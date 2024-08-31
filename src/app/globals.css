@@ -59,10 +59,19 @@
   }
 }
 
+.text-primary {
+  color: #3f446a
+}
+
+.bg-primary-01 {
+  background-color: #3f446a
+}
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

@@ -1,7 +1,15 @@
-import React from 'react'
+import SignUpForm from './form'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Sign Up - UNIKO',
+  description: ''
+}
 
 export default function page() {
   return (
-    <div>page</div>
+    <div>
+      <SignUpForm></SignUpForm>
+    </div>
   )
 }

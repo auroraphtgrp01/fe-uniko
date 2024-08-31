@@ -29,3 +29,18 @@ export function capitalizeMany(str: string) {
 export function isNullish<T>(value: T | null | undefined): value is null | undefined {
   return value == null || value == undefined
 }
+
+export const getAccessTokenFromLocalStorage = () => (isClient ? localStorage.getItem('accessToken') : null)
+
+export const getRefreshTokenFromLocalStorage = () => (isClient ? localStorage.getItem('refreshToken') : null)
+export const setAccessTokenToLocalStorage = (value: string) => isClient && localStorage.setItem('accessToken', value)
+
+export const setRefreshTokenToLocalStorage = (value: string) => isClient && localStorage.setItem('refreshToken', value)
+export const removeTokensFromLocalStorage = () => {
+  isClient && localStorage.removeItem('accessToken')
+  isClient && localStorage.removeItem('refreshToken')
+}
+
+export const setEmailWhenRegister = (value: string) => isClient && localStorage.setItem('registerData', value)
+
+export const getEmailWhenRegister = () => (isClient ? localStorage.getItem('registerData') : null)

@@ -1,5 +1,4 @@
 import { ISignInResponse } from '@/app/sign-in/sign-in.i'
-import { IBaseResponseData } from '@/types/common.i'
 
 export interface ISignUpBody {
   email: string
@@ -7,4 +6,8 @@ export interface ISignUpBody {
   fullName: string
 }
 
-export type ISignUpResponse = ISignInResponse
+export type ISignUpResponse = ISignInResponse & {
+  user: {
+    email: string
+  }
+}

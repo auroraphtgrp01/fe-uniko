@@ -15,6 +15,12 @@ if (!configEnv.success) {
   throw new Error('Invalid configuration')
 }
 
+export type Locale = (typeof locales)[number]
+
+export const locales = ['en', 'vi'] as const
+
+export const defaultLocale: Locale = 'vi'
+
 const configProject = configEnv.data
 
 export default configProject
