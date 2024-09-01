@@ -28,7 +28,7 @@ export default function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div className='mt-[-5px] hidden select-none p-5 md:block lg:block'>
+      <div className='mt-[-10px] hidden select-none p-5 md:block lg:block'>
         {!isMinimized ? (
           <motion.div
             className='justify-start'
