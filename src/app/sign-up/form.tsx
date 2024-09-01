@@ -24,8 +24,8 @@ export default function SignUpForm() {
   }
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-gradient-to-r from-[#4D4C7D] to-[#363062] px-4 py-12 sm:px-6 lg:px-8'>
-      <Card className='w-full max-w-md rounded-lg shadow-lg'>
+    <div className='flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8'>
+      <Card className='w-full max-w-md rounded-lg bg-background_nav shadow-lg'>
         <div className='flex items-center justify-center p-4'>
           <div className='h-32 w-32'>
             <Image
@@ -40,13 +40,15 @@ export default function SignUpForm() {
           </div>
         </div>
         <CardContent className=''>
-          <h2 className='text-center text-2xl font-bold tracking-tight text-primary sm:text-3xl'>
+          <h2 className='text-center text-2xl font-bold tracking-tight text-muted-foreground sm:text-3xl'>
             Create your account
           </h2>
-          <p className='mt-2 text-center text-sm text-primary'>Join us and open up your own world!</p>
+          <p className='mt-2 text-center text-sm text-muted-foreground'>Join us and open up your own world!</p>
           <form className='space-y-4 sm:space-y-6' onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor='fullName'>Full Name</Label>
+              <Label htmlFor='fullName' className='text-muted-foreground'>
+                Full Name
+              </Label>
               <Input
                 id='fullName'
                 required
@@ -56,7 +58,9 @@ export default function SignUpForm() {
               />
             </div>
             <div>
-              <Label htmlFor='email'>Email address</Label>
+              <Label htmlFor='email' className='text-muted-foreground'>
+                Email address
+              </Label>
               <Input
                 id='email'
                 autoComplete='email'
@@ -67,7 +71,9 @@ export default function SignUpForm() {
               />
             </div>
             <div>
-              <Label htmlFor='password'>Password</Label>
+              <Label htmlFor='password' className='text-muted-foreground'>
+                Password
+              </Label>
               <Input
                 id='password'
                 type='password'
@@ -78,7 +84,7 @@ export default function SignUpForm() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button variant='blueVin' className='mt-4 w-full' type='submit' isLoading={isSigningUp}>
+            <Button variant='default' className='mt-4 w-full' type='submit' isLoading={isSigningUp}>
               Sign Up
             </Button>
             <div className='relative mt-4'>
@@ -86,7 +92,7 @@ export default function SignUpForm() {
                 <span className='w-full border-t border-muted-foreground/30' />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>
-                <span className='bg-background px-2 text-muted-foreground'>Already have an account?</span>
+                <span className='px-2 text-muted-foreground'>Already have an account?</span>
               </div>
             </div>
             <Button variant='secondary' className='w-full' type='button' onClick={() => router.push('/sign-in')}>
@@ -97,7 +103,7 @@ export default function SignUpForm() {
                 <span className='w-full border-t border-muted-foreground/30' />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>
-                <span className='bg-background px-2 text-muted-foreground'>Or continue with</span>
+                <span className='px-2 text-muted-foreground'>Or continue with</span>
               </div>
             </div>
             <div className='mt-4 flex flex-col sm:flex-row sm:space-x-2'>

@@ -6,5 +6,11 @@ export const navItems: NavItem[] = [
     href: '/dashboard',
     icon: 'dashboard',
     label: 'Dashboard'
+  },
+  {
+    title: 'Dashboard',
+    href: '/dashsboard',
+    icon: 'dashboard',
+    label: 'Dashboard'
   }
 ]

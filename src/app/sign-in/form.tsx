@@ -23,8 +23,8 @@ export default function SignInForm() {
   }
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-gradient-to-r from-[#4D4C7D] to-[#363062] px-4 py-12 sm:px-6 lg:px-8'>
-      <Card className='w-full max-w-md rounded-lg shadow-lg'>
+    <div className='flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8'>
+      <Card className='w-full max-w-md rounded-lg bg-background_nav shadow-lg'>
         <div className='flex items-center justify-center p-4'>
           <div className='h-32 w-32'>
             <Image
@@ -39,13 +39,15 @@ export default function SignInForm() {
           </div>
         </div>
         <CardContent className=''>
-          <h2 className='text-center text-2xl font-bold tracking-tight text-primary sm:text-3xl'>
+          <h2 className='text-center text-2xl font-bold tracking-tight text-muted-foreground sm:text-3xl'>
             Sign in to your account
           </h2>
-          <p className='mt-2 text-center text-sm text-primary'>Open up your own world!</p>
+          <p className='mt-2 text-center text-sm text-muted-foreground'>Open up your own world!</p>
           <form className='space-y-4 sm:space-y-6' onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor='email'>Email address</Label>
+              <Label htmlFor='email' className='text-muted-foreground'>
+                Email address
+              </Label>
               <Input
                 id='email'
                 autoComplete='email'
@@ -56,7 +58,9 @@ export default function SignInForm() {
               />
             </div>
             <div>
-              <Label htmlFor='password'>Password</Label>
+              <Label htmlFor='password' className='text-muted-foreground'>
+                Password
+              </Label>
               <Input
                 id='password'
                 type='password'
@@ -79,11 +83,11 @@ export default function SignInForm() {
                   Remember me
                 </Label>
               </div>
-              <Link href='#' className='text-sm font-medium text-primary'>
+              <Link href='#' className='text-sm font-medium text-muted-foreground'>
                 Forgot password?
               </Link>
             </div>
-            <Button variant='blueVin' className='mt-4 w-full' type='submit' isLoading={isSigningIn}>
+            <Button variant='default' className='mt-4 w-full text-white' type='submit' isLoading={isSigningIn}>
               Sign in
             </Button>
             <div className='relative mt-4'>
@@ -91,7 +95,7 @@ export default function SignInForm() {
                 <span className='w-full border-t border-muted-foreground/30' />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>
-                <span className='bg-background px-2 text-muted-foreground'>Don't have an account yet?</span>
+                <span className='px-2 text-muted-foreground'>Don't have an account yet?</span>
               </div>
             </div>
             <div className='mt-2'>
@@ -106,7 +110,7 @@ export default function SignInForm() {
                 <span className='w-full border-t border-muted-foreground/30' />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>
-                <span className='bg-background px-2 text-muted-foreground'>Or continue with</span>
+                <span className='px-2 text-muted-foreground'>Or continue with</span>
               </div>
             </div>
             <div className='mt-4 flex flex-col sm:flex-row sm:space-x-2'>
