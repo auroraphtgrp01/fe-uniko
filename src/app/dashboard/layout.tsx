@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
         </header>
-        <div className='p-8'>{children}</div>
+        <div className='p-6'>{children}</div>
       </main>
     </div>
   )
