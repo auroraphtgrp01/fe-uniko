@@ -28,47 +28,46 @@ export default function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div onClick={handleToggle} className='mt-[-5px] cursor-pointer'>
-        <div className='hidden select-none p-5 lg:block'>
-          {!isMinimized ? (
-            <motion.div
-              className='justify-start'
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className='w-full'>
-                <Image
-                  src={Logo3}
-                  alt='Logo'
-                  layout='responsive'
-                  objectFit='cover'
-                  className='h-full w-full object-cover'
-                />
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              className='mt-1 justify-start'
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className='w-full'>
-                <Image
-                  src={Logo2}
-                  alt='Logo'
-                  layout='responsive'
-                  objectFit='cover'
-                  className='h-full w-full object-cover'
-                />
-              </div>
-            </motion.div>
-          )}
-        </div>
-        {/* <div className='hidden p-5 lg:block'>
+      <div className='mt-[-5px] hidden select-none p-5 md:block lg:block'>
+        {!isMinimized ? (
+          <motion.div
+            className='justify-start'
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className='w-full'>
+              <Image
+                src={Logo3}
+                alt='Logo'
+                layout='responsive'
+                objectFit='cover'
+                className='h-full w-full object-cover'
+              />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            className='mt-1 justify-start'
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className='w-full'>
+              <Image
+                src={Logo2}
+                alt='Logo'
+                layout='responsive'
+                objectFit='cover'
+                className='h-full w-full object-cover'
+              />
+            </div>
+          </motion.div>
+        )}
+      </div>
+      {/* <div className='hidden p-5 lg:block'>
           <AnimatePresence mode='wait'>
             <motion.div
               key={isMinimized ? 'logo-minimized' : 'logo-expanded'}
@@ -103,7 +102,6 @@ export default function Sidebar({ className }: SidebarProps) {
             </motion.div>
           </AnimatePresence>
         </div> */}
-      </div>
 
       <div className='space-y-4'>
         <div className='px-3 py-2'>

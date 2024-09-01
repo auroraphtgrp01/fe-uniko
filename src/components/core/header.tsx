@@ -1,18 +1,20 @@
+'use client'
 import { ModeToggle } from '@/libraries/mode-toggle'
-import { cn } from '@/libraries/utils'
 import { MobileSidebar } from '@/components/core/mobile-sidebar'
 import { UserNav } from '@/components/core/user-nav'
-import { Button } from '@/components/ui/button'
+import ButtonCollapseSlideBar from '../dashboard/ButtonCollapseSlideBar'
 
 export default function Header() {
   return (
-    <header className='sticky inset-x-0 top-0 mt-3 w-full'>
-      <nav className='flex items-center justify-between px-4 py-2 md:justify-end'>
-        <div className={cn('block lg:!hidden')}>
+    <header className='sticky w-full'>
+      <nav className='flex items-center justify-between px-4 py-2'>
+        <div className='lg:hidden md:hidden'>
           <MobileSidebar />
         </div>
-
         <div className='flex items-center gap-2'>
+          <ButtonCollapseSlideBar />
+        </div>
+        <div className='ml-auto flex items-center gap-2'>
           <UserNav />
           <ModeToggle />
         </div>
