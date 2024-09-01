@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { DashboardNav } from '@/components/core/dashboard-nav'
-import { navItems } from '@/constants/data'
+import { navItems } from '@/constants/routes'
 import { cn } from '@/libraries/utils'
 import { useSidebar } from '@/hooks/useSidebar'
 import Image from 'next/image'
@@ -23,8 +23,8 @@ export default function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        `bg-background_nav relative hidden h-screen flex-none border-r transition-[width] duration-500 md:block`,
-        !isMinimized ? 'w-48' : 'w-[72px]',
+        `relative hidden h-screen flex-none border-r bg-background_nav transition-[width] duration-500 md:block`,
+        !isMinimized ? 'w-52' : 'w-[72px]',
         className
       )}
     >
