@@ -1,23 +1,28 @@
-UNIKO - Financial Management 💼💰
+# UNIKO - Financial Management 💼💰
+
 UNIKO is a personal finance management tool that helps users track their spending, categorize expenses, and manage their personal spending jars. With UNIKO, you can easily organize your finances, plan your budget, and gain insights into your spending habits.
 
-Key Features ✨
-💵 Expense Tracking: Keep a detailed record of all your spending.
-📊 Categorization: Automatically categorize your expenses for better insights.
-🏦 Spending Jars: Organize your money into various jars for different purposes.
-📅 Financial Planning: Plan your finances ahead of time with personalized budgets.
-Tech Stack 🛠️
-Yarn: Used for managing dependencies and scripts efficiently.
-Next.js: Provides the framework for building a performant and scalable web application.
-Husky: Ensures code quality by managing pre-commit hooks for linting and testing.
-Installation 🚀
+## Key Features ✨
+
+- **💵 Expense Tracking:** Keep a detailed record of all your spending.
+- **📊 Categorization:** Automatically categorize your expenses for better insights.
+- **🏦 Spending Jars:** Organize your money into various jars for different purposes.
+- **📅 Financial Planning:** Plan your finances ahead of time with personalized budgets.
+
+## Tech Stack 🛠️
+
+- **Yarn:** Used for managing dependencies and scripts efficiently.
+- **Next.js:** Provides the framework for building a performant and scalable web application.
+- **Husky:** Ensures code quality by managing pre-commit hooks for linting and testing.
+
+## Installation 🚀
+
 Follow these steps to get UNIKO up and running on your local machine:
 
-Clone the Repository:
+1. **Clone the Repository:**
 
-bash
-Copy code
-git clone https://github.com/yourusername/uniko-financial-management.git
+   ```bash
+   git clone https://github.com/yourusername/uniko-financial-management.git](https://github.com/auroraphtgrp01/fe-uniko
 Navigate to the Project Directory:
 
 bash
@@ -67,3 +72,14 @@ We welcome contributions! Please follow our contributing guidelines and ensure a
 
 License 📄
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+csharp
+Copy code
+
+You can save this content as a `README.md` file in your project directory. This will serve as the main documentation for your project on GitHub.
+
+
+
+
+
+
