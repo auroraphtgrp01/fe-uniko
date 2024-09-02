@@ -8,7 +8,7 @@ export default function Header() {
   return (
     <header className='sticky w-full'>
       <nav className='flex items-center justify-between px-4 py-2'>
-        <div className='lg:hidden md:hidden'>
+        <div className='md:hidden lg:hidden'>
           <MobileSidebar />
         </div>
         <div className='flex items-center gap-2'>
