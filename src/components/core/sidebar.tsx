@@ -1,8 +1,8 @@
 'use client'
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { DashboardNav } from '@/components/core/dashboard-nav'
-import { navItems } from '@/constants/data'
+import { navItems } from '@/constants/routes'
 import { cn } from '@/libraries/utils'
 import { useSidebar } from '@/hooks/useSidebar'
 import Image from 'next/image'
@@ -23,56 +23,89 @@ export default function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        `bg-background_nav relative hidden h-screen flex-none border-r transition-[width] duration-500 md:block`,
-        !isMinimized ? 'w-48' : 'w-[72px]',
+        `relative hidden h-screen flex-none border-r bg-background_nav transition-[width] duration-500 md:block`,
+        !isMinimized ? 'w-52' : 'w-[72px]',
         className
       )}
     >
-      <div onClick={handleToggle} className='mt-[-5px] cursor-pointer'>
-        <div className='hidden p-5 lg:block'>
-          {!isMinimized ? (
+      <div className='mt-[-10px] hidden select-none p-5 md:block lg:block'>
+        {!isMinimized ? (
+          <motion.div
+            className='justify-start'
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className='w-full'>
+              <Image
+                src={Logo3}
+                alt='Logo'
+                layout='responsive'
+                objectFit='cover'
+                className='h-full w-full object-cover'
+              />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            className='mt-1 justify-start'
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className='w-full'>
+              <Image
+                src={Logo2}
+                alt='Logo'
+                layout='responsive'
+                objectFit='cover'
+                className='h-full w-full object-cover'
+              />
+            </div>
+          </motion.div>
+        )}
+      </div>
+      {/* <div className='hidden p-5 lg:block'>
+          <AnimatePresence mode='wait'>
             <motion.div
-              className='justify-start'
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              key={isMinimized ? 'logo-minimized' : 'logo-expanded'}
+              layout
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{ duration: 0.2 }}
+              className='flex w-full items-center justify-center'
             >
-              <div className='w-full'>
+              {!isMinimized ? (
                 <Image
+                  className='h-full w-full object-cover'
                   src={Logo3}
                   alt='Logo'
-                  layout='responsive'
-                  objectFit='cover'
-                  className='h-full w-full object-cover'
+                  layout='fixed'
+                  width={isMinimized ? 50 : 150}
+                  height={isMinimized ? 50 : 150}
+                  objectFit='contain'
                 />
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              className='justify-start'
-              initial={{ scale: 1.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 1.5, opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className='w-full'>
+              ) : (
                 <Image
+                  className='h-full w-full object-cover'
                   src={Logo2}
                   alt='Logo'
-                  layout='responsive'
-                  objectFit='cover'
-                  className='h-full w-full object-cover'
+                  layout='fixed'
+                  width={isMinimized ? 50 : 150}
+                  height={isMinimized ? 50 : 150}
+                  objectFit='contain'
                 />
-              </div>
+              )}
             </motion.div>
-          )}
-        </div>
-      </div>
+          </AnimatePresence>
+        </div> */}
 
-      <div className='space-y-4 py-4'>
+      <div className='space-y-4'>
         <div className='px-3 py-2'>
-          <div className='mt-3 space-y-1'>
+          <div className='select-none space-y-1'>
             <DashboardNav items={navItems} />
           </div>
         </div>

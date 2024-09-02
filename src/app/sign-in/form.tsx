@@ -95,7 +95,7 @@ export default function SignInForm() {
                 <span className='w-full border-t border-muted-foreground/30' />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>
-                <span className='px-2 text-muted-foreground'>Don't have an account yet?</span>
+                <span className='px-2 text-muted-foreground'>Don&apos;t have an account yet? </span>
               </div>
             </div>
             <div className='mt-2'>

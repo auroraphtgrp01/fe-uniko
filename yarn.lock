@@ -1466,6 +1466,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/react-table@npm:^8.20.5":
+  version: 8.20.5
+  resolution: "@tanstack/react-table@npm:8.20.5"
+  dependencies:
+    "@tanstack/table-core": 8.20.5
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 4c08ff56011f640da2dc2680aa141f642f394ed6dd849f681c50d429c27f8f387222fb05436ce4f9fb66715e52587633e859e5cf13f9ee7e4dd80656b1f9ca00
+  languageName: node
+  linkType: hard
+
+"@tanstack/table-core@npm:8.20.5":
+  version: 8.20.5
+  resolution: "@tanstack/table-core@npm:8.20.5"
+  checksum: f8b175f11eb9ee1e029bb5e91c1038527714382de4bd14750377f43c25e69b687b21bfb181ee07131637d3432618964a4b7a898608fc8411ca50da1e7e8ed4c5
+  languageName: node
+  linkType: hard
+
 "@tootallnate/quickjs-emscripten@npm:^0.23.0":
   version: 0.23.0
   resolution: "@tootallnate/quickjs-emscripten@npm:0.23.0"
@@ -8247,6 +8266,7 @@ __metadata:
     "@release-it/conventional-changelog": ^8.0.1
     "@tanstack/react-query": ^5.53.1
     "@tanstack/react-query-devtools": ^5.53.1
+    "@tanstack/react-table": ^8.20.5
     "@types/node": ^20
     "@types/react": ^18
     "@types/react-dom": ^18

@@ -44,6 +44,8 @@ import {
   User,
   User2Icon,
   UserX2Icon,
+  Boxes,
+  ListCollapse,
   X
 } from 'lucide-react'
 import Image from 'next/image'
@@ -93,6 +95,8 @@ export const Icons = {
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,
+  boxes: Boxes,
+  listCollapse: ListCollapse,
   logo: (props: LucideProps) => <Image src={'/metamask.png'} alt='' height={62} width={62} />,
   gitHub: (props: LucideProps) => (
     <svg viewBox='0 0 438.549 438.549' {...props}>
