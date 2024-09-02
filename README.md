@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+UNIKO - Financial Management 💼💰
+UNIKO is a personal finance management tool that helps users track their spending, categorize expenses, and manage their personal spending jars. With UNIKO, you can easily organize your finances, plan your budget, and gain insights into your spending habits.
 
-## Getting Started
+Key Features ✨
+💵 Expense Tracking: Keep a detailed record of all your spending.
+📊 Categorization: Automatically categorize your expenses for better insights.
+🏦 Spending Jars: Organize your money into various jars for different purposes.
+📅 Financial Planning: Plan your finances ahead of time with personalized budgets.
+Tech Stack 🛠️
+Yarn: Used for managing dependencies and scripts efficiently.
+Next.js: Provides the framework for building a performant and scalable web application.
+Husky: Ensures code quality by managing pre-commit hooks for linting and testing.
+Installation 🚀
+Follow these steps to get UNIKO up and running on your local machine:
 
-First, run the development server:
+Clone the Repository:
 
-```bash
-npm run dev
-# or
+bash
+Copy code
+git clone https://github.com/yourusername/uniko-financial-management.git
+Navigate to the Project Directory:
+
+bash
+Copy code
+cd uniko-financial-management
+Install Dependencies:
+
+Make sure you have Yarn installed. Then, run:
+
+bash
+Copy code
+yarn install
+Set Up Environment Variables:
+
+Create a .env.local file in the root of your project and configure any necessary environment variables:
+
+bash
+Copy code
+NEXT_PUBLIC_API_URL=http://your-api-url.com
+Run the Development Server:
+
+Start the development server with:
+
+bash
+Copy code
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Your application will be available at http://localhost:3000.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build for Production:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To create a production build, run:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+bash
+Copy code
+yarn build
+Run Husky for Pre-Commit Hooks:
 
-## Learn More
+Husky is set up to manage pre-commit hooks. Make sure Husky is working correctly by running:
 
-To learn more about Next.js, take a look at the following resources:
+bash
+Copy code
+yarn husky install
+This ensures that linting and testing are performed before each commit.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Contributing 🤝
+We welcome contributions! Please follow our contributing guidelines and ensure all tests pass before submitting a pull request.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+License 📄
+This project is licensed under the MIT License - see the LICENSE file for details.
