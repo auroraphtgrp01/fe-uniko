@@ -1,5 +1,5 @@
 {
-  "*.ts": [
-    "prettier --write \"src/**/*.ts\""
+  "*.{ts,tsx}": [
+    "prettier --write \"src/**/*.{ts,tsx}\""
   ]
 }
