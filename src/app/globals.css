@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 222.2 47.4% 11.2%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -34,7 +34,7 @@
   .dark {
     --background: 220 8% 7%;
     --background-nav: 206, 14%, 10%;
-    --foreground: 210 40% 98%;
+    --foreground: 212.7 26.8% 83.9%;
     --card: 206, 14%, 10%;
     --card-foreground: 210 40% 98%;
     --popover: 206, 14%, 10%;
@@ -61,7 +61,8 @@
 }
 
 .text-primary {
-  color: #3f446a
+  --tw-text-opacity: 1;
+  color: rgb(30 41 59 / var(--tw-text-opacity))
 }
 
 .bg-primary-01 {
