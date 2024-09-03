@@ -23,7 +23,7 @@ export default function SignInForm() {
   }
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8'>
+    <div className='relative flex min-h-screen w-full items-center justify-center overflow-hidden rounded-md bg-black/[0.8] px-4 py-12 pb-[5rem] pt-[5rem] antialiased bg-dot-white/[0.2] sm:px-6 md:items-center md:justify-center lg:px-8'>
       <Card className='w-full max-w-md rounded-lg bg-background_nav shadow-lg'>
         <div className='flex items-center justify-center p-4'>
           <div className='h-32 w-32'>
