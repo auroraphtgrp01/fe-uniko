@@ -35,6 +35,12 @@ export const getAccessTokenFromLocalStorage = () => (isClient ? localStorage.get
 export const getRefreshTokenFromLocalStorage = () => (isClient ? localStorage.getItem('refreshToken') : null)
 export const setAccessTokenToLocalStorage = (value: string) => isClient && localStorage.setItem('accessToken', value)
 
+export const getUserInfoFromLocalStorage = () => {
+  return isClient ? JSON.parse(localStorage.getItem('userInfo') || '{}') : null
+}
+export const setUserInfoToLocalStorage = (value: any) =>
+  isClient && localStorage.setItem('userInfo', JSON.stringify(value))
+
 export const setRefreshTokenToLocalStorage = (value: string) => isClient && localStorage.setItem('refreshToken', value)
 export const removeTokensFromLocalStorage = () => {
   isClient && localStorage.removeItem('accessToken')

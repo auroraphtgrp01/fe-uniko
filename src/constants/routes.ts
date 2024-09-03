@@ -3,7 +3,7 @@ import { NavItem } from '@/types/core.i'
 export const navItems: NavItem[] = [
   {
     title: 'Overview',
-    href: '/dashboard/overview',
+    href: '/dashboard',
     icon: 'dashboard',
     label: 'Overview'
   },
