@@ -2,7 +2,7 @@
 
 import { ISignInBody, ISignInResponse } from '@/app/sign-in/sign-in.i'
 import { apiService } from '@/libraries/api'
-import { setAccessTokenToLocalStorage, setEmailWhenRegister, setRefreshTokenToLocalStorage } from '@/libraries/helpers'
+import { setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/libraries/helpers'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
@@ -23,6 +23,8 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
         return toast.error('Invalid email or password!')
       }
       toast.error('An error occurred. Please try again later.')
+      console.log(error)
+
       opts?.callBackOnError?.()
     },
     onSuccess: (data) => {
@@ -31,7 +33,7 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
         setRefreshTokenToLocalStorage(data.data.refreshToken)
       }
       toast.success('Welcome back!')
-      router.push('/')
+      router.push('/dashboard')
     }
   })
 
@@ -48,7 +50,6 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
     },
     onSuccess: (data) => {
       console.log(data)
-      // setEmailWhenRegister(data.data)
       toast.success('Account created successfully!')
       router.push('/sign-in')
     }
