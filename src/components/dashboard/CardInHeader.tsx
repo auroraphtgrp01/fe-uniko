@@ -7,14 +7,12 @@ import { cn } from '@/libraries/utils'
 
 export default function CardInHeader({ className }: { className?: string }) {
   return (
-    <div className={cn(className)}>
-      <Card className='w-[350px]'>
-        <CardHeader>
-          <CardTitle>Create project</CardTitle>
-          <CardDescription>Deploy your new project in one-click.</CardDescription>
-        </CardHeader>
-        <CardContent></CardContent>
-      </Card>
-    </div>
+    <Card className={cn(className, 'w-[350px]')}>
+      <CardHeader>
+        <CardTitle>Create project</CardTitle>
+        <CardDescription>Deploy your new project in one-click.</CardDescription>
+      </CardHeader>
+      <CardContent></CardContent>
+    </Card>
   )
 }

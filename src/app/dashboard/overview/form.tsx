@@ -3,11 +3,8 @@ import CardInHeader from '@/components/dashboard/CardInHeader'
 
 export default function DashboardMainForm() {
   return (
-    <div>
-      <div className='flex'>
-        <CardInHeader className='me-4' />
-        <CardInHeader />
-      </div>
+    <div className='container mx-auto px-4 py-4'>
+      <CardInHeader></CardInHeader>
     </div>
   )
 }
