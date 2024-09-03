@@ -63,7 +63,9 @@ export default function NotificationDropdown() {
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' size='icon' className='relative rounded-full'>
           <Bell className='h-4 w-4' />
-          {unreadCount > 0 && <span className='absolute right-0 top-0 h-2 w-2 rounded-full bg-red-500' />}
+          {unreadCount > 0 && (
+            <span className='absolute right-0 top-0 me-[5px] mt-[5px] h-2 w-2 rounded-full bg-red-500' />
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-60 md:w-80'>
