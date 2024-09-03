@@ -1,6 +1,6 @@
 'use client'
-import React, { useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import React from 'react'
+import { motion } from 'framer-motion'
 import { DashboardNav } from '@/components/core/dashboard-nav'
 import { navItems } from '@/constants/routes'
 import { cn } from '@/libraries/utils'
@@ -14,11 +14,7 @@ type SidebarProps = {
 }
 
 export default function Sidebar({ className }: SidebarProps) {
-  const { isMinimized, toggle } = useSidebar()
-
-  const handleToggle = () => {
-    toggle()
-  }
+  const { isMinimized } = useSidebar()
 
   return (
     <aside
@@ -67,42 +63,6 @@ export default function Sidebar({ className }: SidebarProps) {
           </motion.div>
         )}
       </div>
-      {/* <div className='hidden p-5 lg:block'>
-          <AnimatePresence mode='wait'>
-            <motion.div
-              key={isMinimized ? 'logo-minimized' : 'logo-expanded'}
-              layout
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
-              transition={{ duration: 0.2 }}
-              className='flex w-full items-center justify-center'
-            >
-              {!isMinimized ? (
-                <Image
-                  className='h-full w-full object-cover'
-                  src={Logo3}
-                  alt='Logo'
-                  layout='fixed'
-                  width={isMinimized ? 50 : 150}
-                  height={isMinimized ? 50 : 150}
-                  objectFit='contain'
-                />
-              ) : (
-                <Image
-                  className='h-full w-full object-cover'
-                  src={Logo2}
-                  alt='Logo'
-                  layout='fixed'
-                  width={isMinimized ? 50 : 150}
-                  height={isMinimized ? 50 : 150}
-                  objectFit='contain'
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div> */}
-
       <div className='space-y-4'>
         <div className='px-3 py-2'>
           <div className='select-none space-y-1'>

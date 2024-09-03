@@ -17,12 +17,26 @@ export const navItems: NavItem[] = [
     title: 'Transaction',
     href: '/dashboard/transaction',
     icon: 'shoppingCart',
-    label: 'Transaction'
+    label: 'Transaction',
+    children: [
+      {
+        title: 'Detail',
+        href: '/dashboard/transaction/detail',
+        label: 'Detail'
+      }
+    ]
   },
   {
     title: 'Account Source',
     href: '/dashboard/account-source',
     icon: 'billing',
-    label: 'Account Source'
+    label: 'Account Source',
+    children: [
+      {
+        title: 'Account Detail',
+        href: '/dashboard/account-source/detail',
+        label: 'Account Detail'
+      }
+    ]
   }
 ]

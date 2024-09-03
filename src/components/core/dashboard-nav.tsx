@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 
 import { Icons } from '@/components/ui/icons'
 import { cn } from '@/libraries/utils'
@@ -19,12 +21,20 @@ interface DashboardNavProps {
 export function DashboardNav({ items, setOpen, isMobileNav = false }: DashboardNavProps) {
   const path = usePathname()
   const { isMinimized } = useSidebar()
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isMinimized)
+
+  useEffect(() => {
+    if (!isMinimized) {
+      const timeout = setTimeout(() => setIsSidebarExpanded(true), 300)
+      return () => clearTimeout(timeout)
+    } else {
+      setIsSidebarExpanded(false)
+    }
+  }, [isMinimized])
 
   if (!items?.length) {
     return null
   }
-
-  console.log('isActive', isMobileNav, isMinimized)
 
   return (
     <nav className='grid items-start gap-2'>
@@ -38,7 +48,7 @@ export function DashboardNav({ items, setOpen, isMobileNav = false }: DashboardN
                   <Link
                     href={item.disabled ? '/' : item.href}
                     className={cn(
-                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-primary hover:text-white',
+                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium text-foreground hover:bg-primary hover:text-white',
                       path === item.href ? 'bg-primary text-white' : 'transparent',
                       item.disabled && 'cursor-not-allowed opacity-80'
                     )}
@@ -47,22 +57,35 @@ export function DashboardNav({ items, setOpen, isMobileNav = false }: DashboardN
                     }}
                   >
                     <Icon className={`ml-3 size-5 flex-none`} src='' alt='' />
-
                     {isMobileNav || (!isMinimized && !isMobileNav) ? (
-                      <span className='mr-2 truncate'>{item.title}</span>
+                      <motion.span
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.2, delay: 0.1 }}
+                        className='mr-2 truncate'
+                      >
+                        <span className='te'>{item.title}</span>
+                      </motion.span>
                     ) : (
                       ''
                     )}
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent
-                  align='center'
-                  side='right'
-                  sideOffset={8}
-                  className={!isMinimized ? 'hidden' : 'inline-block'}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {item.title}
-                </TooltipContent>
+                  <TooltipContent
+                    align='center'
+                    side='right'
+                    sideOffset={8}
+                    className={!isMinimized ? 'hidden' : 'inline-block'}
+                  >
+                    {item.title}
+                  </TooltipContent>
+                </motion.div>
               </Tooltip>
             )
           )

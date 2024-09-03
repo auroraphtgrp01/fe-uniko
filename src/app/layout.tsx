@@ -7,7 +7,6 @@ import QueryProvider from '@/libraries/query-provider'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from '@/libraries/theme-provider'
 import { AppProvider } from '../context/app-context.provider'
-
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans'
@@ -15,7 +14,8 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: 'UNIKO - Financial Management',
-  description: ''
+  description: '',
+  icons: 'favicon.ico'
 }
 
 console.info('Config Project ', configProject)
