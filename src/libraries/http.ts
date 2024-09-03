@@ -49,34 +49,33 @@ axiosInstance.interceptors.request.use((config) => {
   return config
 })
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
-    const { response } = error
-    if (response?.status === AUTHENTICATION_ERROR_STATUS && isClient) {
-      const locale = 'en'
-      if (!clientLogoutRequest) {
-        clientLogoutRequest = axiosInstance.post('/api/auth/logout')
-        try {
-          await clientLogoutRequest
-        } catch {
-          // Handle error silently
-        } finally {
-          removeTokensFromLocalStorage()
-          clientLogoutRequest = null
-          window.location.href = `/${locale}/login`
-        }
-      }
-    }
-    return Promise.reject(
-      new HttpError({
-        status: response?.status || 0,
-        payload: response?.data || {},
-        message: error.message
-      })
-    )
-  }
-)
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   async (error: AxiosError) => {
+//     const { response } = error
+//     if (response?.status === AUTHENTICATION_ERROR_STATUS && isClient) {
+//       if (!clientLogoutRequest) {
+//         clientLogoutRequest = axiosInstance.post('/api/auth/logout')
+//         try {
+//           await clientLogoutRequest
+//         } catch {
+//           // Handle error silently
+//         } finally {
+//           removeTokensFromLocalStorage()
+//           clientLogoutRequest = null
+//           // window.location.href = `/sign-in`
+//         }
+//       }
+//     }
+//     return Promise.reject(
+//       new HttpError({
+//         status: response?.status || 0,
+//         payload: response?.data || {},
+//         message: error.message
+//       })
+//     )
+//   }
+// )
 
 const request = async <TResponse>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',

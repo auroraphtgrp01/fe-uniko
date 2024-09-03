@@ -10,11 +10,9 @@ import { useState, FormEvent } from 'react'
 import { useAuth } from '@/hooks/query-hooks/use-auth'
 import Logo2 from '@/images/logo-2.png'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 
 export default function SignInForm() {
   const [email, setEmail] = useState('')
-  const router = useRouter()
   const [password, setPassword] = useState('')
   const { signIn, isSigningIn, isRememberMe, setIsRememberMe } = useAuth()
   function handleSubmit(event: FormEvent) {
