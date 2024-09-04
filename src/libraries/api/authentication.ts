@@ -1,6 +1,6 @@
 import { ISignInBody, ISignInResponse } from '@/app/sign-in/sign-in.i'
 import { ISignUpBody, ISignUpResponse } from '@/app/sign-up/sign-up.i'
-import { getBaseUrl, getHeaders } from '@/libraries/helpers'
+import { getBaseUrl } from '@/libraries/helpers'
 import httpService from '@/libraries/http'
 
 const baseUrl = getBaseUrl()

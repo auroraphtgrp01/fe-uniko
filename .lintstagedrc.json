@@ -1,5 +1,6 @@
 {
   "*.{ts,tsx}": [
-    "prettier --write \"src/**/*.{ts,tsx}\""
+    "prettier --write \"src/**/*.{ts,tsx}\"",
+    "yarn lint"
   ]
 }

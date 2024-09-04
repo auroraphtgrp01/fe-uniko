@@ -7,6 +7,7 @@ import QueryProvider from '@/libraries/query-provider'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from '@/libraries/theme-provider'
 import { AppProvider } from '../context/app-context.provider'
+import { ReactNode } from 'react'
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans'
@@ -23,7 +24,7 @@ console.info('Config Project ', configProject)
 export default function RootLayout({
   children
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
