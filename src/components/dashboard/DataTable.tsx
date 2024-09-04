@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React from 'react'
-import { PlusIcon } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsUpDown, PlusIcon } from 'lucide-react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -65,7 +65,7 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead className='sm:text-sx text-xs lg:text-sm' key={header.id}>
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 )
@@ -107,21 +107,22 @@ export function DataTable<TData, TValue>({
           </TableRow>
         </TableBody>
       </Table>
-      {isPaginate ? (
-        <div className='flex items-center justify-end space-x-1 px-2 py-2'>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
+      <div className='flex flex-col items-center justify-between space-y-2 px-3 sm:flex-row sm:space-x-2 sm:space-y-0'>
+        <p className='text-xs text-gray-500 sm:text-sm'>0 of 100 row(s) selected.</p>
+        <div className='flex w-full items-center justify-end space-x-2 py-2 sm:w-auto sm:py-4'>
+          <p className='text-sm'>Rows per page</p>
+          <Button variant='outline' className='border-gray-300 px-2 py-1 text-xs sm:text-sm'>
+            10 <ChevronsUpDown size={15} className='ml-1 text-gray-600 sm:ml-2' />
           </Button>
-          <Button variant='outline' size='sm' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            Next
+          <p className='text-sm'>Page 1 of 10</p>
+          <Button className='ml-1 sm:ml-5' variant='outline' size='sm' onClick={() => table.previousPage()}>
+            <ChevronLeft size={15} />
+          </Button>
+          <Button variant='outline' size='sm' onClick={() => table.nextPage()}>
+            <ChevronRight size={15} />
           </Button>
         </div>
-      ) : null}
+      </div>
     </div>
   )
 }

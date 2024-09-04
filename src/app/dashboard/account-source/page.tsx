@@ -35,7 +35,7 @@ const titles: string[] = ['Source Name', 'Type', 'Init Amount', 'Currency', 'Cur
 const data = [
   {
     id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-    sourceName: <Button variant='greenPastel1'>hello cu</Button>,
+    sourceName: 'hello',
     type: 'Wallet',
     initAmount: 500000,
     currency: 400000,
