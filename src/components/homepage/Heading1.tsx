@@ -1,6 +1,6 @@
 'use client'
 import { ReactNode } from 'react'
-import { delay, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 export default function Heading1({
   className,
@@ -18,7 +18,6 @@ export default function Heading1({
   ]
 
   className && classes.push(className)
-
   return (
     <motion.h1
       initial={{ opacity: 0 }}
