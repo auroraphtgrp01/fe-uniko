@@ -2,18 +2,17 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Avatar, AvatarImage } from '../ui/avatar'
-import { Progress } from '../ui/progress'
 import { convertToCamelCase, formatCurrencyVND, formatDateTimeVN, parseReactToHtml } from '@/constants/functions'
-import parse from 'html-react-parser'
-import { renderToString } from 'react-dom/server'
 
 export function getColumns(headers: string[]): ColumnDef<any>[] {
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
-    header: header,
+    header: () => (
+      <div className='flex items-center'>
+        <span>{header.toLocaleUpperCase()}</span>
+      </div>
+    ),
     cell: ({ row }: { row: any }) => {
-      console.log('>>>', typeof row.getValue(convertToCamelCase(header).toString()))
       return <div className='font-medium'>{parseReactToHtml(row.getValue(convertToCamelCase(header)))}</div>
     }
   }))
