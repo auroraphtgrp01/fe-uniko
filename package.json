@@ -9,6 +9,7 @@
     "lint": "next lint",
     "prepare": "husky",
     "lint:staged": "lint-staged",
+    "release": "yarn format & yarn lint",
     "git:soft": "git reset --soft HEAD~1",
     "git:soft-origin": "git reset --soft HEAD~1 && git push origin +HEAD",
     "git:hard": "git reset --hard && git clean -df",
