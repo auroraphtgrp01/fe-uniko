@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -15,6 +15,8 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import * as DialogRadix from '@radix-ui/react-dialog'
 
 export default function page() {
   const headers = [
@@ -43,7 +45,7 @@ export default function page() {
       direction: 'outflow',
       currency: 'USD',
       accountBank: 'Techcombank',
-      trackerTransaction: 'Tracker002',
+      trackerTransaction: undefined,
       createdAt: formatDateTimeVN('2024-09-05T11:20:00.000Z')
     },
     {
@@ -52,7 +54,7 @@ export default function page() {
       direction: 'inflow',
       currency: 'EUR',
       accountBank: 'BIDV',
-      trackerTransaction: 'Tracker003',
+      trackerTransaction: null,
       createdAt: formatDateTimeVN('2024-09-06T12:30:00.000Z')
     },
     {
@@ -61,7 +63,7 @@ export default function page() {
       direction: 'outflow',
       currency: 'JPY',
       accountBank: 'Agribank',
-      trackerTransaction: 'Tracker004',
+      trackerTransaction: '',
       createdAt: formatDateTimeVN('2024-09-07T13:40:00.000Z')
     },
     {
@@ -115,6 +117,19 @@ export default function page() {
     }
   ]
 
+  const getRowClassName = (rowData: any): string => {
+    return !rowData.trackerTransaction || rowData.trackerTransaction === ''
+      ? 'bg-[#75A47F] text-white hover:bg-[#75A47F]/90'
+      : ''
+  }
+
+  const onRowClick = (rowData: any) => {
+    console.log('Clicked row:', rowData)
+  }
+  const onRowDoubleClick = (rowData: any) => {
+    console.log('Double clicked row:', rowData)
+  }
+
   return (
     <div className='mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 md:grid-cols-2'>
       <Card>
@@ -151,7 +166,18 @@ export default function page() {
         <CardHeader>
           <CardTitle className='flex items-center justify-between'>
             <span>Unclassified Transaction</span>
-            <Button variant='outline'>Classify</Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant='outline'>Classify</Button>
+              </DialogTrigger>
+              <DialogContent className='sm:max-w-[1000px]'>
+                <DialogHeader>
+                  <DialogTitle>Unclassified Transaction</DialogTitle>
+                  <DialogDescription>Overview of today`s transactions</DialogDescription>
+                </DialogHeader>
+                <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={false} />
+              </DialogContent>
+            </Dialog>
           </CardTitle>
           <CardDescription>Transactions without a tracker</CardDescription>
         </CardHeader>
@@ -173,7 +199,14 @@ export default function page() {
             <CardDescription>All financial transactions</CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable columns={columns} data={data} isPaginate={false} />
+            <DataTable
+              columns={columns}
+              data={data}
+              isPaginate={false}
+              getRowClassName={getRowClassName}
+              onRowClick={onRowClick}
+              onRowDoubleClick={onRowDoubleClick}
+            />
           </CardContent>
         </Card>
       </div>

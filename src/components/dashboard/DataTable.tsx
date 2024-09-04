@@ -21,9 +21,19 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isPaginate: boolean
+  getRowClassName?: (row: TData) => string
+  onRowClick?: (row: TData) => void
+  onRowDoubleClick?: (row: TData) => void
 }
 
-export function DataTable<TData, TValue>({ columns, data, isPaginate }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  isPaginate,
+  getRowClassName,
+  onRowClick,
+  onRowDoubleClick
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -67,7 +77,13 @@ export function DataTable<TData, TValue>({ columns, data, isPaginate }: DataTabl
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
               return (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                <TableRow
+                  className={getRowClassName ? getRowClassName(row.original) : ''}
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => onRowClick && onRowClick(row.original)}
+                  onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
