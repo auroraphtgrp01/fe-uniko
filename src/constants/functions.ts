@@ -1,3 +1,6 @@
+import { renderToString } from 'react-dom/server'
+import parse from 'html-react-parser'
+
 export const convertToCamelCase = (str: string) => {
   const words = str.toLowerCase().split(' ')
   for (let i = 1; i < words.length; i++) {
@@ -19,4 +22,7 @@ export const formatDateTimeVN = (date: string) => {
     second: '2-digit'
   }).format(new Date(date))
   1
+}
+export const parseReactToHtml = (ui: any) => {
+  return parse(renderToString(ui))
 }

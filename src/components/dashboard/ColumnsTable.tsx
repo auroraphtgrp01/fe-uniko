@@ -1,59 +1,20 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { ArrowUpDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import { IColumnTitle } from '@/app/dashboard/account-source/page'
 import { Avatar, AvatarImage } from '../ui/avatar'
 import { Progress } from '../ui/progress'
-import { convertToCamelCase, formatCurrencyVND, formatDateTimeVN } from '@/constants/functions'
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+import { convertToCamelCase, formatCurrencyVND, formatDateTimeVN, parseReactToHtml } from '@/constants/functions'
+import parse from 'html-react-parser'
+import { renderToString } from 'react-dom/server'
 
-export function getColumns(headers: IColumnTitle[]): ColumnDef<any>[] {
-  const columnsFromHeaders = headers.map((header, index) => ({
-    accessorKey: `${convertToCamelCase(header.title)}`,
-    header: header.title,
+export function getColumns(headers: string[]): ColumnDef<any>[] {
+  const columnsFromHeaders = headers.map((header) => ({
+    accessorKey: `${convertToCamelCase(header)}`,
+    header: header,
     cell: ({ row }: { row: any }) => {
-      switch (header.type) {
-        case 'TEXT':
-          return <div className='font-medium'>{row.getValue(convertToCamelCase(header.title))}</div>
-        case 'IMAGE': {
-          return (
-            <div className='flex items-center'>
-              <Avatar className='h-8 w-8'>
-                <AvatarImage
-                  src={row.getValue(convertToCamelCase(header.title))}
-                  alt={row.getValue(convertToCamelCase(header.title))}
-                />
-              </Avatar>
-            </div>
-          )
-        }
-        case 'CURRENCY':
-          return <span>{formatCurrencyVND(row.getValue(convertToCamelCase(header.title)))}</span>
-        case 'DATE':
-          return (
-            <div className='text-muted-foreground'>
-              {formatDateTimeVN(row.getValue(convertToCamelCase(header.title)))}
-            </div>
-          )
-        case 'STATUS':
-          return <span>hello</span>
-        default:
-          return <Progress value={row.getValue(convertToCamelCase(header.title))} className='w-[100px]' />
-      }
+      console.log('>>>', typeof row.getValue(convertToCamelCase(header).toString()))
+      return <div className='font-medium'>{parseReactToHtml(row.getValue(convertToCamelCase(header)))}</div>
     }
   }))
 

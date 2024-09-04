@@ -29,23 +29,13 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 // import { Badge } from '@/components/ui/badge'
 // import { Progress } from '@/components/ui/progress'
-export interface IColumnTitle {
-  title: string
-  type: string
-}
-const titles: IColumnTitle[] = [
-  { title: 'Source Name', type: 'TEXT' },
-  { title: 'Type', type: 'STATUS' },
-  { title: 'Init Amount', type: 'CURRENCY' },
-  { title: 'Currency', type: 'CURRENCY' },
-  { title: 'Current Amount', type: 'CURRENCY' },
-  { title: 'Created At', type: 'DATE' }
-]
+import { renderToString } from 'react-dom/server'
+const titles: string[] = ['Source Name', 'Type', 'Init Amount', 'Currency', 'Current Amount', 'Created At']
 
 const data = [
   {
     id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-    sourceName: 'aaaa',
+    sourceName: <Button variant='greenPastel1'>hello cu</Button>,
     type: 'Wallet',
     initAmount: 500000,
     currency: 400000,
