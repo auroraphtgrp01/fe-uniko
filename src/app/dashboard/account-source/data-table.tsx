@@ -65,50 +65,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   return (
     <div>
       <Card className='px-5 py-3'>
-        <div className='flex items-center justify-between'>
-          <div className='justify-betweenyả flex items-center py-2'>
-            <Input
-              placeholder='Filter emails...'
-              value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-              onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
-              className='max-w-lg'
-            />
-            <Button variant='default' className='ml-2'>
-              <CirclePlus className='pr-1' />
-              Status
-            </Button>
-            <Button variant='default' className='ml-2'>
-              <CirclePlus className='pr-1' />
-              Priority
-            </Button>
-          </div>
-          <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant='default' className='hover:#306e58 ml-auto'>
-                  View
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className='capitalize'
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    )
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
         <div className='rounded-md border'>
           <Table>
             <TableHeader>
@@ -143,22 +99,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               )}
             </TableBody>
           </Table>
-        </div>
-        <div className='flex items-center justify-between space-x-2'>
-          <p className='text-gray-500'>0 of 100 row(s) selected.</p>
-          <div className='flex items-center justify-end space-x-2 py-4'>
-            <p>Rows per page</p>
-            <Button variant='outline' className='mr-10 border-gray-300'>
-              10 <ChevronsUpDown size={15} className='ml-2 text-gray-600' />
-            </Button>
-            <p>Page 1 of 10</p>
-            <Button className='ml-5' variant='outline' size='sm' onClick={() => table.previousPage()}>
-              <ChevronLeft />
-            </Button>
-            <Button variant='outline' size='sm' onClick={() => table.nextPage()}>
-              <ChevronRight />
-            </Button>
-          </div>
         </div>
       </Card>
     </div>
