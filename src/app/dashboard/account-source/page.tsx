@@ -29,25 +29,17 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 // import { Badge } from '@/components/ui/badge'
 // import { Progress } from '@/components/ui/progress'
-export enum EColumnType {
-  IMAGE = 'IMAGE',
-  TEXT = 'TEXT',
-  CURRENCY = 'CURRENCY',
-  DATE = 'DATE',
-  STATUS = 'STATUS',
-  PROGRESS = 'PROGRESS'
-}
 export interface IColumnTitle {
   title: string
-  type: EColumnType
+  type: string
 }
 const titles: IColumnTitle[] = [
-  { title: 'Source Name', type: EColumnType.TEXT },
-  { title: 'Type', type: EColumnType.STATUS },
-  { title: 'Init Amount', type: EColumnType.CURRENCY },
-  { title: 'Currency', type: EColumnType.CURRENCY },
-  { title: 'Current Amount', type: EColumnType.CURRENCY },
-  { title: 'Created At', type: EColumnType.DATE }
+  { title: 'Source Name', type: 'TEXT' },
+  { title: 'Type', type: 'STATUS' },
+  { title: 'Init Amount', type: 'CURRENCY' },
+  { title: 'Currency', type: 'CURRENCY' },
+  { title: 'Current Amount', type: 'CURRENCY' },
+  { title: 'Created At', type: 'DATE' }
 ]
 
 const data = [

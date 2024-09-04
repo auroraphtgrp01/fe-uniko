@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { EColumnType, IColumnTitle } from '@/app/dashboard/account-source/page'
+import { IColumnTitle } from '@/app/dashboard/account-source/page'
 import { Avatar, AvatarImage } from '../ui/avatar'
 import { Progress } from '../ui/progress'
 import { convertToCamelCase, formatCurrencyVND, formatDateTimeVN } from '@/constants/functions'
@@ -27,9 +27,9 @@ export function getColumns(headers: IColumnTitle[]): ColumnDef<any>[] {
     header: header.title,
     cell: ({ row }: { row: any }) => {
       switch (header.type) {
-        case EColumnType.TEXT:
+        case 'TEXT':
           return <div className='font-medium'>{row.getValue(convertToCamelCase(header.title))}</div>
-        case EColumnType.IMAGE: {
+        case 'IMAGE': {
           return (
             <div className='flex items-center'>
               <Avatar className='h-8 w-8'>
@@ -41,15 +41,15 @@ export function getColumns(headers: IColumnTitle[]): ColumnDef<any>[] {
             </div>
           )
         }
-        case EColumnType.CURRENCY:
+        case 'CURRENCY':
           return <span>{formatCurrencyVND(row.getValue(convertToCamelCase(header.title)))}</span>
-        case EColumnType.DATE:
+        case 'DATE':
           return (
             <div className='text-muted-foreground'>
               {formatDateTimeVN(row.getValue(convertToCamelCase(header.title)))}
             </div>
           )
-        case EColumnType.STATUS:
+        case 'STATUS':
           return <span>hello</span>
         default:
           return <Progress value={row.getValue(convertToCamelCase(header.title))} className='w-[100px]' />
