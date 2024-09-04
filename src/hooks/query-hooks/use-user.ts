@@ -13,6 +13,6 @@ export const useUser = (opts?: IUseQueryHookOptions) => {
   })
 
   return {
-    getMeData
+    getMeData: getMeData?.data
   }
 }
