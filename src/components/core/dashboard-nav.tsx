@@ -3,8 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
-
 import { Icons } from '@/components/ui/icons'
 import { cn } from '@/libraries/utils'
 import { NavItem } from '@/types/core.i'
@@ -21,17 +19,6 @@ interface DashboardNavProps {
 export function DashboardNav({ items, setOpen, isMobileNav = false }: DashboardNavProps) {
   const path = usePathname()
   const { isMinimized } = useSidebar()
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isMinimized)
-
-  useEffect(() => {
-    if (!isMinimized) {
-      const timeout = setTimeout(() => setIsSidebarExpanded(true), 300)
-      return () => clearTimeout(timeout)
-    } else {
-      setIsSidebarExpanded(false)
-    }
-  }, [isMinimized])
-
   if (!items?.length) {
     return null
   }
