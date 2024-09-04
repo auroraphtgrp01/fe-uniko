@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import configProject from '@/config/configService'
 import {
   getAccessTokenFromLocalStorage,
@@ -7,8 +7,6 @@ import {
   setRefreshTokenToLocalStorage
 } from '@/libraries/helpers'
 import { normalizePath } from '@/libraries/utils'
-
-const AUTHENTICATION_ERROR_STATUS = 401
 
 export class HttpError extends Error {
   status: number
@@ -29,7 +27,6 @@ export class HttpError extends Error {
   }
 }
 
-let clientLogoutRequest: null | Promise<any> = null
 const isClient = typeof window !== 'undefined'
 
 const axiosInstance = axios.create({
