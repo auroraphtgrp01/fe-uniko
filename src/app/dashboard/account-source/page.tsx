@@ -97,7 +97,7 @@ export default function page() {
   return (
     <div className='w-full'>
       <Card>
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={data} isPaginate={true} />
       </Card>
     </div>
   )
