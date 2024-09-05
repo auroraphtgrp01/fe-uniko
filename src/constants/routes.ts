@@ -38,5 +38,18 @@ export const navItems: NavItem[] = [
         label: 'Account Detail'
       }
     ]
+  },
+  {
+    title: 'Profile',
+    href: '/dashboard/profile',
+    icon: 'user',
+    label: 'Profile',
+    children: [
+      {
+        title: '',
+        href: '/dashboard/account-source/detail',
+        label: 'Account Detail'
+      }
+    ]
   }
 ]
