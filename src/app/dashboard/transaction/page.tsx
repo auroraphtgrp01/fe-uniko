@@ -4,16 +4,17 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { formatCurrencyVND, formatDateTimeVN } from '@/constants/functions'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
+import { useState } from 'react'
+import CustomDialog from '@/components/dashboard/Dialog'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
-export default function page() {
+export default function TransactionPage() {
+  const [isDialogDetailOpen, setDialogDetailOpen] = useState(false)
+  const [isDialogCreateOpen, setDialogCreateOpen] = useState(false)
+  const [isDialogTransactionTodayOpen, setDialogTransactionTodayOpen] = useState(false)
+  const [isDialogUnclassifiedTransactionOpen, setDialogUnclassifiedTransactionOpen] = useState(false)
+
   const headers = [
     'Transaction Id',
     'Amount',
@@ -112,6 +113,64 @@ export default function page() {
     }
   ]
 
+  const titleDialogCreate = 'Create new transaction'
+  const descriptionDialogCreate = 'Please fill in the information below to create a new transaction'
+  const contentDialogCreate = (
+    <div className='grid gap-4 py-4'>
+      <div className='grid grid-cols-4 items-center gap-4'>
+        <Label htmlFor='name' className='text-right'>
+          Name
+        </Label>
+        <Input id='name' className='col-span-3' />
+      </div>
+    </div>
+  )
+
+  const titleDialogDetail = 'Transaction detail'
+  const descriptionDialogDetail = 'Please fill in the information below to update this transaction if you want'
+  const contentDialogDetail = (
+    <div className='grid gap-4 py-4'>
+      <div className='grid grid-cols-4 items-center gap-4'>
+        <Label htmlFor='name' className='text-right'>
+          Name
+        </Label>
+        <Input id='name' className='col-span-3' />
+      </div>
+    </div>
+  )
+  const footerDialogDetail = (
+    <>
+      <Button variant='outline' onClick={() => closeDialogDetail}>
+        Cancel
+      </Button>
+      <Button type='submit'>Save changes</Button>
+    </>
+  )
+  const footerDialogCreate = (
+    <>
+      <Button variant='outline' onClick={() => closeDialogCreate}>
+        Cancel
+      </Button>
+      <Button type='submit'>Save changes</Button>
+    </>
+  )
+
+  const closeDialogDetail = () => {
+    setDialogDetailOpen(false)
+  }
+
+  const closeDialogCreate = () => {
+    setDialogCreateOpen(false)
+  }
+
+  const closeDialogTransactionToday = () => {
+    setDialogTransactionTodayOpen(false)
+  }
+
+  const closeDialogUnclassifiedTransaction = () => {
+    setDialogUnclassifiedTransactionOpen(false)
+  }
+
   const getRowClassName = (rowData: any): string => {
     return !rowData.trackerTransaction || rowData.trackerTransaction === ''
       ? 'bg-[#75A47F] text-white hover:bg-[#75A47F]/90'
@@ -120,29 +179,31 @@ export default function page() {
 
   const onRowClick = (rowData: any) => {
     console.log('Clicked row:', rowData)
-  }
-  const onRowDoubleClick = (rowData: any) => {
-    console.log('Double clicked row:', rowData)
+    setDialogDetailOpen(true)
   }
 
+  const onCreateTransaction = () => {
+    console.log('Create new transaction')
+    setDialogCreateOpen(true)
+  }
+  const contentDialogTransactionToday = <DataTable columns={columns} data={transactionTodayData} isPaginate={false} />
+  const titleDialogTransactionToday = 'Transaction Today'
+  const descriptionDialogTransactionToday = 'Overview of today`s transactions'
+  const contentDialogUnclassifiedTransaction = (
+    <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={false} />
+  )
+  const titleDialogUnclassifiedTransaction = 'Unclassified Transaction'
+  const descriptionDialogUnclassifiedTransaction = 'Overview of today`s transactions'
+
   return (
-    <div className='mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 md:grid-cols-2'>
+    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center justify-between'>
             <span>Transaction Today</span>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant='outline'>View all</Button>
-              </DialogTrigger>
-              <DialogContent className='sm:max-w-[1000px]'>
-                <DialogHeader>
-                  <DialogTitle>Transaction Today</DialogTitle>
-                  <DialogDescription>Overview of today`s transactions</DialogDescription>
-                </DialogHeader>
-                <DataTable columns={columns} data={transactionTodayData} isPaginate={false} />
-              </DialogContent>
-            </Dialog>
+            <Button variant='outline' onClick={() => setDialogTransactionTodayOpen(true)}>
+              View all
+            </Button>
           </CardTitle>
           <CardDescription>Overview of today`s transactions</CardDescription>
         </CardHeader>
@@ -161,18 +222,9 @@ export default function page() {
         <CardHeader>
           <CardTitle className='flex items-center justify-between'>
             <span>Unclassified Transaction</span>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant='outline'>Classify</Button>
-              </DialogTrigger>
-              <DialogContent className='sm:max-w-[1000px]'>
-                <DialogHeader>
-                  <DialogTitle>Unclassified Transaction</DialogTitle>
-                  <DialogDescription>Overview of today`s transactions</DialogDescription>
-                </DialogHeader>
-                <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={false} />
-              </DialogContent>
-            </Dialog>
+            <Button variant='outline' onClick={() => setDialogUnclassifiedTransactionOpen(true)}>
+              Classify
+            </Button>
           </CardTitle>
           <CardDescription>Transactions without a tracker</CardDescription>
         </CardHeader>
@@ -200,7 +252,39 @@ export default function page() {
               isPaginate={false}
               getRowClassName={getRowClassName}
               onRowClick={onRowClick}
-              onRowDoubleClick={onRowDoubleClick}
+              createFunction={onCreateTransaction}
+            />
+            <CustomDialog
+              content={contentDialogDetail}
+              title={titleDialogDetail}
+              description={descriptionDialogDetail}
+              isOpen={isDialogDetailOpen}
+              onClose={closeDialogDetail}
+              footer={footerDialogDetail}
+            />
+            <CustomDialog
+              content={contentDialogCreate}
+              title={titleDialogCreate}
+              description={descriptionDialogCreate}
+              isOpen={isDialogCreateOpen}
+              onClose={closeDialogCreate}
+              footer={footerDialogCreate}
+            />
+            <CustomDialog
+              className='sm:max-w-[1000px]'
+              content={contentDialogTransactionToday}
+              title={titleDialogTransactionToday}
+              description={descriptionDialogTransactionToday}
+              isOpen={isDialogTransactionTodayOpen}
+              onClose={closeDialogTransactionToday}
+            />
+            <CustomDialog
+              className='sm:max-w-[1000px]'
+              content={contentDialogUnclassifiedTransaction}
+              title={titleDialogUnclassifiedTransaction}
+              description={descriptionDialogUnclassifiedTransaction}
+              isOpen={isDialogUnclassifiedTransactionOpen}
+              onClose={closeDialogUnclassifiedTransaction}
             />
           </CardContent>
         </Card>

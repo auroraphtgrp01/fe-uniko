@@ -21,6 +21,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isPaginate: boolean
+  createFunction?: () => void
   // eslint-disable-next-line no-unused-vars
   getRowClassName?: (row: TData) => string
   // eslint-disable-next-line no-unused-vars
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   isPaginate,
+  createFunction,
   getRowClassName,
   onRowClick,
   onRowDoubleClick
@@ -100,14 +102,18 @@ export function DataTable<TData, TValue>({
               </TableCell>
             </TableRow>
           )}
-          <TableRow>
-            <TableCell colSpan={100}>
-              <button className='flex items-center text-gray-400 hover:text-gray-200'>
-                <PlusIcon className='mr-2 h-4 w-4' />
-                Create new...
-              </button>
-            </TableCell>
-          </TableRow>
+          {createFunction ? (
+            <TableRow>
+              <TableCell colSpan={100} onClick={() => createFunction()}>
+                <button className='flex items-center text-gray-400 hover:text-gray-200'>
+                  <PlusIcon className='mr-2 h-4 w-4' />
+                  Create new...
+                </button>
+              </TableCell>
+            </TableRow>
+          ) : (
+            ''
+          )}
         </TableBody>
       </Table>
       {isPaginate ? (
