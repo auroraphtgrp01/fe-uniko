@@ -21,7 +21,6 @@ export const formatDateTimeVN = (date: string) => {
     minute: '2-digit',
     second: '2-digit'
   }).format(new Date(date))
-  1
 }
 export const parseReactToHtml = (ui: any) => {
   return parse(renderToString(ui))

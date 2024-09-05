@@ -21,8 +21,11 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isPaginate: boolean
+  // eslint-disable-next-line no-unused-vars
   getRowClassName?: (row: TData) => string
+  // eslint-disable-next-line no-unused-vars
   onRowClick?: (row: TData) => void
+  // eslint-disable-next-line no-unused-vars
   onRowDoubleClick?: (row: TData) => void
 }
 

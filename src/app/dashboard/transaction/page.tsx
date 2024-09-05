@@ -1,8 +1,6 @@
 'use client'
-import React, { useState } from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { formatCurrencyVND, formatDateTimeVN } from '@/constants/functions'
@@ -14,9 +12,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import * as DialogRadix from '@radix-ui/react-dialog'
 
 export default function page() {
   const headers = [

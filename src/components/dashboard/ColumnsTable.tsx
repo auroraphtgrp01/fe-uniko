@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { convertToCamelCase, formatCurrencyVND, formatDateTimeVN, parseReactToHtml } from '@/constants/functions'
+import { convertToCamelCase, parseReactToHtml } from '@/constants/functions'
 
 export function getColumns(headers: string[]): ColumnDef<any>[] {
   const columnsFromHeaders = headers.map((header) => ({
