@@ -1,3 +1,5 @@
+import { IUser } from '@/types/user.i'
+
 export const isClient = typeof window !== 'undefined'
 
 export function getBaseUrl() {
@@ -35,9 +37,19 @@ export const getAccessTokenFromLocalStorage = () => (isClient ? localStorage.get
 export const getRefreshTokenFromLocalStorage = () => (isClient ? localStorage.getItem('refreshToken') : null)
 export const setAccessTokenToLocalStorage = (value: string) => isClient && localStorage.setItem('accessToken', value)
 
-export const getUserInfoFromLocalStorage = () => {
-  return isClient ? JSON.parse(localStorage.getItem('userInfo') || '{}') : null
+export const getUserInfoFromLocalStorage = (): IUser | null => {
+  if (!isClient) return null
+
+  const userInfo = localStorage.getItem('userInfo')
+
+  try {
+    return userInfo ? JSON.parse(userInfo) : {}
+  } catch (error) {
+    console.error('Failed to parse userInfo from localStorage:', error)
+    return null
+  }
 }
+
 export const setUserInfoToLocalStorage = (value: any) =>
   isClient && localStorage.setItem('userInfo', JSON.stringify(value))
 
@@ -50,3 +62,17 @@ export const removeTokensFromLocalStorage = () => {
 export const setEmailWhenRegister = (value: string) => isClient && localStorage.setItem('registerData', value)
 
 export const getEmailWhenRegister = () => (isClient ? localStorage.getItem('registerData') : null)
+
+export const isLogin = (): IUser | null => {
+  const accessToken = getAccessTokenFromLocalStorage()
+  const refreshToken = getRefreshTokenFromLocalStorage()
+  const userInfo = getUserInfoFromLocalStorage()
+
+  const isUserInfoEmpty = (obj: any) => {
+    return Object.keys(obj).length === 0 && obj.constructor === Object
+  }
+
+  return accessToken !== null || refreshToken !== null || (userInfo !== null && !isUserInfoEmpty(userInfo))
+    ? userInfo
+    : null
+}

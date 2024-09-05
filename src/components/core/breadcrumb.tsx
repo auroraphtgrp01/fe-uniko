@@ -57,7 +57,7 @@ export default function BreadcrumbHeader() {
             </Link>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          {breadcrumbItems.map((item, index) => (
+          {breadcrumbItems.map((item) => (
             <React.Fragment key={item.href}>
               <BreadcrumbItem>
                 {item.isLast ? (

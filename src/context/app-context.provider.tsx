@@ -1,10 +1,10 @@
 'use client'
 import { IUserFromToken } from '@/types/user.i' // Ensure this path is correct
-import { createContext, useState, useEffect, useContext, ReactNode } from 'react'
+import { createContext, useState, useEffect, useContext, ReactNode, Dispatch, SetStateAction, FC } from 'react'
 
 interface AppContextType {
   user: IUserFromToken | null
-  setUser: React.Dispatch<React.SetStateAction<IUserFromToken | null>>
+  setUser: Dispatch<SetStateAction<IUserFromToken | null>>
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -13,7 +13,7 @@ interface AppProviderProps {
   children: ReactNode
 }
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+export const AppProvider: FC<AppProviderProps> = ({ children }) => {
   const [user, setUser] = useState<IUserFromToken | null>(null)
 
   useEffect(() => {

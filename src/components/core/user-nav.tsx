@@ -12,8 +12,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { motion } from 'framer-motion'
+import { getUserInfoFromLocalStorage } from '@/libraries/helpers'
+import Link from 'next/link'
 
 export function UserNav() {
+  const user = getUserInfoFromLocalStorage()
   return (
     <div className='ms-1 select-none'>
       <DropdownMenu>
@@ -26,7 +29,7 @@ export function UserNav() {
             >
               <Avatar className='h-full w-full rounded-full'>
                 <AvatarImage src={'https://github.com/shadcn.png'} className='rounded-full' />
-                <AvatarFallback className='rounded-full'>Auroraphtgrp</AvatarFallback>
+                <AvatarFallback className='rounded-full'>{JSON.stringify(user?.fullName)}</AvatarFallback>
               </Avatar>
             </motion.div>
           </Button>
@@ -34,16 +37,18 @@ export function UserNav() {
         <DropdownMenuContent className='w-56' align='end' forceMount>
           <DropdownMenuLabel className='font-normal'>
             <div className='flex flex-col space-y-1'>
-              <p className='text-sm font-medium leading-none'>Le Minh Tuan</p>
-              <p className='text-xs leading-none text-muted-foreground'>minhtuanledng@gmail.com</p>
+              <p className='text-sm font-medium leading-none'>{user?.fullName}</p>
+              <p className='text-xs leading-none text-muted-foreground'>{user?.email}</p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <Link href='http://localhost:3000/dashboard/profile'>
+              <DropdownMenuItem>
+                Settings
+                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem>

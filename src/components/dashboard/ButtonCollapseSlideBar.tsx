@@ -4,7 +4,7 @@ import React from 'react'
 import { MenuIcon } from 'lucide-react'
 
 export default function ButtonCollapseSlideBar() {
-  const { isMinimized, toggle } = useSidebar()
+  const { toggle } = useSidebar()
 
   const handleToggle = () => {
     toggle()
