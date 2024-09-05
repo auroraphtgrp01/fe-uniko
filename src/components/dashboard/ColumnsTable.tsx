@@ -2,18 +2,32 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { convertToCamelCase, formatCurrencyVND, formatDateTimeVN, parseReactToHtml } from '@/constants/functions'
+import { convertToCamelCase } from '@/libraries/utils'
+import { ArrowUpDown } from 'lucide-react'
+import { renderToString } from 'react-dom/server'
+import parse from 'html-react-parser'
 
-export function getColumns(headers: string[]): ColumnDef<any>[] {
+export function getColumns(headers: string[], isSort: boolean): ColumnDef<any>[] {
+  console.log('isSort', isSort)
+
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
-    header: () => (
-      <div className='flex items-center'>
-        <span>{header.toLocaleUpperCase()}</span>
-      </div>
-    ),
+    header: ({ column }: { column: any }) =>
+      isSort ? (
+        <div
+          className='flex'
+          onClick={() => {
+            column.toggleSorting(column.getIsSorted() === 'asc')
+          }}
+        >
+          {header}
+          <ArrowUpDown className='ml-2 mt-1 h-3 w-3' />
+        </div>
+      ) : (
+        <div>{header}</div>
+      ),
     cell: ({ row }: { row: any }) => {
-      return <div className='font-medium'>{parseReactToHtml(row.getValue(convertToCamelCase(header)))}</div>
+      return <div>{parse(renderToString(row.getValue(convertToCamelCase(header))))}</div>
     }
   }))
 

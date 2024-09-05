@@ -1,35 +1,8 @@
 'use client'
 
-import * as React from 'react'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table'
-import { ArrowUpDown, Currency, MoreHorizontal, PlusIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-// import { Badge } from '@/components/ui/badge'
-// import { Progress } from '@/components/ui/progress'
-import { renderToString } from 'react-dom/server'
 import CardInHeader from '@/components/dashboard/CardInHeader'
 const titles: string[] = ['Source Name', 'Type', 'Init Amount', 'Currency', 'Current Amount', 'Created At']
 
@@ -90,7 +63,7 @@ const data = [
   }
 ]
 
-const columns = getColumns(titles)
+const columns = getColumns(titles, false)
 
 export type Task = (typeof data)[number]
 
