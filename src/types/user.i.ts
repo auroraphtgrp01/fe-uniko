@@ -12,12 +12,13 @@ export interface IUserFromToken {
   }
 }
 
+/* eslint-disable no-unused-vars */
 export enum EUserStatus {
   ACTIVE = 'ACTIVE',
   BLOCKED = 'BLOCKED',
   UNVERIFIED = 'UNVERIFIED'
 }
-
+/* eslint-enable no-unused-vars */
 export interface IUser {
   id: string
   profession: string

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, PropsWithChildren, ElementType, HTMLAttributes } from 'react'
 
 import { motion } from 'framer-motion'
 import { cn } from '@/libraries/utils'
@@ -14,14 +14,14 @@ export function HoverBorderGradient({
   duration = 1,
   clockwise = true,
   ...props
-}: React.PropsWithChildren<
+}: PropsWithChildren<
   {
-    as?: React.ElementType
+    as?: ElementType
     containerClassName?: string
     className?: string
     duration?: number
     clockwise?: boolean
-  } & React.HTMLAttributes<HTMLElement>
+  } & HTMLAttributes<HTMLElement>
 >) {
   const [hovered, setHovered] = useState<boolean>(false)
   const [direction, setDirection] = useState<Direction>('TOP')
@@ -51,10 +51,11 @@ export function HoverBorderGradient({
       }, duration * 1000)
       return () => clearInterval(interval)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hovered])
   return (
     <Tag
-      onMouseEnter={(event: React.MouseEvent<HTMLDivElement>) => {
+      onMouseEnter={() => {
         setHovered(true)
       }}
       onMouseLeave={() => setHovered(false)}

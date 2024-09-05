@@ -32,16 +32,13 @@ import {
   File,
   FileText,
   HelpCircle,
-  Laptop,
   LayoutDashboardIcon,
   Loader2,
-  LogIn,
   MoreVertical,
   Pizza,
   Plus,
   Settings,
   Trash,
-  User,
   User2Icon,
   UserX2Icon,
   Boxes,
@@ -97,7 +94,7 @@ export const Icons = {
   pizza: Pizza,
   boxes: Boxes,
   listCollapse: ListCollapse,
-  logo: (props: LucideProps) => <Image src={'/metamask.png'} alt='' height={62} width={62} />,
+  logo: () => <Image src={'/metamask.png'} alt='' height={62} width={62} />,
   gitHub: (props: LucideProps) => (
     <svg viewBox='0 0 438.549 438.549' {...props}>
       <path
