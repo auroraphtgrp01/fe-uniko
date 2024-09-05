@@ -4,6 +4,12 @@ import { Card } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import CardInHeader from '@/components/dashboard/CardInHeader'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
+import CustomDialog from '@/components/dashboard/Dialog'
+import { useState } from 'react'
 const titles: string[] = ['Source Name', 'Type', 'Init Amount', 'Currency', 'Current Amount', 'Created At']
 
 const data = [
@@ -63,11 +69,63 @@ const data = [
   }
 ]
 
-const columns = getColumns(titles, false)
+const contentDialogCreate = (
+  <div className='grid gap-4 py-4'>
+    <div className='grid grid-cols-4 items-center gap-4'>
+      <Label htmlFor='sourceName' className='text-right'>
+        Source Name
+      </Label>
+      <Input id='sourceName' value={''} onChange={() => {}} className='col-span-3' />
+    </div>
+    <div className='grid grid-cols-4 items-center gap-4'>
+      <Label htmlFor='type' className='text-right'>
+        Type
+      </Label>
+      <Select onValueChange={() => {}} value={'income'}>
+        <SelectTrigger className='col-span-3'>
+          <SelectValue placeholder='Select a source type' />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value='income'>Income</SelectItem>
+          <SelectItem value='expense'>Expense</SelectItem>
+          <SelectItem value='savings'>Savings</SelectItem>
+          <SelectItem value='investment'>Investment</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+    <div className='grid grid-cols-4 items-center gap-4'>
+      <Label htmlFor='initialAmount' className='text-right'>
+        Initial Amount
+      </Label>
+      <Input id='initialAmount' type='number' value={''} onChange={(e) => {}} className='col-span-3' />
+    </div>
+    <div className='grid grid-cols-4 items-center gap-4'>
+      <Label htmlFor='currency' className='text-right'>
+        Currency
+      </Label>
+      <Select onValueChange={() => {}} value={'USD'}>
+        <SelectTrigger className='col-span-3'>
+          <SelectValue placeholder='Select a currency' />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value='USD'>USD</SelectItem>
+          <SelectItem value='EUR'>EUR</SelectItem>
+          <SelectItem value='GBP'>GBP</SelectItem>
+          <SelectItem value='JPY'>JPY</SelectItem>
+          <SelectItem value='VND'>VND</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  </div>
+)
+const titleDialogCreate = 'Create Account Source'
+const descriptionDialogCreate = 'Please fill in the information below to create a new account source.'
+const footerDialogCreate = <Button type='submit'>Save changes</Button>
 
-export type Task = (typeof data)[number]
+const columns = getColumns(titles, true)
 
-export default function page() {
+export default function AccountPage() {
+  const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false)
   return (
     <div className='w-full'>
       <div className='flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
@@ -75,8 +133,16 @@ export default function page() {
         <CardInHeader className='max-w-full sm:w-[330px] lg:w-full'></CardInHeader>
       </div>
       <Card className='mt-5'>
-        <DataTable columns={columns} data={data} isPaginate={true} />
+        <DataTable columns={columns} data={data} isPaginate={true} onRowClick={() => setIsDialogCreateOpen(true)} />
       </Card>
+      <CustomDialog
+        isOpen={isDialogCreateOpen}
+        onClose={() => setIsDialogCreateOpen(false)}
+        content={contentDialogCreate}
+        footer={footerDialogCreate}
+        title={titleDialogCreate}
+        description={descriptionDialogCreate}
+      />
     </div>
   )
 }

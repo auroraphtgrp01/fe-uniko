@@ -8,8 +8,6 @@ import { renderToString } from 'react-dom/server'
 import parse from 'html-react-parser'
 
 export function getColumns(headers: string[], isSort: boolean): ColumnDef<any>[] {
-  console.log('isSort', isSort)
-
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
     header: ({ column }: { column: any }) =>
