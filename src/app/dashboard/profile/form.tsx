@@ -10,8 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 export default function ProfileForm() {
   return (
-    <div className='relative flex flex-col overflow-hidden rounded-md antialiased lg:flex-row min-[1120px]:flex min-[1120px]:w-full'>
-      <Card className='h-fit w-full flex-shrink-0 max-[1180px]:flex-1 md:mr-8 lg:w-fit'>
+    <div className='container relative flex gap-2 overflow-hidden rounded-md antialiased lg:flex-row min-[1120px]:flex min-[1120px]:w-full'>
+      <Card className='mt-11 h-fit w-full flex-shrink-0 max-[1180px]:flex-1 md:mr-8 lg:w-fit'>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
         </CardHeader>
@@ -60,14 +60,14 @@ export default function ProfileForm() {
 
       <Tabs
         defaultValue='account'
-        className='max-h-screen w-fit max-[1180px]:grid-cols-1 max-[1023px]:mt-5 max-[640px]:w-full sm:w-full lg:w-full'
+        className='w-fit max-[1180px]:grid-cols-1 max-[1023px]:mt-5 max-[640px]:w-full sm:w-full lg:w-full'
       >
         <TabsList className='grid w-full grid-cols-2'>
           <TabsTrigger value='account'>Common Information</TabsTrigger>
           <TabsTrigger value='password'>Credential Information</TabsTrigger>
         </TabsList>
         <TabsContent value='account'>
-          <Card>
+          <Card className='flex-1'>
             <CardHeader>
               <CardTitle>Common Information</CardTitle>
               <CardDescription>Make changes to your account here. Click save when you re done.</CardDescription>
@@ -108,7 +108,10 @@ export default function ProfileForm() {
           </Card>
         </TabsContent>
 
-        <TabsContent value='password' className='max-h-screen'>
+        <TabsContent
+          value='password'
+          className='min-h-fit: w-fit max-[1180px]:grid-cols-1 max-[1023px]:mt-5 max-[640px]:w-full sm:w-full lg:w-full'
+        >
           <Card>
             <CardHeader>
               <CardTitle>Password</CardTitle>
