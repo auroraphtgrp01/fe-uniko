@@ -197,7 +197,7 @@ export default function TransactionPage() {
 
   return (
     <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className='flex items-center justify-between'>
             <span>Transaction Today</span>
@@ -238,7 +238,55 @@ export default function TransactionPage() {
             <div className='text-2xl font-bold'>{formatCurrencyVND(220000)}</div>
           </div>
         </CardContent>
+      </Card> */}
+      <Card>
+        <CardHeader>
+          <CardTitle className='flex flex-col items-start justify-between md:flex-row md:items-center'>
+            <span>Transaction Today</span>
+            <Button variant='outline' onClick={() => setDialogTransactionTodayOpen(true)} className='mt-2 md:mt-0'>
+              View all
+            </Button>
+          </CardTitle>
+          <CardDescription className='mt-2 md:mt-0'>Overview of today’s transactions</CardDescription>
+        </CardHeader>
+        <CardContent className='grid gap-4'>
+          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
+            <div className='font-medium'>Total Transactions</div>
+            <div className='text-2xl font-bold'>5</div>
+          </div>
+          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
+            <div className='font-medium'>Total Amount</div>
+            <div className='text-2xl font-bold'>{formatCurrencyVND(1234567)}</div>
+          </div>
+        </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className='flex flex-col items-start justify-between md:flex-row md:items-center'>
+            <span>Unclassified Transaction</span>
+            <Button
+              variant='outline'
+              onClick={() => setDialogUnclassifiedTransactionOpen(true)}
+              className='mt-2 md:mt-0'
+            >
+              Classify
+            </Button>
+          </CardTitle>
+          <CardDescription className='mt-2 md:mt-0'>Transactions without a tracker</CardDescription>
+        </CardHeader>
+        <CardContent className='grid gap-4'>
+          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
+            <div className='font-medium'>Total Transactions</div>
+            <div className='text-2xl font-bold'>1</div>
+          </div>
+          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
+            <div className='font-medium'>Total Amount</div>
+            <div className='text-2xl font-bold'>{formatCurrencyVND(220000)}</div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className='col-span-2'>
         <Card>
           <CardHeader>
