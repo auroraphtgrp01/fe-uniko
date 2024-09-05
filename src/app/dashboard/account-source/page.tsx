@@ -62,7 +62,7 @@ const data = [
   }
 ]
 
-const columns = getColumns(titles)
+const columns = getColumns(titles, false)
 
 export type Task = (typeof data)[number]
 

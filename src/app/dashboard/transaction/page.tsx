@@ -3,15 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { formatCurrencyVND, formatDateTimeVN } from '@/constants/functions'
+import { formatCurrencyVND, formatDateTimeVN } from '@/libraries/utils'
 import { useState } from 'react'
 import CustomDialog from '@/components/dashboard/Dialog'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { Separator } from '@/components/ui/separator'
 
 export default function TransactionPage() {
   const [isDialogDetailOpen, setDialogDetailOpen] = useState(false)
-  const [isDialogCreateOpen, setDialogCreateOpen] = useState(false)
   const [isDialogTransactionTodayOpen, setDialogTransactionTodayOpen] = useState(false)
   const [isDialogUnclassifiedTransactionOpen, setDialogUnclassifiedTransactionOpen] = useState(false)
 
@@ -24,7 +24,7 @@ export default function TransactionPage() {
     'Tracker Transaction',
     'Created At'
   ]
-  const columns = getColumns(headers)
+  const columns = getColumns(headers, true)
   const data = [
     {
       transactionId: 'TXN123456',
@@ -113,54 +113,56 @@ export default function TransactionPage() {
     }
   ]
 
-  const titleDialogCreate = 'Create new transaction'
-  const descriptionDialogCreate = 'Please fill in the information below to create a new transaction'
-  const contentDialogCreate = (
-    <div className='grid gap-4 py-4'>
-      <div className='grid grid-cols-4 items-center gap-4'>
-        <Label htmlFor='name' className='text-right'>
-          Name
-        </Label>
-        <Input id='name' className='col-span-3' />
-      </div>
-    </div>
-  )
-
   const titleDialogDetail = 'Transaction detail'
-  const descriptionDialogDetail = 'Please fill in the information below to update this transaction if you want'
+  const descriptionDialogDetail = 'Detail information of the transaction'
   const contentDialogDetail = (
-    <div className='grid gap-4 py-4'>
-      <div className='grid grid-cols-4 items-center gap-4'>
-        <Label htmlFor='name' className='text-right'>
-          Name
-        </Label>
-        <Input id='name' className='col-span-3' />
+    <div className='py-4'>
+      <div className='mb-4 flex items-center justify-between'>
+        <div>
+          <p className='text-sm text-muted-foreground'>Amount</p>
+          <p className='ext-t2xl font-bold'>${1200000}</p>
+        </div>
       </div>
+      <Separator className='my-4' />
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell className='font-medium'>Transaction ID</TableCell>
+            <TableCell>id</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium'>Date</TableCell>
+            <TableCell>{new Date().toLocaleString()}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium'>Status</TableCell>
+            <TableCell>
+              <Badge variant={'default'}>status</Badge>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium'>Sender</TableCell>
+            <TableCell>sender</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium'>Recipient</TableCell>
+            <TableCell>recipient</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium'>Description</TableCell>
+            <TableCell>description</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className='font-medium'>Fee</TableCell>
+            <TableCell>fee</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
-  )
-  const footerDialogDetail = (
-    <>
-      <Button variant='outline' onClick={() => closeDialogDetail}>
-        Cancel
-      </Button>
-      <Button type='submit'>Save changes</Button>
-    </>
-  )
-  const footerDialogCreate = (
-    <>
-      <Button variant='outline' onClick={() => closeDialogCreate}>
-        Cancel
-      </Button>
-      <Button type='submit'>Save changes</Button>
-    </>
   )
 
   const closeDialogDetail = () => {
     setDialogDetailOpen(false)
-  }
-
-  const closeDialogCreate = () => {
-    setDialogCreateOpen(false)
   }
 
   const closeDialogTransactionToday = () => {
@@ -181,12 +183,9 @@ export default function TransactionPage() {
     console.log('Clicked row:', rowData)
     setDialogDetailOpen(true)
   }
-
-  const onCreateTransaction = () => {
-    console.log('Create new transaction')
-    setDialogCreateOpen(true)
-  }
-  const contentDialogTransactionToday = <DataTable columns={columns} data={transactionTodayData} isPaginate={false} />
+  const contentDialogTransactionToday = (
+    <DataTable columns={columns} data={transactionTodayData} isPaginate={false} onRowClick={onRowClick} />
+  )
   const titleDialogTransactionToday = 'Transaction Today'
   const descriptionDialogTransactionToday = 'Overview of today`s transactions'
   const contentDialogUnclassifiedTransaction = (
@@ -239,55 +238,52 @@ export default function TransactionPage() {
           </div>
         </CardContent>
       </Card> */}
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex flex-col items-start justify-between md:flex-row md:items-center'>
-            <span>Transaction Today</span>
-            <Button variant='outline' onClick={() => setDialogTransactionTodayOpen(true)} className='mt-2 md:mt-0'>
-              View all
-            </Button>
-          </CardTitle>
-          <CardDescription className='mt-2 md:mt-0'>Overview of today’s transactions</CardDescription>
-        </CardHeader>
-        <CardContent className='grid gap-4'>
-          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
-            <div className='font-medium'>Total Transactions</div>
-            <div className='text-2xl font-bold'>5</div>
-          </div>
-          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
-            <div className='font-medium'>Total Amount</div>
-            <div className='text-2xl font-bold'>{formatCurrencyVND(1234567)}</div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className='grid gap-4 md:grid-cols-1'>
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center justify-between'>
+              <span>Transaction Today</span>
+              <Button variant='outline' onClick={() => setDialogTransactionTodayOpen(true)}>
+                View all
+              </Button>
+            </CardTitle>
+            <CardDescription>Overview of today`s transactions</CardDescription>
+          </CardHeader>
+          <CardContent className='grid gap-4'>
+            <div className='flex items-center justify-between'>
+              <div className='font-medium'>Total Transactions</div>
+              <div className='text-2xl font-bold'>5</div>
+            </div>
+            <div className='flex items-center justify-between'>
+              <div className='font-medium'>Total Amount</div>
+              <div className='text-2xl font-bold'>{formatCurrencyVND(1234567)}</div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center justify-between'>
+              <span>Unclassified Transaction</span>
+              <Button variant='outline' onClick={() => setDialogUnclassifiedTransactionOpen(true)}>
+                Classify
+              </Button>
+            </CardTitle>
+            <CardDescription>Transactions without a tracker</CardDescription>
+          </CardHeader>
+          <CardContent className='grid gap-4'>
+            <div className='flex items-center justify-between'>
+              <div className='font-medium'>Total Transactions</div>
+              <div className='text-2xl font-bold'>1</div>
+            </div>
+            <div className='flex items-center justify-between'>
+              <div className='font-medium'>Total Amount</div>
+              <div className='text-2xl font-bold'>{formatCurrencyVND(220000)}</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex flex-col items-start justify-between md:flex-row md:items-center'>
-            <span>Unclassified Transaction</span>
-            <Button
-              variant='outline'
-              onClick={() => setDialogUnclassifiedTransactionOpen(true)}
-              className='mt-2 md:mt-0'
-            >
-              Classify
-            </Button>
-          </CardTitle>
-          <CardDescription className='mt-2 md:mt-0'>Transactions without a tracker</CardDescription>
-        </CardHeader>
-        <CardContent className='grid gap-4'>
-          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
-            <div className='font-medium'>Total Transactions</div>
-            <div className='text-2xl font-bold'>1</div>
-          </div>
-          <div className='flex flex-col items-start justify-between md:flex-row md:items-center'>
-            <div className='font-medium'>Total Amount</div>
-            <div className='text-2xl font-bold'>{formatCurrencyVND(220000)}</div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className='col-span-2'>
+      <div className='col-span-2 w-full'>
         <Card>
           <CardHeader>
             <CardTitle>Transactions</CardTitle>
@@ -300,7 +296,6 @@ export default function TransactionPage() {
               isPaginate={false}
               getRowClassName={getRowClassName}
               onRowClick={onRowClick}
-              createFunction={onCreateTransaction}
             />
             <CustomDialog
               content={contentDialogDetail}
@@ -308,18 +303,9 @@ export default function TransactionPage() {
               description={descriptionDialogDetail}
               isOpen={isDialogDetailOpen}
               onClose={closeDialogDetail}
-              footer={footerDialogDetail}
             />
             <CustomDialog
-              content={contentDialogCreate}
-              title={titleDialogCreate}
-              description={descriptionDialogCreate}
-              isOpen={isDialogCreateOpen}
-              onClose={closeDialogCreate}
-              footer={footerDialogCreate}
-            />
-            <CustomDialog
-              className='sm:max-w-[1000px]'
+              className='sm:max-w-[1080px]'
               content={contentDialogTransactionToday}
               title={titleDialogTransactionToday}
               description={descriptionDialogTransactionToday}
@@ -327,7 +313,7 @@ export default function TransactionPage() {
               onClose={closeDialogTransactionToday}
             />
             <CustomDialog
-              className='sm:max-w-[1000px]'
+              className='sm:max-w-[1080px]'
               content={contentDialogUnclassifiedTransaction}
               title={titleDialogUnclassifiedTransaction}
               description={descriptionDialogUnclassifiedTransaction}

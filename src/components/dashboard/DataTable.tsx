@@ -121,7 +121,13 @@ export function DataTable<TData, TValue>({
                     className={getRowClassName ? getRowClassName(row.original) : ''}
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
-                    onClick={() => onRowClick && onRowClick(row.original)}
+                    onClick={(event: any) => {
+                      console.log()
+
+                      if (event.target.role !== 'checkbox' && onRowClick) {
+                        onRowClick(row.original)
+                      }
+                    }}
                     onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
                   >
                     {row.getVisibleCells().map((cell) => (
@@ -153,7 +159,10 @@ export function DataTable<TData, TValue>({
         </Table>
 
         <div className='flex flex-col items-center justify-between space-y-2 px-3 py-1 sm:flex-row sm:space-x-2 sm:space-y-0'>
-          <p className='text-xs text-gray-500 sm:text-sm'>0 of 100 row(s) selected.</p>
+          <p className='text-xs text-gray-500 sm:text-sm'>
+            {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
+            selected.
+          </p>
           {isPaginate ? (
             <div className='flex w-full items-center justify-end space-x-2 py-2 sm:w-auto sm:py-4'>
               <p className='text-sm'>Rows per page</p>
