@@ -1,34 +1,17 @@
 'use client'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Icons } from '@/components/ui/icons'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useState, FormEvent } from 'react'
-import { useAuth } from '@/hooks/query-hooks/use-auth'
-import Logo2 from '@/images/logo-2.png'
-import Image from 'next/image'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Cake, BriefcaseBusiness, Phone, MapPin, User } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 export default function ProfileForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const { signIn, isSigningIn, isRememberMe, setIsRememberMe } = useAuth()
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault()
-    signIn({ email, password })
-  }
-
   return (
-    <div className='relative flex flex-col overflow-hidden rounded-md bg-black/[0.8] py-6 antialiased bg-dot-white/[0.2] sm:m-7 md:m-7 md:justify-center md:py-12 lg:flex-row lg:px-8'>
-      <Card className=':mr-10 mb-8 mr-0 h-fit w-full flex-shrink-0 md:mr-8 lg:w-[550px]'>
+    <div className='relative flex flex-col overflow-hidden rounded-md antialiased lg:flex-row min-[1120px]:flex min-[1120px]:w-full'>
+      <Card className='h-fit w-full flex-shrink-0 max-[1180px]:flex-1 md:mr-8 lg:w-fit'>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
         </CardHeader>
@@ -51,21 +34,21 @@ export default function ProfileForm() {
                 <div className='flex-1 text-center md:text-left'>
                   <h1 className='text-xl font-bold md:text-2xl'>Nguyễn Quang Huy</h1>
                   <h1 className='mb-1 text-gray-500'>@kwanghy</h1>
-                  <h1 className='text-md flex justify-center md:justify-start md:text-lg'>
-                    <Cake className='mr-2 md:mr-3' /> 23/03/2003
+                  <h1 className='mb-2 flex align-middle text-sm'>
+                    <Cake className='mb-1 mr-2 md:mr-3' /> 23/03/2003
                   </h1>
-                  <h1 className='text-md mb-2 flex justify-center md:justify-start md:text-lg'>
-                    <User className='mr-2 md:mr-3' /> Nam{' '}
+                  <h1 className='mb-2 flex text-sm'>
+                    <User className='mb-1 mr-2 md:mr-3' /> Nam{' '}
                   </h1>
-                  <h1 className='text-md mb-2 flex justify-center md:justify-start md:text-lg'>
-                    <BriefcaseBusiness className='mr-2 md:mr-3' /> Da Nang
+                  <h1 className='mb-2 flex text-sm'>
+                    <BriefcaseBusiness className='mb-1 mr-2 md:mr-3' /> Da Nang
                   </h1>
-                  <h1 className='text-md mb-2 flex justify-center md:justify-start md:text-lg'>
-                    <Phone className='mr-2 md:mr-3' />
+                  <h1 className='mb-2 flex text-sm'>
+                    <Phone className='mb-1 mr-2 md:mr-3' />
                     0987654321
                   </h1>
-                  <h1 className='text-md mb-2 flex justify-center md:justify-start md:text-lg'>
-                    <MapPin className='mr-2 md:mr-3' />
+                  <h1 className='mb-2 flex text-sm'>
+                    <MapPin className='mb-1 mr-2 md:mr-3' />
                     69 Nhon Hoa 17, Cam Le, Da Nang
                   </h1>
                 </div>
@@ -75,7 +58,10 @@ export default function ProfileForm() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue='account' className='max-h-screen w-full lg:w-[550px]'>
+      <Tabs
+        defaultValue='account'
+        className='max-h-screen w-fit max-[1180px]:grid-cols-1 max-[1023px]:mt-5 max-[640px]:w-full sm:w-full lg:w-full'
+      >
         <TabsList className='grid w-full grid-cols-2'>
           <TabsTrigger value='account'>Common Information</TabsTrigger>
           <TabsTrigger value='password'>Credential Information</TabsTrigger>
@@ -122,7 +108,7 @@ export default function ProfileForm() {
           </Card>
         </TabsContent>
 
-        <TabsContent value='password' className='min-h-screen'>
+        <TabsContent value='password' className='max-h-screen'>
           <Card>
             <CardHeader>
               <CardTitle>Password</CardTitle>
