@@ -38,6 +38,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
   const table = useReactTable({
     data,
     columns,
@@ -99,7 +100,10 @@ export function DataTable<TData, TValue>({
           )}
           <TableRow>
             <TableCell colSpan={100}>
-              <button className='flex items-center text-gray-400 hover:text-gray-200'>
+              <button
+                className='flex items-center text-gray-400 hover:text-gray-200'
+                onClick={() => setIsDialogOpen(true)}
+              >
                 <PlusIcon className='mr-2 h-4 w-4' />
                 Create new...
               </button>

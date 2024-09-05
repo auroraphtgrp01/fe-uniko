@@ -30,6 +30,7 @@ import { getColumns } from '@/components/dashboard/ColumnsTable'
 // import { Badge } from '@/components/ui/badge'
 // import { Progress } from '@/components/ui/progress'
 import { renderToString } from 'react-dom/server'
+import CardInHeader from '@/components/dashboard/CardInHeader'
 const titles: string[] = ['Source Name', 'Type', 'Init Amount', 'Currency', 'Current Amount', 'Created At']
 
 const data = [
@@ -96,7 +97,11 @@ export type Task = (typeof data)[number]
 export default function page() {
   return (
     <div className='w-full'>
-      <Card>
+      <div className='flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
+        <CardInHeader className='max-w-full sm:w-[330px] lg:w-full'></CardInHeader>
+        <CardInHeader className='max-w-full sm:w-[330px] lg:w-full'></CardInHeader>
+      </div>
+      <Card className='mt-5'>
         <DataTable columns={columns} data={data} isPaginate={true} />
       </Card>
     </div>
