@@ -21,7 +21,7 @@ export default function ProfileForm() {
               <div className='flex flex-col items-center gap-5 md:flex-row'>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Avatar className='h-36 w-36 rounded-full hover:cursor-pointer md:h-52 md:w-52'>
+                    <Avatar className='h-36 w-36 rounded-full hover:cursor-pointer md:h-52 md:w-52 lg:h-40 lg:w-40'>
                       <AvatarImage src='https://github.com/shadcn.png' />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
