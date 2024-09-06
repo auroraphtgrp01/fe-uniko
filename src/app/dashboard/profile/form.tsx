@@ -10,8 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 export default function ProfileForm() {
   return (
-    <div className='container relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
-      <div className='flex flex-1 flex-col gap-8 lg:flex-row min-[1050px]:flex-row'>
+    <div className='relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
+      <div className='flex flex-1 flex-col gap-8 lg:flex-row min-[1110px]:flex-row'>
         {/* Card */}
         <Card className='h-full flex-1'>
           <CardHeader>
