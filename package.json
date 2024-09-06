@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "corepack yarn set version 3.6.1 && yarn install && next build",
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky",
