@@ -24,11 +24,8 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   isPaginate: boolean
   createFunction?: () => void
-  // eslint-disable-next-line no-unused-vars
   getRowClassName?: (row: TData) => string
-  // eslint-disable-next-line no-unused-vars
   onRowClick?: (row: TData) => void
-  // eslint-disable-next-line no-unused-vars
   onRowDoubleClick?: (row: TData) => void
 }
 
@@ -69,9 +66,9 @@ export function DataTable<TData, TValue>({
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between space-x-2 py-4'>
-        <div className='min-w-0 max-w-md flex-1'>
+        <div className='min-w-0 max-w-md flex-1 p-1'>
           <Input
-            placeholder='Filter...'
+            placeholder='Filter'
             defaultValue={''}
             onChange={(event) => {
               table.setGlobalFilter(event.target.value)
@@ -162,7 +159,7 @@ export function DataTable<TData, TValue>({
                 <TableCell colSpan={100} onClick={() => createFunction()}>
                   <button className='flex items-center text-gray-400 hover:text-gray-200'>
                     <PlusIcon className='mr-2 h-4 w-4' />
-                    Create new...
+                    Create new
                   </button>
                 </TableCell>
               </TableRow>

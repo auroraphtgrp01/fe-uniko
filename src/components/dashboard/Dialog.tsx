@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogFooter
 } from '@/components/ui/dialog'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface TransactionDialogProps {
   isOpen: boolean
@@ -34,7 +35,9 @@ const CustomDialog: FC<TransactionDialogProps> = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        {content}
+        <Card>
+          <CardContent>{content}</CardContent>
+        </Card>
         <DialogFooter>{footer}</DialogFooter>
       </DialogContent>
     </Dialog>
