@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "corepack yarn set version 3.6.1 && yarn install && next build",
+    "build:local": "next build",
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky",
