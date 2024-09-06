@@ -1,5 +1,10 @@
 import React from 'react'
+import TransactionForm from './form'
 
 export default function page() {
-  return <div>transactions</div>
+  return (
+    <div>
+      <TransactionForm />
+    </div>
+  )
 }
