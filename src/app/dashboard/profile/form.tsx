@@ -21,7 +21,7 @@ export default function ProfileForm() {
               <div className='flex flex-col items-center gap-5 md:flex-row'>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Avatar className='h-36 w-36 rounded-full hover:cursor-pointer md:h-52 md:w-52 lg:h-40 lg:w-40'>
+                    <Avatar className='h-36 w-36 rounded-full hover:cursor-pointer md:h-52 md:w-52'>
                       <AvatarImage src='https://github.com/shadcn.png' />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
@@ -58,26 +58,20 @@ export default function ProfileForm() {
         </CardContent>
       </Card>
 
-      <Tabs
-        defaultValue='account'
-        className='max-h-screen w-fit max-[1180px]:grid-cols-1 max-[1023px]:mt-5 max-[640px]:w-full sm:w-full lg:w-full'
-      >
+      {/* Tabs */}
+      <Tabs defaultValue='account' className='min-[800px]:w- h-full flex-1 rounded-md'>
         <TabsList className='grid w-full grid-cols-2'>
           <TabsTrigger value='account'>Common Information</TabsTrigger>
           <TabsTrigger value='password'>Credential Information</TabsTrigger>
         </TabsList>
-        <TabsContent value='account'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Common Information</CardTitle>
-              <CardDescription>Make changes to your account here. Click save when you re done.</CardDescription>
-            </CardHeader>
+        <TabsContent value='account' className='h-fit'>
+          <Card className='h-full flex-1 rounded-md'>
             <CardContent className='space-y-1'>
-              <div className='mb-2 flex-1 items-center space-y-1'>
+              <div className='mb-2 mt-2 flex-1 items-center space-y-1'>
                 <Label htmlFor='name'>Name:</Label>
                 <Input id='username' />
               </div>
-              <div className='flex flex-col gap-2 md:flex-row'>
+              <div className='flex flex-col gap-2 lg:flex-row'>
                 <div className='mb-2 flex-1 items-center space-y-1'>
                   <Label htmlFor='dateofbirth'>Date of Birth:</Label>
                   <Input id='dateofbirth' />
@@ -87,7 +81,7 @@ export default function ProfileForm() {
                   <Input id='gender' />
                 </div>
               </div>
-              <div className='flex flex-col gap-2 md:flex-row'>
+              <div className='flex flex-col gap-2 lg:flex-row'>
                 <div className='mb-2 flex-1 items-center space-y-1'>
                   <Label htmlFor='workplace'>Workplace:</Label>
                   <Input id='workplace' />
@@ -104,15 +98,17 @@ export default function ProfileForm() {
             </CardContent>
             <CardFooter>
               <Button>Update</Button>
+              <CardDescription className='ml-6 flex items-start space-y-1 font-bold'>
+                Make changes to your account. Click update when you are done.
+              </CardDescription>
             </CardFooter>
           </Card>
         </TabsContent>
-
-        <TabsContent value='password' className='max-h-screen'>
+        <TabsContent value='password' className='h-fit'>
           <Card>
             <CardHeader>
               <CardTitle>Password</CardTitle>
-              <CardDescription>Change your password here. After saving, youll be logged out.</CardDescription>
+              <CardDescription>Change your password here. After saving, you will be logged out.</CardDescription>
             </CardHeader>
             <CardContent className='space-y-2'>
               <div className='space-y-1'>
