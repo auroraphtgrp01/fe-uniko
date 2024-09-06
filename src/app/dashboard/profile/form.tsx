@@ -23,7 +23,7 @@ export default function ProfileForm() {
                 <div className='mt-6 flex flex-1 flex-col items-center justify-center gap-8 md:flex-row'>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Avatar className='mx-5 rounded-full hover:cursor-pointer md:h-44 md:w-44'>
+                      <Avatar className='mx-5 h-44 w-44 rounded-full hover:cursor-pointer max-[765px]:h-44 max-[765px]:w-44'>
                         <AvatarImage src='https://github.com/shadcn.png' />
                         <AvatarFallback>CN</AvatarFallback>
                       </Avatar>
