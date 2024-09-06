@@ -10,8 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 export default function ProfileForm() {
   return (
-    <div className='container relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
-      <div className='flex flex-1 flex-col gap-8 min-[1150px]:flex-row'>
+    <div className='relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
+      <div className='flex flex-1 flex-col gap-8 min-[1350px]:flex-row'>
         {/* Card */}
         <Card className='h-full flex-1'>
           <CardHeader>
@@ -32,9 +32,11 @@ export default function ProfileForm() {
                       <Input id='picture' type='file' />
                     </PopoverContent>
                   </Popover>
-                  <div className='mt-4 flex-1 text-center md:ml-6 md:mt-0 md:text-left'>
-                    <h1 className='text-xl font-bold md:text-2xl'>Nguyễn Quang Huy</h1>
-                    <h1 className='mb-1 text-gray-500'>@kwanghy</h1>
+                  <div className='flex-1'>
+                    <h1 className='flex items-center justify-center text-xl font-bold md:justify-start md:text-2xl'>
+                      Nguyễn Quang Huy
+                    </h1>
+                    <h1 className='mb-1 flex items-center justify-center text-gray-500 md:justify-start'>@kwanghy</h1>
                     <h1 className='mb-2 flex items-center justify-center text-lg md:justify-start'>
                       <Cake className='mb-1 mr-2' /> 23/03/2003
                     </h1>
@@ -103,7 +105,7 @@ export default function ProfileForm() {
               </CardFooter>
             </Card>
           </TabsContent>
-          <TabsContent value='password' className='h-fit'>
+          <TabsContent value='password' className='h-fit min-[1490px]:mt-2'>
             <Card>
               <CardHeader>
                 <CardTitle>Password</CardTitle>
