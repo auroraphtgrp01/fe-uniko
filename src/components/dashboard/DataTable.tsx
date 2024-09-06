@@ -46,6 +46,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [limit, setLimit] = React.useState<number>(10)
   const table = useReactTable({
     data,
     columns,
@@ -105,7 +106,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className='rounded-md border'>
         <Table>
-          <TableHeader>
+          <TableHeader style={{ cursor: 'pointer' }}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -171,39 +172,59 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
 
-        <div className='flex flex-col items-center justify-between space-y-2 px-3 py-1 sm:flex-row sm:space-x-2 sm:space-y-0'>
+        <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 sm:flex-row sm:space-y-0'>
           <p className='text-xs text-gray-500 sm:text-sm'>
             {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
             selected.
           </p>
           {isPaginate ? (
-            <div className='flex w-full items-center justify-end space-x-2 py-2 sm:w-auto sm:py-4'>
-              <p className='text-sm'>
-                Page {currentPage} of {table.getPageCount()}
-              </p>
-              <Button
-                className='ml-1 sm:ml-5'
-                variant='outline'
-                size='sm'
-                onClick={() => {
-                  table.previousPage()
-                  setCurrentPage(--currentPage)
-                }}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <ChevronLeft size={15} />
-              </Button>
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={() => {
-                  table.nextPage()
-                  setCurrentPage(++currentPage)
-                }}
-                disabled={!table.getCanNextPage()}
-              >
-                <ChevronRight size={15} />
-              </Button>
+            <div className='flex flex-col items-center sm:flex-row sm:items-center sm:space-x-4'>
+              <div className='flex flex-col items-center sm:flex-row sm:space-x-4'>
+                <div className='flex items-center space-x-2'>
+                  <p className='whitespace-nowrap text-sm'>Rows per page</p>
+                  <Input
+                    value={limit}
+                    onChange={(event) => setLimit(Number(event.target.value))}
+                    className='w-16 px-1 text-center'
+                    type='number'
+                    min={1}
+                    max={20}
+                    inputMode='numeric'
+                    pattern='[0-9]*'
+                  />
+                </div>
+                <div className='flex items-center space-x-2'>
+                  <p className='whitespace-nowrap text-sm'>
+                    Page {currentPage} of {table.getPageCount()}
+                  </p>
+                  <div className='flex space-x-1'>
+                    <Button
+                      className='px-2'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => {
+                        table.previousPage()
+                        setCurrentPage((prev) => prev - 1)
+                      }}
+                      disabled={!table.getCanPreviousPage()}
+                    >
+                      <ChevronLeft size={15} />
+                    </Button>
+                    <Button
+                      className='px-2'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => {
+                        table.nextPage()
+                        setCurrentPage((prev) => prev + 1)
+                      }}
+                      disabled={!table.getCanNextPage()}
+                    >
+                      <ChevronRight size={15} />
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : null}
         </div>

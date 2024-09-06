@@ -51,6 +51,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           ref={ref}
           disabled={isLoading || props.disabled}
           {...props}
+          style={{ cursor: 'pointer' }}
         >
           {children}
           {isLoading && (

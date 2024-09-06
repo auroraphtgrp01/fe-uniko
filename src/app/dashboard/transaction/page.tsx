@@ -188,14 +188,14 @@ export default function TransactionPage() {
   }
   const contentDialogTransactionToday = (
     <div className='overflow-x-auto'>
-      <DataTable columns={columns} data={transactionTodayData} isPaginate={false} onRowClick={onRowClick} />
+      <DataTable columns={columns} data={transactionTodayData} isPaginate={true} onRowClick={onRowClick} />
     </div>
   )
   const titleDialogTransactionToday = 'Transaction Today'
   const descriptionDialogTransactionToday = 'Overview of today`s transactions'
   const contentDialogUnclassifiedTransaction = (
     <div className='overflow-x-auto'>
-      <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={false} />
+      <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={true} onRowClick={onRowClick} />
     </div>
   )
   const titleDialogUnclassifiedTransaction = 'Unclassified Transaction'
