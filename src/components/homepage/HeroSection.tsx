@@ -14,7 +14,6 @@ import { isLogin } from '@/libraries/helpers'
 
 export default function HeroSection() {
   const isLoginUser = isLogin()
-  console.log('isLoginUser', isLoginUser)
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
