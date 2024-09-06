@@ -8,6 +8,8 @@ import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from '@/libraries/theme-provider'
 import { AppProvider } from '../context/app-context.provider'
 import { ReactNode } from 'react'
+import NextTopLoader from 'nextjs-toploader'
+
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans'
@@ -46,6 +48,7 @@ export default function RootLayout({
           containerClassName=''
           containerStyle={{}}
         />
+        <NextTopLoader />
         <AppProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
             <QueryProvider>{children}</QueryProvider>

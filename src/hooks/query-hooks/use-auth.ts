@@ -8,8 +8,9 @@ import { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
 import { IUseQueryHookOptions } from '@/hooks/query-hooks/query-hook.i'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import { ISignUpBody, ISignUpResponse } from '@/app/sign-up/sign-up.i'
+import { useRouter } from 'nextjs-toploader/app'
 
 const authServices = apiService.authentication
 
