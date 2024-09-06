@@ -1,4 +1,5 @@
 'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -117,47 +118,49 @@ export default function TransactionPage() {
   const descriptionDialogDetail = 'Detail information of the transaction'
   const contentDialogDetail = (
     <div className='py-4'>
-      <div className='mb-4 flex items-center justify-between'>
-        <div>
+      <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
+        <div className='mb-2 sm:mb-0'>
           <p className='text-sm text-muted-foreground'>Amount</p>
-          <p className='ext-t2xl font-bold'>${1200000}</p>
+          <p className='text-xl font-bold'>${1200000}</p>
         </div>
       </div>
       <Separator className='my-4' />
-      <Table>
-        <TableBody>
-          <TableRow>
-            <TableCell className='font-medium'>Transaction ID</TableCell>
-            <TableCell>id</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Date</TableCell>
-            <TableCell>{new Date().toLocaleString()}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Status</TableCell>
-            <TableCell>
-              <Badge variant={'default'}>status</Badge>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Sender</TableCell>
-            <TableCell>sender</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Recipient</TableCell>
-            <TableCell>recipient</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Description</TableCell>
-            <TableCell>description</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className='font-medium'>Fee</TableCell>
-            <TableCell>fee</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+      <div className='overflow-x-auto'>
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell>Transaction ID</TableCell>
+              <TableCell>id</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell>{new Date().toLocaleString()}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Status</TableCell>
+              <TableCell>
+                <Badge variant={'default'}>status</Badge>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Sender</TableCell>
+              <TableCell>sender</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Recipient</TableCell>
+              <TableCell>recipient</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Description</TableCell>
+              <TableCell>description</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Fee</TableCell>
+              <TableCell>fee</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 
@@ -184,61 +187,23 @@ export default function TransactionPage() {
     setDialogDetailOpen(true)
   }
   const contentDialogTransactionToday = (
-    <DataTable columns={columns} data={transactionTodayData} isPaginate={false} onRowClick={onRowClick} />
+    <div className='overflow-x-auto'>
+      <DataTable columns={columns} data={transactionTodayData} isPaginate={false} onRowClick={onRowClick} />
+    </div>
   )
   const titleDialogTransactionToday = 'Transaction Today'
   const descriptionDialogTransactionToday = 'Overview of today`s transactions'
   const contentDialogUnclassifiedTransaction = (
-    <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={false} />
+    <div className='overflow-x-auto'>
+      <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={false} />
+    </div>
   )
   const titleDialogUnclassifiedTransaction = 'Unclassified Transaction'
   const descriptionDialogUnclassifiedTransaction = 'Overview of today`s transactions'
 
   return (
-    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-      {/* <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center justify-between'>
-            <span>Transaction Today</span>
-            <Button variant='outline' onClick={() => setDialogTransactionTodayOpen(true)}>
-              View all
-            </Button>
-          </CardTitle>
-          <CardDescription>Overview of today`s transactions</CardDescription>
-        </CardHeader>
-        <CardContent className='grid gap-4'>
-          <div className='flex items-center justify-between'>
-            <div className='font-medium'>Total Transactions</div>
-            <div className='text-2xl font-bold'>5</div>
-          </div>
-          <div className='flex items-center justify-between'>
-            <div className='font-medium'>Total Amount</div>
-            <div className='text-2xl font-bold'>{formatCurrencyVND(1234567)} </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center justify-between'>
-            <span>Unclassified Transaction</span>
-            <Button variant='outline' onClick={() => setDialogUnclassifiedTransactionOpen(true)}>
-              Classify
-            </Button>
-          </CardTitle>
-          <CardDescription>Transactions without a tracker</CardDescription>
-        </CardHeader>
-        <CardContent className='grid gap-4'>
-          <div className='flex items-center justify-between'>
-            <div className='font-medium'>Total Transactions</div>
-            <div className='text-2xl font-bold'>1</div>
-          </div>
-          <div className='flex items-center justify-between'>
-            <div className='font-medium'>Total Amount</div>
-            <div className='text-2xl font-bold'>{formatCurrencyVND(220000)}</div>
-          </div>
-        </CardContent>
-      </Card> */}
-      <div className='grid gap-4 md:grid-cols-1'>
+    <div className='space-y-4'>
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
         <Card>
           <CardHeader>
             <CardTitle className='flex items-center justify-between'>
@@ -251,12 +216,12 @@ export default function TransactionPage() {
           </CardHeader>
           <CardContent className='grid gap-4'>
             <div className='flex items-center justify-between'>
-              <div className='font-medium'>Total Transactions</div>
-              <div className='text-2xl font-bold'>5</div>
+              <div>Total Transactions</div>
+              <div className='text-xl font-bold'>5</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div className='font-medium'>Total Amount</div>
-              <div className='text-2xl font-bold'>{formatCurrencyVND(1234567)}</div>
+              <div>Total Amount</div>
+              <div className='text-xl font-bold'>{formatCurrencyVND(1234567)}</div>
             </div>
           </CardContent>
         </Card>
@@ -272,24 +237,24 @@ export default function TransactionPage() {
           </CardHeader>
           <CardContent className='grid gap-4'>
             <div className='flex items-center justify-between'>
-              <div className='font-medium'>Total Transactions</div>
-              <div className='text-2xl font-bold'>1</div>
+              <div>Total Transactions</div>
+              <div className='text-xl font-bold'>1</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div className='font-medium'>Total Amount</div>
-              <div className='text-2xl font-bold'>{formatCurrencyVND(220000)}</div>
+              <div>Total Amount</div>
+              <div className='text-xl font-bold'>{formatCurrencyVND(220000)}</div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className='col-span-2 w-full'>
-        <Card>
-          <CardHeader>
-            <CardTitle>Transactions</CardTitle>
-            <CardDescription>All financial transactions</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>
+          <CardTitle>Transactions</CardTitle>
+          <CardDescription>All financial transactions</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className='overflow-x-auto'>
             <DataTable
               columns={columns}
               data={data}
@@ -297,32 +262,32 @@ export default function TransactionPage() {
               getRowClassName={getRowClassName}
               onRowClick={onRowClick}
             />
-            <CustomDialog
-              content={contentDialogDetail}
-              title={titleDialogDetail}
-              description={descriptionDialogDetail}
-              isOpen={isDialogDetailOpen}
-              onClose={closeDialogDetail}
-            />
-            <CustomDialog
-              className='sm:max-w-[1080px]'
-              content={contentDialogTransactionToday}
-              title={titleDialogTransactionToday}
-              description={descriptionDialogTransactionToday}
-              isOpen={isDialogTransactionTodayOpen}
-              onClose={closeDialogTransactionToday}
-            />
-            <CustomDialog
-              className='sm:max-w-[1080px]'
-              content={contentDialogUnclassifiedTransaction}
-              title={titleDialogUnclassifiedTransaction}
-              description={descriptionDialogUnclassifiedTransaction}
-              isOpen={isDialogUnclassifiedTransactionOpen}
-              onClose={closeDialogUnclassifiedTransaction}
-            />
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+          <CustomDialog
+            content={contentDialogDetail}
+            title={titleDialogDetail}
+            description={descriptionDialogDetail}
+            isOpen={isDialogDetailOpen}
+            onClose={closeDialogDetail}
+          />
+          <CustomDialog
+            className='sm:max-w-[425px] md:max-w-[1080px]'
+            content={contentDialogTransactionToday}
+            title={titleDialogTransactionToday}
+            description={descriptionDialogTransactionToday}
+            isOpen={isDialogTransactionTodayOpen}
+            onClose={closeDialogTransactionToday}
+          />
+          <CustomDialog
+            className='sm:max-w-[425px] md:max-w-[1080px]'
+            content={contentDialogUnclassifiedTransaction}
+            title={titleDialogUnclassifiedTransaction}
+            description={descriptionDialogUnclassifiedTransaction}
+            isOpen={isDialogUnclassifiedTransactionOpen}
+            onClose={closeDialogUnclassifiedTransaction}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }

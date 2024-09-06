@@ -67,23 +67,24 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className='w-full'>
-      <div className='flex items-center justify-between py-4'>
-        <Input
-          placeholder='Filter emails...'
-          defaultValue={''}
-          onChange={(event) => {
-            console.log('filter')
-            table.setGlobalFilter(event.target.value)
-          }}
-          className='max-w-sm'
-        />
+      <div className='flex items-center justify-between space-x-2 py-4'>
+        <div className='min-w-0 max-w-md flex-1'>
+          <Input
+            placeholder='Filter...'
+            defaultValue={''}
+            onChange={(event) => {
+              table.setGlobalFilter(event.target.value)
+            }}
+            className='w-full'
+          />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='ml-auto'>
+            <Button variant='outline' className='whitespace-nowrap'>
               Columns <ChevronDown className='ml-2 h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
+          <DropdownMenuContent align='end' className='w-[200px]'>
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
