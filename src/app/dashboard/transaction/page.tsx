@@ -293,7 +293,7 @@ export default function TransactionPage() {
             <DataTable
               columns={columns}
               data={data}
-              isPaginate={false}
+              isPaginate={true}
               getRowClassName={getRowClassName}
               onRowClick={onRowClick}
             />

@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronsUpDown, PlusIcon } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
 
@@ -42,6 +42,7 @@ export function DataTable<TData, TValue>({
   onRowDoubleClick
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
+  let [currentPage, setCurrentPage] = React.useState<number>(1)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -69,8 +70,11 @@ export function DataTable<TData, TValue>({
       <div className='flex items-center justify-between py-4'>
         <Input
           placeholder='Filter emails...'
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
+          defaultValue={''}
+          onChange={(event) => {
+            console.log('filter')
+            table.setGlobalFilter(event.target.value)
+          }}
           className='max-w-sm'
         />
         <DropdownMenu>
@@ -105,7 +109,14 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      onMouseDown={(event) => {
+                        if (event.detail > 1) {
+                          event.preventDefault()
+                        }
+                      }}
+                    >
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   )
@@ -118,6 +129,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => {
                 return (
                   <TableRow
+                    style={{ cursor: 'pointer' }}
                     className={getRowClassName ? getRowClassName(row.original) : ''}
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
@@ -165,15 +177,30 @@ export function DataTable<TData, TValue>({
           </p>
           {isPaginate ? (
             <div className='flex w-full items-center justify-end space-x-2 py-2 sm:w-auto sm:py-4'>
-              <p className='text-sm'>Rows per page</p>
-              <Button variant='outline' className='border-gray-300 px-2 text-xs sm:text-sm'>
-                10 <ChevronsUpDown size={15} className='ml-1 text-gray-600 sm:ml-2' />
-              </Button>
-              <p className='text-sm'>Page 1 of 10</p>
-              <Button className='ml-1 sm:ml-5' variant='outline' size='sm' onClick={() => table.previousPage()}>
+              <p className='text-sm'>
+                Page {currentPage} of {table.getPageCount()}
+              </p>
+              <Button
+                className='ml-1 sm:ml-5'
+                variant='outline'
+                size='sm'
+                onClick={() => {
+                  table.previousPage()
+                  setCurrentPage(--currentPage)
+                }}
+                disabled={!table.getCanPreviousPage()}
+              >
                 <ChevronLeft size={15} />
               </Button>
-              <Button variant='outline' size='sm' onClick={() => table.nextPage()}>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => {
+                  table.nextPage()
+                  setCurrentPage(++currentPage)
+                }}
+                disabled={!table.getCanNextPage()}
+              >
                 <ChevronRight size={15} />
               </Button>
             </div>
