@@ -1,5 +1,10 @@
+import DashboardMainForm from '@/app/dashboard/form'
 import React from 'react'
 
 export default function page() {
-  return <div>page</div>
+  return (
+    <div>
+      <DashboardMainForm />
+    </div>
+  )
 }
