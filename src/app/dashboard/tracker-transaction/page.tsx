@@ -1,5 +1,10 @@
 import React from 'react'
+import TrackerTransactionForm from './form'
 
 export default function page() {
-  return <div>tracker transaction</div>
+  return (
+    <div>
+      <TrackerTransactionForm />
+    </div>
+  )
 }
