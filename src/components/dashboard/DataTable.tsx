@@ -18,9 +18,7 @@ import React from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
-import { cn } from '@/libraries/utils'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -29,14 +27,14 @@ interface DataTableProps<TData, TValue> {
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
-  className?: string
+  classNameOfScroll?: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   isPaginate,
-  className,
+  classNameOfScroll,
   createFunction,
   getRowClassName,
   onRowClick,
@@ -68,29 +66,17 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className={cn('w-full')}>
+    <div className='w-full'>
       <div className='flex items-center justify-between space-x-2 py-4'>
-        <div className='flex min-w-0 max-w-md flex-1 p-1'>
+        <div className='min-w-0 max-w-md flex-1 p-1'>
           <Input
             placeholder='Filter'
             defaultValue={''}
             onChange={(event) => {
               table.setGlobalFilter(event.target.value)
             }}
-            className='w-30'
+            className='w-full'
           />
-          <div className='ms-2 flex-1'>
-            <Select>
-              <SelectTrigger className='h-[40px] w-[100px] bg-background hover:bg-accent'>
-                <SelectValue placeholder='Type' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='light'>Light</SelectItem>
-                <SelectItem value='dark'>Dark</SelectItem>
-                <SelectItem value='system'>System</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -117,79 +103,74 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className='rounded-lg'>
-        <div className='relative w-full rounded-lg'>
-          <div className='sticky top-0 z-10 w-full rounded-lg bg-background'>
-            <Table className='w-full table-fixed rounded-lg border'>
-              <TableHeader className='rounded-lg border'>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className='text-nowrap'
-                        style={{ cursor: 'pointer', width: header.id === 'select' ? '50px' : '0px' }}
-                        onMouseDown={(event) => {
-                          if (event.detail > 1) {
-                            event.preventDefault()
-                          }
-                        }}
-                      >
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-            </Table>
-          </div>
-
-          <ScrollArea className={cn('w-full overflow-x-auto border px-2', className)}>
-            <Table className='table-fixed'>
-              <TableBody>
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className={getRowClassName ? getRowClassName(row.original) : ''}
-                      style={{ cursor: 'pointer' }}
-                      data-state={row.getIsSelected() && 'selected'}
-                      onClick={(event: any) => {
-                        if (event.target.role !== 'checkbox' && onRowClick) {
-                          onRowClick(row.original)
+      <div className='rounded-md border'>
+        <Table classNameOfScroll={classNameOfScroll}>
+          <TableHeader style={{ cursor: 'pointer' }}>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      className='text-nowrap'
+                      key={header.id}
+                      onMouseDown={(event) => {
+                        if (event.detail > 1) {
+                          event.preventDefault()
                         }
                       }}
-                      onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className={cell.column.id === 'select' ? 'w-[50px]' : 'w-0'}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className='h-24 text-center'>
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  )
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => {
+                return (
+                  <TableRow
+                    style={{ cursor: 'pointer' }}
+                    className={getRowClassName ? getRowClassName(row.original) : ''}
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={(event: any) => {
+                      console.log()
 
-                {createFunction && (
-                  <TableRow>
-                    <TableCell colSpan={100} onClick={() => createFunction()}>
-                      <button className='flex items-center text-gray-400 hover:text-gray-200'>
-                        <PlusIcon className='mr-2 h-4 w-4' />
-                        Create new
-                      </button>
-                    </TableCell>
+                      if (event.target.role !== 'checkbox' && onRowClick) {
+                        onRowClick(row.original)
+                      }
+                    }}
+                    onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        </div>
+                )
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+            {createFunction ? (
+              <TableRow>
+                <TableCell colSpan={100} onClick={() => createFunction()}>
+                  <button className='flex items-center text-gray-400 hover:text-gray-200'>
+                    <PlusIcon className='mr-2 h-4 w-4' />
+                    Create new
+                  </button>
+                </TableCell>
+              </TableRow>
+            ) : (
+              ''
+            )}
+          </TableBody>
+        </Table>
 
         <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 sm:flex-row sm:space-y-0'>
           <p className='text-xs text-gray-500 sm:text-sm'>

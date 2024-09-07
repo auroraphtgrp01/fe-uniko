@@ -119,7 +119,7 @@ export default function TrackerTransactionForm() {
           <Card className='h-full w-full'>
             <CardContent>
               <DataTable
-                className='h-[400px]'
+                classNameOfScroll='h-[calc(100vh-28rem)]'
                 columns={columns}
                 data={data}
                 isPaginate={true}
