@@ -8,6 +8,9 @@ import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from '@/libraries/theme-provider'
 import { AppProvider } from '../context/app-context.provider'
 import { ReactNode } from 'react'
+import 'nprogress/nprogress.css'
+import dynamic from 'next/dynamic'
+
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans'
@@ -20,6 +23,13 @@ export const metadata: Metadata = {
 }
 
 console.info('Config Project ', configProject)
+
+const TopProgressBar = dynamic(
+  () => {
+    return import('@/components/core/top-progress-bar')
+  },
+  { ssr: false }
+)
 
 export default function RootLayout({
   children
@@ -46,6 +56,7 @@ export default function RootLayout({
           containerClassName=''
           containerStyle={{}}
         />
+        <TopProgressBar />
         <AppProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
             <QueryProvider>{children}</QueryProvider>
