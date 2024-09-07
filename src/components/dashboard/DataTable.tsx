@@ -109,6 +109,7 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
+                      className='text-nowrap'
                       key={header.id}
                       onMouseDown={(event) => {
                         if (event.detail > 1) {
@@ -182,7 +183,7 @@ export function DataTable<TData, TValue>({
                   <Input
                     value={limit}
                     onChange={(event) => setLimit(Number(event.target.value))}
-                    className='w-16 px-1 text-center'
+                    className='w-12 px-1 pl-3 text-center'
                     type='number'
                     min={1}
                     max={20}
