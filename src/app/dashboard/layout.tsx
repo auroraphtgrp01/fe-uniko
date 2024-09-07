@@ -1,9 +1,9 @@
 import Header from '@/components/core/header'
 import Sidebar from '@/components/core/sidebar'
 import BreadcrumbHeader from '../../components/core/breadcrumb'
-import { ReactNode } from 'react'
+import AnimatedComponent from '../../components/common/AnimatedComponent'
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className='flex'>
       <Sidebar />

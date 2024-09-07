@@ -98,3 +98,19 @@
 .hero-slider-container:hover:after {
   /* opacity: 0.6 */
 }
+
+#nprogress .bar {
+  background: linear-gradient(90deg, #429378 0%, #54c5a7 100%) !important;
+  /* Gradient màu từ #306e59 đến #48a78e */
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #306e59, 0 0 5px #429479 !important;
+  /* Màu của bóng đổ */
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #3b886e !important;
+  /* Màu của spinner */
+  border-left-color: #419c7e !important;
+}
