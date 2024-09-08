@@ -25,6 +25,7 @@ const config = {
         background: 'hsl(var(--background))',
         background_nav: 'hsl(var(--background-nav))',
         foreground: 'hsl(var(--foreground))',
+        bgTable: 'hsl(var(--bg-table))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))'
