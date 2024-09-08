@@ -90,7 +90,7 @@ export function DataTable<TData, TValue>({
                 table.getColumn('type')?.setFilterValue(value)
               }}
             >
-              <SelectTrigger className='h-[40px] w-[100px] bg-background hover:bg-accent'>
+              <SelectTrigger className='h-[40px] w-max bg-background hover:bg-accent'>
                 <SelectValue placeholder='Type' />
               </SelectTrigger>
               <SelectContent>

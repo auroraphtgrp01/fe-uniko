@@ -68,7 +68,7 @@ export function DashboardNav({ items, setOpen, isMobileNav = false }: DashboardN
                     align='center'
                     side='right'
                     sideOffset={8}
-                    className={!isMinimized ? 'hidden' : 'inline-block'}
+                    className={`${!isMinimized ? 'hidden' : 'inline-block'} text-white`}
                   >
                     {item.title}
                   </TooltipContent>
