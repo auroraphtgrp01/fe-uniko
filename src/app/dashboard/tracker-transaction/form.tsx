@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
+import { getTypes } from '@/libraries/utils'
 
 export default function TrackerTransactionForm() {
   const titles: string[] = ['Transaction Name', 'Type', 'Amount', 'Date', 'From Account', 'Description']
@@ -107,6 +108,8 @@ export default function TrackerTransactionForm() {
       description: 'Mua mỳ xíu mại ở quán gần nhà'
     }
   ]
+
+  const types = getTypes(data)
 
   const chartData: IPayloadDataChart[] = [
     {
@@ -220,7 +223,14 @@ export default function TrackerTransactionForm() {
         <div className='mt-4 flex-1'>
           <Card className='h-full w-full'>
             <CardContent>
-              <DataTable classNameOfScroll='h-[calc(100vh-30rem)]' columns={columns} data={data} isPaginate={true} />
+              <DataTable
+                isVisibleSortType={true}
+                types={types}
+                classNameOfScroll='h-[calc(100vh-30rem)]'
+                columns={columns}
+                data={data}
+                isPaginate={true}
+              />
             </CardContent>
           </Card>
         </div>

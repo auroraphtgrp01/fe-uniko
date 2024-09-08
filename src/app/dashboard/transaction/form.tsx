@@ -186,14 +186,26 @@ export default function TransactionForm() {
   }
   const contentDialogTransactionToday = (
     <div className='overflow-x-auto'>
-      <DataTable columns={columns} data={transactionTodayData} isPaginate={true} onRowClick={onRowClick} />
+      <DataTable
+        isVisibleSortType={false}
+        columns={columns}
+        data={transactionTodayData}
+        isPaginate={true}
+        onRowClick={onRowClick}
+      />
     </div>
   )
   const titleDialogTransactionToday = 'Transaction Today'
   const descriptionDialogTransactionToday = 'Overview of today`s transactions'
   const contentDialogUnclassifiedTransaction = (
     <div className='overflow-x-auto'>
-      <DataTable columns={columns} data={unclassifiedTransactionData} isPaginate={true} onRowClick={onRowClick} />
+      <DataTable
+        isVisibleSortType={false}
+        columns={columns}
+        data={unclassifiedTransactionData}
+        isPaginate={true}
+        onRowClick={onRowClick}
+      />
     </div>
   )
   const titleDialogUnclassifiedTransaction = 'Unclassified Transaction'
@@ -253,6 +265,7 @@ export default function TransactionForm() {
         <CardContent>
           <div className='overflow-x-auto'>
             <DataTable
+              isVisibleSortType={false}
               columns={columns}
               data={data}
               isPaginate={true}
