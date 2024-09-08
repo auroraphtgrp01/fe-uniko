@@ -7,6 +7,7 @@ import { getColumns } from '@/components/dashboard/ColumnsTable'
 import BadgeType from '@/components/common/BadgeType'
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
+import { getTypes } from '@/libraries/utils'
 
 export default function TrackerTransactionForm() {
   const titles: string[] = ['Transaction Name', 'Type', 'Amount', 'Date', 'From Account', 'Description']
@@ -15,7 +16,7 @@ export default function TrackerTransactionForm() {
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
       transactionName: 'Mỳ xíu mại',
-      type: <BadgeType />,
+      type: 'Con cái',
       amount: '500000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -24,7 +25,7 @@ export default function TrackerTransactionForm() {
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
       transactionName: 'Mỳ xíu mại',
-      type: <BadgeType />,
+      type: 'Ăn uống',
       amount: '500000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -33,7 +34,7 @@ export default function TrackerTransactionForm() {
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
       transactionName: 'Mỳ xíu mại',
-      type: <BadgeType />,
+      type: 'Ăn uống',
       amount: '500000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -42,7 +43,7 @@ export default function TrackerTransactionForm() {
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
       transactionName: 'Mỳ xíu mại',
-      type: <BadgeType />,
+      type: 'Thể thao',
       amount: '500000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -51,7 +52,7 @@ export default function TrackerTransactionForm() {
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
       transactionName: 'Mỳ xíu mại',
-      type: <BadgeType />,
+      type: 'Điện thoại',
       amount: '500000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -60,7 +61,7 @@ export default function TrackerTransactionForm() {
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
       transactionName: 'Mỳ xíu mại',
-      type: <BadgeType />,
+      type: 'Con cái',
       amount: '500000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -69,7 +70,7 @@ export default function TrackerTransactionForm() {
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
       transactionName: 'Mỳ xíu mại',
-      type: <BadgeType />,
+      type: 'Con cái',
       amount: '500000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -79,7 +80,7 @@ export default function TrackerTransactionForm() {
     {
       id: '4c7a5fbd-3d8d-4a88-9c5e-1a3f7b742de1',
       transactionName: 'Bàn phím mới',
-      type: <BadgeType />,
+      type: 'Con cái',
       amount: '750000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-05T11:15:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -88,7 +89,7 @@ export default function TrackerTransactionForm() {
     {
       id: '9a7c3a7b-52d9-4f62-98d4-c0c4b98a0e64',
       transactionName: 'Thay nhớt',
-      type: <BadgeType />,
+      type: 'Con cái',
       amount: '300000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-06T12:20:00.000Z', 'HH:mm dd/MM/yyyy'),
@@ -97,13 +98,15 @@ export default function TrackerTransactionForm() {
     {
       id: 'e8d4c1d0-4528-4c13-8bcd-1cfd5d2c6ad5',
       transactionName: 'Đổ xăng',
-      type: <BadgeType />,
+      type: 'Di chuyển',
       amount: '600000 VND',
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-07T13:25:00.000Z', 'HH:mm dd/MM/yyyy'),
       description: 'Mua mỳ xíu mại ở quán gần nhà'
     }
   ]
+  const types = getTypes(data)
+
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
       <div className='flex w-full flex-col md:col-span-2'>
@@ -119,6 +122,8 @@ export default function TrackerTransactionForm() {
           <Card className='h-full w-full'>
             <CardContent>
               <DataTable
+                isVisibleSortType={true}
+                types={types}
                 classNameOfScroll='h-[calc(100vh-28rem)]'
                 columns={columns}
                 data={data}

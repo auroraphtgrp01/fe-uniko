@@ -18,11 +18,14 @@ import React from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isPaginate: boolean
+  isVisibleSortType: boolean
+  types?: string[]
   createFunction?: () => void
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
@@ -34,6 +37,8 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   isPaginate,
+  isVisibleSortType,
+  types,
   classNameOfScroll,
   createFunction,
   getRowClassName,
@@ -68,7 +73,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between space-x-2 py-4'>
-        <div className='min-w-0 max-w-md flex-1 p-1'>
+        <div className='min-w-0 max-w-md flex-1'>
           <Input
             placeholder='Filter'
             defaultValue={''}
@@ -78,10 +83,36 @@ export function DataTable<TData, TValue>({
             className='w-full'
           />
         </div>
+        {isVisibleSortType ? (
+          <div className='ms-2 flex-1'>
+            <Select
+              onValueChange={(value) => {
+                table.getColumn('type')?.setFilterValue(value)
+              }}
+            >
+              <SelectTrigger className='h-[40px] w-[100px] bg-background hover:bg-accent'>
+                <SelectValue placeholder='Type' />
+              </SelectTrigger>
+              <SelectContent>
+                {types && types.length > 0
+                  ? types.map((type, index) => (
+                      <SelectItem key={index} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))
+                  : ''}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : (
+          ''
+        )}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='outline' className='whitespace-nowrap'>
-              Columns <ChevronDown className='ml-2 h-4 w-4' />
+              <span className='mr-2 hidden sm:inline-block'>Columns</span>
+              <ChevronDown className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end' className='w-[200px]'>
