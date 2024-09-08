@@ -27,12 +27,14 @@ interface DataTableProps<TData, TValue> {
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
+  classNameOfScroll?: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   isPaginate,
+  classNameOfScroll,
   createFunction,
   getRowClassName,
   onRowClick,
@@ -102,7 +104,7 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
       </div>
       <div className='rounded-md border'>
-        <Table>
+        <Table classNameOfScroll={classNameOfScroll}>
           <TableHeader style={{ cursor: 'pointer' }}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

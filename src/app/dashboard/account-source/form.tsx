@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import CustomDialog from '@/components/dashboard/Dialog'
+import React, { useState } from 'react'
 
 const titles: string[] = ['Source Name', 'Type', 'Init Amount', 'Currency', 'Current Amount', 'Created At']
 const data = [
@@ -119,8 +120,6 @@ const contentDialogCreate = (
 const titleDialogCreate = 'Create Account Source'
 const descriptionDialogCreate = 'Please fill in the information below to create a new account source.'
 const footerDialogCreate = <Button type='submit'>Save changes</Button>
-
-import React, { useState } from 'react'
 
 export default function AccountSourceForm() {
   const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false)
