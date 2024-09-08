@@ -1,12 +1,15 @@
 'use client'
 import React from 'react'
 import CardInHeader from '@/components/dashboard/CardInHeader'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import BadgeType from '@/components/common/BadgeType'
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
+import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
+import { Icons } from '../../../components/ui/icons'
+import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
 
 export default function TrackerTransactionForm() {
   const titles: string[] = ['Transaction Name', 'Type', 'Amount', 'Date', 'From Account', 'Description']
@@ -104,35 +107,146 @@ export default function TrackerTransactionForm() {
       description: 'Mua mỳ xíu mại ở quán gần nhà'
     }
   ]
+
+  const chartData: IPayloadDataChart[] = [
+    {
+      name: 'Food & Drink',
+      value: 20
+    },
+    {
+      name: 'Transport',
+      value: 30
+    },
+    {
+      name: 'Shopping',
+      value: 10
+    },
+    {
+      name: 'Health',
+      value: 40
+    },
+    {
+      name: 'Entertainment',
+      value: 25
+    },
+    {
+      name: 'Housing',
+      value: 35
+    },
+    {
+      name: 'Education',
+      value: 15
+    },
+    {
+      name: 'Travel',
+      value: 50
+    },
+    {
+      name: 'Utilities',
+      value: 22
+    },
+    {
+      name: 'Miscellaneous',
+      value: 18
+    }
+  ]
+
+  const accountData: IPayloadDataChart[] = [
+    {
+      name: 'TP Bank',
+      value: '500.000'
+    },
+    {
+      name: 'Wallet',
+      value: '700.000'
+    },
+    {
+      name: 'Vietcombank',
+      value: '700.000'
+    },
+    {
+      name: 'Techcombank',
+      value: '700.000'
+    }
+  ]
+
   return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+      {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
-        <div className='grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2'>
+        <div className='grid flex-1 grid-cols-1 gap-4 md:grid-cols-[4fr,6fr]'>
+          {/* Total Spending Card */}
           <Card className='h-full w-full'>
-            <CardHeader>
-              <CardTitle>Total</CardTitle>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <div className='space-y-2'>
+                <CardTitle>Total spending today</CardTitle>
+                <CardDescription>
+                  <span className='text-2xl font-semibold'>1,000,000 VND</span>
+                </CardDescription>
+              </div>
+              <Icons.banknote className='h-8 w-8 text-green-500' />
             </CardHeader>
           </Card>
-          <CardInHeader className='h-full w-full' />
+
+          {/* Incoming vs Expense Transaction Card */}
+          <Card className='w-full overflow-hidden'>
+            <div className='flex flex-col sm:flex-row'>
+              {/* Incoming Transaction */}
+              <div className='flex-1 bg-gradient-to-br from-green-100 to-green-200 p-6 dark:from-green-700 dark:to-green-800'>
+                <CardHeader className='p-0'>
+                  <div className='flex items-center space-x-2 text-green-600 dark:text-green-100'>
+                    <ArrowDownIcon className='h-5 w-5' />
+                    <h3 className='text-lg font-semibold'>Incoming Transaction</h3>
+                  </div>
+                </CardHeader>
+                <p className='mt-4 text-2xl font-bold text-green-700 dark:text-green-100'>10,000,000 VND</p>
+              </div>
+
+              {/* Expense Transaction */}
+              <div className='flex-1 bg-gradient-to-br from-rose-100 to-rose-200 p-6 dark:from-rose-700 dark:to-rose-800'>
+                <CardHeader className='p-0'>
+                  <div className='flex items-center space-x-2 text-rose-500 dark:text-rose-100'>
+                    <ArrowUpIcon className='h-5 w-5' />
+                    <h3 className='text-lg font-semibold'>Expense Transaction</h3>
+                  </div>
+                </CardHeader>
+                <p className='mt-4 text-2xl font-bold text-rose-500 dark:text-rose-100'>5,000,000 VND</p>
+              </div>
+            </div>
+          </Card>
         </div>
+
+        {/* DataTable Section */}
         <div className='mt-4 flex-1'>
           <Card className='h-full w-full'>
             <CardContent>
-              <DataTable
-                classNameOfScroll='h-[calc(100vh-28rem)]'
-                columns={columns}
-                data={data}
-                isPaginate={true}
-                // onRowClick={() => setIsDialogCreateOpen(true)}
-              />
+              <DataTable classNameOfScroll='h-[calc(100vh-30rem)]' columns={columns} data={data} isPaginate={true} />
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Right Section */}
       <div className='flex w-full flex-col md:col-span-1'>
         <div className='grid flex-1 grid-cols-1 gap-4'>
-          <CardInHeader className='h-full w-full' />
-          <CardInHeader className='h-full w-full' />
+          {/* DonutChart 1 */}
+          <Card className='w-full'>
+            <CardContent className='flex items-center justify-center'>
+              <DonutChart data={chartData} className={'mb-[-20px] mt-[-60px] h-[500px] w-full'} types='donut' />
+            </CardContent>
+          </Card>
+
+          {/* DonutChart 2 with Total */}
+          <Card className='w-full p-0'>
+            <div className='flex items-center justify-center p-0'>
+              <div className=''>
+                <DonutChart data={accountData} className='mt-[-30px] h-[250px] w-[500px]' types='donut' />
+              </div>
+              {/* <div className='h-full ms-[-60px]'>
+                <div>Total: 1.000.000 VND</div>
+              </div> */}
+            </div>
+          </Card>
         </div>
       </div>
     </div>

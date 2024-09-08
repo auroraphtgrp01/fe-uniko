@@ -2,6 +2,7 @@ import Header from '@/components/core/header'
 import Sidebar from '@/components/core/sidebar'
 import BreadcrumbHeader from '../../components/core/breadcrumb'
 import AnimatedComponent from '../../components/common/AnimatedComponent'
+import { Footer } from '../../components/core/footer'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,13 +12,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <header className='sticky top-0 z-30 h-14 border-b-[1px] bg-background_nav'>
           <Header />
         </header>
-        <div className='p-6'>
+        <div className='px-6 pt-4'>
           <div>
             <h1 className='mb-4 text-2xl font-semibold text-foreground'>
               <BreadcrumbHeader />
             </h1>
           </div>
           <div>{children}</div>
+          <Footer />
         </div>
       </main>
     </div>
