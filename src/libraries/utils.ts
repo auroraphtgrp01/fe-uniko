@@ -29,3 +29,7 @@ export const formatDateTimeVN = (date: string) => {
     second: '2-digit'
   }).format(new Date(date))
 }
+export const getTypes = (data: any): string[] => {
+  const types: string[] = data.map((item: any) => item.type)
+  return Array.from(new Set(types))
+}

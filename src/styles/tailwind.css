@@ -9,16 +9,21 @@
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
 }
- 
+
 .no-visible-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-a{
+a {
   @apply text-gray-400;
-  @apply hover:underline hover:text-gray-200;
+  @apply hover: underline hover:text-gray-200;
 }
 
-html, body {
+html,
+body {
   scroll-behavior: smooth
+}
+
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
