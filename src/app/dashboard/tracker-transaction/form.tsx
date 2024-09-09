@@ -177,43 +177,47 @@ export default function TrackerTransactionForm() {
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
-        <div className='grid flex-1 grid-cols-1 gap-4 md:grid-cols-[4fr,6fr]'>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
           {/* Total Spending Card */}
-          <Card className='h-full w-full'>
+          <Card className='col-span-1 h-full md:col-span-2 xl:col-span-1'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <div className='space-y-2'>
-                <CardTitle>Total spending today</CardTitle>
+                <CardTitle className='text-nowrap text-sm sm:text-base lg:text-lg'>Total spending today</CardTitle>
                 <CardDescription>
-                  <span className='text-2xl font-semibold'>1,000,000 VND</span>
+                  <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>1,000,000 VND</span>
                 </CardDescription>
               </div>
-              <Icons.banknote className='h-8 w-8 text-green-500' />
+              <Icons.banknote className='hidden text-green-500 lg:h-8 lg:w-8 2xl:block' />
             </CardHeader>
           </Card>
 
           {/* Incoming vs Expense Transaction Card */}
-          <Card className='w-full overflow-hidden'>
-            <div className='flex flex-col sm:flex-row'>
+          <Card className='col-span-1 w-full overflow-hidden sm:col-span-2 lg:w-full'>
+            <div className='flex flex-col md:flex-row'>
               {/* Incoming Transaction */}
-              <div className='flex-1 bg-gradient-to-br from-green-100 to-green-200 p-6 dark:from-green-700 dark:to-green-800'>
-                <CardHeader className='p-0'>
+              <div className='flex-1 bg-gradient-to-br from-green-100 to-green-200 p-4 dark:from-green-700 dark:to-green-800 sm:p-6'>
+                <CardHeader className='p-0 lg:w-full'>
                   <div className='flex items-center space-x-2 text-green-600 dark:text-green-100'>
-                    <ArrowDownIcon className='h-5 w-5' />
-                    <h3 className='text-lg font-semibold'>Incoming Transaction</h3>
+                    <ArrowDownIcon className='h-4 w-4 sm:h-5 sm:w-5' />
+                    <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>Incoming Transaction</h3>
                   </div>
                 </CardHeader>
-                <p className='mt-4 text-2xl font-bold text-green-700 dark:text-green-100'>10,000,000 VND</p>
+                <p className='mt-2 text-nowrap text-lg font-bold text-green-700 dark:text-green-100 sm:mt-4 sm:text-xl lg:text-2xl'>
+                  10,000,000 VND
+                </p>
               </div>
 
               {/* Expense Transaction */}
-              <div className='flex-1 bg-gradient-to-br from-rose-100 to-rose-200 p-6 dark:from-rose-700 dark:to-rose-800'>
+              <div className='flex-1 bg-gradient-to-br from-rose-100 to-rose-200 p-4 dark:from-rose-700 dark:to-rose-800 sm:p-6'>
                 <CardHeader className='p-0'>
                   <div className='flex items-center space-x-2 text-rose-500 dark:text-rose-100'>
-                    <ArrowUpIcon className='h-5 w-5' />
-                    <h3 className='text-lg font-semibold'>Expense Transaction</h3>
+                    <ArrowUpIcon className='h-4 w-4 sm:h-5 sm:w-5' />
+                    <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>Expense Transaction</h3>
                   </div>
                 </CardHeader>
-                <p className='mt-4 text-2xl font-bold text-rose-500 dark:text-rose-100'>5,000,000 VND</p>
+                <p className='mt-2 text-nowrap text-lg font-bold text-rose-500 dark:text-rose-100 sm:mt-4 sm:text-xl lg:text-2xl'>
+                  5,000,000 VND
+                </p>
               </div>
             </div>
           </Card>
