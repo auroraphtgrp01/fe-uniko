@@ -35,9 +35,10 @@ const CustomDialog: FC<TransactionDialogProps> = ({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Card>
-          <CardContent>{content}</CardContent>
-        </Card>
+        {content}
+        {/* <Card>
+          <CardContent></CardContent>
+        </Card> */}
         <DialogFooter>{footer}</DialogFooter>
       </DialogContent>
     </Dialog>

@@ -6,12 +6,15 @@ import { convertToCamelCase } from '@/libraries/utils'
 import { ArrowUpDown } from 'lucide-react'
 import { renderToString } from 'react-dom/server'
 import parse from 'html-react-parser'
+import { CLIENT_RENEG_WINDOW } from 'tls'
 
 export function getColumns(headers: string[], isSort: boolean): ColumnDef<any>[] {
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
     header: ({ column }: { column: any }) =>
-      isSort ? (
+      header === 'Id' ? (
+        ''
+      ) : isSort ? (
         <div
           className='flex'
           onClick={() => {
@@ -25,7 +28,7 @@ export function getColumns(headers: string[], isSort: boolean): ColumnDef<any>[]
         <div>{header}</div>
       ),
     cell: ({ row }: { row: any }) => {
-      return <div>{parse(renderToString(row.getValue(convertToCamelCase(header))))}</div>
+      return header === 'Id' ? '' : <div>{parse(renderToString(row.getValue(convertToCamelCase(header))))}</div>
     }
   }))
 

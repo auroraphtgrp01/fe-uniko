@@ -25,12 +25,18 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   isPaginate: boolean
   isVisibleSortType: boolean
+  classNameOfScroll?: string
+  currentPage: number
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+  limit: number
+  setLimit: React.Dispatch<React.SetStateAction<number>>
+  totalPage: number
+  setTotalPage: React.Dispatch<React.SetStateAction<number>>
   types?: string[]
   createFunction?: () => void
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
-  classNameOfScroll?: string
 }
 
 export function DataTable<TData, TValue>({
@@ -38,6 +44,12 @@ export function DataTable<TData, TValue>({
   data,
   isPaginate,
   isVisibleSortType,
+  currentPage,
+  setCurrentPage,
+  limit,
+  setLimit,
+  totalPage,
+  setTotalPage,
   types,
   classNameOfScroll,
   createFunction,
@@ -46,11 +58,9 @@ export function DataTable<TData, TValue>({
   onRowDoubleClick
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  let [currentPage, setCurrentPage] = React.useState<number>(1)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [limit, setLimit] = React.useState<number>(10)
   const table = useReactTable({
     data,
     columns,
@@ -83,8 +93,8 @@ export function DataTable<TData, TValue>({
             className='w-full'
           />
         </div>
-        {isVisibleSortType ? (
-          <div className='ms-2 flex-1'>
+        {isVisibleSortType && (
+          <div className='flex-1'>
             <Select
               onValueChange={(value) => {
                 table.getColumn('type')?.setFilterValue(value)
@@ -104,35 +114,40 @@ export function DataTable<TData, TValue>({
               </SelectContent>
             </Select>
           </div>
-        ) : (
-          ''
         )}
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='whitespace-nowrap'>
-              <span className='mr-2 hidden sm:inline-block'>Columns</span>
-              <ChevronDown className='h-4 w-4' />
+        <div className='flex items-center space-x-2'>
+          {createFunction && (
+            <Button variant='outline' className='whitespace-nowrap' onClick={createFunction}>
+              <span className='mr-2 hidden sm:inline-block'>Create</span>
+              <PlusIcon className='h-4 w-4' />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='w-[200px]'>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className='capitalize'
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' className='whitespace-nowrap'>
+                <span className='mr-2 hidden sm:inline-block'>Columns</span>
+                <ChevronDown className='h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className='w-[200px]'>
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className='capitalize'
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className='rounded-md border'>
         <Table classNameOfScroll={classNameOfScroll}>
@@ -167,8 +182,6 @@ export function DataTable<TData, TValue>({
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={(event: any) => {
-                      console.log()
-
                       if (event.target.role !== 'checkbox' && onRowClick) {
                         onRowClick(row.original)
                       }
@@ -188,18 +201,6 @@ export function DataTable<TData, TValue>({
                 </TableCell>
               </TableRow>
             )}
-            {createFunction ? (
-              <TableRow>
-                <TableCell colSpan={100} onClick={() => createFunction()}>
-                  <button className='flex items-center text-gray-400 hover:text-gray-200'>
-                    <PlusIcon className='mr-2 h-4 w-4' />
-                    Create new
-                  </button>
-                </TableCell>
-              </TableRow>
-            ) : (
-              ''
-            )}
           </TableBody>
         </Table>
 
@@ -214,7 +215,7 @@ export function DataTable<TData, TValue>({
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>Rows per page</p>
                   <Input
-                    value={limit}
+                    defaultValue={limit}
                     onChange={(event) => setLimit(Number(event.target.value))}
                     className='w-12 px-1 pl-3 text-center'
                     type='number'
@@ -226,7 +227,7 @@ export function DataTable<TData, TValue>({
                 </div>
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>
-                    Page {currentPage} of {table.getPageCount()}
+                    Page {currentPage} of {totalPage}
                   </p>
                   <div className='flex space-x-1'>
                     <Button
@@ -237,7 +238,7 @@ export function DataTable<TData, TValue>({
                         table.previousPage()
                         setCurrentPage((prev) => prev - 1)
                       }}
-                      disabled={!table.getCanPreviousPage()}
+                      disabled={currentPage === 1}
                     >
                       <ChevronLeft size={15} />
                     </Button>
@@ -249,7 +250,7 @@ export function DataTable<TData, TValue>({
                         table.nextPage()
                         setCurrentPage((prev) => prev + 1)
                       }}
-                      disabled={!table.getCanNextPage()}
+                      disabled={currentPage === totalPage}
                     >
                       <ChevronRight size={15} />
                     </Button>

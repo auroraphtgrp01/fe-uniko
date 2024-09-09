@@ -4,17 +4,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { formatCurrencyVND, formatDateTimeVN } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import { useState } from 'react'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { Separator } from '@/components/ui/separator'
+import { ISelectFields } from '@/types/common.i'
 
 export default function TransactionForm() {
   const [isDialogDetailOpen, setDialogDetailOpen] = useState(false)
   const [isDialogTransactionTodayOpen, setDialogTransactionTodayOpen] = useState(false)
   const [isDialogUnclassifiedTransactionOpen, setDialogUnclassifiedTransactionOpen] = useState(false)
+  const [totalPage, setTotalPage] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [limit, setLimit] = useState<number>(10)
+  const [condition, setCondition] = useState<string>()
+  const [isExactly, setIsExactly] = useState<boolean>()
+  const [sort, setSort] = useState<string>()
+  const [includePopulate, setIncludePopulate] = useState<boolean>(true)
+  const [selectFields, setSelectFields] = useState<ISelectFields[]>([])
   const headers = [
     'Transaction Id',
     'Amount',
@@ -28,7 +37,7 @@ export default function TransactionForm() {
   const data = [
     {
       transactionId: 'TXN123456',
-      amount: formatCurrencyVND(1000000),
+      amount: formatCurrency(1000000, 'VND', 'vi-VN'),
       direction: 'inflow',
       currency: 'VND',
       accountBank: 'Vietcombank',
@@ -37,7 +46,7 @@ export default function TransactionForm() {
     },
     {
       transactionId: 'TXN123457',
-      amount: formatCurrencyVND(2000000),
+      amount: formatCurrency(2000000, 'VND', 'vi-VN'),
       direction: 'outflow',
       currency: 'USD',
       accountBank: 'Techcombank',
@@ -46,7 +55,7 @@ export default function TransactionForm() {
     },
     {
       transactionId: 'TXN123458',
-      amount: formatCurrencyVND(1500000),
+      amount: formatCurrency(1500000, 'VND', 'vi-VN'),
       direction: 'inflow',
       currency: 'EUR',
       accountBank: 'BIDV',
@@ -55,7 +64,7 @@ export default function TransactionForm() {
     },
     {
       transactionId: 'TXN123459',
-      amount: formatCurrencyVND(2500000),
+      amount: formatCurrency(2500000, 'VND', 'vi-VN'),
       direction: 'outflow',
       currency: 'JPY',
       accountBank: 'Agribank',
@@ -64,7 +73,7 @@ export default function TransactionForm() {
     },
     {
       transactionId: 'TXN123460',
-      amount: formatCurrencyVND(3000000),
+      amount: formatCurrency(3000000, 'VND', 'vi-VN'),
       direction: 'inflow',
       currency: 'GBP',
       accountBank: 'ACB',
@@ -75,7 +84,7 @@ export default function TransactionForm() {
   const transactionTodayData = [
     {
       transactionId: 'TXN123456',
-      amount: formatCurrencyVND(1000000),
+      amount: formatCurrency(1000000, 'VND', 'vi-VN'),
       direction: 'inflow',
       currency: 'VND',
       accountBank: 'Vietcombank',
@@ -84,7 +93,7 @@ export default function TransactionForm() {
     },
     {
       transactionId: 'TXN123457',
-      amount: formatCurrencyVND(2000000),
+      amount: formatCurrency(2000000, 'VND', 'vi-VN'),
       direction: 'outflow',
       currency: 'USD',
       accountBank: 'Techcombank',
@@ -93,7 +102,7 @@ export default function TransactionForm() {
     },
     {
       transactionId: 'TXN123458',
-      amount: formatCurrencyVND(1500000),
+      amount: formatCurrency(1500000, 'VND', 'vi-VN'),
       direction: 'inflow',
       currency: 'EUR',
       accountBank: 'BIDV',
@@ -104,7 +113,7 @@ export default function TransactionForm() {
   const unclassifiedTransactionData = [
     {
       transactionId: 'TXN123460',
-      amount: formatCurrencyVND(3000000),
+      amount: formatCurrency(3000000),
       direction: 'inflow',
       currency: 'GBP',
       accountBank: 'ACB',
@@ -192,6 +201,12 @@ export default function TransactionForm() {
         data={transactionTodayData}
         isPaginate={true}
         onRowClick={onRowClick}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        limit={limit}
+        setLimit={setLimit}
+        totalPage={totalPage}
+        setTotalPage={setTotalPage}
       />
     </div>
   )
@@ -205,6 +220,12 @@ export default function TransactionForm() {
         data={unclassifiedTransactionData}
         isPaginate={true}
         onRowClick={onRowClick}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        limit={limit}
+        setLimit={setLimit}
+        totalPage={totalPage}
+        setTotalPage={setTotalPage}
       />
     </div>
   )
@@ -231,7 +252,7 @@ export default function TransactionForm() {
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
-              <div className='text-xl font-bold'>{formatCurrencyVND(1234567)}</div>
+              <div className='text-xl font-bold'>{formatCurrency(1234567)}</div>
             </div>
           </CardContent>
         </Card>
@@ -252,7 +273,7 @@ export default function TransactionForm() {
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
-              <div className='text-xl font-bold'>{formatCurrencyVND(220000)}</div>
+              <div className='text-xl font-bold'>{formatCurrency(220000)}</div>
             </div>
           </CardContent>
         </Card>
@@ -271,6 +292,12 @@ export default function TransactionForm() {
               isPaginate={true}
               getRowClassName={getRowClassName}
               onRowClick={onRowClick}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              limit={limit}
+              setLimit={setLimit}
+              totalPage={totalPage}
+              setTotalPage={setTotalPage}
             />
           </div>
           <CustomDialog

@@ -75,7 +75,7 @@ axiosInstance.interceptors.request.use((config) => {
 // )
 
 const request = async <TResponse>(
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
   url: string,
   options?: AxiosRequestConfig
 ): Promise<{ status: number; payload: TResponse }> => {
@@ -122,6 +122,9 @@ const httpService = {
   },
   delete<TRes>(url: string, options?: AxiosRequestConfig) {
     return request<TRes>('DELETE', url, options)
+  },
+  patch<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig) {
+    return request<TRes>('PATCH', url, { ...options, data: body })
   }
 }
 
