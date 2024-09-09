@@ -131,7 +131,13 @@ export default function AccountSourceForm() {
       </div>
       <Card className='mt-5'>
         <CardContent>
-          <DataTable columns={columns} data={data} isPaginate={true} onRowClick={() => setIsDialogCreateOpen(true)} />
+          <DataTable
+            isVisibleSortType={false}
+            columns={columns}
+            data={data}
+            isPaginate={true}
+            onRowClick={() => setIsDialogCreateOpen(true)}
+          />
         </CardContent>
       </Card>
       <CustomDialog
