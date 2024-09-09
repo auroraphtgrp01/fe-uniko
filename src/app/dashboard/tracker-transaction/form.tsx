@@ -179,7 +179,7 @@ export default function TrackerTransactionForm() {
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
           {/* Total Spending Card */}
-          <Card className='col-span-1 h-full md:col-span-2 xl:col-span-1'>
+          <Card className='col-span-1 h-full w-full overflow-hidden sm:col-span-2 md:w-full lg:w-full xl:col-span-1'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <div className='space-y-2'>
                 <CardTitle className='text-nowrap text-sm sm:text-base lg:text-lg'>Total spending today</CardTitle>
@@ -246,7 +246,7 @@ export default function TrackerTransactionForm() {
           {/* DonutChart 1 */}
           <Card className='w-full'>
             <CardContent className='flex items-center justify-center'>
-              <DonutChart data={chartData} className={'mb-[-20px] mt-[-60px] h-[500px] w-full'} types='donut' />
+              <DonutChart data={chartData} className={'mb-[-20px] mt-[-60px] h-[500px] w-full'} types='nightingale' />
             </CardContent>
           </Card>
 
