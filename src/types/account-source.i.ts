@@ -18,7 +18,7 @@ export interface IAccountSourceDataFormat {
   currentAmount: string
 }
 
-export interface IAccountSourceForm {
+export interface IAccountSourceBody {
   name?: string
   type?: string
   initAmount?: number

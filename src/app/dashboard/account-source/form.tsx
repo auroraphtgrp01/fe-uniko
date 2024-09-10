@@ -9,13 +9,13 @@ import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@
 import { Button } from '@/components/ui/button'
 import CustomDialog from '@/components/dashboard/Dialog'
 import React, { use, useEffect, useState } from 'react'
-import { IAccountSourceDataFormat, IAccountSourceForm } from '@/types/account-source.i'
+import { IAccountSourceDataFormat, IAccountSourceBody, IAccountSource } from '@/types/account-source.i'
 import { apiService } from '@/libraries/api'
 import { formatCurrency, getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
 import { HandCoins, Landmark, Wallet2 } from 'lucide-react'
-import { ISelectFields } from '@/types/common.i'
+import { IBaseResponseData, ISelectFields } from '@/types/common.i'
 import toast from 'react-hot-toast'
-import { set } from 'date-fns'
+import { useAccountSource } from '@/hooks/query-hooks/use-account-source'
 
 const accountSourceRoutes = apiService.accountSource
 
@@ -24,7 +24,6 @@ export default function AccountSourceForm() {
   const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState(false)
   const [data, setData] = useState<IAccountSourceDataFormat[]>([])
   const [columns, setColumns] = useState<any[]>([])
-  const [titles, setTitles] = useState<string[]>([])
   const [totalPage, setTotalPage] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
@@ -39,6 +38,9 @@ export default function AccountSourceForm() {
   const [initAmountInput, setInitAmountInput] = useState<number>()
   const [currencyInput, setCurrencyInput] = useState<string>('')
   const [types, setTypes] = useState<string[]>()
+
+  const { createAccountSource, isCreating, updateAccountSource, isUpdating } = useAccountSource()
+
   useEffect(() => {
     ;(async () => {
       const payload = await accountSourceRoutes.getAccountSource({
@@ -50,43 +52,48 @@ export default function AccountSourceForm() {
         includePopulate,
         select: selectFields
       })
-      const dataFormat: IAccountSourceDataFormat[] = payload?.data.map((item) => {
-        const { id, name, type, initAmount, currency, currentAmount, accountBank } = item
-        return {
-          id,
-          name,
-          type:
-            type === 'WALLET' ? (
-              <div className='Ư flex items-center'>
-                <Wallet2 className='mr-2' />
-                <span>Wallet</span>
-              </div>
-            ) : type === 'BANKING' ? (
-              <div className='flex items-center'>
-                <Landmark className='mr-2' /> <span>Banking</span>
-              </div>
-            ) : (
-              <div className='flex items-center'>
-                <HandCoins className='mr-2' /> <span>Transfer</span>
-              </div>
-            ),
-          initAmount: formatCurrency(initAmount, currency),
-          accountBank: accountBank?.type,
-          currency,
-          currentAmount: formatCurrency(currentAmount, 'VND')
-        }
-      })
+      const dataFormat: IAccountSourceDataFormat[] = formatArrayData(payload?.data)
       const titles = getConvertedKeysToTitleCase(dataFormat[0])
 
       const columns = getColumns(titles, true)
       setData(dataFormat)
-      setTitles(titles)
       setColumns(columns)
       setTypes(getTypes(dataFormat))
       setTotalPage(Number(payload?.pagination?.totalPage))
     })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, limit, condition, isExactly, sort, includePopulate, selectFields])
-
+  const formatData = (data: IAccountSource): IAccountSourceDataFormat => {
+    const { id, name, type, initAmount, currency, currentAmount, accountBank } = data
+    return {
+      id,
+      name,
+      type:
+        type === 'WALLET' ? (
+          <div className='Ư flex items-center'>
+            <Wallet2 className='mr-2' />
+            <span>Wallet</span>
+          </div>
+        ) : type === 'BANKING' ? (
+          <div className='flex items-center'>
+            <Landmark className='mr-2' /> <span>Banking</span>
+          </div>
+        ) : (
+          <div className='flex items-center'>
+            <HandCoins className='mr-2' /> <span>Transfer</span>
+          </div>
+        ),
+      initAmount: formatCurrency(initAmount, currency),
+      accountBank: accountBank?.type,
+      currency,
+      currentAmount: formatCurrency(currentAmount, 'VND')
+    }
+  }
+  const formatArrayData = (data: IAccountSource[]): IAccountSourceDataFormat[] => {
+    return data.map((item) => {
+      return formatData(item)
+    })
+  }
   const contentDialogForm = (
     <div className='grid gap-4 py-4'>
       <div className='grid grid-cols-4 items-center gap-4'>
@@ -106,7 +113,7 @@ export default function AccountSourceForm() {
         <Label htmlFor='type' className='text-right'>
           Type
         </Label>
-        <Select onValueChange={(value) => setTypeInput(value)}>
+        <Select onValueChange={(value) => setTypeInput(value)} value={typeInput}>
           <SelectTrigger className='col-span-3'>
             <SelectValue placeholder='Select a source type' />
           </SelectTrigger>
@@ -164,43 +171,48 @@ export default function AccountSourceForm() {
   )
 
   const handleCreateAccountSource = async () => {
-    const payload: IAccountSourceForm = {
+    const payload: IAccountSourceBody = {
       name: nameInput,
       type: typeInput,
       initAmount: initAmountInput,
       currency: currencyInput
     }
-    try {
-      const { data, statusCode, messages } = await accountSourceRoutes.createAccountSource(payload)
-      if (statusCode === 200 || statusCode === 201) {
-        setIsDialogCreateOpen(false)
-        toast.success('Create account source successfully!')
+    createAccountSource(payload, {
+      onSuccess: (res) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          const format = formatData(res.data)
+          setIsDialogCreateOpen(false)
+          setData([format, ...data])
+          toast.success('Create account source successfully!')
+        }
       }
-    } catch (error: Error | any) {
-      toast.error(error?.response?.data?.messages)
-    }
+    })
   }
   const handleUpdateAccountSource = async () => {
-    const payload: IAccountSourceForm = {
+    const payload: IAccountSourceBody & { id: string } = {
       name: nameInput,
       type: typeInput,
       initAmount: initAmountInput,
-      currency: currencyInput
+      currency: currencyInput,
+      id
     }
-    try {
-      const { statusCode } = await accountSourceRoutes.updateAccountSource(id, payload)
-      if (statusCode === 200 || statusCode === 201) {
-        setIsDialogUpdateOpen(false)
-        toast.success('Update account source successfully!')
+    updateAccountSource(payload, {
+      onSuccess(res) {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          const format = formatData(res.data)
+          setData((prevRows) => prevRows.map((row) => (row.id === format.id ? { ...row, ...format } : row)))
+          setIsDialogUpdateOpen(false)
+          toast.success('Update account source successfully!')
+        }
       }
-    } catch (error: Error | any) {
-      toast.error(error?.response?.data?.messages)
-    }
+    })
   }
 
   const handleOnRowClick = async (row: IAccountSourceDataFormat) => {
     const { data, statusCode } = await accountSourceRoutes.getOneAccountSourceById(row.id)
     if ((statusCode === 200 || statusCode === 201) && data !== null) {
+      console.log(data.type)
+
       setId(row.id)
       setIsDialogUpdateOpen(true)
       setNameInput(data.name as string)

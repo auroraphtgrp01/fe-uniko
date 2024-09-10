@@ -1,6 +1,6 @@
 import { getBaseUrl } from '@/libraries/helpers'
 import httpService from '@/libraries/http'
-import { IAccountSource, IAccountSourceForm } from '@/types/account-source.i'
+import { IAccountSource, IAccountSourceBody } from '@/types/account-source.i'
 import { IBaseResponseData, IRequestGetAll, ISelectFields } from '@/types/common.i'
 
 const baseUrl = getBaseUrl()
@@ -14,8 +14,8 @@ export const accountSourceRoutes = {
     return payload
   },
 
-  createAccountSource: async (data: IAccountSourceForm): Promise<IBaseResponseData<IAccountSource>> => {
-    const { payload } = await httpService.post<IAccountSourceForm, IBaseResponseData<IAccountSource>>(
+  createAccountSource: async (data: IAccountSourceBody): Promise<IBaseResponseData<IAccountSource>> => {
+    const { payload } = await httpService.post<IAccountSourceBody, IBaseResponseData<IAccountSource>>(
       `${baseUrl}/account-sources`,
       data
     )
@@ -27,9 +27,11 @@ export const accountSourceRoutes = {
     return payload
   },
 
-  updateAccountSource: async (id: string, data: IAccountSourceForm): Promise<IBaseResponseData<IAccountSource>> => {
-    const { payload } = await httpService.patch<IAccountSourceForm, IBaseResponseData<IAccountSource>>(
-      `${baseUrl}/account-sources/${id}`,
+  updateAccountSource: async (
+    data: IAccountSourceBody & { id: string }
+  ): Promise<IBaseResponseData<IAccountSource>> => {
+    const { payload } = await httpService.patch<IAccountSourceBody, IBaseResponseData<IAccountSource>>(
+      `${baseUrl}/account-sources/${data.id}`,
       data
     )
     return payload
