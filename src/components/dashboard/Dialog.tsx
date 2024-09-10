@@ -30,15 +30,16 @@ const CustomDialog: FC<TransactionDialogProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={className ?? 'sm:max-w-[425px]'}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <Card>
-          <CardContent>{content}</CardContent>
+      <DialogContent className={`rounded-none p-0 sm:max-w-[100vw] md:max-w-[80vw] lg:max-w-[70vw] ${className}`}>
+        <Card className='overflow-hidden rounded-none shadow-lg sm:rounded-lg'>
+          <DialogHeader className='mt-8 flex flex-col items-center justify-between bg-background px-6 lg:flex-row'>
+            <DialogTitle className='text-nowrap text-lg font-semibold sm:text-xl'>{title}</DialogTitle>
+            <DialogDescription className='mt-1 text-nowrap text-sm text-muted-foreground'></DialogDescription>
+            {description}
+          </DialogHeader>
+          <CardContent className='max-h-[70vh] overflow-y-auto'>{content}</CardContent>
+          {footer && <DialogFooter className='bg-muted/10'>{footer}</DialogFooter>}
         </Card>
-        <DialogFooter>{footer}</DialogFooter>
       </DialogContent>
     </Dialog>
   )

@@ -213,46 +213,56 @@ export default function TransactionForm() {
 
   return (
     <div className='space-y-4'>
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center justify-between'>
-              <span>Transaction Today</span>
-              <Button variant='outline' onClick={() => setDialogTransactionTodayOpen(true)}>
+      <div className='custom-breakpoint:grid-cols-1 grid grid-cols-1 gap-6 lg:grid-cols-2'>
+        <Card className='w-full'>
+          <CardHeader className='space-y-1 p-4'>
+            <CardTitle className='flex items-center justify-between text-base sm:text-lg md:text-xl'>
+              <span className='truncate text-nowrap'>Transaction Today</span>
+              <Button
+                variant='outline'
+                onClick={() => setDialogTransactionTodayOpen(true)}
+                className='w-full whitespace-nowrap text-xs sm:w-auto sm:text-sm'
+              >
                 View all
               </Button>
             </CardTitle>
-            <CardDescription>Overview of today`s transactions</CardDescription>
+            <CardDescription className='text-nowrap text-xs sm:text-sm'>
+              Overview of today's transactions
+            </CardDescription>
           </CardHeader>
-          <CardContent className='grid gap-4'>
+          <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
-              <div>Total Transactions</div>
-              <div className='text-xl font-bold'>5</div>
+              <div className='truncate'>Total Transactions</div>
+              <div className='text-lg font-bold sm:text-xl'>5</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Amount</div>
-              <div className='text-xl font-bold'>{formatCurrencyVND(1234567)}</div>
+              <div className='truncate'>Total Amount</div>
+              <div className='text-lg font-bold sm:text-xl'>{formatCurrencyVND(1234567)}</div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center justify-between'>
-              <span>Unclassified Transaction</span>
-              <Button variant='outline' onClick={() => setDialogUnclassifiedTransactionOpen(true)}>
+        <Card className='w-full'>
+          <CardHeader className='space-y-1 p-4'>
+            <CardTitle className='flex items-center justify-between text-base sm:text-lg md:text-xl'>
+              <span className='truncate'>Unclassified Transaction</span>
+              <Button
+                variant='outline'
+                onClick={() => setDialogUnclassifiedTransactionOpen(true)}
+                className='w-full whitespace-nowrap text-xs sm:w-auto sm:text-sm'
+              >
                 Classify
               </Button>
             </CardTitle>
-            <CardDescription>Transactions without a tracker</CardDescription>
+            <CardDescription className='text-xs sm:text-sm'>Transactions without a tracker</CardDescription>
           </CardHeader>
-          <CardContent className='grid gap-4'>
+          <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
-              <div>Total Transactions</div>
-              <div className='text-xl font-bold'>1</div>
+              <div className='truncate'>Total Transactions</div>
+              <div className='text-lg font-bold sm:text-xl'>1</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Amount</div>
-              <div className='text-xl font-bold'>{formatCurrencyVND(220000)}</div>
+              <div className='truncate'>Total Amount</div>
+              <div className='text-lg font-bold sm:text-xl'>{formatCurrencyVND(220000)}</div>
             </div>
           </CardContent>
         </Card>
