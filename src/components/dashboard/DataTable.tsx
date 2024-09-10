@@ -14,11 +14,17 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { IAccountSourceDataFormat } from '@/types/account-source.i'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -32,11 +38,19 @@ interface DataTableProps<TData, TValue> {
   setLimit: React.Dispatch<React.SetStateAction<number>>
   totalPage: number
   setTotalPage: React.Dispatch<React.SetStateAction<number>>
+  selectedTypes?: string[]
+  setSelectedTypes?: React.Dispatch<React.SetStateAction<string[]>>
   types?: string[]
   createFunction?: () => void
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
+}
+
+interface MyDataTableProps {
+  data: IAccountSourceDataFormat[]
+  columns: any[]
+  filterValues: string[]
 }
 
 export function DataTable<TData, TValue>({
@@ -50,6 +64,8 @@ export function DataTable<TData, TValue>({
   setLimit,
   totalPage,
   setTotalPage,
+  selectedTypes,
+  setSelectedTypes,
   types,
   classNameOfScroll,
   createFunction,
@@ -80,6 +96,14 @@ export function DataTable<TData, TValue>({
     }
   })
 
+  const toggleType = (type: string) => {
+    if (setSelectedTypes && selectedTypes)
+      setSelectedTypes((prev) => {
+        if (!prev.includes(type)) return [...prev, type]
+        return selectedTypes.filter((selectedType) => selectedType !== type)
+      })
+  }
+
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between space-x-2 py-4'>
@@ -95,24 +119,30 @@ export function DataTable<TData, TValue>({
         </div>
         {isVisibleSortType && (
           <div className='flex-1'>
-            <Select
-              onValueChange={(value) => {
-                table.getColumn('type')?.setFilterValue(value)
-              }}
-            >
-              <SelectTrigger className='h-[40px] w-max bg-background hover:bg-accent'>
-                <SelectValue placeholder='Type' />
-              </SelectTrigger>
-              <SelectContent>
-                {types && types.length > 0
-                  ? types.map((type, index) => (
-                      <SelectItem key={index} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))
-                  : ''}
-              </SelectContent>
-            </Select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='outline' className='whitespace-nowrap'>
+                  <span className='mr-2 hidden sm:inline-block'>Types</span>
+                  <ChevronDown className='h-4 w-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end' className='w-[200px]'>
+                {types && types.length > 0 ? (
+                  types.map((type) => (
+                    <DropdownMenuCheckboxItem
+                      key={type}
+                      className='capitalize'
+                      checked={selectedTypes ? selectedTypes.includes(type) : false}
+                      onCheckedChange={() => toggleType(type)}
+                    >
+                      {type}
+                    </DropdownMenuCheckboxItem>
+                  ))
+                ) : (
+                  <DropdownMenuCheckboxItem disabled>No Types Available</DropdownMenuCheckboxItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
         <div className='flex items-center space-x-2'>

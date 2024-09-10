@@ -38,9 +38,11 @@ export default function AccountSourceForm() {
   const [initAmountInput, setInitAmountInput] = useState<number>()
   const [currencyInput, setCurrencyInput] = useState<string>('')
   const [types, setTypes] = useState<string[]>()
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [filteredData, setFilteredData] = useState<IAccountSourceDataFormat[]>([])
 
-  const { createAccountSource, isCreating, updateAccountSource, isUpdating } = useAccountSource()
-
+  const { createAccountSource, updateAccountSource } = useAccountSource()
+  // GET DATA
   useEffect(() => {
     ;(async () => {
       const payload = await accountSourceRoutes.getAccountSource({
@@ -57,12 +59,21 @@ export default function AccountSourceForm() {
 
       const columns = getColumns(titles, true)
       setData(dataFormat)
+      setFilteredData(dataFormat)
       setColumns(columns)
-      setTypes(getTypes(dataFormat))
+      setTypes(getTypes(payload?.data))
       setTotalPage(Number(payload?.pagination?.totalPage))
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, limit, condition, isExactly, sort, includePopulate, selectFields])
+
+  // FILTER DATA
+  useEffect(() => {
+    if (selectedTypes.length === 0) setFilteredData(data as IAccountSourceDataFormat[])
+    else
+      setFilteredData(data.filter((item: IAccountSourceDataFormat) => selectedTypes.includes(item.checkType as string)))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTypes])
   const formatData = (data: IAccountSource): IAccountSourceDataFormat => {
     const { id, name, type, initAmount, currency, currentAmount, accountBank } = data
     return {
@@ -86,7 +97,8 @@ export default function AccountSourceForm() {
       initAmount: formatCurrency(initAmount, currency),
       accountBank: accountBank?.type,
       currency,
-      currentAmount: formatCurrency(currentAmount, 'VND')
+      currentAmount: formatCurrency(currentAmount, 'VND'),
+      checkType: type
     }
   }
   const formatArrayData = (data: IAccountSource[]): IAccountSourceDataFormat[] => {
@@ -237,7 +249,7 @@ export default function AccountSourceForm() {
             types={types}
             createFunction={() => setIsDialogCreateOpen(true)}
             columns={columns}
-            data={data}
+            data={filteredData}
             isPaginate={true}
             classNameOfScroll='h-[calc(100vh-30rem)]'
             onRowClick={handleOnRowClick}
@@ -247,6 +259,8 @@ export default function AccountSourceForm() {
             setLimit={setLimit}
             totalPage={totalPage}
             setTotalPage={setTotalPage}
+            selectedTypes={selectedTypes}
+            setSelectedTypes={setSelectedTypes}
           />
         </CardContent>
       </Card>
