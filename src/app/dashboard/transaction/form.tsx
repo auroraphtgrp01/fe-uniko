@@ -227,7 +227,7 @@ export default function TransactionForm() {
               </Button>
             </CardTitle>
             <CardDescription className='text-nowrap text-xs sm:text-sm'>
-              Overview of today's transactions
+              Overview of today`s transactions
             </CardDescription>
           </CardHeader>
           <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
