@@ -1,6 +1,6 @@
 import { apiService } from '@/libraries/api'
-import { IUseQueryHookOptions } from './query-hook.i'
-import { useMutation } from '@tanstack/react-query'
+import { IUseGetAdvancedProps, IUseQueryHookOptions } from './query-hook.i'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { IAccountSource, IAccountSourceBody } from '@/types/account-source.i'
 import { AxiosError } from 'axios'
@@ -26,7 +26,7 @@ export const useAccountSource = (opts?: IUseQueryHookOptions) => {
   const { mutate: updateAccountSource, isPending: isUpdating } = useMutation<
     IBaseResponseData<IAccountSource>,
     AxiosError,
-    IAccountSourceBody & { id: string }
+    IAccountSourceBody
   >({
     mutationFn: accountSourceServices.updateAccountSource,
     onError: (error: Error | any) => {
@@ -43,5 +43,20 @@ export const useAccountSource = (opts?: IUseQueryHookOptions) => {
     isCreating,
     updateAccountSource,
     isUpdating
+  }
+}
+
+export const useGetAdvancedAccountSource = (props: IUseGetAdvancedProps) => {
+  const { isPending: isGetAdvancedPending, data: getAdvancedData } = useQuery({
+    queryKey: ['account-source', 'advanced', props.params, props.queryCondition],
+    queryFn: () => accountSourceServices.getAdvanced(props.params, props.queryCondition),
+    enabled: !!props,
+    retry: 2,
+    retryDelay: 1000
+  })
+
+  return {
+    isGetAdvancedPending,
+    getAdvancedData
   }
 }

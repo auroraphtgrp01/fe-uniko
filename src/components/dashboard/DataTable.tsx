@@ -16,63 +16,33 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '../ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
-import { IAccountSourceDataFormat } from '@/types/account-source.i'
+import { IDataTableConfig } from '@/types/common.i'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  isPaginate: boolean
-  isVisibleSortType: boolean
-  classNameOfScroll?: string
-  currentPage: number
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
-  limit: number
-  setLimit: React.Dispatch<React.SetStateAction<number>>
-  totalPage: number
-  setTotalPage: React.Dispatch<React.SetStateAction<number>>
-  selectedTypes?: string[]
-  setSelectedTypes?: React.Dispatch<React.SetStateAction<string[]>>
-  types?: string[]
-  createFunction?: () => void
+  config: IDataTableConfig
+  setConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  onCreateButtonClick?: () => void
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
 }
 
-interface MyDataTableProps {
-  data: IAccountSourceDataFormat[]
-  columns: any[]
-  filterValues: string[]
-}
-
 export function DataTable<TData, TValue>({
   columns,
   data,
-  isPaginate,
-  isVisibleSortType,
-  currentPage,
-  setCurrentPage,
-  limit,
-  setLimit,
-  totalPage,
-  setTotalPage,
-  selectedTypes,
-  setSelectedTypes,
-  types,
-  classNameOfScroll,
-  createFunction,
+  config,
+  setConfig,
+  onCreateButtonClick,
   getRowClassName,
   onRowClick,
   onRowDoubleClick
 }: DataTableProps<TData, TValue>) {
+  const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
+    config
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -97,11 +67,13 @@ export function DataTable<TData, TValue>({
   })
 
   const toggleType = (type: string) => {
-    if (setSelectedTypes && selectedTypes)
-      setSelectedTypes((prev) => {
-        if (!prev.includes(type)) return [...prev, type]
-        return selectedTypes.filter((selectedType) => selectedType !== type)
-      })
+    if (selectedTypes)
+      setConfig((prev) => ({
+        ...prev,
+        selectedTypes: selectedTypes.includes(type)
+          ? selectedTypes.filter((selectedType) => selectedType !== type)
+          : [...selectedTypes, type]
+      }))
   }
 
   return (
@@ -146,8 +118,8 @@ export function DataTable<TData, TValue>({
           </div>
         )}
         <div className='flex items-center space-x-2'>
-          {createFunction && (
-            <Button variant='outline' className='whitespace-nowrap' onClick={createFunction}>
+          {onCreateButtonClick && (
+            <Button variant='outline' className='whitespace-nowrap' onClick={onCreateButtonClick}>
               <span className='mr-2 hidden sm:inline-block'>Create</span>
               <PlusIcon className='h-4 w-4' />
             </Button>
@@ -246,7 +218,12 @@ export function DataTable<TData, TValue>({
                   <p className='whitespace-nowrap text-sm'>Rows per page</p>
                   <Input
                     defaultValue={limit}
-                    onChange={(event) => setLimit(Number(event.target.value))}
+                    onChange={(event) =>
+                      setConfig((prev) => ({
+                        ...prev,
+                        limit: Number(event.target.value)
+                      }))
+                    }
                     className='w-12 px-1 pl-3 text-center'
                     type='number'
                     min={1}
@@ -266,7 +243,10 @@ export function DataTable<TData, TValue>({
                       size='sm'
                       onClick={() => {
                         table.previousPage()
-                        setCurrentPage((prev) => prev - 1)
+                        setConfig((prev) => ({
+                          ...prev,
+                          currentPage: currentPage - 1
+                        }))
                       }}
                       disabled={currentPage === 1}
                     >
@@ -278,7 +258,10 @@ export function DataTable<TData, TValue>({
                       size='sm'
                       onClick={() => {
                         table.nextPage()
-                        setCurrentPage((prev) => prev + 1)
+                        setConfig((prev) => ({
+                          ...prev,
+                          currentPage: currentPage + 1
+                        }))
                       }}
                       disabled={currentPage === totalPage}
                     >

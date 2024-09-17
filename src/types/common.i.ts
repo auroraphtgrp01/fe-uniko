@@ -1,3 +1,5 @@
+import { IAccountSourceDataFormat } from './account-source.i'
+
 export interface IBaseResponseData<T> {
   data: T
   statusCode: number
@@ -20,18 +22,23 @@ export interface IResponseError {
   details: string[]
 }
 
-export interface IRequestGetAll {
-  page: number
+export interface IDataTableConfig {
+  totalPage: number
+  currentPage: number
   limit: number
-  condition?: string
-  isExactly?: boolean
-  sort?: string
-  includePopulate?: boolean
-  select?: ISelectFields[]
+  types?: string[]
+  selectedTypes?: string[]
+  isPaginate: boolean
+  isVisibleSortType: boolean
+  classNameOfScroll?: string
 }
 
-// Interface định dạng các field mà user muốn lấy (select) từ database
-export interface ISelectFields {
-  key: string
-  value: string
+export interface IDialogConfig {
+  isOpen: boolean
+  onClose: () => void
+  title: any
+  content: any
+  className?: string
+  description?: any
+  footer?: any
 }

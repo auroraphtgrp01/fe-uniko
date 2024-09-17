@@ -7,27 +7,14 @@ import {
   DialogDescription,
   DialogFooter
 } from '@/components/ui/dialog'
-import { Card, CardContent } from '@/components/ui/card'
-
-interface TransactionDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  title: any
-  content: any
-  className?: string
-  description?: any
-  footer?: any
+import { IDialogConfig } from '@/types/common.i'
+interface CustomDialogProps {
+  config: IDialogConfig
 }
 
-const CustomDialog: FC<TransactionDialogProps> = ({
-  isOpen,
-  onClose,
-  title,
-  description,
-  content,
-  className,
-  footer
-}) => {
+const CustomDialog: FC<CustomDialogProps> = ({ config }) => {
+  let { isOpen } = config
+  const { title, description, content, className, footer, onClose } = config
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={className ?? 'sm:max-w-[425px]'}>
@@ -36,9 +23,6 @@ const CustomDialog: FC<TransactionDialogProps> = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         {content}
-        {/* <Card>
-          <CardContent></CardContent>
-        </Card> */}
         <DialogFooter>{footer}</DialogFooter>
       </DialogContent>
     </Dialog>
