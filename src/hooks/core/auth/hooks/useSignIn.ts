@@ -1,7 +1,6 @@
 'use client'
 
 import { ISignInBody, ISignInResponse } from '@/app/sign-in/sign-in.i'
-import { IUseQueryHookOptions } from '@/hooks/query-hooks/query-hook.i'
 import { setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/libraries/helpers'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
@@ -9,6 +8,7 @@ import toast from 'react-hot-toast'
 import { authServices } from '../configs'
 import { useMutation } from '@tanstack/react-query'
 import { AUTH_RETRY } from '@/hooks/core/auth/constants'
+import { IUseQueryHookOptions } from '@/types/query.interface'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {
   const router = useRouter()

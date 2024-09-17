@@ -11,8 +11,8 @@ import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutCha
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
 import { getTypes } from '@/libraries/utils'
-import { IDynamicType, IQueryOptions } from '@/hooks/query-hooks/query-hook.i'
 import { IDataTableConfig } from '@/types/common.i'
+import { IQueryOptions } from '@/types/query.interface'
 
 export default function TrackerTransactionForm() {
   const [totalPage, setTotalPage] = useState<number>(0)

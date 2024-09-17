@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiService } from '@/libraries/api'
-import { IUseQueryHookOptions } from '@/hooks/query-hooks/query-hook.i'
+import { IUseQueryHookOptions } from '@/types/query.interface'
 
 const userServices = apiService.user
 

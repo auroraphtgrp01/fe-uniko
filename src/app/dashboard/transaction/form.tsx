@@ -10,8 +10,8 @@ import CustomDialog from '@/components/dashboard/Dialog'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { Separator } from '@/components/ui/separator'
-import { IDynamicType, IQueryOptions } from '@/hooks/query-hooks/query-hook.i'
 import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
+import { IQueryOptions } from '@/types/query.interface'
 
 export default function TransactionForm() {
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({

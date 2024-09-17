@@ -1,8 +1,8 @@
-import { IDynamicType, IQueryOptions } from '@/hooks/query-hooks/query-hook.i'
 import { getBaseUrl } from '@/libraries/helpers'
 import httpService from '@/libraries/http'
 import { IAccountSource, IAccountSourceBody } from '@/types/account-source.i'
 import { IBaseResponseData } from '@/types/common.i'
+import { IDynamicType, IQueryOptions } from '@/types/query.interface'
 
 const baseUrl = getBaseUrl()
 
