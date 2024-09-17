@@ -11,17 +11,31 @@ import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutCha
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
 import { getTypes } from '@/libraries/utils'
-import { ISelectFields } from '@/types/common.i'
+import { IDynamicType, IQueryOptions } from '@/hooks/query-hooks/query-hook.i'
+import { IDataTableConfig } from '@/types/common.i'
 
 export default function TrackerTransactionForm() {
   const [totalPage, setTotalPage] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
-  const [condition, setCondition] = useState<string>()
-  const [isExactly, setIsExactly] = useState<boolean>()
-  const [sort, setSort] = useState<string>()
-  const [includePopulate, setIncludePopulate] = useState<boolean>(true)
-  const [selectFields, setSelectFields] = useState<ISelectFields[]>([])
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    totalPage: 0,
+    currentPage: 1,
+    limit: 10,
+    types: [],
+    selectedTypes: [],
+    isPaginate: true,
+    isVisibleSortType: true,
+    classNameOfScroll: 'h-[calc(100vh-30rem)]'
+  })
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
+    page: dataTableConfig.currentPage,
+    limit: dataTableConfig.limit,
+    condition: '',
+    isExactly: false,
+    sort: '',
+    includePopulate: true
+  })
   const titles: string[] = ['Transaction Name', 'Type', 'Amount', 'Date', 'From Account', 'Description']
   const columns = getColumns(titles, true)
   const data = [
@@ -236,20 +250,7 @@ export default function TrackerTransactionForm() {
         <div className='mt-4 flex-1'>
           <Card className='h-full w-full'>
             <CardContent>
-              <DataTable
-                isVisibleSortType={true}
-                types={types}
-                classNameOfScroll='h-[calc(100vh-30rem)]'
-                columns={columns}
-                data={data}
-                isPaginate={true}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                limit={limit}
-                setLimit={setLimit}
-                totalPage={totalPage}
-                setTotalPage={setTotalPage}
-              />
+              <DataTable columns={columns} data={data} config={dataTableConfig} setConfig={setDataTableConfig} />
             </CardContent>
           </Card>
         </div>

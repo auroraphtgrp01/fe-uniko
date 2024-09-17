@@ -10,20 +10,33 @@ import CustomDialog from '@/components/dashboard/Dialog'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { Separator } from '@/components/ui/separator'
-import { ISelectFields } from '@/types/common.i'
+import { IDynamicType, IQueryOptions } from '@/hooks/query-hooks/query-hook.i'
+import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 
 export default function TransactionForm() {
-  const [isDialogDetailOpen, setDialogDetailOpen] = useState(false)
-  const [isDialogTransactionTodayOpen, setDialogTransactionTodayOpen] = useState(false)
-  const [isDialogUnclassifiedTransactionOpen, setDialogUnclassifiedTransactionOpen] = useState(false)
-  const [totalPage, setTotalPage] = useState<number>(0)
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [limit, setLimit] = useState<number>(10)
-  const [condition, setCondition] = useState<string>()
-  const [isExactly, setIsExactly] = useState<boolean>()
-  const [sort, setSort] = useState<string>()
-  const [includePopulate, setIncludePopulate] = useState<boolean>(true)
-  const [selectFields, setSelectFields] = useState<ISelectFields[]>([])
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    totalPage: 0,
+    currentPage: 1,
+    limit: 10,
+    types: [],
+    selectedTypes: [],
+    isPaginate: true,
+    isVisibleSortType: true,
+    classNameOfScroll: 'h-[calc(100vh-30rem)]'
+  })
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
+    page: dataTableConfig.currentPage,
+    limit: dataTableConfig.limit,
+    condition: '',
+    isExactly: false,
+    sort: '',
+    includePopulate: true
+  })
+  const [isDialogOpen, setIsDialogOpen] = useState({
+    isDialogDetailOpen: false,
+    isDialogTransactionTodayOpen: false,
+    isDialogUnclassifiedTransactionOpen: false
+  })
   const headers = [
     'Transaction Id',
     'Amount',
@@ -121,68 +134,6 @@ export default function TransactionForm() {
       createdAt: formatDateTimeVN('2024-09-08T14:50:00.000Z')
     }
   ]
-  const titleDialogDetail = 'Transaction detail'
-  const descriptionDialogDetail = 'Detail information of the transaction'
-  const contentDialogDetail = (
-    <div className='py-4'>
-      <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
-        <div className='mb-2 sm:mb-0'>
-          <p className='text-sm text-muted-foreground'>Amount</p>
-          <p className='text-xl font-bold'>${1200000}</p>
-        </div>
-      </div>
-      <Separator className='my-4' />
-      <div className='overflow-x-auto'>
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableCell>Transaction ID</TableCell>
-              <TableCell>id</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>{new Date().toLocaleString()}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Status</TableCell>
-              <TableCell>
-                <Badge variant={'default'}>status</Badge>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Sender</TableCell>
-              <TableCell>sender</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Recipient</TableCell>
-              <TableCell>recipient</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Description</TableCell>
-              <TableCell>description</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Fee</TableCell>
-              <TableCell>fee</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  )
-
-  const closeDialogDetail = () => {
-    setDialogDetailOpen(false)
-  }
-
-  const closeDialogTransactionToday = () => {
-    setDialogTransactionTodayOpen(false)
-  }
-
-  const closeDialogUnclassifiedTransaction = () => {
-    setDialogUnclassifiedTransactionOpen(false)
-  }
-
   const getRowClassName = (rowData: any): string => {
     return !rowData.trackerTransaction || rowData.trackerTransaction === ''
       ? 'bg-[#75A47F] text-white hover:bg-[#75A47F]/90'
@@ -191,46 +142,106 @@ export default function TransactionForm() {
 
   const onRowClick = (rowData: any) => {
     console.log('Clicked row:', rowData)
-    setDialogDetailOpen(true)
+    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
   }
-  const contentDialogTransactionToday = (
-    <div className='overflow-x-auto'>
-      <DataTable
-        isVisibleSortType={false}
-        columns={columns}
-        data={transactionTodayData}
-        isPaginate={true}
-        onRowClick={onRowClick}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        limit={limit}
-        setLimit={setLimit}
-        totalPage={totalPage}
-        setTotalPage={setTotalPage}
-      />
-    </div>
-  )
-  const titleDialogTransactionToday = 'Transaction Today'
-  const descriptionDialogTransactionToday = 'Overview of today`s transactions'
-  const contentDialogUnclassifiedTransaction = (
-    <div className='overflow-x-auto'>
-      <DataTable
-        isVisibleSortType={false}
-        columns={columns}
-        data={unclassifiedTransactionData}
-        isPaginate={true}
-        onRowClick={onRowClick}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        limit={limit}
-        setLimit={setLimit}
-        totalPage={totalPage}
-        setTotalPage={setTotalPage}
-      />
-    </div>
-  )
-  const titleDialogUnclassifiedTransaction = 'Unclassified Transaction'
-  const descriptionDialogUnclassifiedTransaction = 'Overview of today`s transactions'
+  const detailsConfigDialog: IDialogConfig = {
+    content: (
+      <div className='py-4'>
+        <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
+          <div className='mb-2 sm:mb-0'>
+            <p className='text-sm text-muted-foreground'>Amount</p>
+            <p className='text-xl font-bold'>${1200000}</p>
+          </div>
+        </div>
+        <Separator className='my-4' />
+        <div className='overflow-x-auto'>
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell>Transaction ID</TableCell>
+                <TableCell>id</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>{new Date().toLocaleString()}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Status</TableCell>
+                <TableCell>
+                  <Badge variant={'default'}>status</Badge>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Sender</TableCell>
+                <TableCell>sender</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Recipient</TableCell>
+                <TableCell>recipient</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Description</TableCell>
+                <TableCell>description</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Fee</TableCell>
+                <TableCell>fee</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    ),
+
+    description: 'Detail information of the transaction',
+    title: 'Transaction detail',
+    isOpen: isDialogOpen.isDialogDetailOpen,
+    onClose: () => {
+      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
+    }
+  }
+  const transactionsTodayConfigDialog: IDialogConfig = {
+    content: (
+      <div className='overflow-x-auto'>
+        <DataTable
+          columns={columns}
+          data={transactionTodayData}
+          config={dataTableConfig}
+          setConfig={setDataTableConfig}
+          getRowClassName={getRowClassName}
+          onRowClick={onRowClick}
+        />
+      </div>
+    ),
+    className: 'sm:max-w-[425px] md:max-w-[1080px]',
+    description: 'Overview of today`s transactions',
+    title: 'Transaction Today',
+    isOpen: isDialogOpen.isDialogTransactionTodayOpen,
+    onClose: () => {
+      setIsDialogOpen((prev) => ({ ...prev, isDialogTransactionTodayOpen: false }))
+    }
+  }
+  const unclassifiedTransactionsConfigDialog: IDialogConfig = {
+    content: (
+      <div className='overflow-x-auto'>
+        <DataTable
+          columns={columns}
+          data={unclassifiedTransactionData}
+          onRowClick={onRowClick}
+          setConfig={setDataTableConfig}
+          config={dataTableConfig}
+          getRowClassName={getRowClassName}
+        />
+      </div>
+    ),
+    className: 'sm:max-w-[425px] md:max-w-[1080px]',
+    description: 'Overview of today`s transactions',
+    title: 'Unclassified Transaction',
+    isOpen: isDialogOpen.isDialogUnclassifiedTransactionOpen,
+    onClose: () => {
+      setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedTransactionOpen: false }))
+    }
+  }
 
   return (
     <div className='space-y-4'>
@@ -239,7 +250,10 @@ export default function TransactionForm() {
           <CardHeader>
             <CardTitle className='flex items-center justify-between'>
               <span>Transaction Today</span>
-              <Button variant='outline' onClick={() => setDialogTransactionTodayOpen(true)}>
+              <Button
+                variant='outline'
+                onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogTransactionTodayOpen: true }))}
+              >
                 View all
               </Button>
             </CardTitle>
@@ -260,7 +274,10 @@ export default function TransactionForm() {
           <CardHeader>
             <CardTitle className='flex items-center justify-between'>
               <span>Unclassified Transaction</span>
-              <Button variant='outline' onClick={() => setDialogUnclassifiedTransactionOpen(true)}>
+              <Button
+                variant='outline'
+                onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedTransactionOpen: true }))}
+              >
                 Classify
               </Button>
             </CardTitle>
@@ -286,43 +303,17 @@ export default function TransactionForm() {
         <CardContent>
           <div className='overflow-x-auto'>
             <DataTable
-              isVisibleSortType={false}
               columns={columns}
               data={data}
-              isPaginate={true}
+              config={dataTableConfig}
+              setConfig={setDataTableConfig}
               getRowClassName={getRowClassName}
               onRowClick={onRowClick}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              limit={limit}
-              setLimit={setLimit}
-              totalPage={totalPage}
-              setTotalPage={setTotalPage}
             />
           </div>
-          <CustomDialog
-            content={contentDialogDetail}
-            title={titleDialogDetail}
-            description={descriptionDialogDetail}
-            isOpen={isDialogDetailOpen}
-            onClose={closeDialogDetail}
-          />
-          <CustomDialog
-            className='sm:max-w-[425px] md:max-w-[1080px]'
-            content={contentDialogTransactionToday}
-            title={titleDialogTransactionToday}
-            description={descriptionDialogTransactionToday}
-            isOpen={isDialogTransactionTodayOpen}
-            onClose={closeDialogTransactionToday}
-          />
-          <CustomDialog
-            className='sm:max-w-[425px] md:max-w-[1080px]'
-            content={contentDialogUnclassifiedTransaction}
-            title={titleDialogUnclassifiedTransaction}
-            description={descriptionDialogUnclassifiedTransaction}
-            isOpen={isDialogUnclassifiedTransactionOpen}
-            onClose={closeDialogUnclassifiedTransaction}
-          />
+          <CustomDialog config={detailsConfigDialog} />
+          <CustomDialog config={transactionsTodayConfigDialog} />
+          <CustomDialog config={unclassifiedTransactionsConfigDialog} />
         </CardContent>
       </Card>
     </div>

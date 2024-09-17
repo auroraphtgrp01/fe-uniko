@@ -13,11 +13,10 @@ import { IAccountSourceDataFormat, IAccountSource, IAccountSourceBody } from '@/
 import { apiService } from '@/libraries/api'
 import { formatCurrency, getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
 import { HandCoins, Landmark, Wallet2 } from 'lucide-react'
-import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
+import { IBaseResponseData, IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/hooks/query-hooks/query-hook.i'
 import toast from 'react-hot-toast'
 import { useAccountSource, useGetAdvancedAccountSource } from '@/hooks/query-hooks/use-account-source'
-import { unknown } from 'zod'
 
 const accountSourceRoutes = apiService.accountSource
 
@@ -36,11 +35,7 @@ export default function AccountSourceForm() {
   })
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
     page: dataTableConfig.currentPage,
-    limit: dataTableConfig.limit,
-    condition: '',
-    isExactly: false,
-    sort: '',
-    includePopulate: true
+    limit: dataTableConfig.limit
   })
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>(
     dataTableConfig?.selectedTypes?.length === 0
@@ -96,23 +91,26 @@ export default function AccountSourceForm() {
       return formatData(item)
     })
   }
-  ;(() => {
-    console.log('data', getAdvancedData)
-    if (isGetAdvancedPending) return
+  useEffect(() => {
+    ;(async () => {
+      const res: IBaseResponseData<IAccountSource[]> = await accountSourceRoutes.getAdvanced(queryOptions)
+      console.log('res', res)
 
-    const dataFormat: IAccountSourceDataFormat[] = formatArrayData(getAdvancedData as unknown as IAccountSource[])
-    const titles = getConvertedKeysToTitleCase(dataFormat[0])
+      const dataFormat: IAccountSourceDataFormat[] = formatArrayData(res?.data)
+      const titles = getConvertedKeysToTitleCase(dataFormat[0])
 
-    const columns = getColumns(titles, true)
-    setDataTableConfig((prev) => ({
-      ...prev,
-      types: getTypes(getAdvancedData),
-      totalPage: Number(getAdvancedData?.pagination?.totalPage)
-    }))
-    setData(dataFormat)
-    setTableData(dataFormat)
-    setColumns(columns)
-  })()
+      const columns = getColumns(titles, true)
+      setDataTableConfig((prev) => ({
+        ...prev,
+        types: getTypes(res),
+        totalPage: Number(res?.pagination?.totalPage)
+      }))
+      setData(dataFormat)
+      setTableData(dataFormat)
+      setColumns(columns)
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryOptions])
   const contentDialogForm = (
     <div className='grid gap-4 py-4'>
       <div className='grid grid-cols-4 items-center gap-4'>
