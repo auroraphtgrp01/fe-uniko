@@ -7,14 +7,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Cake, BriefcaseBusiness, Phone, MapPin, User } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useGetMeUser } from '@/hooks/core/users/hooks/useQueryUser'
+import { useState } from 'react'
 
 export default function ProfileForm() {
+  const [isCall, setIsCall] = useState(false)
   return (
     <div className='relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
       <div className='flex flex-1 flex-col gap-8 min-[1350px]:flex-row'>
         <Card className='h-full flex-1'>
           <CardHeader>
             <CardTitle>Profile</CardTitle>
+            <Button
+              onClick={() => {
+                setIsCall(true)
+              }}
+            >
+              Call
+            </Button>
           </CardHeader>
           <CardContent>
             <form>

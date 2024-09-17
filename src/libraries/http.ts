@@ -77,13 +77,15 @@ axiosInstance.interceptors.request.use((config) => {
 const request = async <TResponse>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
   url: string,
-  options?: AxiosRequestConfig
+  options?: AxiosRequestConfig,
+  headers?: Record<string, string>
 ): Promise<{ status: number; payload: TResponse }> => {
   const fullUrl = normalizePath(url)
   const response = await axiosInstance.request<TResponse>({
     url: fullUrl,
     method,
-    ...options
+    ...options,
+    headers
   })
 
   const { data, status } = response
@@ -111,21 +113,30 @@ const handleClientSideActions = (url: string, data: any) => {
 }
 
 const httpService = {
-  get<TRes>(url: string, options?: AxiosRequestConfig) {
-    return request<TRes>('GET', url, options)
+  get<TRes>(url: string, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TRes>('GET', url, options, headers)
   },
-  post<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig) {
-    return request<TRes>('POST', url, { ...options, data: body })
+  post<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TRes>('POST', url, { ...options, data: body }, headers)
   },
-  put<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig) {
-    return request<TRes>('PUT', url, { ...options, data: body })
+  put<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TRes>('PUT', url, { ...options, data: body }, headers)
   },
-  delete<TRes>(url: string, options?: AxiosRequestConfig) {
-    return request<TRes>('DELETE', url, options)
+  delete<TRes>(url: string, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TRes>('DELETE', url, options, headers)
   },
-  patch<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig) {
-    return request<TRes>('PATCH', url, { ...options, data: body })
+  patch<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TRes>('PATCH', url, { ...options, data: body }, headers)
   }
+}
+
+export const fetchData = async <TRes>(
+  url: string,
+  params: Record<string, any> = {},
+  headers?: Record<string, string>
+): Promise<TRes> => {
+  const { payload } = await httpService.get<TRes>(url, { params }, headers)
+  return payload
 }
 
 export default httpService

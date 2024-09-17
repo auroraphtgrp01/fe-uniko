@@ -1,246 +1,47 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import { useState } from 'react'
-import CustomDialog from '@/components/dashboard/Dialog'
-import { Badge } from '@/components/ui/badge'
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { Separator } from '@/components/ui/separator'
 import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
-import { IQueryOptions } from '@/types/query.interface'
+import { initTableConfig } from '@/constants/data-table'
+import TransactionDialog from '@/app/dashboard/transaction/dialog'
+import { transactionHeaders } from '@/app/dashboard/transaction/constants'
+import { useQueryTransaction } from '@/hooks/core/transaction/hooks/useQueryTransaction'
+import { IDataTransactionTable, modifyTransactionHandler } from '@/app/dashboard/transaction/handler'
 
 export default function TransactionForm() {
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
-    totalPage: 0,
-    currentPage: 1,
-    limit: 10,
-    types: [],
-    selectedTypes: [],
-    isPaginate: true,
-    isVisibleSortType: true,
-    classNameOfScroll: 'h-[calc(100vh-30rem)]'
+    ...initTableConfig,
+    classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
-  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
-    page: dataTableConfig.currentPage,
-    limit: dataTableConfig.limit,
-    condition: '',
-    isExactly: false,
-    sort: '',
-    includePopulate: true
-  })
+
+  const { dataTransaction, isGetTransaction } = useQueryTransaction()
+
+  const [dataDetail, setDataDetail] = useState<IDataTransactionTable>()
+
+  const [dataTable, setDataTable] = useState<IDataTransactionTable[]>()
+
+  useEffect(() => {
+    if (dataTransaction) {
+      setDataTable(modifyTransactionHandler(dataTransaction))
+    }
+  }, [dataTransaction])
+
   const [isDialogOpen, setIsDialogOpen] = useState({
     isDialogDetailOpen: false,
     isDialogTransactionTodayOpen: false,
     isDialogUnclassifiedTransactionOpen: false
   })
-  const headers = [
-    'Transaction Id',
-    'Amount',
-    'Direction',
-    'Currency',
-    'Account Bank',
-    'Tracker Transaction',
-    'Created At'
-  ]
-  const columns = getColumns(headers, true)
-  const data = [
-    {
-      transactionId: 'TXN123456',
-      amount: formatCurrency(1000000, 'VND', 'vi-VN'),
-      direction: 'inflow',
-      currency: 'VND',
-      accountBank: 'Vietcombank',
-      trackerTransaction: 'Tracker001',
-      createdAt: formatDateTimeVN('2024-09-04T10:10:00.000Z')
-    },
-    {
-      transactionId: 'TXN123457',
-      amount: formatCurrency(2000000, 'VND', 'vi-VN'),
-      direction: 'outflow',
-      currency: 'USD',
-      accountBank: 'Techcombank',
-      trackerTransaction: undefined,
-      createdAt: formatDateTimeVN('2024-09-05T11:20:00.000Z')
-    },
-    {
-      transactionId: 'TXN123458',
-      amount: formatCurrency(1500000, 'VND', 'vi-VN'),
-      direction: 'inflow',
-      currency: 'EUR',
-      accountBank: 'BIDV',
-      trackerTransaction: null,
-      createdAt: formatDateTimeVN('2024-09-06T12:30:00.000Z')
-    },
-    {
-      transactionId: 'TXN123459',
-      amount: formatCurrency(2500000, 'VND', 'vi-VN'),
-      direction: 'outflow',
-      currency: 'JPY',
-      accountBank: 'Agribank',
-      trackerTransaction: '',
-      createdAt: formatDateTimeVN('2024-09-07T13:40:00.000Z')
-    },
-    {
-      transactionId: 'TXN123460',
-      amount: formatCurrency(3000000, 'VND', 'vi-VN'),
-      direction: 'inflow',
-      currency: 'GBP',
-      accountBank: 'ACB',
-      trackerTransaction: 'Tracker005',
-      createdAt: formatDateTimeVN('2024-09-08T14:50:00.000Z')
-    }
-  ]
-  const transactionTodayData = [
-    {
-      transactionId: 'TXN123456',
-      amount: formatCurrency(1000000, 'VND', 'vi-VN'),
-      direction: 'inflow',
-      currency: 'VND',
-      accountBank: 'Vietcombank',
-      trackerTransaction: 'Tracker001',
-      createdAt: formatDateTimeVN('2024-09-04T10:10:00.000Z')
-    },
-    {
-      transactionId: 'TXN123457',
-      amount: formatCurrency(2000000, 'VND', 'vi-VN'),
-      direction: 'outflow',
-      currency: 'USD',
-      accountBank: 'Techcombank',
-      trackerTransaction: 'Tracker002',
-      createdAt: formatDateTimeVN('2024-09-05T11:20:00.000Z')
-    },
-    {
-      transactionId: 'TXN123458',
-      amount: formatCurrency(1500000, 'VND', 'vi-VN'),
-      direction: 'inflow',
-      currency: 'EUR',
-      accountBank: 'BIDV',
-      trackerTransaction: 'Tracker003',
-      createdAt: formatDateTimeVN('2024-09-06T12:30:00.000Z')
-    }
-  ]
-  const unclassifiedTransactionData = [
-    {
-      transactionId: 'TXN123460',
-      amount: formatCurrency(3000000),
-      direction: 'inflow',
-      currency: 'GBP',
-      accountBank: 'ACB',
-      trackerTransaction: 'Tracker005',
-      createdAt: formatDateTimeVN('2024-09-08T14:50:00.000Z')
-    }
-  ]
-  const getRowClassName = (rowData: any): string => {
-    return !rowData.trackerTransaction || rowData.trackerTransaction === ''
-      ? 'bg-[#75A47F] text-white hover:bg-[#75A47F]/90'
-      : ''
-  }
+
+  const columns = getColumns(transactionHeaders, true)
 
   const onRowClick = (rowData: any) => {
-    console.log('Clicked row:', rowData)
+    setDataDetail(rowData)
     setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-  }
-  const detailsConfigDialog: IDialogConfig = {
-    content: (
-      <div className='py-4'>
-        <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
-          <div className='mb-2 sm:mb-0'>
-            <p className='text-sm text-muted-foreground'>Amount</p>
-            <p className='text-xl font-bold'>${1200000}</p>
-          </div>
-        </div>
-        <Separator className='my-4' />
-        <div className='overflow-x-auto'>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell>Transaction ID</TableCell>
-                <TableCell>id</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>{new Date().toLocaleString()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Status</TableCell>
-                <TableCell>
-                  <Badge variant={'default'}>status</Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Sender</TableCell>
-                <TableCell>sender</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Recipient</TableCell>
-                <TableCell>recipient</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Description</TableCell>
-                <TableCell>description</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Fee</TableCell>
-                <TableCell>fee</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-    ),
-
-    description: 'Detail information of the transaction',
-    title: 'Transaction detail',
-    isOpen: isDialogOpen.isDialogDetailOpen,
-    onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
-    }
-  }
-  const transactionsTodayConfigDialog: IDialogConfig = {
-    content: (
-      <div className='overflow-x-auto'>
-        <DataTable
-          columns={columns}
-          data={transactionTodayData}
-          config={dataTableConfig}
-          setConfig={setDataTableConfig}
-          getRowClassName={getRowClassName}
-          onRowClick={onRowClick}
-        />
-      </div>
-    ),
-    className: 'sm:max-w-[425px] md:max-w-[1080px]',
-    description: 'Overview of today`s transactions',
-    title: 'Transaction Today',
-    isOpen: isDialogOpen.isDialogTransactionTodayOpen,
-    onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogTransactionTodayOpen: false }))
-    }
-  }
-  const unclassifiedTransactionsConfigDialog: IDialogConfig = {
-    content: (
-      <div className='overflow-x-auto'>
-        <DataTable
-          columns={columns}
-          data={unclassifiedTransactionData}
-          onRowClick={onRowClick}
-          setConfig={setDataTableConfig}
-          config={dataTableConfig}
-          getRowClassName={getRowClassName}
-        />
-      </div>
-    ),
-    className: 'sm:max-w-[425px] md:max-w-[1080px]',
-    description: 'Overview of today`s transactions',
-    title: 'Unclassified Transaction',
-    isOpen: isDialogOpen.isDialogUnclassifiedTransactionOpen,
-    onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedTransactionOpen: false }))
-    }
   }
 
   return (
@@ -296,25 +97,40 @@ export default function TransactionForm() {
         </Card>
       </div>
       <Card>
-        <CardHeader>
-          <CardTitle>Transactions</CardTitle>
-          <CardDescription>All financial transactions</CardDescription>
-        </CardHeader>
         <CardContent>
-          <div className='overflow-x-auto'>
+          <div>
             <DataTable
               columns={columns}
-              data={data}
+              data={dataTable || []}
               config={dataTableConfig}
               setConfig={setDataTableConfig}
-              getRowClassName={getRowClassName}
               onRowClick={onRowClick}
+              isLoading={isGetTransaction}
             />
           </div>
-          <CustomDialog config={detailsConfigDialog} />
-          <CustomDialog config={transactionsTodayConfigDialog} />
-          <CustomDialog config={unclassifiedTransactionsConfigDialog} />
         </CardContent>
+        <TransactionDialog
+          dataTable={{
+            columns: columns,
+            data: dataTable || [],
+            onRowClick: onRowClick,
+            setConfig: setDataTableConfig,
+            config: dataTableConfig,
+            dataDetail: dataDetail || {
+              transactionId: '',
+              amount: '',
+              direction: '',
+              accountBank: '',
+              currency: '',
+              accountNo: '',
+              description: ''
+            }
+          }}
+          dialogState={{
+            isDialogOpen: isDialogOpen,
+            setIsDialogOpen: setIsDialogOpen
+          }}
+        />
       </Card>
     </div>
   )

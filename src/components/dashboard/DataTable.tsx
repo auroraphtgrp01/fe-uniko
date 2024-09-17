@@ -29,6 +29,7 @@ interface DataTableProps<TData, TValue> {
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
+  isLoading?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -39,7 +40,8 @@ export function DataTable<TData, TValue>({
   onCreateButtonClick,
   getRowClassName,
   onRowClick,
-  onRowDoubleClick
+  onRowDoubleClick,
+  isLoading
 }: DataTableProps<TData, TValue>) {
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
     config
@@ -90,7 +92,7 @@ export function DataTable<TData, TValue>({
           />
         </div>
         {isVisibleSortType && (
-          <div className='flex-1'>
+          <div className='ms-2 flex-1'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='whitespace-nowrap'>
@@ -212,7 +214,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  No results.
+                  {isLoading ? 'Loading...' : 'No data available'}
                 </TableCell>
               </TableRow>
             )}
