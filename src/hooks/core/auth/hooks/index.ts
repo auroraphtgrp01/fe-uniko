@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { IUseQueryHookOptions } from '@/hooks/query-hooks/query-hook.i'
-import { useSignIn, useSignUp } from '@/services/authServices'
+import { useSignIn } from '@/hooks/core/auth/hooks/useSignIn'
+import { useSignUp } from '@/hooks/core/auth/hooks/useSignUp'
 
 export const useAuth = (opts?: IUseQueryHookOptions) => {
   const [isRememberMe, setIsRememberMe] = useState(true)

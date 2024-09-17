@@ -7,13 +7,14 @@ import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { authServices } from '../configs'
-import { AUTHT_RETRY } from '../constants'
+import { useMutation } from '@tanstack/react-query'
+import { AUTH_RETRY } from '@/hooks/core/auth/constants'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {
   const router = useRouter()
   return useMutation<ISignInResponse, AxiosError, ISignInBody>({
     mutationFn: authServices.signIn,
-    retry: AUTHT_RETRY,
+    retry: AUTH_RETRY,
     onError: (error) => {
       if (error.response?.status === 401) {
         return toast.error('Invalid email or password!')
