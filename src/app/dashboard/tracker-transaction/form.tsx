@@ -241,25 +241,29 @@ export default function TrackerTransactionForm() {
       </div>
 
       {/* Right Section */}
-      <div className='flex w-full flex-col md:col-span-1'>
-        <div className='grid flex-1 grid-cols-1 gap-4'>
-          {/* DonutChart 1 */}
-          <Card className='w-full'>
-            <CardContent className='flex items-center justify-center'>
-              <DonutChart data={chartData} className={'mb-[-20px] mt-[-60px] h-[500px] w-full'} types='nightingale' />
-            </CardContent>
-          </Card>
+      <div className='flex w-full flex-col md:col-span-2 lg:col-span-1'>
+        {/* DonutChart 1 */}
+        <Card className='w-full'>
+          <CardContent className='flex items-center justify-center'>
+            <DonutChart
+              data={chartData}
+              className={'mt-[2%] h-[490px] w-full lg:mt-[2%] xl:h-[450px]'}
+              types='nightingale'
+            />
+          </CardContent>
+        </Card>
 
-          {/* DonutChart 2 with Total */}
-          <Card className='w-full p-0'>
-            <div className='flex items-center justify-center p-0'>
-              <div className=''>
-                <DonutChart data={accountData} className='mt-[-30px] h-[250px] w-[500px]' types='donut' />
-              </div>
-              {/* <div className='h-full ms-[-60px]'>
+        {/* DonutChart 2 with Total */}
+        <div className='flex items-center justify-center p-0'>
+          <Card className='mt-4 w-full'>
+            <DonutChart
+              data={accountData}
+              className='mb-[5%] mt-[-8%] h-[350px] w-full sm:mt-[-1%] md:h-[300px] lg:mt-[-5%] xl:h-[300px]'
+              types='donut'
+            />
+            {/* <div className='h-full ms-[-60px]'>
                 <div>Total: 1.000.000 VND</div>
               </div> */}
-            </div>
           </Card>
         </div>
       </div>

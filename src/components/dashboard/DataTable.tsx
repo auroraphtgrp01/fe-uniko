@@ -71,8 +71,8 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className='w-full'>
-      <div className='flex items-center py-4'>
+    <div className='w-full p-1'>
+      <div className='flex items-center justify-between py-4'>
         <div className='min-w-0 max-w-md'>
           <Input
             placeholder='Filter'
@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) => {
               table.setGlobalFilter(event.target.value)
             }}
-            className='w-60'
+            className='w-50 mr-2'
           />
         </div>
         {isVisibleSortType ? (
