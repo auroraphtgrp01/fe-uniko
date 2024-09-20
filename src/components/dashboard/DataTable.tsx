@@ -198,8 +198,6 @@ export function DataTable<TData, TValue>({
                           event.currentTarget.getAttribute('role') !== 'checkbox') &&
                         onRowClick
                       ) {
-                        console.log('onRowClick')
-
                         onRowClick(row.original)
                       }
                     }}

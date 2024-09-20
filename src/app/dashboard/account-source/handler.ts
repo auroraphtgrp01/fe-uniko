@@ -1,22 +1,21 @@
 import { formatData } from '@/app/dashboard/account-source/constants'
-import { useAccountSource } from '@/hooks/core/account-source/hooks'
+import { IAccountSourceDialogFlag } from '@/hooks/core/account-source/models'
 import { IAccountSourceBody, IAccountSourceDataFormat } from '@/types/account-source.i'
 import toast from 'react-hot-toast'
-
-export const handleOnRowClickAccountSource = async (row: IAccountSourceDataFormat) => {
-  //   const { data, statusCode } = await accountSourceRoutes.getOneAccountSourceById(row.id)
-  //   if ((statusCode === 200 || statusCode === 201) && data !== null) {
-  //     setFormData({
-  //       id: row.id,
-  //       name: data.name as string,
-  //       type: data.type,
-  //       initAmount: Number(data.initAmount),
-  //       currency: data.currency
-  //     })
-  //     setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
-  //   } else {
-  //     toast.error('Cannot get data of this account source!')
-  //   }
+export const handleShowDetailAccountSource = async (
+  setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>,
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IAccountSourceDialogFlag>>,
+  getAccountSourceById: any
+) => {
+  const data = getAccountSourceById.data
+  setFormData({
+    id: data.id,
+    name: data.name as string,
+    type: data.type,
+    initAmount: Number(data.initAmount),
+    currency: data.currency
+  })
+  setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
 }
 
 export const handleCreateAccountSource = async ({

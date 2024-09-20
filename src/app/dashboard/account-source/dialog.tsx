@@ -30,7 +30,6 @@ export default function AccountSourceDialog({
   setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
 }) {
-  let attemptingToClose: 'create' | 'update' | null = null
   const contentDialogForm = contentDialogAccountSourceForm({
     formData,
     setFormData
@@ -59,7 +58,6 @@ export default function AccountSourceDialog({
     title: 'Update Account Source',
     isOpen: isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
-      attemptingToClose = 'update'
       setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: true }))
     }
   }
@@ -69,7 +67,7 @@ export default function AccountSourceDialog({
     content: 'Are you sure you want to close this dialog?',
     isOpen: isDialogOpen.isCloseConfirmationDialog,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: false })), (attemptingToClose = null)
+      setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: false }))
     },
     footer: (
       <>
@@ -77,11 +75,13 @@ export default function AccountSourceDialog({
           type='button'
           variant={'greenPastel1'}
           onClick={() => {
-            if (attemptingToClose === 'create')
-              setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false, isCloseConfirmationDialog: false }))
-            else setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false, isCloseConfirmationDialog: false }))
             setFormData((prev) => ({ ...prev, name: '', type: '', initAmount: 0, currency: '' }))
-            attemptingToClose = null
+            setIsDialogOpen((prev) => ({
+              ...prev,
+              isDialogCreateOpen: false,
+              isCloseConfirmationDialog: false,
+              isDialogUpdateOpen: false
+            }))
           }}
         >
           Confirm
@@ -90,7 +90,7 @@ export default function AccountSourceDialog({
           type='button'
           variant={'secondary'}
           onClick={() => {
-            setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: false })), (attemptingToClose = null)
+            setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: false }))
           }}
         >
           Cancel
@@ -124,7 +124,6 @@ export default function AccountSourceDialog({
     title: 'Create Account Source',
     isOpen: isDialogOpen.isDialogCreateOpen,
     onClose: () => {
-      attemptingToClose = 'create'
       setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: true }))
     }
   }

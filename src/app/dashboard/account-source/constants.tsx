@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { IAccountSourceBody } from '@/hooks/core/account-source/models'
+import { IAccountSourceBody, IAccountSourceDialogFlag } from '@/hooks/core/account-source/models'
 import { formatCurrency } from '@/libraries/utils'
 import { IAccountSource, IAccountSourceDataFormat } from '@/types/account-source.i'
 import { HandCoins, Landmark, Wallet2 } from 'lucide-react'
@@ -118,7 +118,7 @@ export const initAccountSourceFormData: IAccountSourceBody = {
   id: undefined
 }
 
-export const initDialogFlag = {
+export const initDialogFlag: IAccountSourceDialogFlag = {
   isDialogCreateOpen: false,
   isDialogUpdateOpen: false,
   isCloseConfirmationDialog: false

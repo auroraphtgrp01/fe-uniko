@@ -1,3 +1,4 @@
+import { IAccountSourceResponse, IAdvancedAccountSourceResponse } from '@/hooks/core/account-source/models'
 import { getBaseUrl } from '@/libraries/helpers'
 import httpService from '@/libraries/http'
 import { IAccountSource, IAccountSourceBody } from '@/types/account-source.i'
@@ -7,10 +8,15 @@ import { IDynamicType, IQueryOptions } from '@/types/query.interface'
 const baseUrl = getBaseUrl()
 
 export const accountSourceRoutes = {
+  getById: async (id: string): Promise<IAccountSourceResponse> => {
+    const { payload } = await httpService.get<IBaseResponseData<IAccountSource>>(`${baseUrl}/account-sources/${id}`)
+    return payload
+  },
+
   getAdvanced: async (
     params: IQueryOptions,
     queryCondition?: IDynamicType[]
-  ): Promise<IBaseResponseData<IAccountSource[]>> => {
+  ): Promise<IAdvancedAccountSourceResponse> => {
     const { page, limit, condition, isExactly, sort, includePopulate } = params
     const { payload } = await httpService.get<IBaseResponseData<IAccountSource[]>>(
       `${baseUrl}/account-sources?page=${page}&limit=${limit}${condition ? `&condition=${condition}` : ''}${isExactly ? `&isExactly=${isExactly}` : ''}${sort ? `&sort=${sort}` : ''}${includePopulate ? `&includePopulate=${includePopulate}` : ''}${queryCondition && queryCondition.length > 0 ? queryCondition.map(({ key, value }) => `&${key}=${value}`) : ''}`

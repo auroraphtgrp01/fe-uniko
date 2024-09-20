@@ -1,6 +1,7 @@
 import { IBaseResponseData } from '@/types/common.i'
 
-export type ICreateAccountSourceResponse = IBaseResponseData<IAccountSource>
+export type IAccountSourceResponse = IBaseResponseData<IAccountSource>
+export type IAdvancedAccountSourceResponse = IBaseResponseData<IAccountSource[]>
 
 export interface IAccountSource {
   id: string
@@ -29,4 +30,10 @@ export interface IAccountSourceBody {
   type?: string
   initAmount?: number
   currency?: string
+}
+
+export interface IAccountSourceDialogFlag {
+  isDialogCreateOpen: boolean
+  isDialogUpdateOpen: boolean
+  isCloseConfirmationDialog: boolean
 }

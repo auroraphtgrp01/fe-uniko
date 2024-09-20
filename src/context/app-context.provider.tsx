@@ -18,7 +18,6 @@ export const AppProvider: FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
-    console.log('>>>>', storedUser)
     if (storedUser) {
       setUser(JSON.parse(storedUser) as IUserFromToken)
     }

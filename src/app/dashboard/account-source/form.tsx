@@ -6,16 +6,20 @@ import React, { useEffect, useState } from 'react'
 import { IAccountSourceDataFormat, IAccountSourceBody } from '@/types/account-source.i'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
-import { initAccountSourceFormData, initDialogFlag } from '@/app/dashboard/account-source/constants'
-import { handleOnRowClickAccountSource } from '@/app/dashboard/account-source/handler'
+import { formatArrayData, initAccountSourceFormData, initDialogFlag } from '@/app/dashboard/account-source/constants'
+import { handleShowDetailAccountSource } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import AccountSourceDialog from './dialog'
-import { useAccountSource } from '@/hooks/core/account-source/hooks'
+import { useAccountSource, useGetAdvancedAccountSource } from '@/hooks/core/account-source/hooks'
+import { getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
+import { getColumns } from '@/components/dashboard/ColumnsTable'
+import { useGetAccountSourceById } from '@/hooks/core/account-source/hooks/useGetAccountSourceById'
 
 export default function AccountSourceForm() {
   const [data, setData] = useState<IAccountSourceDataFormat[]>([])
   const [columns, setColumns] = useState<any[]>([])
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
     page: dataTableConfig.currentPage,
     limit: dataTableConfig.limit
@@ -30,6 +34,8 @@ export default function AccountSourceForm() {
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState(initDialogFlag)
   const { createAccountSource, updateAccountSource } = useAccountSource()
+  const { getAdvancedData, isGetAdvancedPending } = useGetAdvancedAccountSource({ params: queryOptions })
+  const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
 
   useEffect(() => {
     if (dataTableConfig?.selectedTypes?.length === 0) setTableData(data)
@@ -41,31 +47,27 @@ export default function AccountSourceForm() {
       )
     }
   }, [dataTableConfig.selectedTypes])
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res: IBaseResponseData<IAccountSource[]> = await accountSourceRoutes.getAdvanced(queryOptions)
-  //       console.log('res', res)
+  useEffect(() => {
+    if (!isGetAdvancedPending && getAdvancedData) {
+      const dataFormat: IAccountSourceDataFormat[] = formatArrayData(getAdvancedData.data)
+      const titles = getConvertedKeysToTitleCase(dataFormat[0])
+      const columns = getColumns(titles, true)
+      console.log(dataFormat, titles, columns)
+      setDataTableConfig((prev) => ({
+        ...prev,
+        types: getTypes(getAdvancedData.data),
+        totalPage: Number(getAdvancedData.pagination?.totalPage)
+      }))
+      setData(dataFormat)
+      setColumns(columns)
+      setTableData(dataFormat)
+    }
+  }, [getAdvancedData])
 
-  //       const dataFormat: IAccountSourceDataFormat[] = formatArrayData(res?.data)
-  //       const titles = getConvertedKeysToTitleCase(dataFormat[0])
-
-  //       const columns = getColumns(titles, true)
-  //       setDataTableConfig((prev) => ({
-  //         ...prev,
-  //         types: getTypes(res),
-  //         totalPage: Number(res?.pagination?.totalPage)
-  //       }))
-  //       setData(dataFormat)
-  //       setTableData(dataFormat)
-  //       setColumns(columns)
-  //     } catch (error) {
-  //       console.error('Failed to fetch data:', error)
-  //     }
-  //   }
-
-  //   fetchData()
-  // }, [queryOptions])
+  useEffect(() => {
+    if (getDetailAccountSource !== undefined)
+      handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
+  }, [getDetailAccountSource])
 
   return (
     <div className='w-full'>
@@ -81,7 +83,7 @@ export default function AccountSourceForm() {
             setConfig={setDataTableConfig}
             onCreateButtonClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))}
             columns={columns}
-            onRowClick={handleOnRowClickAccountSource}
+            onRowClick={(row: IAccountSourceDataFormat) => setIdRowClicked(row.id)}
           />
         </CardContent>
       </Card>
