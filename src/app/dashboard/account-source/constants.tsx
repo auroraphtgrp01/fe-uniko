@@ -76,7 +76,7 @@ export const contentDialogAccountSourceForm = ({
   </div>
 )
 
-export const formatData = (data: IAccountSource): IAccountSourceDataFormat => {
+export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDataFormat => {
   const { id, name, type, initAmount, currency, currentAmount, accountBank } = data
   return {
     id,
@@ -102,12 +102,6 @@ export const formatData = (data: IAccountSource): IAccountSourceDataFormat => {
     currentAmount: formatCurrency(currentAmount, 'VND'),
     checkType: type
   }
-}
-
-export const formatArrayData = (data: IAccountSource[]): IAccountSourceDataFormat[] => {
-  return data.map((item) => {
-    return formatData(item)
-  })
 }
 
 export const initAccountSourceFormData: IAccountSourceBody = {

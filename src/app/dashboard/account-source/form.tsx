@@ -3,15 +3,19 @@ import { Card, CardContent } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import CardInHeader from '@/components/dashboard/CardInHeader'
 import React, { useEffect, useState } from 'react'
-import { IAccountSourceDataFormat, IAccountSourceBody } from '@/types/account-source.i'
+import { IAccountSourceDataFormat, IAccountSourceBody, IAccountSource } from '@/types/account-source.i'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
-import { formatArrayData, initAccountSourceFormData, initDialogFlag } from '@/app/dashboard/account-source/constants'
+import {
+  formatAccountSourceData,
+  initAccountSourceFormData,
+  initDialogFlag
+} from '@/app/dashboard/account-source/constants'
 import { handleShowDetailAccountSource } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import AccountSourceDialog from './dialog'
 import { useAccountSource, useGetAdvancedAccountSource } from '@/hooks/core/account-source/hooks'
-import { getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
+import { formatArrayData, getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { useGetAccountSourceById } from '@/hooks/core/account-source/hooks/useGetAccountSourceById'
 
@@ -49,10 +53,13 @@ export default function AccountSourceForm() {
   }, [dataTableConfig.selectedTypes])
   useEffect(() => {
     if (!isGetAdvancedPending && getAdvancedData) {
-      const dataFormat: IAccountSourceDataFormat[] = formatArrayData(getAdvancedData.data)
+      const dataFormat: IAccountSourceDataFormat[] = formatArrayData<IAccountSource, IAccountSourceDataFormat>(
+        getAdvancedData.data,
+        formatAccountSourceData
+      )
       const titles = getConvertedKeysToTitleCase(dataFormat[0])
       const columns = getColumns(titles, true)
-      console.log(dataFormat, titles, columns)
+      console.log(dataFormat)
       setDataTableConfig((prev) => ({
         ...prev,
         types: getTypes(getAdvancedData.data),
@@ -63,12 +70,13 @@ export default function AccountSourceForm() {
       setTableData(dataFormat)
     }
   }, [getAdvancedData])
-
   useEffect(() => {
     if (getDetailAccountSource !== undefined)
       handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
   }, [getDetailAccountSource])
-
+  useEffect(() => {
+    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
+  }, [dataTableConfig])
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>

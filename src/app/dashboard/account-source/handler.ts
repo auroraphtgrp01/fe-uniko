@@ -1,4 +1,4 @@
-import { formatData } from '@/app/dashboard/account-source/constants'
+import { formatAccountSourceData } from '@/app/dashboard/account-source/constants'
 import { IAccountSourceDialogFlag } from '@/hooks/core/account-source/models'
 import { IAccountSourceBody, IAccountSourceDataFormat } from '@/types/account-source.i'
 import toast from 'react-hot-toast'
@@ -53,10 +53,10 @@ export const handleCreateAccountSource = async ({
   createAccountSource(payload, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        const format = formatData(res.data)
+        const format = formatAccountSourceData(res.data)
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-        setData([format, ...data])
-        setTableData([format, ...tableData])
+        setData([format, ...data.slice(0, -1)])
+        setTableData([format, ...tableData.slice(0, -1)])
         setFormData((prev) => ({ ...prev, name: '', type: '', initAmount: 0, currency: '' }))
         toast.success('Create account source successfully!')
       }
@@ -95,7 +95,7 @@ export const handleUpdateAccountSource = async ({
   updateAccountSource(payload, {
     onSuccess(res: any) {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        const format = formatData(res.data)
+        const format = formatAccountSourceData(res.data)
         setData((prevRows) => prevRows.map((row) => (row.id === format.id ? { ...row, ...format } : row)))
         setTableData((prevRows) => prevRows.map((row) => (row.id === format.id ? { ...row, ...format } : row)))
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))

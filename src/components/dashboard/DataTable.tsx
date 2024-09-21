@@ -255,7 +255,6 @@ export function DataTable<TData, TValue>({
                       variant='outline'
                       size='sm'
                       onClick={() => {
-                        table.previousPage()
                         setConfig((prev) => ({
                           ...prev,
                           currentPage: currentPage - 1
@@ -270,7 +269,6 @@ export function DataTable<TData, TValue>({
                       variant='outline'
                       size='sm'
                       onClick={() => {
-                        table.nextPage()
                         setConfig((prev) => ({
                           ...prev,
                           currentPage: currentPage + 1
