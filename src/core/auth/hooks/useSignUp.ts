@@ -1,11 +1,11 @@
 'use client'
 import { ISignUpBody, ISignUpResponse } from '@/app/sign-up/sign-up.i'
-import { IUseQueryHookOptions } from '@/hooks/query-hooks/query-hook.i'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { authServices } from '../configs'
 import { useMutation } from '@tanstack/react-query'
+import { IUseQueryHookOptions } from '@/types/query.interface'
 
 export const useSignUp = (opts?: IUseQueryHookOptions) => {
   const router = useRouter()

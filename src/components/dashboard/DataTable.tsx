@@ -14,43 +14,41 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { IDataTableConfig } from '@/types/common.i'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  isPaginate: boolean
-  isVisibleSortType: boolean
-  types?: string[]
-  createFunction?: () => void
+  config: IDataTableConfig
+  setConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  onCreateButtonClick?: () => void
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
-  classNameOfScroll?: string
+  isLoading?: boolean
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  isPaginate,
-  isVisibleSortType,
-  types,
-  classNameOfScroll,
-  createFunction,
+  config,
+  setConfig,
+  onCreateButtonClick,
   getRowClassName,
   onRowClick,
-  onRowDoubleClick
+  onRowDoubleClick,
+  isLoading
 }: DataTableProps<TData, TValue>) {
+  const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
+    config
   const [sorting, setSorting] = React.useState<SortingState>([])
-  let [currentPage, setCurrentPage] = React.useState<number>(1)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [limit, setLimit] = React.useState<number>(10)
   const table = useReactTable({
     data,
     columns,
@@ -70,6 +68,16 @@ export function DataTable<TData, TValue>({
     }
   })
 
+  const toggleType = (type: string) => {
+    if (selectedTypes)
+      setConfig((prev) => ({
+        ...prev,
+        selectedTypes: selectedTypes.includes(type)
+          ? selectedTypes.filter((selectedType) => selectedType !== type)
+          : [...selectedTypes, type]
+      }))
+  }
+
   return (
     <div className='w-full'>
       <div className='flex items-center py-4'>
@@ -83,56 +91,67 @@ export function DataTable<TData, TValue>({
             className='w-60'
           />
         </div>
-        {isVisibleSortType ? (
+        {isVisibleSortType && (
           <div className='ms-2 flex-1'>
-            <Select
-              onValueChange={(value) => {
-                table.getColumn('type')?.setFilterValue(value)
-              }}
-            >
-              <SelectTrigger className='h-[40px] w-36 bg-background hover:bg-accent'>
-                <SelectValue placeholder='Type' />
-              </SelectTrigger>
-              <SelectContent>
-                {types && types.length > 0
-                  ? types.map((type, index) => (
-                      <SelectItem key={index} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))
-                  : ''}
-              </SelectContent>
-            </Select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='outline' className='whitespace-nowrap'>
+                  <span className='mr-2 hidden sm:inline-block'>Types</span>
+                  <ChevronDown className='h-4 w-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end' className='w-[200px]'>
+                {types && types.length > 0 ? (
+                  types.map((type) => (
+                    <DropdownMenuCheckboxItem
+                      key={type}
+                      className='capitalize'
+                      checked={selectedTypes ? selectedTypes.includes(type) : false}
+                      onCheckedChange={() => toggleType(type)}
+                    >
+                      {type}
+                    </DropdownMenuCheckboxItem>
+                  ))
+                ) : (
+                  <DropdownMenuCheckboxItem disabled>No Types Available</DropdownMenuCheckboxItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        ) : (
-          ''
         )}
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='whitespace-nowrap'>
-              <span className='mr-2 hidden sm:inline-block'>Columns</span>
-              <ChevronDown className='h-4 w-4' />
+        <div className='flex items-center space-x-2'>
+          {onCreateButtonClick && (
+            <Button variant='outline' className='whitespace-nowrap' onClick={onCreateButtonClick}>
+              <span className='mr-2 hidden sm:inline-block'>Create</span>
+              <PlusIcon className='h-4 w-4' />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='w-[200px]'>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className='capitalize'
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' className='whitespace-nowrap'>
+                <span className='mr-2 hidden sm:inline-block'>Columns</span>
+                <ChevronDown className='h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className='w-[200px]'>
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className='capitalize'
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className='rounded-md border'>
         <Table classNameOfScroll={classNameOfScroll}>
@@ -167,9 +186,18 @@ export function DataTable<TData, TValue>({
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={(event: any) => {
-                      console.log()
+                      console.log(onRowClick)
 
-                      if (event.target.role !== 'checkbox' && onRowClick) {
+                      console.log(
+                        event.currentTarget.getAttribute('role') === null ||
+                          event.currentTarget.getAttribute('role') !== 'checkbox'
+                      )
+
+                      if (
+                        (event.currentTarget.getAttribute('role') === null ||
+                          event.currentTarget.getAttribute('role') !== 'checkbox') &&
+                        onRowClick
+                      ) {
                         onRowClick(row.original)
                       }
                     }}
@@ -184,21 +212,9 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  No results.
+                  {isLoading ? 'Loading...' : 'No data available'}
                 </TableCell>
               </TableRow>
-            )}
-            {createFunction ? (
-              <TableRow>
-                <TableCell colSpan={100} onClick={() => createFunction()}>
-                  <button className='flex items-center text-gray-400 hover:text-gray-200'>
-                    <PlusIcon className='mr-2 h-4 w-4' />
-                    Create new
-                  </button>
-                </TableCell>
-              </TableRow>
-            ) : (
-              ''
             )}
           </TableBody>
         </Table>
@@ -214,8 +230,13 @@ export function DataTable<TData, TValue>({
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>Rows per page</p>
                   <Input
-                    value={limit}
-                    onChange={(event) => setLimit(Number(event.target.value))}
+                    defaultValue={limit}
+                    onChange={(event) =>
+                      setConfig((prev) => ({
+                        ...prev,
+                        limit: Number(event.target.value)
+                      }))
+                    }
                     className='w-12 px-1 pl-3 text-center'
                     type='number'
                     min={1}
@@ -226,7 +247,7 @@ export function DataTable<TData, TValue>({
                 </div>
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>
-                    Page {currentPage} of {table.getPageCount()}
+                    Page {currentPage} of {totalPage}
                   </p>
                   <div className='flex space-x-1'>
                     <Button
@@ -234,10 +255,12 @@ export function DataTable<TData, TValue>({
                       variant='outline'
                       size='sm'
                       onClick={() => {
-                        table.previousPage()
-                        setCurrentPage((prev) => prev - 1)
+                        setConfig((prev) => ({
+                          ...prev,
+                          currentPage: currentPage - 1
+                        }))
                       }}
-                      disabled={!table.getCanPreviousPage()}
+                      disabled={currentPage === 1}
                     >
                       <ChevronLeft size={15} />
                     </Button>
@@ -246,10 +269,12 @@ export function DataTable<TData, TValue>({
                       variant='outline'
                       size='sm'
                       onClick={() => {
-                        table.nextPage()
-                        setCurrentPage((prev) => prev + 1)
+                        setConfig((prev) => ({
+                          ...prev,
+                          currentPage: currentPage + 1
+                        }))
                       }}
-                      disabled={!table.getCanNextPage()}
+                      disabled={currentPage === totalPage}
                     >
                       <ChevronRight size={15} />
                     </Button>

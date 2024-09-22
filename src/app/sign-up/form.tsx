@@ -6,10 +6,10 @@ import { Input } from '@/components/ui/input'
 import { Icons } from '@/components/ui/icons'
 import { Card, CardContent } from '@/components/ui/card'
 import { useState, FormEvent } from 'react'
-import { useAuth } from '@/hooks/query-hooks/use-auth'
 import Logo2 from '@/images/logo-2.png'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/core/auth/hooks'
 
 export default function SignUpForm() {
   const [fullName, setFullName] = useState('')

@@ -1,128 +1,85 @@
 'use client'
 import { Card, CardContent } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
-import { getColumns } from '@/components/dashboard/ColumnsTable'
 import CardInHeader from '@/components/dashboard/CardInHeader'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import CustomDialog from '@/components/dashboard/Dialog'
-import React, { useState } from 'react'
-
-const titles: string[] = ['Source Name', 'Type', 'Init Amount', 'Currency', 'Current Amount', 'Created At']
-const data = [
-  {
-    id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-    sourceName: 'hello',
-    type: 'Wallet',
-    initAmount: 500000,
-    currency: 400000,
-    currentAmount: 100000,
-    createdAt: '2024-09-04T10:10:00.000Z'
-  },
-  {
-    id: '4c7a5fbd-3d8d-4a88-9c5e-1a3f7b742de1',
-    sourceName: 'bbbb',
-    type: 'Bank',
-    initAmount: 750000,
-    currency: 600000,
-    currentAmount: 150000,
-    createdAt: '2024-09-05T11:15:00.000Z'
-  },
-  {
-    id: '9a7c3a7b-52d9-4f62-98d4-c0c4b98a0e64',
-    sourceName: 'cccc',
-    type: 'Cash',
-    initAmount: 300000,
-    currency: 250000,
-    currentAmount: 50000,
-    createdAt: '2024-09-06T12:20:00.000Z'
-  },
-  {
-    id: 'e8d4c1d0-4528-4c13-8bcd-1cfd5d2c6ad5',
-    sourceName: 'dddd',
-    type: 'Card',
-    initAmount: 600000,
-    currency: 550000,
-    currentAmount: 50000,
-    createdAt: '2024-09-07T13:25:00.000Z'
-  },
-  {
-    id: 'b6e7d510-8a1a-4c59-9f7d-4f90a6f52bd3',
-    sourceName: 'eeee',
-    type: 'Investment',
-    initAmount: 900000,
-    currency: 800000,
-    currentAmount: 100000,
-    createdAt: '2024-09-08T14:30:00.000Z'
-  },
-  {
-    id: 'f2a1ed5e-826b-4c1d-9f7e-3e58b29f315b',
-    sourceName: 'ffff',
-    type: 'Savings',
-    initAmount: 1200000,
-    currency: 1000000,
-    currentAmount: 200000,
-    createdAt: '2024-09-09T15:35:00.000Z'
-  }
-]
-const columns = getColumns(titles, true)
-const contentDialogCreate = (
-  <div className='grid gap-4 py-4'>
-    <div className='grid grid-cols-4 items-center gap-4'>
-      <Label htmlFor='sourceName' className='text-right'>
-        Source Name
-      </Label>
-      <Input id='sourceName' value={''} onChange={() => {}} className='col-span-3' />
-    </div>
-    <div className='grid grid-cols-4 items-center gap-4'>
-      <Label htmlFor='type' className='text-right'>
-        Type
-      </Label>
-      <Select onValueChange={() => {}} value={'income'}>
-        <SelectTrigger className='col-span-3'>
-          <SelectValue placeholder='Select a source type' />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value='income'>Income</SelectItem>
-          <SelectItem value='expense'>Expense</SelectItem>
-          <SelectItem value='savings'>Savings</SelectItem>
-          <SelectItem value='investment'>Investment</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-    <div className='grid grid-cols-4 items-center gap-4'>
-      <Label htmlFor='initialAmount' className='text-right'>
-        Initial Amount
-      </Label>
-      <Input id='initialAmount' type='number' value={''} onChange={(e) => {}} className='col-span-3' />
-    </div>
-    <div className='grid grid-cols-4 items-center gap-4'>
-      <Label htmlFor='currency' className='text-right'>
-        Currency
-      </Label>
-      <Select onValueChange={() => {}} value={'USD'}>
-        <SelectTrigger className='col-span-3'>
-          <SelectValue placeholder='Select a currency' />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value='USD'>USD</SelectItem>
-          <SelectItem value='EUR'>EUR</SelectItem>
-          <SelectItem value='GBP'>GBP</SelectItem>
-          <SelectItem value='JPY'>JPY</SelectItem>
-          <SelectItem value='VND'>VND</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  </div>
-)
-const titleDialogCreate = 'Create Account Source'
-const descriptionDialogCreate = 'Please fill in the information below to create a new account source.'
-const footerDialogCreate = <Button type='submit'>Save changes</Button>
+import React, { useEffect, useState } from 'react'
+import { IAccountSourceDataFormat, IAccountSourceBody, IAccountSource } from '@/types/account-source.i'
+import { IDataTableConfig } from '@/types/common.i'
+import { IQueryOptions } from '@/types/query.interface'
+import {
+  formatAccountSourceData,
+  initAccountSourceFormData,
+  initDialogFlag
+} from '@/app/dashboard/account-source/constants'
+import { handleShowDetailAccountSource } from '@/app/dashboard/account-source/handler'
+import { initTableConfig } from '@/constants/data-table'
+import AccountSourceDialog from './dialog'
+import { useAccountSource, useGetAdvancedAccountSource } from '@/core/account-source/hooks'
+import { formatArrayData, getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
+import { getColumns } from '@/components/dashboard/ColumnsTable'
+import { useGetAccountSourceById } from '@/core/account-source/hooks/useGetAccountSourceById'
 
 export default function AccountSourceForm() {
-  const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false)
+  const [data, setData] = useState<IAccountSourceDataFormat[]>([])
+  const [columns, setColumns] = useState<any[]>([])
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [idRowClicked, setIdRowClicked] = useState<string>('')
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
+    page: dataTableConfig.currentPage,
+    limit: dataTableConfig.limit
+  })
+  const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>(
+    dataTableConfig?.selectedTypes?.length === 0
+      ? data
+      : data.filter((item: IAccountSourceDataFormat) =>
+          dataTableConfig?.selectedTypes?.includes(item.checkType as string)
+        )
+  )
+  const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
+  const [isDialogOpen, setIsDialogOpen] = useState(initDialogFlag)
+  const { createAccountSource, updateAccountSource } = useAccountSource()
+  const { getAdvancedData, isGetAdvancedPending } = useGetAdvancedAccountSource({ params: queryOptions })
+  const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
+
+  useEffect(() => {
+    if (dataTableConfig?.selectedTypes?.length === 0) setTableData(data)
+    else {
+      setTableData(
+        data.filter((item: IAccountSourceDataFormat) =>
+          dataTableConfig?.selectedTypes?.includes(item.checkType as string)
+        )
+      )
+    }
+  }, [dataTableConfig.selectedTypes])
+
+  useEffect(() => {
+    if (!isGetAdvancedPending && getAdvancedData) {
+      const dataFormat: IAccountSourceDataFormat[] = formatArrayData<IAccountSource, IAccountSourceDataFormat>(
+        getAdvancedData.data,
+        formatAccountSourceData
+      )
+      const titles = getConvertedKeysToTitleCase(dataFormat[0])
+      const columns = getColumns(titles, true)
+      setDataTableConfig((prev) => ({
+        ...prev,
+        types: getTypes(getAdvancedData.data),
+        totalPage: Number(getAdvancedData.pagination?.totalPage)
+      }))
+      setData(dataFormat)
+      setColumns(columns)
+      setTableData(dataFormat)
+    }
+  }, [getAdvancedData])
+
+  useEffect(() => {
+    if (getDetailAccountSource !== undefined)
+      handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
+  }, [getDetailAccountSource])
+
+  useEffect(() => {
+    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
+  }, [dataTableConfig])
+
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
@@ -132,21 +89,26 @@ export default function AccountSourceForm() {
       <Card className='mt-5'>
         <CardContent>
           <DataTable
-            isVisibleSortType={false}
+            data={tableData}
+            config={dataTableConfig}
+            setConfig={setDataTableConfig}
+            onCreateButtonClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))}
             columns={columns}
-            data={data}
-            isPaginate={true}
-            onRowClick={() => setIsDialogCreateOpen(true)}
+            onRowClick={(row: IAccountSourceDataFormat) => setIdRowClicked(row.id)}
           />
         </CardContent>
       </Card>
-      <CustomDialog
-        isOpen={isDialogCreateOpen}
-        onClose={() => setIsDialogCreateOpen(false)}
-        content={contentDialogCreate}
-        footer={footerDialogCreate}
-        title={titleDialogCreate}
-        description={descriptionDialogCreate}
+      <AccountSourceDialog
+        setIsDialogOpen={setIsDialogOpen}
+        isDialogOpen={isDialogOpen}
+        setFormData={setFormData}
+        formData={formData}
+        setData={setData}
+        setTableData={setTableData}
+        tableData={tableData}
+        data={data}
+        createAccountSource={createAccountSource}
+        updateAccountSource={updateAccountSource}
       />
     </div>
   )
