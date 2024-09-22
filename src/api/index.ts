@@ -1,7 +1,7 @@
-import { authenticationRoutes } from '@/libraries/api/authentication'
-import { userRoutes } from '@/libraries/api/user'
+import { authenticationRoutes } from '@/api/authentication'
+import { userRoutes } from '@/api/user'
 import { accountSourceRoutes } from './account-source'
-import { transactionRoutes } from '@/libraries/api/transaction'
+import { transactionRoutes } from '@/api/transaction'
 
 export const apiService = {
   authentication: authenticationRoutes,

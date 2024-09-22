@@ -14,10 +14,10 @@ import {
 import { handleShowDetailAccountSource } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import AccountSourceDialog from './dialog'
-import { useAccountSource, useGetAdvancedAccountSource } from '@/hooks/core/account-source/hooks'
+import { useAccountSource, useGetAdvancedAccountSource } from '@/core/account-source/hooks'
 import { formatArrayData, getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { useGetAccountSourceById } from '@/hooks/core/account-source/hooks/useGetAccountSourceById'
+import { useGetAccountSourceById } from '@/core/account-source/hooks/useGetAccountSourceById'
 
 export default function AccountSourceForm() {
   const [data, setData] = useState<IAccountSourceDataFormat[]>([])
@@ -51,6 +51,7 @@ export default function AccountSourceForm() {
       )
     }
   }, [dataTableConfig.selectedTypes])
+
   useEffect(() => {
     if (!isGetAdvancedPending && getAdvancedData) {
       const dataFormat: IAccountSourceDataFormat[] = formatArrayData<IAccountSource, IAccountSourceDataFormat>(
@@ -59,7 +60,6 @@ export default function AccountSourceForm() {
       )
       const titles = getConvertedKeysToTitleCase(dataFormat[0])
       const columns = getColumns(titles, true)
-      console.log(dataFormat)
       setDataTableConfig((prev) => ({
         ...prev,
         types: getTypes(getAdvancedData.data),
@@ -70,13 +70,16 @@ export default function AccountSourceForm() {
       setTableData(dataFormat)
     }
   }, [getAdvancedData])
+
   useEffect(() => {
     if (getDetailAccountSource !== undefined)
       handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
   }, [getDetailAccountSource])
+
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
+
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>

@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useSignIn } from '@/hooks/core/auth/hooks/useSignIn'
-import { useSignUp } from '@/hooks/core/auth/hooks/useSignUp'
+import { useSignIn } from '@/core/auth/hooks/useSignIn'
+import { useSignUp } from '@/core/auth/hooks/useSignUp'
 import { IUseQueryHookOptions } from '@/types/query.interface'
 
 export const useAuth = (opts?: IUseQueryHookOptions) => {

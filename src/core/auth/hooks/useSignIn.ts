@@ -9,9 +9,9 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { authServices } from '../configs'
 import { useMutation } from '@tanstack/react-query'
-import { AUTH_RETRY } from '@/hooks/core/auth/constants'
+import { AUTH_RETRY } from '@/core/auth/constants'
 import { IUseQueryHookOptions } from '@/types/query.interface'
-import { useGetMeUser } from '@/hooks/core/users/hooks/useQueryUser'
+import { useGetMeUser } from '@/core/users/hooks/useQueryUser'
 import { useEffect, useState } from 'react'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {

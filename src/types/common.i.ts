@@ -42,3 +42,7 @@ export interface IDialogConfig {
   description?: any
   footer?: any
 }
+
+export interface IDynamicType {
+  [key: string]: any
+}

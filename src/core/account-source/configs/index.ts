@@ -1,3 +1,3 @@
-import { apiService } from '@/libraries/api'
+import { apiService } from '@/api'
 
 export const accountSourceServices = apiService.accountSource

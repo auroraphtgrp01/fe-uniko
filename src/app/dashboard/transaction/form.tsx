@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { use, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -10,8 +10,9 @@ import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import { transactionHeaders } from '@/app/dashboard/transaction/constants'
-import { useQueryTransaction } from '@/hooks/core/transaction/hooks/useQueryTransaction'
+import { useQueryTransaction } from '@/core/transaction/hooks/useQueryTransaction'
 import { IDataTransactionTable, modifyTransactionHandler } from '@/app/dashboard/transaction/handler'
+import { IQueryOptions } from '@/types/query.interface'
 
 export default function TransactionForm() {
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
@@ -19,11 +20,16 @@ export default function TransactionForm() {
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
 
-  const { dataTransaction, isGetTransaction } = useQueryTransaction()
-
   const [dataDetail, setDataDetail] = useState<IDataTransactionTable>()
 
   const [dataTable, setDataTable] = useState<IDataTransactionTable[]>()
+
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
+    page: dataTableConfig.currentPage,
+    limit: dataTableConfig.limit
+  })
+
+  const { dataTransaction, isGetTransaction } = useQueryTransaction(queryOptions)
 
   useEffect(() => {
     if (dataTransaction) {
@@ -43,6 +49,10 @@ export default function TransactionForm() {
     setDataDetail(rowData)
     setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
   }
+
+  useEffect(() => {
+    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
+  }, [dataTableConfig])
 
   return (
     <div className='space-y-4'>

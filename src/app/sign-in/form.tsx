@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useState, FormEvent } from 'react'
 import Logo2 from '@/images/logo-2.png'
 import Image from 'next/image'
-import { useAuth } from '@/hooks/core/auth/hooks'
+import { useAuth } from '@/core/auth/hooks'
 
 export default function SignInForm() {
   const [email, setEmail] = useState('')

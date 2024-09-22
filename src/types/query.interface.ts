@@ -1,3 +1,5 @@
+import { IDynamicType } from '@/types/common.i'
+
 export interface IUseQueryHookOptions {
   callBackOnSuccess?: () => void
   callBackOnError?: () => void
@@ -15,8 +17,4 @@ export interface IQueryOptions {
   isExactly?: boolean
   sort?: string
   includePopulate?: boolean
-}
-
-export interface IDynamicType {
-  [key: string]: any
 }

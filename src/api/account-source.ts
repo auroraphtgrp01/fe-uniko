@@ -1,9 +1,9 @@
-import { IAccountSourceResponse, IAdvancedAccountSourceResponse } from '@/hooks/core/account-source/models'
+import { IAccountSourceResponse, IAdvancedAccountSourceResponse } from '@/core/account-source/models'
 import { getBaseUrl } from '@/libraries/helpers'
 import httpService from '@/libraries/http'
 import { IAccountSource, IAccountSourceBody } from '@/types/account-source.i'
-import { IBaseResponseData } from '@/types/common.i'
-import { IDynamicType, IQueryOptions } from '@/types/query.interface'
+import { IBaseResponseData, IDynamicType } from '@/types/common.i'
+import { IQueryOptions } from '@/types/query.interface'
 
 const baseUrl = getBaseUrl()
 

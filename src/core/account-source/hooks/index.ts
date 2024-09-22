@@ -1,7 +1,7 @@
 'use client'
 
-import { useCreateAccountSource } from '@/hooks/core/account-source/hooks/useCreateAccountSource'
-import { useUpdateAccountSource } from '@/hooks/core/account-source/hooks/useUpdateAccountSource'
+import { useCreateAccountSource } from '@/core/account-source/hooks/useCreateAccountSource'
+import { useUpdateAccountSource } from '@/core/account-source/hooks/useUpdateAccountSource'
 import { IUseQueryHookOptions } from '@/types/query.interface'
 
 export * from './useGetAdvancedAccountSource'

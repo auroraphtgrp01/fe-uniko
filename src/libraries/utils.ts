@@ -45,11 +45,8 @@ const camelCaseToTitleCase = (input: string): string => {
     .join(' ')
 }
 
-export const getConvertedKeysToTitleCase = (obj: Record<string, any>): string[] => {
-  const keys = Object.keys(obj)
-  return keys.map((key) => camelCaseToTitleCase(key))
-}
-
+export const getConvertedKeysToTitleCase = (obj: Record<string, any> = {}): string[] =>
+  Object.keys(obj).map(camelCaseToTitleCase)
 export const formatArrayData = <T, R>(data: T[], formatFunc: (item: T) => R): R[] => {
   return data.map((item: T) => {
     return formatFunc(item)

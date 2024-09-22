@@ -1,4 +1,4 @@
-import { accountSourceServices } from '@/hooks/core/account-source/configs'
+import { accountSourceServices } from '@/core/account-source/configs'
 import { IUseGetAdvancedProps } from '@/types/query.interface'
 import { useQuery } from '@tanstack/react-query'
 

@@ -2,7 +2,7 @@ import { contentDialogAccountSourceForm } from '@/app/dashboard/account-source/c
 import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dashboard/account-source/handler'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
-import { IDialogAccountSource } from '@/hooks/core/account-source/constants'
+import { IDialogAccountSource } from '@/core/account-source/constants'
 import { IAccountSourceBody, IAccountSourceDataFormat } from '@/types/account-source.i'
 import { IDialogConfig } from '@/types/common.i'
 import React from 'react'

@@ -1,5 +1,5 @@
 import { formatAccountSourceData } from '@/app/dashboard/account-source/constants'
-import { IAccountSourceDialogFlag } from '@/hooks/core/account-source/models'
+import { IAccountSourceDialogFlag } from '@/core/account-source/models'
 import { IAccountSourceBody, IAccountSourceDataFormat } from '@/types/account-source.i'
 import toast from 'react-hot-toast'
 export const handleShowDetailAccountSource = async (

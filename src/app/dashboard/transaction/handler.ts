@@ -1,4 +1,4 @@
-import { IGetTransactionResponse } from '@/hooks/core/transaction/models'
+import { IGetTransactionResponse } from '@/core/transaction/models'
 import { formatCurrency } from '@/libraries/utils'
 
 export const modifyTransactionHandler = (payload: IGetTransactionResponse): IDataTransactionTable[] => {
