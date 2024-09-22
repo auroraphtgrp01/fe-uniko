@@ -9,3 +9,15 @@ export type ISignInResponse = IBaseResponseData<{
   accessToken: string
   refreshToken: string
 }>
+
+export interface ISignUpBody {
+  email: string
+  password: string
+  fullName: string
+}
+
+export type ISignUpResponse = ISignInResponse & {
+  user: {
+    email: string
+  }
+}

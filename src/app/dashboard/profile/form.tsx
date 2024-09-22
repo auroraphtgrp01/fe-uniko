@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Cake, BriefcaseBusiness, Phone, MapPin, User } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useGetMeUser } from '@/core/users/hooks/useQueryUser'
 import { useState } from 'react'
 
 export default function ProfileForm() {

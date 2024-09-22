@@ -13,6 +13,7 @@ import { transactionHeaders } from '@/app/dashboard/transaction/constants'
 import { useQueryTransaction } from '@/core/transaction/hooks/useQueryTransaction'
 import { IDataTransactionTable, modifyTransactionHandler } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
+import { useTransaction } from '@/core/transaction/hooks'
 
 export default function TransactionForm() {
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
@@ -29,7 +30,8 @@ export default function TransactionForm() {
     limit: dataTableConfig.limit
   })
 
-  const { dataTransaction, isGetTransaction } = useQueryTransaction(queryOptions)
+  const { getTransactions } = useTransaction()
+  const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
 
   useEffect(() => {
     if (dataTransaction) {
