@@ -74,14 +74,14 @@ axiosInstance.interceptors.request.use((config) => {
 //   }
 // )
 
-const request = async <TResponse>(
+const request = async <TResponseponse>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
   url: string,
   options?: AxiosRequestConfig,
   headers?: Record<string, string>
-): Promise<{ status: number; payload: TResponse }> => {
+): Promise<{ status: number; payload: TResponseponse }> => {
   const fullUrl = normalizePath(url)
-  const response = await axiosInstance.request<TResponse>({
+  const response = await axiosInstance.request<TResponseponse>({
     url: fullUrl,
     method,
     ...options,
@@ -113,29 +113,39 @@ const handleClientSideActions = (url: string, data: any) => {
 }
 
 const httpService = {
-  get<TRes>(url: string, options?: AxiosRequestConfig, headers?: Record<string, string>) {
-    return request<TRes>('GET', url, options, headers)
+  get<TResponse>(url: string, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TResponse>('GET', url, options, headers)
   },
-  post<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
-    return request<TRes>('POST', url, { ...options, data: body }, headers)
+  post<TBody, TResponse>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TResponse>('POST', url, { ...options, data: body }, headers)
   },
-  put<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
-    return request<TRes>('PUT', url, { ...options, data: body }, headers)
+  put<TBody, TResponse>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TResponse>('PUT', url, { ...options, data: body }, headers)
   },
-  delete<TRes>(url: string, options?: AxiosRequestConfig, headers?: Record<string, string>) {
-    return request<TRes>('DELETE', url, options, headers)
+  delete<TResponse>(url: string, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TResponse>('DELETE', url, options, headers)
   },
-  patch<TBody, TRes>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
-    return request<TRes>('PATCH', url, { ...options, data: body }, headers)
+  patch<TBody, TResponse>(url: string, body: TBody, options?: AxiosRequestConfig, headers?: Record<string, string>) {
+    return request<TResponse>('PATCH', url, { ...options, data: body }, headers)
   }
 }
 
-export const fetchData = async <TRes>(
+export const fetchData = async <TResponse>(
   url: string,
   params: Record<string, any> = {},
   headers?: Record<string, string>
-): Promise<TRes> => {
-  const { payload } = await httpService.get<TRes>(url, { params }, headers)
+): Promise<TResponse> => {
+  const { payload } = await httpService.get<TResponse>(url, { params }, headers)
+  return payload
+}
+
+export const postData = async <TBody, TResponse>(
+  url: string,
+  body: TBody,
+  params: Record<string, any> = {},
+  headers?: Record<string, string>
+): Promise<TResponse> => {
+  const { payload } = await httpService.post<TBody, TResponse>(url, body, { params }, headers)
   return payload
 }
 
