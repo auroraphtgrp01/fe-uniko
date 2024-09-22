@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import CardInHeader from '@/components/dashboard/CardInHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -11,8 +11,31 @@ import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutCha
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
 import { getTypes } from '@/libraries/utils'
+import { IDataTableConfig } from '@/types/common.i'
+import { IQueryOptions } from '@/types/query.interface'
 
 export default function TrackerTransactionForm() {
+  const [totalPage, setTotalPage] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [limit, setLimit] = useState<number>(10)
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    totalPage: 0,
+    currentPage: 1,
+    limit: 10,
+    types: [],
+    selectedTypes: [],
+    isPaginate: true,
+    isVisibleSortType: true,
+    classNameOfScroll: 'h-[calc(100vh-30rem)]'
+  })
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
+    page: dataTableConfig.currentPage,
+    limit: dataTableConfig.limit,
+    condition: '',
+    isExactly: false,
+    sort: '',
+    includePopulate: true
+  })
   const titles: string[] = ['Transaction Name', 'Type', 'Amount', 'Date', 'From Account', 'Description']
   const columns = getColumns(titles, true)
   const data = [
@@ -227,14 +250,7 @@ export default function TrackerTransactionForm() {
         <div className='mt-4 flex-1'>
           <Card className='h-full w-full'>
             <CardContent>
-              <DataTable
-                isVisibleSortType={true}
-                types={types}
-                classNameOfScroll='h-[calc(100vh-30rem)]'
-                columns={columns}
-                data={data}
-                isPaginate={true}
-              />
+              <DataTable columns={columns} data={data} config={dataTableConfig} setConfig={setDataTableConfig} />
             </CardContent>
           </Card>
         </div>

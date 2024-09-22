@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { IUseQueryHookOptions } from '@/hooks/query-hooks/query-hook.i'
-import { useSignIn } from '@/hooks/core/auth/hooks/useSignIn'
-import { useSignUp } from '@/hooks/core/auth/hooks/useSignUp'
+import { useSignIn } from '@/core/auth/hooks/useSignIn'
+import { useSignUp } from '@/core/auth/hooks/useSignUp'
+import { IUseQueryHookOptions } from '@/types/query.interface'
 
 export const useAuth = (opts?: IUseQueryHookOptions) => {
   const [isRememberMe, setIsRememberMe] = useState(true)

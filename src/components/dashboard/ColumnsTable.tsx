@@ -11,7 +11,9 @@ export function getColumns(headers: string[], isSort: boolean): ColumnDef<any>[]
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
     header: ({ column }: { column: any }) =>
-      isSort ? (
+      header === 'Id' || header === 'Check Type' ? (
+        ''
+      ) : isSort ? (
         <div
           className='flex'
           onClick={() => {
@@ -25,7 +27,11 @@ export function getColumns(headers: string[], isSort: boolean): ColumnDef<any>[]
         <div>{header}</div>
       ),
     cell: ({ row }: { row: any }) => {
-      return <div>{parse(renderToString(row.getValue(convertToCamelCase(header))))}</div>
+      return header === 'Id' || header === 'Check Type' ? (
+        ''
+      ) : (
+        <div>{parse(renderToString(row.getValue(convertToCamelCase(header))))}</div>
+      )
     }
   }))
 
