@@ -1,3 +1,3 @@
 import { apiService } from '@/api'
 
-export const accountSourceServices = apiService.accountSource
+export const accountSourceRoutes = apiService.accountSource

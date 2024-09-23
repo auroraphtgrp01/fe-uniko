@@ -1,6 +1,10 @@
 import { formatAccountSourceData } from '@/app/dashboard/account-source/constants'
-import { IAccountSourceDialogFlag } from '@/core/account-source/models'
-import { IAccountSourceBody, IAccountSourceDataFormat } from '@/types/account-source.i'
+import {
+  EAccountSourceType,
+  IAccountSourceBody,
+  IAccountSourceDataFormat,
+  IAccountSourceDialogFlag
+} from '@/core/account-source/models'
 import toast from 'react-hot-toast'
 export const handleShowDetailAccountSource = async (
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>,
@@ -36,8 +40,8 @@ export const handleCreateAccountSource = async ({
       isCloseConfirmationDialog: boolean
     }>
   >
-  createAccountSource: any // You can type this properly based on the actual function or API you're using.
-  updateAccountSource?: any // Optional, if you're using it later
+  createAccountSource: any
+  updateAccountSource?: any
   setData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
   data: IAccountSourceDataFormat[]
   setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
@@ -57,7 +61,7 @@ export const handleCreateAccountSource = async ({
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
         setData([format, ...data.slice(0, -1)])
         setTableData([format, ...tableData.slice(0, -1)])
-        setFormData((prev) => ({ ...prev, name: '', type: '', initAmount: 0, currency: '' }))
+        setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
         toast.success('Create account source successfully!')
       }
     }
@@ -99,7 +103,7 @@ export const handleUpdateAccountSource = async ({
         setData((prevRows) => prevRows.map((row) => (row.id === format.id ? { ...row, ...format } : row)))
         setTableData((prevRows) => prevRows.map((row) => (row.id === format.id ? { ...row, ...format } : row)))
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
-        setFormData((prev) => ({ ...prev, name: '', type: '', initAmount: 0, currency: '' }))
+        setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
         toast.success('Update account source successfully!')
       }
     }
