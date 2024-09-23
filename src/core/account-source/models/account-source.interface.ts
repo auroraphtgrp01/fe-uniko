@@ -25,7 +25,7 @@ export interface IAccountSourceDataFormat {
 }
 
 export interface IAccountSourceBody {
-  id?: string
+  id: string
   name?: string
   type?: EAccountSourceType
   initAmount?: number

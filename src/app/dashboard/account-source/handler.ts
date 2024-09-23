@@ -52,7 +52,8 @@ export const handleCreateAccountSource = async ({
     name: formData.name,
     type: formData.type,
     initAmount: formData.initAmount,
-    currency: formData.currency
+    currency: formData.currency,
+    id: formData.id
   }
   createAccountSource(payload, {
     onSuccess: (res: any) => {

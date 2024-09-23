@@ -7,6 +7,7 @@ import {
   setRefreshTokenToLocalStorage
 } from '@/libraries/helpers'
 import { normalizePath } from '@/libraries/utils'
+import { IDynamicType, IMutateData } from '@/types/common.i'
 
 export class HttpError extends Error {
   status: number
@@ -139,13 +140,9 @@ export const fetchData = async <TResponse>(
   return payload
 }
 
-export const postData = async <TBody, TResponse>(
-  url: string,
-  body: TBody,
-  params: Record<string, any> = {},
-  headers?: Record<string, string>
-): Promise<TResponse> => {
-  const { payload } = await httpService.post<TBody, TResponse>(url, body, { params }, headers)
+export const mutateData = async <TBody, TResponse>(props: IMutateData<TBody>): Promise<TResponse> => {
+  const { url, body, params = {}, headers = {}, method = 'post' } = props
+  const { payload } = await httpService[method]<TBody, TResponse>(url, body, { params }, headers)
   return payload
 }
 
