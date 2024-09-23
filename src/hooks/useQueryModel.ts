@@ -26,6 +26,15 @@ const defaultOptions: QueryOptions = {
   retry: 2
 }
 
+/**
+ * Custom React hook that fetches data using React Query with customizable options.
+ *
+ * @template TResponse - The expected response type.
+ * @param {string} modelName - The name of the model to query.
+ * @param {string} pathUrl - The URL path for the query endpoint.
+ * @param {QueryOptions} [options={}] - Optional configuration to customize the query behavior.
+ * @returns {object} - Returns the result of the `useQuery` hook from React Query.
+ */
 export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, options: QueryOptions = {}) => {
   const mergedOptions: QueryOptions = { ...defaultOptions, ...options }
   const params = Object.keys(mergedOptions.params ?? {})
@@ -45,6 +54,11 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
   })
 }
 
+/**
+ * @param {T | undefined} oldData - The existing data before the update. It could be undefined if no data has been previously fetched.
+ * @param {Partial<T>} newData - The new data to update with. This is a partial object of type T.
+ * @returns {T} - If oldData is not defined, it returns the newData cast to type T.
+ */
 export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (oldData: T, newData: Partial<T>) => T) => {
   const queryClient = useQueryClient()
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]

@@ -2,8 +2,12 @@ import { contentDialogAccountSourceForm } from '@/app/dashboard/account-source/c
 import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dashboard/account-source/handler'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
-import { IDialogAccountSource } from '@/core/account-source/constants'
-import { IAccountSourceBody, IAccountSourceDataFormat } from '@/types/account-source.i'
+import {
+  EAccountSourceType,
+  IAccountSourceBody,
+  IAccountSourceDataFormat,
+  IDialogAccountSource
+} from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
 import React from 'react'
 
@@ -75,7 +79,7 @@ export default function AccountSourceDialog({
           type='button'
           variant={'greenPastel1'}
           onClick={() => {
-            setFormData((prev) => ({ ...prev, name: '', type: '', initAmount: 0, currency: '' }))
+            setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
             setIsDialogOpen((prev) => ({
               ...prev,
               isDialogCreateOpen: false,

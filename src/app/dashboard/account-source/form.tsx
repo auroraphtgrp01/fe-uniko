@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import CardInHeader from '@/components/dashboard/CardInHeader'
 import React, { useEffect, useState } from 'react'
-import { IAccountSourceDataFormat, IAccountSourceBody, IAccountSource } from '@/types/account-source.i'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
@@ -14,12 +13,13 @@ import {
 import { handleShowDetailAccountSource } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import AccountSourceDialog from './dialog'
-import { useAccountSource, useGetAdvancedAccountSource } from '@/core/account-source/hooks'
+import { useAccountSource } from '@/core/account-source/hooks'
 import { formatArrayData, getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { useGetAccountSourceById } from '@/core/account-source/hooks/useGetAccountSourceById'
+import { IAccountSource, IAccountSourceBody, IAccountSourceDataFormat } from '@/core/account-source/models'
 
 export default function AccountSourceForm() {
+  // States
   const [data, setData] = useState<IAccountSourceDataFormat[]>([])
   const [columns, setColumns] = useState<any[]>([])
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
@@ -37,10 +37,14 @@ export default function AccountSourceForm() {
   )
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState(initDialogFlag)
-  const { createAccountSource, updateAccountSource } = useAccountSource()
-  const { getAdvancedData, isGetAdvancedPending } = useGetAdvancedAccountSource({ params: queryOptions })
+
+  // Hooks
+  const { createAccountSource, updateAccountSource, getAdvancedAccountSource, useGetAccountSourceById } =
+    useAccountSource()
+  const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ params: queryOptions })
   const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
 
+  // Effects
   useEffect(() => {
     if (dataTableConfig?.selectedTypes?.length === 0) setTableData(data)
     else {

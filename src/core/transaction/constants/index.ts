@@ -1,0 +1,2 @@
+export const TRANSACTION_RETRY = 1
+export const TRANSACTION_MODEL_KEY = 'TRANSACTION'
