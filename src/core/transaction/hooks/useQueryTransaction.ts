@@ -1,4 +1,5 @@
 import { transactionRoutes } from '@/api/transaction'
+import { TRANSACTION_MODEL_KEY, TRANSACTION_RETRY } from '@/core/transaction/constants'
 import { IGetTransactionResponse } from '@/core/transaction/models'
 import { useModelQuery } from '@/hooks/useQueryModel'
 import { IDynamicType } from '@/types/common.i'
@@ -10,8 +11,9 @@ export const useQueryTransaction = (params: IDynamicType) => {
     isPending: isGetTransaction,
     data: dataTransaction,
     error
-  } = useModelQuery<IGetTransactionResponse>('Transaction', transactionRoutes.getTransactionById, {
-    params
+  } = useModelQuery<IGetTransactionResponse>(TRANSACTION_MODEL_KEY, transactionRoutes.getTransactionById, {
+    params,
+    retry: TRANSACTION_RETRY
   })
 
   useEffect(() => {
