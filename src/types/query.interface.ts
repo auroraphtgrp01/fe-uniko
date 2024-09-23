@@ -6,7 +6,7 @@ export interface IUseQueryHookOptions {
 }
 
 export interface IUseGetAdvancedProps {
-  params: IQueryOptions
+  query: IQueryOptions
   queryCondition?: IDynamicType[]
 }
 

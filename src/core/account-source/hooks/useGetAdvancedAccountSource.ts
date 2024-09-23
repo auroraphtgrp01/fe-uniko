@@ -9,7 +9,7 @@ export const useGetAdvancedAccountSource = (props: IUseGetAdvancedProps) => {
     ACCOUNT_SOURCE_MODEL_KEY,
     accountSourceRoutes.getAdvanced,
     {
-      params: props.params,
+      query: props.query,
       enable: !!props,
       retry: ACCOUNT_SOURCE_RETRY_QUERY
     }

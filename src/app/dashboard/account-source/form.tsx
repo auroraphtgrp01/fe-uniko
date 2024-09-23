@@ -41,7 +41,7 @@ export default function AccountSourceForm() {
   // Hooks
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource, useGetAccountSourceById } =
     useAccountSource()
-  const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ params: queryOptions })
+  const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
 
   // Effects

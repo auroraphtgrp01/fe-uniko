@@ -6,13 +6,13 @@ import { IDynamicType } from '@/types/common.i'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 
-export const useQueryTransaction = (params: IDynamicType) => {
+export const useQueryTransaction = (query: IDynamicType) => {
   const {
     isPending: isGetTransaction,
     data: dataTransaction,
     error
   } = useModelQuery<IGetTransactionResponse>(TRANSACTION_MODEL_KEY, transactionRoutes.getTransactionById, {
-    params,
+    query,
     retry: TRANSACTION_RETRY
   })
 
