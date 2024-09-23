@@ -1,5 +1,3 @@
-import { IAccountSourceDataFormat } from './account-source.i'
-
 export interface IBaseResponseData<T> {
   data: T
   statusCode: number

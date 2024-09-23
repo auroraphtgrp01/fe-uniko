@@ -1,15 +1,19 @@
-import { accountSourceServices } from '@/core/account-source/configs'
+import { accountSourceRoutes } from '@/core/account-source/configs'
+import { ACCOUNT_SOURCE_MODEL_KEY, ACCOUNT_SOURCE_RETRY_QUERY } from '@/core/account-source/constants'
+import { IAdvancedAccountSourceResponse } from '@/core/account-source/models'
+import { useModelQuery } from '@/hooks/useQueryModel'
 import { IUseGetAdvancedProps } from '@/types/query.interface'
-import { useQuery } from '@tanstack/react-query'
 
 export const useGetAdvancedAccountSource = (props: IUseGetAdvancedProps) => {
-  const { isPending: isGetAdvancedPending, data: getAdvancedData } = useQuery({
-    queryKey: ['account-source', 'advanced', props.params, props.queryCondition],
-    queryFn: () => accountSourceServices.getAdvanced(props.params, props.queryCondition),
-    enabled: !!props,
-    retry: 2,
-    retryDelay: 1000
-  })
+  const { isPending: isGetAdvancedPending, data: getAdvancedData } = useModelQuery<IAdvancedAccountSourceResponse>(
+    ACCOUNT_SOURCE_MODEL_KEY,
+    accountSourceRoutes.getAdvanced,
+    {
+      params: props.params,
+      enable: !!props,
+      retry: ACCOUNT_SOURCE_RETRY_QUERY
+    }
+  )
   return {
     isGetAdvancedPending,
     getAdvancedData

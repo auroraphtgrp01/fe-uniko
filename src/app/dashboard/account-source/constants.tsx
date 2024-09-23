@@ -1,9 +1,14 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { IAccountSourceBody, IAccountSourceDialogFlag } from '@/core/account-source/models'
+import {
+  EAccountSourceType,
+  IAccountSource,
+  IAccountSourceBody,
+  IAccountSourceDataFormat,
+  IAccountSourceDialogFlag
+} from '@/core/account-source/models'
 import { formatCurrency } from '@/libraries/utils'
-import { IAccountSource, IAccountSourceDataFormat } from '@/types/account-source.i'
 import { HandCoins, Landmark, Wallet2 } from 'lucide-react'
 
 export const contentDialogAccountSourceForm = ({
@@ -31,7 +36,10 @@ export const contentDialogAccountSourceForm = ({
       <Label htmlFor='type' className='text-right'>
         Type
       </Label>
-      <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))} value={formData.type}>
+      <Select
+        onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value as EAccountSourceType }))}
+        value={formData.type}
+      >
         <SelectTrigger className='col-span-3'>
           <SelectValue placeholder='Select a source type' />
         </SelectTrigger>
@@ -106,7 +114,7 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
 
 export const initAccountSourceFormData: IAccountSourceBody = {
   name: '',
-  type: '',
+  type: EAccountSourceType.WALLET,
   initAmount: 0,
   currency: '',
   id: undefined
