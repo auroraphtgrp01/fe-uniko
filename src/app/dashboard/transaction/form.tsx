@@ -70,12 +70,14 @@ export default function TransactionForm() {
                 View all
               </Button>
             </CardTitle>
-            <CardDescription>Overview of today`s transactions</CardDescription>
+            <CardDescription className='text-nowrap text-xs sm:text-sm'>
+              Overview of today`s transactions
+            </CardDescription>
           </CardHeader>
-          <CardContent className='grid gap-4'>
+          <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
-              <div>Total Transactions</div>
-              <div className='text-xl font-bold'>5</div>
+              <div className='truncate'>Total Transactions</div>
+              <div className='text-lg font-bold sm:text-xl'>5</div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
@@ -94,12 +96,12 @@ export default function TransactionForm() {
                 Classify
               </Button>
             </CardTitle>
-            <CardDescription>Transactions without a tracker</CardDescription>
+            <CardDescription className='text-xs sm:text-sm'>Transactions without a tracker</CardDescription>
           </CardHeader>
-          <CardContent className='grid gap-4'>
+          <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
-              <div>Total Transactions</div>
-              <div className='text-xl font-bold'>1</div>
+              <div className='truncate'>Total Transactions</div>
+              <div className='text-lg font-bold sm:text-xl'>1</div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>

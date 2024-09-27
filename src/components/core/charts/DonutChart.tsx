@@ -87,7 +87,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           name: 'Nightingale Chart',
           type: 'pie',
           radius: [50, 150],
-          center: ['50%', '50%'],
+          center: ['50%', '40%'],
           roseType: 'area',
           itemStyle: {
             borderRadius: 10,

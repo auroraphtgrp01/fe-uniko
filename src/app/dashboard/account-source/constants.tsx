@@ -117,7 +117,7 @@ export const initAccountSourceFormData: IAccountSourceBody = {
   type: EAccountSourceType.WALLET,
   initAmount: 0,
   currency: '',
-  id: undefined
+  id: ''
 }
 
 export const initDialogFlag: IAccountSourceDialogFlag = {

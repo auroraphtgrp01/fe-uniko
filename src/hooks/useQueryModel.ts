@@ -1,5 +1,6 @@
 import { getBaseUrl } from '@/libraries/helpers'
 import { fetchData } from '@/libraries/http'
+import { replaceParams } from '@/libraries/utils'
 import { IDynamicType } from '@/types/common.i'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -10,10 +11,11 @@ interface QueryOptions {
   refetchOnWindowFocus?: boolean
   refetchOnReconnect?: boolean
   enable?: boolean
-  params?: IDynamicType
+  query?: IDynamicType
   condition?: string | null
   headers?: Record<string, string>
   retry?: number
+  params?: IDynamicType
 }
 
 const defaultOptions: QueryOptions = {
@@ -21,7 +23,7 @@ const defaultOptions: QueryOptions = {
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,
   enable: true,
-  params: {},
+  query: {},
   condition: null,
   retry: 2
 }
@@ -37,14 +39,14 @@ const defaultOptions: QueryOptions = {
  */
 export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, options: QueryOptions = {}) => {
   const mergedOptions: QueryOptions = { ...defaultOptions, ...options }
-  const params = Object.keys(mergedOptions.params ?? {})
-    .map((key) => `${key}=${encodeURIComponent(mergedOptions.params ? mergedOptions.params[key] : '')}`)
+  const query = Object.keys(mergedOptions.query ?? {})
+    .map((key) => `${key}=${encodeURIComponent(mergedOptions.query ? mergedOptions.query[key] : '')}`)
     .join('&')
-  const queryKey = [modelName, mergedOptions.condition ?? '', params]
-
+  const queryKey = [modelName, mergedOptions.condition ?? '', query]
+  const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
   return useQuery<TResponse>({
     queryKey,
-    queryFn: () => fetchData<TResponse>(`${baseUrl}/${pathUrl}?` + params, options.headers),
+    queryFn: () => fetchData<TResponse>(finalUrl, options.headers),
     refetchOnMount: mergedOptions.refetchOnMount,
     refetchOnWindowFocus: mergedOptions.refetchOnWindowFocus,
     refetchOnReconnect: mergedOptions.refetchOnReconnect,
