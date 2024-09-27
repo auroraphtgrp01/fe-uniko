@@ -1,3 +1,4 @@
+import { IDynamicType } from '@/types/common.i'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -50,5 +51,11 @@ export const getConvertedKeysToTitleCase = (obj: Record<string, any> = {}): stri
 export const formatArrayData = <T, R>(data: T[], formatFunc: (item: T) => R): R[] => {
   return data.map((item: T) => {
     return formatFunc(item)
+  })
+}
+
+export function replaceParams(pathUrl: string, params: IDynamicType) {
+  return pathUrl.replace(/:(\w+)/g, (_, key) => {
+    return params[key] ? params[key] : `:${key}`
   })
 }

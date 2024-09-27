@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 export const useUpdateAccountSource = (opts?: IUseQueryHookOptions) => {
   return useMutationCustom<IAccountSourceBody, IAccountSourceResponse>({
     pathUrl: accountSourceRoutes.updateAccountSource,
+    method: 'patch',
     mutateOption: {
       onError: (error: Error | any) => {
         if (error.response?.status === 401) {

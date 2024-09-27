@@ -44,3 +44,11 @@ export interface IDialogConfig {
 export interface IDynamicType {
   [key: string]: any
 }
+
+export interface IMutateData<TBody> {
+  url: string
+  body: TBody
+  params: IDynamicType
+  headers?: Record<string, string>
+  method: 'post' | 'put' | 'patch'
+}

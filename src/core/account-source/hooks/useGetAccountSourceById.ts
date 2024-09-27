@@ -8,7 +8,8 @@ export const useGetAccountSourceById = (id: string) => {
     accountSourceRoutes.getById,
     {
       condition: id,
-      enable: !!id
+      enable: !!id,
+      params: { id }
     }
   )
   return {
