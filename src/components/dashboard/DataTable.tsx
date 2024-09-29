@@ -81,26 +81,26 @@ export function DataTable<TData, TValue>({
   return (
     <div className='w-full p-1'>
       <div className='flex items-center justify-between py-4'>
-        <div className='min-w-0 max-w-md'>
-          <Input
-            placeholder='Filter'
-            defaultValue={''}
-            onChange={(event) => {
-              table.setGlobalFilter(event.target.value)
-            }}
-            className='w-50 mr-2'
-          />
-        </div>
-        {isVisibleSortType && (
-          <div className='ms-2 flex-1'>
+        <div className='flex items-center space-x-2'>
+          <div className='min-w-0'>
+            <Input
+              placeholder='Filter'
+              defaultValue={''}
+              onChange={(event) => {
+                table.setGlobalFilter(event.target.value)
+              }}
+              className='w-[200px]'
+            />
+          </div>
+          {isVisibleSortType && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='whitespace-nowrap'>
-                  <span className='mr-2 hidden sm:inline-block'>Types</span>
-                  <ChevronDown className='h-4 w-4' />
+                  Types
+                  <ChevronDown className='ml-2 h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='w-[200px]'>
+              <DropdownMenuContent align='start' className='w-[200px]'>
                 {types && types.length > 0 ? (
                   types.map((type) => (
                     <DropdownMenuCheckboxItem
@@ -117,26 +117,26 @@ export function DataTable<TData, TValue>({
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        )}
+          )}
+        </div>
         <div className='flex items-center space-x-2'>
           {onCreateButtonClick && (
             <Button variant='outline' className='whitespace-nowrap' onClick={onCreateButtonClick}>
-              <span className='mr-2 hidden sm:inline-block'>Create</span>
-              <PlusIcon className='h-4 w-4' />
+              Create
+              <PlusIcon className='ml-2 h-4 w-4' />
             </Button>
           )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
-                <span className='mr-2 hidden sm:inline-block'>Columns</span>
-                <ChevronDown className='h-4 w-4' />
+                Columns
+                <ChevronDown className='ml-2 h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[200px]'>
               {table
                 .getAllColumns()
-                .filter((column) => column.getCanHide())
+                .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType')
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem

@@ -35,12 +35,6 @@ export interface IAccountSourceBody {
   accountBankId?: string
 }
 
-export interface IAccountSourceDialogFlag {
-  isDialogCreateOpen: boolean
-  isDialogUpdateOpen: boolean
-  isCloseConfirmationDialog: boolean
-}
-
 export enum EAccountSourceType {
   WALLET = 'WALLET',
   BANKING = 'BANKING'
@@ -49,5 +43,4 @@ export enum EAccountSourceType {
 export interface IDialogAccountSource {
   isDialogCreateOpen: boolean
   isDialogUpdateOpen: boolean
-  isCloseConfirmationDialog: boolean
 }

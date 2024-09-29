@@ -3,7 +3,7 @@ import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dash
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import {
-  EAccountSourceType,
+  IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
   IDialogAccountSource
@@ -16,23 +16,25 @@ export default function AccountSourceDialog({
   isDialogOpen,
   setFormData,
   formData,
-  setData,
-  setTableData,
-  tableData,
-  data,
+  setFetchedData,
+  fetchedData,
   createAccountSource,
-  updateAccountSource
+  updateAccountSource,
+  setDataCreate,
+  setDataUpdate
 }: {
   formData: IAccountSourceBody
   isDialogOpen: IDialogAccountSource
-  data: IAccountSourceDataFormat[]
+  fetchedData: IAccountSource[]
   tableData: IAccountSourceDataFormat[]
   createAccountSource: any
   updateAccountSource: any
-  setData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
+  setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+  setDataCreate: any
+  setDataUpdate: any
 }) {
   const contentDialogForm = contentDialogAccountSourceForm({
     formData,
@@ -48,10 +50,11 @@ export default function AccountSourceDialog({
           await handleUpdateAccountSource({
             formData,
             setIsDialogOpen,
-            setData,
-            setTableData,
+            setFetchedData,
             setFormData,
-            updateAccountSource
+            updateAccountSource,
+            fetchedData,
+            setDataUpdate
           })
         }
       >
@@ -62,45 +65,8 @@ export default function AccountSourceDialog({
     title: 'Update Account Source',
     isOpen: isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: true }))
+      setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
     }
-  }
-
-  const closeConfirmationDialog: IDialogConfig = {
-    title: 'Close Confirmation',
-    content: 'Are you sure you want to close this dialog?',
-    isOpen: isDialogOpen.isCloseConfirmationDialog,
-    onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: false }))
-    },
-    footer: (
-      <>
-        <Button
-          type='button'
-          variant={'greenPastel1'}
-          onClick={() => {
-            setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
-            setIsDialogOpen((prev) => ({
-              ...prev,
-              isDialogCreateOpen: false,
-              isCloseConfirmationDialog: false,
-              isDialogUpdateOpen: false
-            }))
-          }}
-        >
-          Confirm
-        </Button>
-        <Button
-          type='button'
-          variant={'secondary'}
-          onClick={() => {
-            setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: false }))
-          }}
-        >
-          Cancel
-        </Button>
-      </>
-    )
   }
 
   const createConfigDialog: IDialogConfig = {
@@ -112,12 +78,10 @@ export default function AccountSourceDialog({
           await handleCreateAccountSource({
             formData,
             setIsDialogOpen,
-            setData,
-            setTableData,
+            setFetchedData,
             setFormData,
-            data,
-            tableData,
-            createAccountSource
+            createAccountSource,
+            setDataCreate
           })
         }
       >
@@ -128,14 +92,13 @@ export default function AccountSourceDialog({
     title: 'Create Account Source',
     isOpen: isDialogOpen.isDialogCreateOpen,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isCloseConfirmationDialog: true }))
+      setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
     }
   }
   return (
     <div>
       <CustomDialog config={createConfigDialog} />
       <CustomDialog config={updateConfigDialog} />
-      <CustomDialog config={closeConfirmationDialog} />
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { ArrowUpDown } from 'lucide-react'
 import { renderToString } from 'react-dom/server'
 import parse from 'html-react-parser'
 
-export function getColumns(headers: string[], isSort: boolean): ColumnDef<any>[] {
+export function getColumns<T>(headers: string[], isSort: boolean): ColumnDef<T>[] {
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
     header: ({ column }: { column: any }) =>
