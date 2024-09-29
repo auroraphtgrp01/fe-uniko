@@ -1,7 +1,7 @@
 import { getBaseUrl } from '@/libraries/helpers'
 import { fetchData } from '@/libraries/http'
-import { replaceParams } from '@/libraries/utils'
-import { IDynamicType } from '@/types/common.i'
+import { mergeQueryParams, replaceParams } from '@/libraries/utils'
+import { IBaseResponseData, IDynamicType } from '@/types/common.i'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const baseUrl = getBaseUrl()
@@ -39,10 +39,9 @@ const defaultOptions: QueryOptions = {
  */
 export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, options: QueryOptions = {}) => {
   const mergedOptions: QueryOptions = { ...defaultOptions, ...options }
-  const query = Object.keys(mergedOptions.query ?? {})
-    .map((key) => `${key}=${encodeURIComponent(mergedOptions.query ? mergedOptions.query[key] : '')}`)
-    .join('&')
+  const query = mergeQueryParams(mergedOptions.query ?? {})
   const queryKey = [modelName, mergedOptions.condition ?? '', query]
+
   const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
   return useQuery<TResponse>({
     queryKey,
@@ -56,16 +55,25 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
   })
 }
 
+type Updater<T> =
+  T extends IBaseResponseData<infer U>
+    ? U extends Array<infer ItemType>
+      ? ItemType
+      : never
+    : T extends Array<infer ItemType>
+      ? ItemType
+      : never
+
 /**
  * @param {T | undefined} oldData - The existing data before the update. It could be undefined if no data has been previously fetched.
  * @param {Partial<T>} newData - The new data to update with. This is a partial object of type T.
  * @returns {T} - If oldData is not defined, it returns the newData cast to type T.
  */
-export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (oldData: T, newData: Partial<T>) => T) => {
+export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (oldData: T, newData: Updater<T>) => T) => {
   const queryClient = useQueryClient()
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
 
-  const setData = (newData: Partial<T>) => {
+  const setData = (newData: Updater<T>) => {
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)

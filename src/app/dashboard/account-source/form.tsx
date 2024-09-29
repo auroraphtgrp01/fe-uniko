@@ -2,7 +2,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import CardInHeader from '@/components/dashboard/CardInHeader'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
@@ -10,50 +10,57 @@ import {
   initAccountSourceFormData,
   initDialogFlag
 } from '@/app/dashboard/account-source/constants'
-import { handleShowDetailAccountSource } from '@/app/dashboard/account-source/handler'
+import {
+  filterDataAccountSource,
+  handleShowDetailAccountSource,
+  updateCacheDataCreate,
+  updateCacheDataUpdate
+} from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import AccountSourceDialog from './dialog'
 import { useAccountSource } from '@/core/account-source/hooks'
-import { formatArrayData, getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
+import { formatArrayData, getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { IAccountSource, IAccountSourceBody, IAccountSourceDataFormat } from '@/core/account-source/models'
+import {
+  IAccountSource,
+  IAccountSourceBody,
+  IAccountSourceDataFormat,
+  IAdvancedAccountSourceResponse,
+  IDialogAccountSource
+} from '@/core/account-source/models'
+import { initQueryOptions } from '@/constants/init-query-options'
+import { useUpdateModel } from '@/hooks/useQueryModel'
+import { ACCOUNT_SOURCE_MODEL_KEY } from '@/core/account-source/constants'
 
 export default function AccountSourceForm() {
   // States
-  const [data, setData] = useState<IAccountSourceDataFormat[]>([])
-  const [columns, setColumns] = useState<any[]>([])
+  const [fetchedData, setFetchedData] = useState<IAccountSource[]>([])
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [idRowClicked, setIdRowClicked] = useState<string>('')
-  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
-    page: dataTableConfig.currentPage,
-    limit: dataTableConfig.limit
-  })
-  const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>(
-    dataTableConfig?.selectedTypes?.length === 0
-      ? data
-      : data.filter((item: IAccountSourceDataFormat) =>
-          dataTableConfig?.selectedTypes?.includes(item.checkType as string)
-        )
-  )
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
-  const [isDialogOpen, setIsDialogOpen] = useState(initDialogFlag)
+  const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
+
+  // Memo
+  const query = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
+  const columns = useMemo(() => {
+    if (tableData.length === 0) return []
+    const titles = getConvertedKeysToTitleCase(tableData[0])
+    return getColumns<IAccountSourceDataFormat>(titles, true)
+  }, [tableData])
 
   // Hooks
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource, useGetAccountSourceById } =
     useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
+  const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataCreate)
+  const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataUpdate)
 
   // Effects
   useEffect(() => {
-    if (dataTableConfig?.selectedTypes?.length === 0) setTableData(data)
-    else {
-      setTableData(
-        data.filter((item: IAccountSourceDataFormat) =>
-          dataTableConfig?.selectedTypes?.includes(item.checkType as string)
-        )
-      )
-    }
+    setTableData(filterDataAccountSource(fetchedData, dataTableConfig.selectedTypes as string[]))
   }, [dataTableConfig.selectedTypes])
 
   useEffect(() => {
@@ -62,15 +69,12 @@ export default function AccountSourceForm() {
         getAdvancedData.data,
         formatAccountSourceData
       )
-      const titles = getConvertedKeysToTitleCase(dataFormat[0])
-      const columns = getColumns(titles, true)
       setDataTableConfig((prev) => ({
         ...prev,
         types: getTypes(getAdvancedData.data),
         totalPage: Number(getAdvancedData.pagination?.totalPage)
       }))
-      setData(dataFormat)
-      setColumns(columns)
+      setFetchedData(getAdvancedData.data)
       setTableData(dataFormat)
     }
   }, [getAdvancedData])
@@ -107,12 +111,14 @@ export default function AccountSourceForm() {
         isDialogOpen={isDialogOpen}
         setFormData={setFormData}
         formData={formData}
-        setData={setData}
+        setFetchedData={setFetchedData}
         setTableData={setTableData}
         tableData={tableData}
-        data={data}
+        fetchedData={fetchedData}
         createAccountSource={createAccountSource}
         updateAccountSource={updateAccountSource}
+        setDataCreate={setDataCreate}
+        setDataUpdate={setDataUpdate}
       />
     </div>
   )

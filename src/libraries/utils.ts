@@ -48,6 +48,7 @@ const camelCaseToTitleCase = (input: string): string => {
 
 export const getConvertedKeysToTitleCase = (obj: Record<string, any> = {}): string[] =>
   Object.keys(obj).map(camelCaseToTitleCase)
+
 export const formatArrayData = <T, R>(data: T[], formatFunc: (item: T) => R): R[] => {
   return data.map((item: T) => {
     return formatFunc(item)
@@ -58,4 +59,10 @@ export function replaceParams(pathUrl: string, params: IDynamicType) {
   return pathUrl.replace(/:(\w+)/g, (_, key) => {
     return params[key] ? params[key] : `:${key}`
   })
+}
+
+export function mergeQueryParams(query: IDynamicType): string {
+  return Object.keys(query)
+    .map((key) => `${key}=${encodeURIComponent(query ? query[key] : '')}`)
+    .join('&')
 }

@@ -6,9 +6,9 @@ import {
   IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
-  IAccountSourceDialogFlag
+  IDialogAccountSource
 } from '@/core/account-source/models'
-import { formatCurrency } from '@/libraries/utils'
+import { formatArrayData, formatCurrency } from '@/libraries/utils'
 import { HandCoins, Landmark, Wallet2 } from 'lucide-react'
 
 export const contentDialogAccountSourceForm = ({
@@ -120,8 +120,7 @@ export const initAccountSourceFormData: IAccountSourceBody = {
   id: ''
 }
 
-export const initDialogFlag: IAccountSourceDialogFlag = {
+export const initDialogFlag: IDialogAccountSource = {
   isDialogCreateOpen: false,
-  isDialogUpdateOpen: false,
-  isCloseConfirmationDialog: false
+  isDialogUpdateOpen: false
 }
