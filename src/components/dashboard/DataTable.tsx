@@ -14,7 +14,7 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
@@ -49,6 +49,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+
   const table = useReactTable({
     data,
     columns,
@@ -67,6 +68,10 @@ export function DataTable<TData, TValue>({
       rowSelection
     }
   })
+
+  useEffect(() => {
+    table.setPagination({ pageIndex: currentPage - 1, pageSize: limit })
+  }, [data, config])
 
   const toggleType = (type: string) => {
     if (selectedTypes)
@@ -186,13 +191,6 @@ export function DataTable<TData, TValue>({
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={(event: any) => {
-                      console.log(onRowClick)
-
-                      console.log(
-                        event.currentTarget.getAttribute('role') === null ||
-                          event.currentTarget.getAttribute('role') !== 'checkbox'
-                      )
-
                       if (
                         (event.currentTarget.getAttribute('role') === null ||
                           event.currentTarget.getAttribute('role') !== 'checkbox') &&
