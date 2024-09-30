@@ -14,7 +14,8 @@ import {
   filterDataAccountSource,
   handleShowDetailAccountSource,
   updateCacheDataCreate,
-  updateCacheDataUpdate
+  updateCacheDataUpdate,
+  updateCacheDetailData
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import AccountSourceDialog from './dialog'
@@ -25,6 +26,7 @@ import {
   IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
+  IAccountSourceResponse,
   IAdvancedAccountSourceResponse,
   IDialogAccountSource
 } from '@/core/account-source/models'
@@ -42,11 +44,12 @@ export default function AccountSourceForm() {
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
 
-  // Memo
+  // Memos
+  const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const query = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
+  const queryGetDetail = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, idRowClicked, ''], [idRowClicked])
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
-    const titles = getConvertedKeysToTitleCase(tableData[0])
     return getColumns<IAccountSourceDataFormat>(titles, true)
   }, [tableData])
 
@@ -56,6 +59,7 @@ export default function AccountSourceForm() {
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataCreate)
+  const { setData: setCacheDetailData } = useUpdateModel<IAccountSourceResponse>(queryGetDetail, updateCacheDetailData)
   const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataUpdate)
 
   // Effects
@@ -102,7 +106,11 @@ export default function AccountSourceForm() {
             setConfig={setDataTableConfig}
             onCreateButtonClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))}
             columns={columns}
-            onRowClick={(row: IAccountSourceDataFormat) => setIdRowClicked(row.id)}
+            onRowClick={(row: IAccountSourceDataFormat) =>
+              row.id === idRowClicked
+                ? handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
+                : setIdRowClicked(row.id)
+            }
           />
         </CardContent>
       </Card>
@@ -119,6 +127,7 @@ export default function AccountSourceForm() {
         updateAccountSource={updateAccountSource}
         setDataCreate={setDataCreate}
         setDataUpdate={setDataUpdate}
+        setDetailData={setCacheDetailData}
       />
     </div>
   )

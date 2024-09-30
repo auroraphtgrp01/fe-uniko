@@ -3,6 +3,7 @@ import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dash
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import {
+  EAccountSourceType,
   IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
@@ -21,7 +22,8 @@ export default function AccountSourceDialog({
   createAccountSource,
   updateAccountSource,
   setDataCreate,
-  setDataUpdate
+  setDataUpdate,
+  setDetailData
 }: {
   formData: IAccountSourceBody
   isDialogOpen: IDialogAccountSource
@@ -35,6 +37,7 @@ export default function AccountSourceDialog({
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   setDataCreate: any
   setDataUpdate: any
+  setDetailData: any
 }) {
   const contentDialogForm = contentDialogAccountSourceForm({
     formData,
@@ -46,15 +49,16 @@ export default function AccountSourceDialog({
     footer: (
       <Button
         type='button'
-        onClick={async () =>
-          await handleUpdateAccountSource({
+        onClick={() =>
+          handleUpdateAccountSource({
             formData,
             setIsDialogOpen,
             setFetchedData,
             setFormData,
             updateAccountSource,
             fetchedData,
-            setDataUpdate
+            setDataUpdate,
+            setDetailData
           })
         }
       >
@@ -66,6 +70,13 @@ export default function AccountSourceDialog({
     isOpen: isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
+      setFormData((prev) => ({
+        ...prev,
+        name: '',
+        type: EAccountSourceType.WALLET,
+        initAmount: 0,
+        currency: ''
+      }))
     }
   }
 
@@ -93,6 +104,13 @@ export default function AccountSourceDialog({
     isOpen: isDialogOpen.isDialogCreateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
+      setFormData((prev) => ({
+        ...prev,
+        name: '',
+        type: EAccountSourceType.WALLET,
+        initAmount: 0,
+        currency: ''
+      }))
     }
   }
   return (

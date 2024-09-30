@@ -6,6 +6,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const baseUrl = getBaseUrl()
 
+type Updater<T> =
+  T extends IBaseResponseData<infer U>
+    ? U extends Array<infer ItemType>
+      ? ItemType
+      : never
+    : T extends Array<infer ItemType>
+      ? ItemType
+      : never
 interface QueryOptions {
   refetchOnMount?: boolean
   refetchOnWindowFocus?: boolean
@@ -43,6 +51,7 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
   const queryKey = [modelName, mergedOptions.condition ?? '', query]
 
   const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
+
   return useQuery<TResponse>({
     queryKey,
     queryFn: () => fetchData<TResponse>(finalUrl, options.headers),
@@ -55,15 +64,6 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
   })
 }
 
-type Updater<T> =
-  T extends IBaseResponseData<infer U>
-    ? U extends Array<infer ItemType>
-      ? ItemType
-      : never
-    : T extends Array<infer ItemType>
-      ? ItemType
-      : never
-
 /**
  * @param {T | undefined} oldData - The existing data before the update. It could be undefined if no data has been previously fetched.
  * @param {Partial<T>} newData - The new data to update with. This is a partial object of type T.
@@ -74,10 +74,13 @@ export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (old
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
 
   const setData = (newData: Updater<T>) => {
+    console.log('Trước update', queryClient.getQueryData(key))
+
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)
     })
+    console.log('Sau update', queryClient.getQueryData(key))
   }
 
   const resetData = () => {

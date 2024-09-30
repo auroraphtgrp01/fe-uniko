@@ -4,12 +4,14 @@ import {
   IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
+  IAccountSourceResponse,
   IAdvancedAccountSourceResponse,
   IDialogAccountSource
 } from '@/core/account-source/models'
 import { formatArrayData } from '@/libraries/utils'
+import { IBaseResponseData } from '@/types/common.i'
 import toast from 'react-hot-toast'
-export const handleShowDetailAccountSource = async (
+export const handleShowDetailAccountSource = (
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>,
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>,
   getAccountSourceById: any
@@ -25,7 +27,7 @@ export const handleShowDetailAccountSource = async (
   setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
 }
 
-export const handleCreateAccountSource = async ({
+export const handleCreateAccountSource = ({
   formData,
   setIsDialogOpen,
   setFormData,
@@ -54,7 +56,7 @@ export const handleCreateAccountSource = async ({
     id: formData.id
   }
   createAccountSource(payload, {
-    onSuccess: (res: any) => {
+    onSuccess: (res: IAccountSourceResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
         setFetchedData((prev) => [res.data, ...prev])
@@ -66,14 +68,15 @@ export const handleCreateAccountSource = async ({
   })
 }
 
-export const handleUpdateAccountSource = async ({
+export const handleUpdateAccountSource = ({
   formData,
   setIsDialogOpen,
   fetchedData,
   setFetchedData,
   setFormData,
   updateAccountSource,
-  setDataUpdate
+  setDataUpdate,
+  setDetailData
 }: {
   formData: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<
@@ -87,6 +90,7 @@ export const handleUpdateAccountSource = async ({
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   fetchedData: IAccountSource[]
   setDataUpdate: any
+  setDetailData: any
 }) => {
   const payload: IAccountSourceBody = {
     name: formData.name,
@@ -96,13 +100,14 @@ export const handleUpdateAccountSource = async ({
     id: formData.id
   }
   updateAccountSource(payload, {
-    onSuccess(res: any) {
+    onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
         const format = formatAccountSourceData(res.data)
         const indexDataUpdated = fetchedData.findIndex((item) => item.id === format.id)
         fetchedData[indexDataUpdated] = res.data
         setFetchedData(fetchedData)
         setDataUpdate(res.data)
+        setDetailData(res.data)
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
         setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
         toast.success('Update account source successfully!')
@@ -138,4 +143,11 @@ export const updateCacheDataUpdate = (
     updatedData.splice(index, 0, { ...updatedData[index], ...newData })
   }
   return { ...oldData, data: updatedData }
+}
+
+export const updateCacheDetailData = (
+  oldData: IAccountSourceResponse,
+  newData: IAccountSource
+): IAccountSourceResponse => {
+  return { ...oldData, data: newData }
 }

@@ -107,7 +107,7 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
     initAmount: formatCurrency(initAmount, currency),
     accountBank: accountBank?.type,
     currency,
-    currentAmount: formatCurrency(currentAmount, 'VND'),
+    currentAmount: formatCurrency(currentAmount, currency),
     checkType: type
   }
 }
