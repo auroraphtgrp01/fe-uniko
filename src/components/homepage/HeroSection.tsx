@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect } from 'react'
-import ListViewImage from '@/images/list-view.png'
 import Image from 'next/image'
 import { Spotlight } from '@/components/homepage/Spotlight'
 import { HoverBorderGradient } from '@/components/homepage/HoverBorderGradient'
@@ -11,6 +10,7 @@ import '@/styles/hero.css'
 import logoImg from '@/images/logo-3.png'
 import { motion } from 'framer-motion'
 import { isLogin } from '@/libraries/helpers'
+import { FlipWords } from '@/components/dashboard/flip-words'
 
 export default function HeroSection() {
   const isLoginUser = isLogin()
@@ -21,11 +21,11 @@ export default function HeroSection() {
       document.body.style.overflow = 'auto'
     }
   }, [])
-
   return (
-    <div id='hero' className='hero'>
-      <div className='relative flex h-full w-full overflow-hidden rounded-md bg-black/[0.96] pt-[5rem] antialiased bg-dot-white/[0.2] md:items-center md:justify-center'>
+    <div id='hero' className='hero flex min-h-screen items-center justify-center'>
+      <div className='relative flex w-full items-center justify-center bg-black bg-grid-small-white/[0.2]'>
         <Spotlight className='left-0 top-40 md:-top-20 md:left-60' fill='white' />
+
         <div className='pointer-events-none absolute inset-0 flex items-center justify-center bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]'></div>
         <div className='relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center p-4 pt-20 md:pt-0'>
           <motion.div
@@ -38,7 +38,14 @@ export default function HeroSection() {
           <Heading1 delay={1} duration={6} className='text-center'>
             <span className={`font-semibold tracking-tighter`}>{'Optimized financial solutions'}</span>
             <br />
-            <span className={`font-semibold leading-snug tracking-tighter`}>for lasting success</span>
+            <span className={`font-semibold leading-snug tracking-tighter`}>
+              for{' '}
+              <FlipWords
+                className='font-semibold leading-snug tracking-tighter'
+                duration={3000}
+                words={['lasting success', 'future development']}
+              ></FlipWords>
+            </span>
           </Heading1>
           <AnimElement>
             <p
@@ -70,12 +77,6 @@ export default function HeroSection() {
           </AnimElement>
         </div>
       </div>
-      <AnimElement className=''>
-        <div className='hero-slider-container'>
-          <Image className='mx-auto w-[1216px]' src={ListViewImage} alt='List view image' />
-        </div>
-      </AnimElement>
-      <div className='relative flex h-[100000px] w-full overflow-hidden rounded-md bg-black/[0.96] antialiased bg-dot-white/[0.2] md:items-center md:justify-center'></div>
     </div>
   )
 }
