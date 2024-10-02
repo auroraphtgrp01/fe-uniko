@@ -10,7 +10,7 @@ export const Spotlight = ({ className, fill }: SpotlightProps) => {
   return (
     <svg
       className={cn(
-        'animate-spotlight pointer-events-none absolute z-[1] h-[169%] w-[138%] opacity-0 lg:w-[84%]',
+        'pointer-events-none absolute z-[1] h-[169%] w-[138%] animate-spotlight opacity-0 lg:w-[84%]',
         className
       )}
       xmlns='http://www.w3.org/2000/svg'
@@ -25,7 +25,7 @@ export const Spotlight = ({ className, fill }: SpotlightProps) => {
           ry='273.501'
           transform='matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)'
           fill={fill || 'white'}
-          fillOpacity='0.21'
+          fillOpacity='0.1'
         ></ellipse>
       </g>
       <defs>
@@ -40,7 +40,8 @@ export const Spotlight = ({ className, fill }: SpotlightProps) => {
         >
           <feFlood floodOpacity='0' result='BackgroundImageFix'></feFlood>
           <feBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape'></feBlend>
-          <feGaussianBlur stdDeviation='151' result='effect1_foregroundBlur_1065_8'></feGaussianBlur>
+          <feGaussianBlur stdDeviation='250' result='effect1_foregroundBlur_1065_8'></feGaussianBlur>{' '}
+          {/* Higher blur for softer effect */}
         </filter>
       </defs>
     </svg>
