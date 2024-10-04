@@ -192,8 +192,8 @@ export function DataTable<TData, TValue>({
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={(event: any) => {
                       if (
-                        (event.currentTarget.getAttribute('role') === null ||
-                          event.currentTarget.getAttribute('role') !== 'checkbox') &&
+                        (event.target.getAttribute('role') === null ||
+                          event.target.getAttribute('role') !== 'checkbox') &&
                         onRowClick
                       ) {
                         onRowClick(row.original)

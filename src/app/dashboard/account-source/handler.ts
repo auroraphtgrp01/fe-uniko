@@ -9,7 +9,7 @@ import {
   IDialogAccountSource
 } from '@/core/account-source/models'
 import { formatArrayData } from '@/libraries/utils'
-import { IBaseResponseData } from '@/types/common.i'
+import { IBaseResponseData, IBaseResponsePagination } from '@/types/common.i'
 import toast from 'react-hot-toast'
 export const handleShowDetailAccountSource = (
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>,
@@ -76,7 +76,8 @@ export const handleUpdateAccountSource = ({
   setFormData,
   updateAccountSource,
   setDataUpdate,
-  setDetailData
+  setDetailData,
+  setIdRowClicked
 }: {
   formData: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<
@@ -91,6 +92,7 @@ export const handleUpdateAccountSource = ({
   fetchedData: IAccountSource[]
   setDataUpdate: any
   setDetailData: any
+  setIdRowClicked: React.Dispatch<React.SetStateAction<string | null>>
 }) => {
   const payload: IAccountSourceBody = {
     name: formData.name,
@@ -110,6 +112,7 @@ export const handleUpdateAccountSource = ({
         setDetailData(res.data)
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
         setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
+        setIdRowClicked(null)
         toast.success('Update account source successfully!')
       }
     }
@@ -128,7 +131,8 @@ export const updateCacheDataCreate = (
   newData: IAccountSource
 ): IAdvancedAccountSourceResponse => {
   const updatedData = [newData, ...oldData.data]
-  if (updatedData.length > 1) updatedData.pop()
+
+  if (updatedData.length > (oldData.pagination as IBaseResponsePagination).limit) updatedData.pop()
   return { ...oldData, data: updatedData }
 }
 

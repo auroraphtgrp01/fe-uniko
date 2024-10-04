@@ -74,13 +74,10 @@ export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (old
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
 
   const setData = (newData: Updater<T>) => {
-    console.log('Trước update', queryClient.getQueryData(key))
-
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)
     })
-    console.log('Sau update', queryClient.getQueryData(key))
   }
 
   const resetData = () => {

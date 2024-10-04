@@ -23,7 +23,8 @@ export default function AccountSourceDialog({
   updateAccountSource,
   setDataCreate,
   setDataUpdate,
-  setDetailData
+  setDetailData,
+  setIdRowClicked
 }: {
   formData: IAccountSourceBody
   isDialogOpen: IDialogAccountSource
@@ -38,6 +39,7 @@ export default function AccountSourceDialog({
   setDataCreate: any
   setDataUpdate: any
   setDetailData: any
+  setIdRowClicked: React.Dispatch<React.SetStateAction<string | null>>
 }) {
   const contentDialogForm = contentDialogAccountSourceForm({
     formData,
@@ -58,7 +60,8 @@ export default function AccountSourceDialog({
             updateAccountSource,
             fetchedData,
             setDataUpdate,
-            setDetailData
+            setDetailData,
+            setIdRowClicked
           })
         }
       >
@@ -85,8 +88,8 @@ export default function AccountSourceDialog({
     footer: (
       <Button
         type='button'
-        onClick={async () =>
-          await handleCreateAccountSource({
+        onClick={() =>
+          handleCreateAccountSource({
             formData,
             setIsDialogOpen,
             setFetchedData,
