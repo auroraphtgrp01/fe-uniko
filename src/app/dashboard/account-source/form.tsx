@@ -13,6 +13,7 @@ import {
 import {
   filterDataAccountSource,
   handleShowDetailAccountSource,
+  initDataTable,
   updateCacheDataCreate,
   updateCacheDataUpdate,
   updateCacheDetailData
@@ -47,7 +48,7 @@ export default function AccountSourceForm() {
   // Memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const query = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
-  const queryGetDetail = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, idRowClicked ? idRowClicked : '', ''], [idRowClicked])
+  const queryGetDetail = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, idRowClicked ?? '', ''], [idRowClicked])
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
     return getColumns<IAccountSourceDataFormat>(titles, true)
@@ -57,7 +58,7 @@ export default function AccountSourceForm() {
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource, useGetAccountSourceById } =
     useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
-  const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked ? idRowClicked : '')
+  const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked ?? '')
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataCreate)
   const { setData: setCacheDetailData } = useUpdateModel<IAccountSourceResponse>(queryGetDetail, updateCacheDetailData)
   const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataUpdate)
@@ -68,24 +69,10 @@ export default function AccountSourceForm() {
   }, [dataTableConfig.selectedTypes])
 
   useEffect(() => {
-    if (!isGetAdvancedPending && getAdvancedData) {
-      const dataFormat: IAccountSourceDataFormat[] = formatArrayData<IAccountSource, IAccountSourceDataFormat>(
-        getAdvancedData.data,
-        formatAccountSourceData
-      )
-      setDataTableConfig((prev) => ({
-        ...prev,
-        types: getTypes(getAdvancedData.data),
-        totalPage: Number(getAdvancedData.pagination?.totalPage)
-      }))
-      setFetchedData(getAdvancedData.data)
-      setTableData(dataFormat)
-    }
+    initDataTable(isGetAdvancedPending, getAdvancedData, setDataTableConfig, setFetchedData, setTableData)
   }, [getAdvancedData])
 
   useEffect(() => {
-    console.log('getDetailAccountSource', getDetailAccountSource)
-
     if (getDetailAccountSource !== undefined && Boolean(idRowClicked))
       handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
   }, [getDetailAccountSource])

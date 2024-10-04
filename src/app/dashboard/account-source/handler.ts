@@ -8,8 +8,8 @@ import {
   IAdvancedAccountSourceResponse,
   IDialogAccountSource
 } from '@/core/account-source/models'
-import { formatArrayData } from '@/libraries/utils'
-import { IBaseResponseData, IBaseResponsePagination } from '@/types/common.i'
+import { formatArrayData, getTypes } from '@/libraries/utils'
+import { IBaseResponseData, IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import toast from 'react-hot-toast'
 export const handleShowDetailAccountSource = (
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>,
@@ -154,4 +154,26 @@ export const updateCacheDetailData = (
   newData: IAccountSource
 ): IAccountSourceResponse => {
   return { ...oldData, data: newData }
+}
+
+export const initDataTable = (
+  isGetAdvancedPending: boolean,
+  getAdvancedData: IAdvancedAccountSourceResponse | undefined,
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>,
+  setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>,
+  setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
+) => {
+  if (!isGetAdvancedPending && getAdvancedData) {
+    const dataFormat: IAccountSourceDataFormat[] = formatArrayData<IAccountSource, IAccountSourceDataFormat>(
+      getAdvancedData.data,
+      formatAccountSourceData
+    )
+    setDataTableConfig((prev) => ({
+      ...prev,
+      types: getTypes(getAdvancedData.data),
+      totalPage: Number(getAdvancedData.pagination?.totalPage)
+    }))
+    setFetchedData(getAdvancedData.data)
+    setTableData(dataFormat)
+  }
 }
