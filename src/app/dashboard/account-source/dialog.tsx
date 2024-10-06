@@ -39,7 +39,7 @@ export default function AccountSourceDialog({
   setDataCreate: any
   setDataUpdate: any
   setDetailData: any
-  setIdRowClicked: React.Dispatch<React.SetStateAction<string | null>>
+  setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) {
   const contentDialogForm = contentDialogAccountSourceForm({
     formData,
@@ -80,6 +80,7 @@ export default function AccountSourceDialog({
         initAmount: 0,
         currency: ''
       }))
+      setIdRowClicked('')
     }
   }
 

@@ -5,11 +5,7 @@ import CardInHeader from '@/components/dashboard/CardInHeader'
 import React, { useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
-import {
-  formatAccountSourceData,
-  initAccountSourceFormData,
-  initDialogFlag
-} from '@/app/dashboard/account-source/constants'
+import { initAccountSourceFormData, initDialogFlag } from '@/app/dashboard/account-source/constants'
 import {
   filterDataAccountSource,
   handleShowDetailAccountSource,
@@ -21,7 +17,7 @@ import {
 import { initTableConfig } from '@/constants/data-table'
 import AccountSourceDialog from './dialog'
 import { useAccountSource } from '@/core/account-source/hooks'
-import { formatArrayData, getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
+import { getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
   IAccountSource,
@@ -39,7 +35,7 @@ export default function AccountSourceForm() {
   // States
   const [fetchedData, setFetchedData] = useState<IAccountSource[]>([])
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
-  const [idRowClicked, setIdRowClicked] = useState<string | null>(null)
+  const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
@@ -48,7 +44,7 @@ export default function AccountSourceForm() {
   // Memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const query = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
-  const queryGetDetail = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, idRowClicked ?? '', ''], [idRowClicked])
+  const queryGetDetail = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, idRowClicked, ''], [idRowClicked])
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
     return getColumns<IAccountSourceDataFormat>(titles, true)
@@ -58,7 +54,7 @@ export default function AccountSourceForm() {
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource, useGetAccountSourceById } =
     useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
-  const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked ?? '')
+  const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataCreate)
   const { setData: setCacheDetailData } = useUpdateModel<IAccountSourceResponse>(queryGetDetail, updateCacheDetailData)
   const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataUpdate)
@@ -73,9 +69,9 @@ export default function AccountSourceForm() {
   }, [getAdvancedData])
 
   useEffect(() => {
-    if (getDetailAccountSource !== undefined && Boolean(idRowClicked))
+    if (getDetailAccountSource !== undefined && idRowClicked !== '')
       handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
-  }, [getDetailAccountSource])
+  }, [getDetailAccountSource, idRowClicked])
 
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
@@ -95,7 +91,7 @@ export default function AccountSourceForm() {
             setConfig={setDataTableConfig}
             onCreateButtonClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))}
             columns={columns}
-            onRowClick={(row: IAccountSourceDataFormat) => setIdRowClicked(row.id)}
+            onRowClick={(data: IAccountSourceDataFormat) => setIdRowClicked(data.id)}
           />
         </CardContent>
       </Card>

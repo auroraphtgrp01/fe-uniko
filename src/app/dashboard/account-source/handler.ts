@@ -9,8 +9,9 @@ import {
   IDialogAccountSource
 } from '@/core/account-source/models'
 import { formatArrayData, getTypes } from '@/libraries/utils'
-import { IBaseResponseData, IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
+import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import toast from 'react-hot-toast'
+
 export const handleShowDetailAccountSource = (
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>,
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>,
@@ -43,7 +44,6 @@ export const handleCreateAccountSource = ({
     }>
   >
   createAccountSource: any
-  updateAccountSource?: any
   setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setDataCreate: any
@@ -92,7 +92,7 @@ export const handleUpdateAccountSource = ({
   fetchedData: IAccountSource[]
   setDataUpdate: any
   setDetailData: any
-  setIdRowClicked: React.Dispatch<React.SetStateAction<string | null>>
+  setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) => {
   const payload: IAccountSourceBody = {
     name: formData.name,
@@ -104,15 +104,14 @@ export const handleUpdateAccountSource = ({
   updateAccountSource(payload, {
     onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        const format = formatAccountSourceData(res.data)
-        const indexDataUpdated = fetchedData.findIndex((item) => item.id === format.id)
-        fetchedData[indexDataUpdated] = res.data
-        setFetchedData(fetchedData)
+        const clonedData = JSON.parse(JSON.stringify(res))
+        const updatedData = fetchedData.map((item) => (item.id === clonedData.data.id ? clonedData.data : item))
+        setFetchedData(updatedData)
         setDataUpdate(res.data)
         setDetailData(res.data)
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
         setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
-        setIdRowClicked(null)
+        setIdRowClicked('')
         toast.success('Update account source successfully!')
       }
     }
@@ -140,12 +139,9 @@ export const updateCacheDataUpdate = (
   oldData: IAdvancedAccountSourceResponse,
   newData: IAccountSource
 ): IAdvancedAccountSourceResponse => {
-  const updatedData = [...oldData.data]
-  const index = updatedData.findIndex((item) => item.id === newData.id)
-  if (index !== -1) {
-    updatedData.splice(index, 1)
-    updatedData.splice(index, 0, { ...updatedData[index], ...newData })
-  }
+  const updatedData = oldData.data.map((item) => {
+    return item.id === newData.id ? { ...item, ...newData } : item
+  })
   return { ...oldData, data: updatedData }
 }
 
