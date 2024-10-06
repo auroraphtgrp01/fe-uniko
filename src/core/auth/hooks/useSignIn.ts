@@ -28,6 +28,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
         setAccessToken(data.data.accessToken)
 
         toast.success('Login successful - Welcome back!')
+        router.push('/dashboard')
       },
       onError: (error) => {
         if (error.response?.status === 401) {
