@@ -9,8 +9,9 @@ import { handleUpdateCommonInformation, initData } from './handler'
 import CommonInformationForm from './commonInformationForm'
 import CredentialInformationForm from './credentialInformationForm'
 import ProfileCardContainer from './profileCardContainer'
-import { IUser } from '@/types/user.i'
+import { IUser, IUserGetMeResponse } from '@/types/user.i'
 import { initFormData } from './constants'
+import { useUpdateModel } from '@/hooks/useQueryModel'
 
 export default function ProfileForm() {
   const accessToken = getAccessTokenFromLocalStorage()
@@ -20,6 +21,9 @@ export default function ProfileForm() {
   // hooks
   const { getMe, updateUser, isUpdating } = useUser()
   const { userGetMeData, isGetMeUserPending } = getMe(accessToken as string)
+  const { setData } = useUpdateModel<IUserGetMeResponse>(['USER', 'me', ''], (oldData, newData) => {
+    return { ...oldData, data: newData }
+  })
 
   // Effects
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function ProfileForm() {
               onSubmit={handleUpdateCommonInformation}
               updateUser={updateUser}
               isUpdating={isUpdating}
+              setData={setData}
             />
           </TabsContent>
           <TabsContent value='password' className='h-fit min-[1490px]:mt-2'>

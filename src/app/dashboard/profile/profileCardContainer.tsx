@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { formatDateTimeVN } from '@/libraries/utils'
 import { IUser } from '@/types/user.i'
 import { BriefcaseBusiness, Cake, MapPin, Phone, User } from 'lucide-react'
 
@@ -28,7 +29,7 @@ export default function ProfileCardContainer({ data }: { data: IUser }) {
               {data?.email ?? ''}
             </h1>
             <h1 className='mb-2 flex items-center justify-center text-lg md:justify-start'>
-              <Cake className='mb-1 mr-2' /> {data?.dateOfBirth ?? ''}
+              <Cake className='mb-1 mr-2' /> {data?.dateOfBirth ? formatDateTimeVN(data?.dateOfBirth, false) : ''}
             </h1>
             <h1 className='mb-2 flex items-center justify-center text-lg md:justify-start'>
               <User className='mb-1 mr-2' /> {data?.gender ?? ''}

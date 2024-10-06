@@ -18,13 +18,17 @@ export const initData = (
 export const handleUpdateCommonInformation = (
   formData: ICommonInformationForm,
   updateUser: any,
-  isUpdating: boolean
+  isUpdating: boolean,
+  setData: any
 ) => {
+  // const payload = { ...formData, dateOfBirth: formData.dateOfBirth !== null ? new Date(formData.dateOfBirth) : null }
   updateUser(formData, {
     onSuccess: (res: IBaseResponseData<any>) => {
       console.log(res)
-      if (!isUpdating && (res.statusCode === 200 || res.statusCode === 201))
+      if (!isUpdating && (res.statusCode === 200 || res.statusCode === 201)) {
+        setData(res.data)
         toast.success('Update common information successfully')
+      }
     }
   })
 }

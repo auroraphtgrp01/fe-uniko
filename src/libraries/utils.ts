@@ -23,14 +23,14 @@ export const formatCurrency = (amount: number, currency = 'USD', locale = 'en-US
     currency: currency
   }).format(amount)
 }
-export const formatDateTimeVN = (date: string) => {
+export const formatDateTimeVN = (date: string, hasTime: boolean) => {
   return new Intl.DateTimeFormat('vi-VN', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
+    hour: hasTime ? '2-digit' : undefined,
+    minute: hasTime ? '2-digit' : undefined,
+    second: hasTime ? '2-digit' : undefined
   }).format(new Date(date))
 }
 export const getTypes = (data: any): string[] => {
@@ -65,4 +65,12 @@ export function mergeQueryParams(query: IDynamicType): string {
   return Object.keys(query)
     .map((key) => `${key}=${encodeURIComponent(query ? query[key] : '')}`)
     .join('&')
+}
+
+export function formatDateToInput(dateString: string) {
+  const date = new Date(dateString)
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0, nên cần +1
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }

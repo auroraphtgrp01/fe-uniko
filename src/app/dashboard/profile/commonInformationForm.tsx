@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ICommonInformationForm } from '@/core/users/models/user.interface'
+import { formatDateToInput } from '@/libraries/utils'
 import React from 'react'
 
 export default function CommonInformationForm({
@@ -11,13 +12,15 @@ export default function CommonInformationForm({
   setFormData,
   onSubmit,
   updateUser,
-  isUpdating
+  isUpdating,
+  setData
 }: {
   formData: ICommonInformationForm
   setFormData: React.Dispatch<React.SetStateAction<ICommonInformationForm>>
   onSubmit: any
   updateUser: any
   isUpdating: boolean
+  setData: any
 }) {
   return (
     <Card className='h-full flex-1 rounded-md'>
@@ -39,7 +42,7 @@ export default function CommonInformationForm({
           <div className='mb-2 flex-1 items-center space-y-1'>
             <Label htmlFor='dateOfBirth'>Date of Birth:</Label>
             <Input
-              value={formData?.dateOfBirth ?? ''}
+              value={formData?.dateOfBirth ? formatDateToInput(formData?.dateOfBirth) : ''}
               type='date'
               onChange={(event) =>
                 setFormData((prev) => ({
@@ -117,7 +120,7 @@ export default function CommonInformationForm({
         <Button
           type='button'
           onClick={() => {
-            onSubmit(formData, updateUser, isUpdating)
+            onSubmit(formData, updateUser, isUpdating, setData)
           }}
         >
           Update
