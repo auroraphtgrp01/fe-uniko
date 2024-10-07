@@ -28,11 +28,10 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
         setAccessToken(data.data.accessToken)
 
         toast.success('Login successful - Welcome back!')
-        router.push('/dashboard')
       },
       onError: (error) => {
-        if (error.response?.status === 401) {
-          return toast.error('Invalid email or password!')
+        if (error.response?.status) {
+          return toast.error(`${(error.response?.data as { message: string }).message} !`)
         }
         toast.error('An error occurred. Please try again later.')
 

@@ -1,4 +1,4 @@
-export const initFormData = {
+export const initCommonInfFormData = {
   id: '',
   fullName: '',
   dateOfBirth: '',
@@ -6,4 +6,10 @@ export const initFormData = {
   address: '',
   phone_number: '',
   workplace: ''
+}
+
+export const initCredentialInfFormData = {
+  id: '',
+  currentPassword: '',
+  newPassword: ''
 }

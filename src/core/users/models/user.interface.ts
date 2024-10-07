@@ -7,3 +7,9 @@ export interface ICommonInformationForm {
   phone_number: string | null
   workplace: string | null
 }
+
+export interface ICredentialInformationForm {
+  id: string
+  currentPassword?: string | undefined
+  newPassword?: string | undefined
+}

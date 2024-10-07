@@ -4,22 +4,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useEffect, useState } from 'react'
 import { useUser } from '@/core/users/hooks'
 import { getAccessTokenFromLocalStorage } from '@/libraries/helpers'
-import { ICommonInformationForm } from '@/core/users/models/user.interface'
-import { handleUpdateCommonInformation, initData } from './handler'
+import { ICommonInformationForm, ICredentialInformationForm } from '@/core/users/models/user.interface'
+import { handleUpdateCredentialInformation, handleUpdateCommonInformation, initData } from './handler'
 import CommonInformationForm from './commonInformationForm'
 import CredentialInformationForm from './credentialInformationForm'
 import ProfileCardContainer from './profileCardContainer'
 import { IUser, IUserGetMeResponse } from '@/types/user.i'
-import { initFormData } from './constants'
+import { initCredentialInfFormData, initCommonInfFormData } from './constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 
 export default function ProfileForm() {
   const accessToken = getAccessTokenFromLocalStorage()
   // states
-  const [formData, setFormData] = useState<ICommonInformationForm>(initFormData)
+  const [commonInfFormData, setCommonInfFormData] = useState<ICommonInformationForm>(initCommonInfFormData)
+  const [credentialInfFormData, setCredentialInfFormData] =
+    useState<ICredentialInformationForm>(initCredentialInfFormData)
 
   // hooks
-  const { getMe, updateUser, isUpdating } = useUser()
+  const { getMe, updateUser, isUpdating, isPasswordUpdating, updatePassword } = useUser()
   const { userGetMeData, isGetMeUserPending } = getMe(accessToken as string)
   const { setData } = useUpdateModel<IUserGetMeResponse>(['USER', 'me', ''], (oldData, newData) => {
     return { ...oldData, data: newData }
@@ -27,7 +29,8 @@ export default function ProfileForm() {
 
   // Effects
   useEffect(() => {
-    if (!isGetMeUserPending && userGetMeData) initData(userGetMeData, isGetMeUserPending, setFormData)
+    if (!isGetMeUserPending && userGetMeData)
+      initData(userGetMeData, isGetMeUserPending, setCommonInfFormData, setCredentialInfFormData)
   }, [userGetMeData, isGetMeUserPending])
 
   return (
@@ -48,8 +51,8 @@ export default function ProfileForm() {
           </TabsList>
           <TabsContent value='account' className='h-fit'>
             <CommonInformationForm
-              formData={formData}
-              setFormData={setFormData}
+              formData={commonInfFormData}
+              setFormData={setCommonInfFormData}
               onSubmit={handleUpdateCommonInformation}
               updateUser={updateUser}
               isUpdating={isUpdating}
@@ -57,7 +60,13 @@ export default function ProfileForm() {
             />
           </TabsContent>
           <TabsContent value='password' className='h-fit min-[1490px]:mt-2'>
-            <CredentialInformationForm />
+            <CredentialInformationForm
+              formData={credentialInfFormData}
+              setFormData={setCredentialInfFormData}
+              onSubmit={handleUpdateCredentialInformation}
+              updatePassword={updatePassword}
+              isUpdating={isPasswordUpdating}
+            />
           </TabsContent>
         </Tabs>
       </div>
