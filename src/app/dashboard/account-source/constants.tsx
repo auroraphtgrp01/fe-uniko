@@ -25,6 +25,7 @@ export const contentDialogAccountSourceForm = ({
       </Label>
       <Input
         value={formData.name}
+        required
         onChange={(e) => {
           setFormData((prev) => ({ ...prev, name: e.target.value }))
         }}
@@ -37,6 +38,7 @@ export const contentDialogAccountSourceForm = ({
         Type
       </Label>
       <Select
+        required
         onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value as EAccountSourceType }))}
         value={formData.type}
       >
@@ -55,6 +57,7 @@ export const contentDialogAccountSourceForm = ({
       </Label>
       <Input
         type='number'
+        required
         defaultValue={formData.initAmount}
         onChange={(e) => {
           setFormData((prev) => ({ ...prev, initAmount: Number(e.target.value) }))
@@ -68,6 +71,7 @@ export const contentDialogAccountSourceForm = ({
         Currency
       </Label>
       <Select
+        required
         onValueChange={(value) => setFormData((prev) => ({ ...prev, currency: value }))}
         value={formData.currency}
       >

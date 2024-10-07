@@ -10,7 +10,7 @@ import {
   IDialogAccountSource
 } from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
-import React from 'react'
+import React, { FormEvent } from 'react'
 
 export default function AccountSourceDialog({
   setIsDialogOpen,
@@ -41,6 +41,33 @@ export default function AccountSourceDialog({
   setDetailData: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) {
+  function handleUpdateConfigDialogSubmit(e: FormEvent) {
+    e.preventDefault()
+    handleUpdateAccountSource({
+      formData,
+      setIsDialogOpen,
+      setFetchedData,
+      setFormData,
+      updateAccountSource,
+      fetchedData,
+      setDataUpdate,
+      setDetailData,
+      setIdRowClicked
+    })
+  }
+
+  function handleCreateConfigDialogSubmit(e: FormEvent) {
+    e.preventDefault()
+    handleCreateAccountSource({
+      formData,
+      setIsDialogOpen,
+      setFetchedData,
+      setFormData,
+      createAccountSource,
+      setDataCreate
+    })
+  }
+
   const contentDialogForm = contentDialogAccountSourceForm({
     formData,
     setFormData
@@ -48,26 +75,7 @@ export default function AccountSourceDialog({
 
   const updateConfigDialog: IDialogConfig = {
     content: contentDialogForm,
-    footer: (
-      <Button
-        type='button'
-        onClick={() =>
-          handleUpdateAccountSource({
-            formData,
-            setIsDialogOpen,
-            setFetchedData,
-            setFormData,
-            updateAccountSource,
-            fetchedData,
-            setDataUpdate,
-            setDetailData,
-            setIdRowClicked
-          })
-        }
-      >
-        Save changes
-      </Button>
-    ),
+    footer: <Button type='submit'>Save changes</Button>,
     description: 'Please fill in the information below to update a account source.',
     title: 'Update Account Source',
     isOpen: isDialogOpen.isDialogUpdateOpen,
@@ -86,23 +94,7 @@ export default function AccountSourceDialog({
 
   const createConfigDialog: IDialogConfig = {
     content: contentDialogForm,
-    footer: (
-      <Button
-        type='button'
-        onClick={() =>
-          handleCreateAccountSource({
-            formData,
-            setIsDialogOpen,
-            setFetchedData,
-            setFormData,
-            createAccountSource,
-            setDataCreate
-          })
-        }
-      >
-        Save changes
-      </Button>
-    ),
+    footer: <Button type='submit'>Save changes</Button>,
     description: 'Please fill in the information below to create a new account source.',
     title: 'Create Account Source',
     isOpen: isDialogOpen.isDialogCreateOpen,
@@ -119,8 +111,8 @@ export default function AccountSourceDialog({
   }
   return (
     <div>
-      <CustomDialog config={createConfigDialog} />
-      <CustomDialog config={updateConfigDialog} />
+      <CustomDialog config={createConfigDialog} onSubmit={handleCreateConfigDialogSubmit} />
+      <CustomDialog config={updateConfigDialog} onSubmit={handleUpdateConfigDialogSubmit} />
     </div>
   )
 }
