@@ -20,3 +20,11 @@ export type Transaction = {
 }
 
 export type IGetTransactionResponse = IBaseResponseData<Transaction[]>
+
+export interface IDialogTransaction {
+  isDialogDetailOpen: boolean
+  isDialogTransactionTodayOpen: boolean
+  isDialogUnclassifiedTransactionOpen: boolean
+}
+
+export interface ITransaction {}

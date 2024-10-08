@@ -1,5 +1,5 @@
 'use client'
-import React, { use, useEffect } from 'react'
+import React, { use, useEffect, useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -9,51 +9,53 @@ import { useState } from 'react'
 import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
-import { transactionHeaders } from '@/app/dashboard/transaction/constants'
 import { IDataTransactionTable, modifyTransactionHandler } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
 import { useTransaction } from '@/core/transaction/hooks'
+import { IDialogTransaction } from '@/core/transaction/models'
+import { initButtonInDataTableHeader, initDialogFlag, transactionHeaders } from './constants'
 
 export default function TransactionForm() {
+  // states
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
-
   const [dataDetail, setDataDetail] = useState<IDataTransactionTable>()
-
-  const [dataTable, setDataTable] = useState<IDataTransactionTable[]>()
-
+  const [dataTable, setDataTable] = useState<IDataTransactionTable[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
     page: dataTableConfig.currentPage,
     limit: dataTableConfig.limit
   })
+  const [isDialogOpen, setIsDialogOpen] = useState<IDialogTransaction>(initDialogFlag)
 
+  // hooks
   const { getTransactions } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
 
+  // effects
   useEffect(() => {
     if (dataTransaction) {
       setDataTable(modifyTransactionHandler(dataTransaction))
     }
   }, [dataTransaction])
+  useEffect(() => {
+    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
+  }, [dataTableConfig])
 
-  const [isDialogOpen, setIsDialogOpen] = useState({
-    isDialogDetailOpen: false,
-    isDialogTransactionTodayOpen: false,
-    isDialogUnclassifiedTransactionOpen: false
-  })
+  // memos
+  const columns = useMemo(() => {
+    if (dataTable.length === 0) return []
+    return getColumns<IDataTransactionTable>(transactionHeaders, true)
+  }, [dataTable])
 
-  const columns = getColumns(transactionHeaders, true)
+  // other components
+  const dataTableButtons = initButtonInDataTableHeader()
 
   const onRowClick = (rowData: any) => {
     setDataDetail(rowData)
     setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
   }
-
-  useEffect(() => {
-    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
-  }, [dataTableConfig])
 
   return (
     <div className='space-y-4'>
@@ -114,18 +116,19 @@ export default function TransactionForm() {
           <div>
             <DataTable
               columns={columns}
-              data={dataTable || []}
+              data={dataTable}
               config={dataTableConfig}
               setConfig={setDataTableConfig}
               onRowClick={onRowClick}
               isLoading={isGetTransaction}
+              buttons={dataTableButtons}
             />
           </div>
         </CardContent>
         <TransactionDialog
           dataTable={{
             columns: columns,
-            data: dataTable || [],
+            data: dataTable,
             onRowClick: onRowClick,
             setConfig: setDataTableConfig,
             config: dataTableConfig,

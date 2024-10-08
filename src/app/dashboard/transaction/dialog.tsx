@@ -3,6 +3,7 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { IDialogTransaction } from '@/core/transaction/models'
 import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
@@ -18,18 +19,8 @@ export interface ITransactionDialogProps {
     dataDetail: IDataTransactionTable
   }
   dialogState: {
-    isDialogOpen: {
-      isDialogDetailOpen: boolean
-      isDialogTransactionTodayOpen: boolean
-      isDialogUnclassifiedTransactionOpen: boolean
-    }
-    setIsDialogOpen: React.Dispatch<
-      React.SetStateAction<{
-        isDialogDetailOpen: boolean
-        isDialogTransactionTodayOpen: boolean
-        isDialogUnclassifiedTransactionOpen: boolean
-      }>
-    >
+    isDialogOpen: IDialogTransaction
+    setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
   }
 }
 
