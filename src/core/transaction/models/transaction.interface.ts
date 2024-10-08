@@ -27,4 +27,12 @@ export interface IDialogTransaction {
   isDialogUnclassifiedTransactionOpen: boolean
 }
 
-export interface ITransaction {}
+export interface IDataTransactionTable {
+  transactionId: string
+  amount: string
+  direction: string
+  accountBank: string
+  currency: string
+  accountNo: string
+  description: string
+}

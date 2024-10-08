@@ -1,5 +1,7 @@
-import { IGetTransactionResponse } from '@/core/transaction/models'
+import { IAccountBank } from '@/core/account-bank/models'
+import { IDataTransactionTable, IGetTransactionResponse } from '@/core/transaction/models'
 import { formatCurrency } from '@/libraries/utils'
+import toast from 'react-hot-toast'
 
 export const modifyTransactionHandler = (payload: IGetTransactionResponse): IDataTransactionTable[] => {
   return payload.data.map((item) => {
@@ -15,12 +17,10 @@ export const modifyTransactionHandler = (payload: IGetTransactionResponse): IDat
   })
 }
 
-export interface IDataTransactionTable {
-  transactionId: string
-  amount: string
-  direction: string
-  accountBank: string
-  currency: string
-  accountNo: string
-  description: string
+export const handleRefetchWithAccountBanks = (accountBanks: IAccountBank[], refetchPayment: any) => {
+  for (const item of accountBanks) {
+    const { isRefetchPayment } = refetchPayment({ accountBankId: item.id })
+    if (!isRefetchPayment) toast.success(`Refetch payment with account ${item.type} success !`)
+  }
+  toast.success(`Refetch payment success !`)
 }

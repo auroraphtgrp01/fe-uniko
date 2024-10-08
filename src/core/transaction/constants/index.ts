@@ -1,2 +1,4 @@
 export const TRANSACTION_RETRY = 1
+export const PAYMENT_RETRY = 3
 export const TRANSACTION_MODEL_KEY = 'TRANSACTION'
+export const PAYMENT_MODEL_KEY = 'PAYMENT'

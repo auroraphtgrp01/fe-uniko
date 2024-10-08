@@ -128,7 +128,12 @@ export function DataTable<TData, TValue>({
         <div className='flex items-center space-x-2'>
           {buttons && buttons.length > 0
             ? buttons.map((button: IButtonInDataTableHeader) => (
-                <Button key={button.title} variant='outline' className='whitespace-nowrap' onClick={button.onClick}>
+                <Button
+                  key={button.title}
+                  variant='outline'
+                  className='whitespace-nowrap'
+                  onClick={() => button.onClick()}
+                >
                   {button.title} {button.icon}
                 </Button>
               ))

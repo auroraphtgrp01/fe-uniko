@@ -1,3 +1,4 @@
 export const transactionRoutes = {
-  getTransactionById: 'payment/all'
+  getTransactionById: 'payment/all',
+  refetchPayment: 'payment/refetch/:id'
 }
