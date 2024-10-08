@@ -19,17 +19,18 @@ import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
 import { IDataTableConfig } from '@/types/common.i'
+import { IButtonInDataTableHeader } from '@/types/core.i'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   config: IDataTableConfig
   setConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
-  onCreateButtonClick?: () => void
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
   isLoading?: boolean
+  buttons?: IButtonInDataTableHeader[]
 }
 
 export function DataTable<TData, TValue>({
@@ -37,11 +38,11 @@ export function DataTable<TData, TValue>({
   data,
   config,
   setConfig,
-  onCreateButtonClick,
   getRowClassName,
   onRowClick,
   onRowDoubleClick,
-  isLoading
+  isLoading,
+  buttons
 }: DataTableProps<TData, TValue>) {
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
     config
@@ -125,12 +126,13 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className='flex items-center space-x-2'>
-          {onCreateButtonClick && (
-            <Button variant='outline' className='whitespace-nowrap' onClick={onCreateButtonClick}>
-              Create
-              <PlusIcon className='ml-2 h-4 w-4' />
-            </Button>
-          )}
+          {buttons && buttons.length > 0
+            ? buttons.map((button: IButtonInDataTableHeader) => (
+                <Button key={button.title} variant='outline' className='whitespace-nowrap' onClick={button.onClick}>
+                  {button.title} {button.icon}
+                </Button>
+              ))
+            : ''}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>

@@ -5,7 +5,11 @@ import CardInHeader from '@/components/dashboard/CardInHeader'
 import React, { useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
-import { initAccountSourceFormData, initDialogFlag } from '@/app/dashboard/account-source/constants'
+import {
+  initAccountSourceFormData,
+  initButtonInDataTableHeader,
+  initDialogFlag
+} from '@/app/dashboard/account-source/constants'
 import {
   filterDataAccountSource,
   handleShowDetailAccountSource,
@@ -77,6 +81,9 @@ export default function AccountSourceForm() {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
 
+  // Other components
+  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
@@ -89,9 +96,9 @@ export default function AccountSourceForm() {
             data={tableData}
             config={dataTableConfig}
             setConfig={setDataTableConfig}
-            onCreateButtonClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))}
             columns={columns}
             onRowClick={(data: IAccountSourceDataFormat) => setIdRowClicked(data.id)}
+            buttons={dataTableButtons}
           />
         </CardContent>
       </Card>

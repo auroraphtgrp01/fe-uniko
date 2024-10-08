@@ -9,7 +9,8 @@ import {
   IDialogAccountSource
 } from '@/core/account-source/models'
 import { formatArrayData, formatCurrency } from '@/libraries/utils'
-import { HandCoins, Landmark, Wallet2 } from 'lucide-react'
+import { IButtonInDataTableHeader } from '@/types/core.i'
+import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
 
 export const contentDialogAccountSourceForm = ({
   setFormData,
@@ -127,4 +128,18 @@ export const initAccountSourceFormData: IAccountSourceBody = {
 export const initDialogFlag: IDialogAccountSource = {
   isDialogCreateOpen: false,
   isDialogUpdateOpen: false
+}
+
+export const initButtonInDataTableHeader = ({
+  setIsDialogOpen
+}: {
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+}): IButtonInDataTableHeader[] => {
+  return [
+    {
+      title: 'Create',
+      onClick: () => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true })),
+      icon: <PlusIcon className='ml-2 h-4 w-4' />
+    }
+  ]
 }

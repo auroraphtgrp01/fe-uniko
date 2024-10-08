@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import CardInHeader from '@/components/dashboard/CardInHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -10,34 +10,45 @@ import { Button } from '@/components/ui/button'
 import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
-import { getTypes } from '@/libraries/utils'
+import { getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
+import {
+  IDialogTrackerTransaction,
+  ITrackerTransaction,
+  ITrackerTransactionDataFormat
+} from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { initButtonInDataTableHeader, initDialogFlag } from './constants'
+import TrackerTransactionDialog from './dialog'
+import { initTableConfig } from '@/constants/data-table'
+import { initQueryOptions } from '@/constants/init-query-options'
+import { IDataTransactionTable } from '../transaction/handler'
+import { ITransaction } from '@/core/transaction/models'
 
 export default function TrackerTransactionForm() {
-  const [totalPage, setTotalPage] = useState<number>(0)
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [limit, setLimit] = useState<number>(10)
-  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
-    totalPage: 0,
-    currentPage: 1,
-    limit: 10,
-    types: [],
-    selectedTypes: [],
-    isPaginate: true,
-    isVisibleSortType: true,
-    classNameOfScroll: 'h-[calc(100vh-30rem)]'
-  })
-  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
-    page: dataTableConfig.currentPage,
-    limit: dataTableConfig.limit,
-    condition: '',
-    isExactly: false,
-    sort: '',
-    includePopulate: true
-  })
-  const titles: string[] = ['Transaction Name', 'Type', 'Amount', 'Date', 'From Account', 'Description']
-  const columns = getColumns(titles, true)
+  const [fetchedData, setFetchedData] = useState<ITrackerTransaction[]>([])
+  const [fetchedTransactionData, setFetchedTransactionData] = useState<ITransaction[]>([])
+  const [idRowClicked, setIdRowClicked] = useState<string>('')
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const [tableData, setTableData] = useState<ITrackerTransactionDataFormat[]>([])
+  const [tableClassifyData, setTableClassifyData] = useState<IDataTransactionTable[]>([])
+  // const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [dataTableClassifyConfig, setDataTableClassifyConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
+
+  // memos
+  const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
+  const columns = useMemo(() => {
+    if (tableData.length === 0) return []
+    return getColumns<ITrackerTransactionDataFormat>(titles, true)
+  }, [tableData])
+  const tableClassifyTitles = useMemo(() => getConvertedKeysToTitleCase(tableClassifyData[0]), [tableClassifyData])
+  const tableClassifyColumns = useMemo(() => {
+    if (tableData.length === 0) return []
+    return getColumns<ITrackerTransactionDataFormat>(titles, true)
+  }, [tableData])
+
   const data = [
     {
       id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
@@ -47,92 +58,8 @@ export default function TrackerTransactionForm() {
       fromAccount: <Button variant={'outline'}>TP Bank</Button>,
       date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
       description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Ăn uống',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Ăn uống',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Thể thao',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Điện thoại',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Con cái',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Con cái',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-
-    {
-      id: '4c7a5fbd-3d8d-4a88-9c5e-1a3f7b742de1',
-      transactionName: 'Bàn phím mới',
-      type: 'Con cái',
-      amount: '750000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-05T11:15:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '9a7c3a7b-52d9-4f62-98d4-c0c4b98a0e64',
-      transactionName: 'Thay nhớt',
-      type: 'Con cái',
-      amount: '300000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-06T12:20:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: 'e8d4c1d0-4528-4c13-8bcd-1cfd5d2c6ad5',
-      transactionName: 'Đổ xăng',
-      type: 'Di chuyển',
-      amount: '600000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-07T13:25:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
     }
   ]
-
-  const types = getTypes(data)
 
   const chartData: IPayloadDataChart[] = [
     {
@@ -196,6 +123,8 @@ export default function TrackerTransactionForm() {
     }
   ]
 
+  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {/* Left Section */}
@@ -250,7 +179,13 @@ export default function TrackerTransactionForm() {
         <div className='mt-4 flex-1'>
           <Card className='h-full w-full'>
             <CardContent>
-              <DataTable columns={columns} data={data} config={dataTableConfig} setConfig={setDataTableConfig} />
+              <DataTable
+                columns={columns}
+                data={tableData}
+                config={dataTableConfig}
+                setConfig={setDataTableConfig}
+                buttons={dataTableButtons}
+              />
             </CardContent>
           </Card>
         </div>
@@ -283,6 +218,15 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
+      <TrackerTransactionDialog
+        columns={tableClassifyColumns}
+        dataTable={tableClassifyData}
+        setDataTable={setTableClassifyData}
+        isDialogOpen={isDialogOpen}
+        setIsDialogOpen={setIsDialogOpen}
+        setTableConfig={setDataTableClassifyConfig}
+        tableConfig={dataTableClassifyConfig}
+      />
     </div>
   )
 }
