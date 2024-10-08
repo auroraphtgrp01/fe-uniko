@@ -1,16 +1,14 @@
 'use client'
 import React, { useMemo, useState } from 'react'
-import CardInHeader from '@/components/dashboard/CardInHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import BadgeType from '@/components/common/BadgeType'
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
-import { getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
+import { getConvertedKeysToTitleCase } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
@@ -22,12 +20,11 @@ import { initButtonInDataTableHeader, initDialogFlag } from './constants'
 import TrackerTransactionDialog from './dialog'
 import { initTableConfig } from '@/constants/data-table'
 import { initQueryOptions } from '@/constants/init-query-options'
-import { IDataTransactionTable } from '../transaction/handler'
-import { ITransaction } from '@/core/transaction/models'
+import { IDataTransactionTable, Transaction } from '@/core/transaction/models'
 
 export default function TrackerTransactionForm() {
   const [fetchedData, setFetchedData] = useState<ITrackerTransaction[]>([])
-  const [fetchedTransactionData, setFetchedTransactionData] = useState<ITransaction[]>([])
+  const [fetchedTransactionData, setFetchedTransactionData] = useState<Transaction[]>([])
   const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ITrackerTransactionDataFormat[]>([])
