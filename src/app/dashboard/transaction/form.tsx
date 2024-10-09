@@ -6,24 +6,40 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
 import { useState } from 'react'
-import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
+import { IDataTableConfig } from '@/types/common.i'
 import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
-  defineOnRowClickFunction,
   handleAccountBankRefetching,
   handleRefetchPaymentCompletion,
-  modifyTransactionHandler
+  modifyTransactionHandler,
+  updateDataCache
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
 import { useTransaction } from '@/core/transaction/hooks'
-import { IDataTransactionTable, IDialogTransaction, IGetTransactionResponse } from '@/core/transaction/models'
-import { initButtonInDataTableHeader, initDialogFlag, transactionHeaders } from './constants'
+import {
+  IClassifyTransactionFormData,
+  IDataTransactionTable,
+  IDialogTransaction,
+  IGetTransactionResponse
+} from '@/core/transaction/models'
+import {
+  initButtonInDataTableHeader,
+  initClassifyTransactionForm,
+  initDialogFlag,
+  initEmptyDataTransactionTable,
+  initEmptyDetailTransaction,
+  transactionHeaders
+} from './constants'
 import { useAccountBank } from '@/core/account-bank/hooks'
 import { IAccountBank } from '@/core/account-bank/models'
 import { initQueryOptions } from '@/constants/init-query-options'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
+import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
+import toast from 'react-hot-toast'
+import { useTrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/hooks'
+import { initTodayAndUnclassifiedTx } from '../tracker-transaction/handlers'
 
 export default function TransactionForm() {
   // states
@@ -37,17 +53,37 @@ export default function TransactionForm() {
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTransaction>(initDialogFlag)
   const [accountBankRefetching, setAccountBankRefetching] = useState<IAccountBank>()
   const [accountBankRefetchingQueue, setAccountBankRefetchingQueue] = useState<IAccountBank[]>([])
+  const [formData, setFormData] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
+  const [transactionTodayData, setTransactionTodayData] = useState<{
+    totalTransaction: number
+    totalAmount: number
+    data: IDataTransactionTable[]
+  }>(initEmptyDataTransactionTable)
+  const [unclassifiedTransactionData, setUnclassifiedTransactionData] = useState<{
+    totalTransaction: number
+    totalAmount: number
+    data: IDataTransactionTable[]
+  }>(initEmptyDataTransactionTable)
+
   const query = useMemo(() => [TRANSACTION_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
 
   // hooks
+  const { createTrackerTransaction } = useTrackerTransaction()
+  const { getAllTrackerTransactionType } = useTrackerTransactionType()
+  const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { getTransactions, refetchPayment } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
   const { getAccountBank } = useAccountBank()
   const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
   const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
   const { resetData } = useUpdateModel<IGetTransactionResponse>(query, (oldData, newData) => oldData)
+  const { setData } = useUpdateModel<IGetTransactionResponse>(query, updateDataCache)
 
   // effects
+  useEffect(() => {
+    if (dataTable && dataTable.length > 0)
+      initTodayAndUnclassifiedTx(dataTable, setTransactionTodayData, setUnclassifiedTransactionData)
+  }, [dataTable])
   useEffect(() => {
     if (dataTransaction) setDataTable(modifyTransactionHandler(dataTransaction))
   }, [dataTransaction])
@@ -73,11 +109,26 @@ export default function TransactionForm() {
   }, [dataTable])
   const dataTableButtons = useMemo(
     () =>
-      initButtonInDataTableHeader({ dataAccountBank, setAccountBankRefetchingQueue, reloadDataFunction: resetData }),
+      initButtonInDataTableHeader({
+        dataAccountBank,
+        setAccountBankRefetchingQueue,
+        reloadDataFunction: () => {
+          resetData()
+          while (!isGetTransaction) {
+            if (dataTransaction?.statusCode === 200) toast.success('Reload data successfully!')
+            else toast.error('Failed to get transaction !')
+            break
+          }
+        }
+      }),
     [dataAccountBank]
   )
 
-  const onRowClick = defineOnRowClickFunction(setDataDetail, setIsDialogOpen)
+  const onRowClick = (rowData: any) => {
+    setDataDetail(rowData)
+    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+    setFormData((prev) => ({ ...prev, transactionId: rowData.id }))
+  }
 
   return (
     <div className='space-y-4'>
@@ -100,11 +151,13 @@ export default function TransactionForm() {
           <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
               <div className='truncate'>Total Transactions</div>
-              <div className='text-lg font-bold sm:text-xl'>5</div>
+              <div className='text-lg font-bold sm:text-xl'>{transactionTodayData.totalTransaction}</div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
-              <div className='text-xl font-bold'>{formatCurrency(1234567)}</div>
+              <div className='text-xl font-bold'>
+                {formatCurrency(transactionTodayData.totalAmount, 'VND', 'vi-vn')}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -124,11 +177,13 @@ export default function TransactionForm() {
           <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
               <div className='truncate'>Total Transactions</div>
-              <div className='text-lg font-bold sm:text-xl'>1</div>
+              <div className='text-lg font-bold sm:text-xl'>{unclassifiedTransactionData.totalTransaction}</div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
-              <div className='text-xl font-bold'>{formatCurrency(220000)}</div>
+              <div className='text-xl font-bold'>
+                {formatCurrency(unclassifiedTransactionData.totalTransaction, 'VND', 'vi-vn')}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -151,22 +206,23 @@ export default function TransactionForm() {
           dataTable={{
             columns: columns,
             data: dataTable,
+            transactionTodayData: transactionTodayData.data,
+            unclassifiedTransactionData: unclassifiedTransactionData.data,
             onRowClick: onRowClick,
             setConfig: setDataTableConfig,
             config: dataTableConfig,
-            dataDetail: dataDetail || {
-              transactionId: '',
-              amount: '',
-              direction: '',
-              accountBank: '',
-              currency: '',
-              accountNo: '',
-              description: ''
-            }
+            dataDetail: dataDetail || initEmptyDetailTransaction
           }}
           dialogState={{
             isDialogOpen: isDialogOpen,
             setIsDialogOpen: setIsDialogOpen
+          }}
+          classifyDialog={{
+            formData,
+            setFormData,
+            createTrackerTransaction,
+            trackerTransactionType: dataTrackerTransactionType?.data ?? [],
+            hookUpdateCache: setData
           }}
         />
       </Card>

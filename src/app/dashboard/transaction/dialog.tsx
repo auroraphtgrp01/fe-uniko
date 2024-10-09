@@ -2,16 +2,21 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { IDataTransactionTable, IDialogTransaction } from '@/core/transaction/models'
+import { IClassifyTransactionFormData, IDataTransactionTable, IDialogTransaction } from '@/core/transaction/models'
 import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
+import React, { useState } from 'react'
+import { defineContentClassifyingTransactionDialog, initClassifyTransactionForm } from './constants'
+import { handleCreateTrackerTransaction, initTodayAndUnclassifiedTx } from '../tracker-transaction/handlers'
+import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export interface ITransactionDialogProps {
   dataTable: {
     columns: ColumnDef<any>[]
-    data: any[]
+    data: IDataTransactionTable[]
+    transactionTodayData: IDataTransactionTable[]
+    unclassifiedTransactionData: IDataTransactionTable[]
     onRowClick: (row: any) => void
     setConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
     config: IDataTableConfig
@@ -21,10 +26,22 @@ export interface ITransactionDialogProps {
     isDialogOpen: IDialogTransaction
     setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
   }
+  classifyDialog: {
+    formData: IClassifyTransactionFormData
+    setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+    createTrackerTransaction: any
+    trackerTransactionType: ITrackerTransactionType[]
+    hookUpdateCache: any
+  }
 }
 
 export default function TransactionDialog(params: ITransactionDialogProps) {
-  const { dataTable, dialogState } = params
+  // useStates
+  const [newItemTrackerType, setItemTrackerType] = useState<string>('')
+  const [isAddingNewTrackerType, setIsAddingNewTrackerType] = useState<boolean>(false)
+
+  const { dataTable, dialogState, classifyDialog } = params
+  const { formData, setFormData } = classifyDialog
   const detailsConfigDialog: IDialogConfig = {
     content: (
       <div className='py-4'>
@@ -33,7 +50,15 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
             <p className='text-sm text-muted-foreground'>Amount</p>
             <div className='flex w-full items-center justify-between'>
               <p className='text-xl font-bold'>{dataTable.dataDetail.amount}</p>
-              <Button variant={'greenPastel1'}>Tracker Transaction</Button>
+              <Button
+                variant={'greenPastel1'}
+                type='button'
+                onClick={() =>
+                  dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
+                }
+              >
+                Tracker Transaction
+              </Button>
             </div>
           </div>
         </div>
@@ -71,12 +96,12 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
         </div>
       </div>
     ),
-
     description: 'Detail information of the transaction',
     title: 'Transaction detail',
     isOpen: dialogState.isDialogOpen.isDialogDetailOpen,
     onClose: () => {
       dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
+      classifyDialog.setFormData(initClassifyTransactionForm)
     }
   }
   const transactionsTodayConfigDialog: IDialogConfig = {
@@ -84,7 +109,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       <div className='overflow-x-auto'>
         <DataTable
           columns={dataTable.columns}
-          data={dataTable.data}
+          data={dataTable.transactionTodayData}
           onRowClick={dataTable.onRowClick}
           setConfig={dataTable.setConfig}
           config={dataTable.config}
@@ -104,7 +129,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       <div className='overflow-x-auto'>
         <DataTable
           columns={dataTable.columns}
-          data={dataTable.data}
+          data={dataTable.unclassifiedTransactionData}
           onRowClick={dataTable.onRowClick}
           setConfig={dataTable.setConfig}
           config={dataTable.config}
@@ -119,11 +144,47 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedTransactionOpen: false }))
     }
   }
+  const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
+    formData,
+    setFormData,
+    newItemTrackerType,
+    setItemTrackerType,
+    isAddingNewTrackerType,
+    setIsAddingNewTrackerType,
+    trackerTransactionType: classifyDialog.trackerTransactionType
+  })
+  const classifyingTransactionConfigDialog: IDialogConfig = {
+    content: classifyingTransactionConfigDialogContent,
+    footer: (
+      <Button
+        onClick={() =>
+          handleCreateTrackerTransaction({
+            formData,
+            setFormData,
+            hookCreate: classifyDialog.createTrackerTransaction,
+            hookUpdateCache: classifyDialog.hookUpdateCache,
+            setIsDialogOpen: dialogState.setIsDialogOpen
+          })
+        }
+        type='button'
+      >
+        Save changes
+      </Button>
+    ),
+    description: 'Please fill in the information below to classify transaction.',
+    title: 'Classify Transaction',
+    isOpen: dialogState.isDialogOpen.isDialogClassifyTransactionOpen,
+    onClose: () => {
+      dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: false }))
+      setFormData(initClassifyTransactionForm)
+    }
+  }
   return (
     <div>
       <CustomDialog config={detailsConfigDialog} />
       <CustomDialog config={transactionsTodayConfigDialog} />
       <CustomDialog config={unclassifiedTransactionsConfigDialog} />
+      <CustomDialog config={classifyingTransactionConfigDialog} />
     </div>
   )
 }

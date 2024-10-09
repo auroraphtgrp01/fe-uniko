@@ -1,5 +1,10 @@
 import { IAccountBank, IGetAccountBankResponse } from '@/core/account-bank/models'
-import { IDataTransactionTable, IDialogTransaction, IGetTransactionResponse } from '@/core/transaction/models'
+import {
+  IClassifyTransactionFormData,
+  IDataTransactionTable,
+  IDialogTransaction,
+  IGetTransactionResponse
+} from '@/core/transaction/models'
 import { formatCurrency } from '@/libraries/utils'
 import React from 'react'
 import toast from 'react-hot-toast'
@@ -7,23 +12,18 @@ import toast from 'react-hot-toast'
 export const modifyTransactionHandler = (payload: IGetTransactionResponse): IDataTransactionTable[] => {
   return payload.data.map((item) => {
     return {
+      id: item.id,
       transactionId: item.transactionId,
       amount: formatCurrency(item.amount, 'VND', 'vi-VN'),
       direction: item.direction,
       accountBank: item.accountBankId,
       currency: item.currency,
       accountNo: item.ofAccount.accountNo,
-      description: item.description
+      description: item.description,
+      time: item.time,
+      trackerTransactionId: item.trackerTransactionId
     }
   })
-}
-
-export const handleRefetchWithAccountBanks = (accountBanks: IAccountBank[], refetchPayment: any) => {
-  for (const item of accountBanks) {
-    const { isRefetchPayment } = refetchPayment({ accountBankId: item.id })
-    if (!isRefetchPayment) toast.success(`Refetch payment with account ${item.type} success !`)
-  }
-  toast.success(`Refetch payment success !`)
 }
 
 export const handleRefetchPaymentCompletion = ({
@@ -55,17 +55,6 @@ export const handleRefetchPaymentCompletion = ({
     setAccountBankRefetching(undefined)
   }
 }
-
-export const defineOnRowClickFunction = (
-  setDataDetail: React.Dispatch<React.SetStateAction<IDataTransactionTable | undefined>>,
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
-) => {
-  return (rowData: any) => {
-    setDataDetail(rowData)
-    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-  }
-}
-
 export const handleAccountBankRefetching = (
   accountBankRefetchingQueue: IAccountBank[],
   accountBankRefetching: IAccountBank | undefined,
@@ -73,4 +62,11 @@ export const handleAccountBankRefetching = (
 ) => {
   if (accountBankRefetchingQueue.length > 0 && accountBankRefetching === undefined)
     setAccountBankRefetching(accountBankRefetchingQueue[0])
+}
+
+export const updateDataCache = (oldData: any, newData: any) => {
+  return {
+    ...oldData,
+    ...newData
+  }
 }

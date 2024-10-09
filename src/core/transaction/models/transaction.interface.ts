@@ -4,7 +4,7 @@ export type Transaction = {
   id: string
   direction: string
   transactionId: string
-  amount: 10000
+  amount: number
   toAccountNo: string | null
   toAccountName: string | null
   toBankName: string | null
@@ -17,6 +17,8 @@ export type Transaction = {
     accountNo: string
     accountBankId: string
   }
+  time: string
+  trackerTransactionId: string
 }
 
 export type IGetTransactionResponse = IBaseResponseData<Transaction[]>
@@ -25,14 +27,25 @@ export interface IDialogTransaction {
   isDialogDetailOpen: boolean
   isDialogTransactionTodayOpen: boolean
   isDialogUnclassifiedTransactionOpen: boolean
+  isDialogClassifyTransactionOpen: boolean
 }
 
 export interface IDataTransactionTable {
+  id: string
   transactionId: string
   amount: string
   direction: string
   accountBank: string
   currency: string
   accountNo: string
+  description: string
+  time: string
+  trackerTransactionId: string
+}
+
+export interface IClassifyTransactionFormData {
+  transactionId?: string
+  trackerTypeId: string
+  reasonName: string
   description: string
 }

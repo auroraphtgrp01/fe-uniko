@@ -7,13 +7,12 @@ export interface IDialogTrackerTransaction {
 }
 
 export interface ITrackerTransaction {
-  // id: string
-  // name: string
-  // type: string
-  // initAmount: string
-  // accountBank: string
-  // currency: string
-  // currentAmount: string
+  id: string
+  trackerTypeId: string
+  reasonName: string
+  description: string | null
+  userId: string
+  transactionId: string | null
 }
 
 export type ITrackerTransactionResponse = IBaseResponseData<ITrackerTransaction>
@@ -27,4 +26,11 @@ export interface ITrackerTransactionDataFormat {
   fromAccount: string // tên ví hoăc tên ngân hàng
   description?: string
   checkType?: string
+}
+
+export interface ITrackerTransactionBody {
+  id?: string
+  transactionId?: string
+  trackerType: string
+  description: string
 }

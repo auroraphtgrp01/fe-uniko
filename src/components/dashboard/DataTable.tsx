@@ -203,6 +203,8 @@ export function DataTable<TData, TValue>({
                           event.target.getAttribute('role') !== 'checkbox') &&
                         onRowClick
                       ) {
+                        console.log('row.original', row.original)
+
                         onRowClick(row.original)
                       }
                     }}
