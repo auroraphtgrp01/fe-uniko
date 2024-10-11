@@ -19,6 +19,7 @@ import {
   IClassifyTransactionFormData,
   ICreateTransactionFormData,
   IDataTransactionTable,
+  IDialogTransaction,
   Transaction
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
@@ -68,7 +69,7 @@ export const handleClassifyTrackerTransaction = async ({
   setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
   hookCreate: any
   hookUpdateCache: any
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
 }) => {
   hookCreate(formData, {
     onSuccess: (res: ITrackerTransactionResponse) => {
@@ -76,7 +77,7 @@ export const handleClassifyTrackerTransaction = async ({
         hookUpdateCache(res.data)
         toast.success('Create tracker transaction successfully!')
         setFormData({ ...initCreateTrackerTransactionForm })
-        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyOpen: false }))
+        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
       }
     }
   })

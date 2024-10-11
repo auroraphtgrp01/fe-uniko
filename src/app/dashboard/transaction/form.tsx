@@ -13,7 +13,7 @@ import {
   handleAccountBankRefetching,
   handleRefetchPaymentCompletion,
   modifyTransactionHandler,
-  updateDataCache
+  updateCacheDataUpdate
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
 import { useTransaction } from '@/core/transaction/hooks'
@@ -78,10 +78,15 @@ export default function TransactionForm() {
   const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
   const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
   const { resetData } = useUpdateModel<IGetTransactionResponse>(query, (oldData, newData) => oldData)
-  const { setData } = useUpdateModel<IGetTransactionResponse>(query, updateDataCache)
+  const { setData } = useUpdateModel<IGetTransactionResponse>(query, updateCacheDataUpdate)
 
   // effects
-  useEffect(() => {}, [transactionTodayData, unclassifiedTransactionData])
+  useEffect(() => {
+    console.log('🚀 ~ TransactionForm ~ dataPayment:', dataPayment)
+  }, [dataPayment])
+  useEffect(() => {
+    console.log('🚀 ~ TransactionForm ~ unclassifiedTransactionData:', unclassifiedTransactionData)
+  }, [unclassifiedTransactionData])
   useEffect(() => {
     if (dataPayment)
       initDataTableTransaction(dataPayment.data, setDataTable, setUnclassifiedTransactionData, setTransactionTodayData)

@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const baseUrl = getBaseUrl()
 
-type Updater<T> =
+export type Updater<T> =
   T extends IBaseResponseData<infer U>
     ? U extends Array<infer ItemType>
       ? ItemType
@@ -74,10 +74,13 @@ export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (old
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
 
   const setData = (newData: Updater<T>) => {
+    console.log('Truoc', queryClient.getQueryData(key))
+
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)
     })
+    console.log('sau', queryClient.getQueryData(key))
   }
 
   const resetData = () => {
