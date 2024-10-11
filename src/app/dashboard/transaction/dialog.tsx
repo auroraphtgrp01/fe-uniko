@@ -8,7 +8,7 @@ import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { defineContentClassifyingTransactionDialog, initClassifyTransactionForm } from './constants'
-import { handleCreateTrackerTransaction, initTodayAndUnclassifiedTx } from '../tracker-transaction/handlers'
+import { handleClassifyTrackerTransaction } from '../tracker-transaction/handlers'
 import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export interface ITransactionDialogProps {
@@ -158,7 +158,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
     footer: (
       <Button
         onClick={() =>
-          handleCreateTrackerTransaction({
+          handleClassifyTrackerTransaction({
             formData,
             setFormData,
             hookCreate: classifyDialog.createTrackerTransaction,

@@ -15,10 +15,16 @@ import {
   IDialogTrackerTransaction,
   ITrackerTransactionResponse
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
-import { IClassifyTransactionFormData, IDataTransactionTable, IDialogTransaction } from '@/core/transaction/models'
+import {
+  IClassifyTransactionFormData,
+  ICreateTransactionFormData,
+  IDataTransactionTable,
+  Transaction
+} from '@/core/transaction/models'
 import toast from 'react-hot-toast'
-import { initClassifyTransactionForm } from '../transaction/constants'
+import { initCreateTrackerTransactionForm } from '../transaction/constants'
 import React from 'react'
+import { modifyTransactionHandler } from '../transaction/handler'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -33,26 +39,52 @@ export const handleCreateTrackerTransaction = async ({
   hookUpdateCache,
   setIsDialogOpen
 }: {
-  formData: IClassifyTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+  formData: ICreateTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<ICreateTransactionFormData>>
   hookCreate: any
   hookUpdateCache: any
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
 }) => {
   hookCreate(formData, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
         toast.success('Create tracker transaction successfully!')
-        setFormData({ ...initClassifyTransactionForm })
-        setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
+        setFormData({ ...initCreateTrackerTransactionForm })
+        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyOpen: false }))
       }
     }
   })
 }
 
-export const initTodayAndUnclassifiedTx = (
-  dataTable: IDataTransactionTable[],
+export const handleClassifyTrackerTransaction = async ({
+  formData,
+  setFormData,
+  hookCreate,
+  hookUpdateCache,
+  setIsDialogOpen
+}: {
+  formData: IClassifyTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+  hookCreate: any
+  hookUpdateCache: any
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
+}) => {
+  hookCreate(formData, {
+    onSuccess: (res: ITrackerTransactionResponse) => {
+      if (res.statusCode === 200 || res.statusCode === 201) {
+        hookUpdateCache(res.data)
+        toast.success('Create tracker transaction successfully!')
+        setFormData({ ...initCreateTrackerTransactionForm })
+        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyOpen: false }))
+      }
+    }
+  })
+}
+
+export const initDataTableTransaction = (
+  dataTransaction: Transaction[],
+  setDataTable: React.Dispatch<React.SetStateAction<IDataTransactionTable[]>>,
   setDataTableUnclassifiedTransaction: React.Dispatch<
     React.SetStateAction<{
       totalTransaction: number
@@ -68,31 +100,35 @@ export const initTodayAndUnclassifiedTx = (
     }>
   >
 ) => {
-  const transactionToday = dataTable.filter((item: IDataTransactionTable) => isIsoStringToday(item.time))
-  const unclassifiedTransaction = dataTable.filter((item: IDataTransactionTable) => !item.trackerTransactionId)
-  const totalAmountToday = transactionToday.reduce((acc, item) => acc + parseFloat(item.amount), 0)
-  const totalAmountUnclassified = unclassifiedTransaction.reduce((acc, item) => acc + parseFloat(item.amount), 0)
+  setDataTable(modifyTransactionHandler(dataTransaction))
+  const transactionToday = dataTransaction.filter((item: Transaction) => {
+    isIsoStringInToday(item.time)
+  })
+  const unclassifiedTransaction = dataTransaction.filter((item: Transaction) => !item.trackerTransactionId)
+  const totalAmountToday = transactionToday.reduce((acc, item) => acc + item.amount, 0)
+  const totalAmountUnclassified = unclassifiedTransaction.reduce((acc, item) => acc + item.amount, 0)
+
   setDataTableTransactionToday({
     totalTransaction: transactionToday.length,
     totalAmount: totalAmountToday,
-    data: transactionToday
+    data: modifyTransactionHandler(transactionToday)
   })
   setDataTableUnclassifiedTransaction({
     totalTransaction: unclassifiedTransaction.length,
     totalAmount: totalAmountUnclassified,
-    data: transactionToday
+    data: modifyTransactionHandler(unclassifiedTransaction)
   })
 }
 
-function isIsoStringToday(isoString: string): boolean {
+function isIsoStringInToday(isoString: string): boolean {
+  const today = new Date()
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0)
+  const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999)
   const inputDate = new Date(isoString)
+
   if (isNaN(inputDate.getTime())) {
     return false
   }
-  const today = new Date()
-  return (
-    inputDate.getUTCFullYear() === today.getUTCFullYear() &&
-    inputDate.getUTCMonth() === today.getUTCMonth() &&
-    inputDate.getUTCDate() === today.getUTCDate()
-  )
+
+  return inputDate >= startOfToday && inputDate <= endOfToday
 }

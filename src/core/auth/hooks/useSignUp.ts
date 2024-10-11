@@ -19,7 +19,6 @@ export const useSignUp = (opts?: IUseQueryHookOptions) => {
         opts?.callBackOnError?.()
       },
       onSuccess: (data) => {
-        console.log(data)
         toast.success('Account created successfully!')
         router.push('/sign-in')
       }

@@ -25,8 +25,6 @@ export const handleUpdateCommonInformation = (
   isUpdating: boolean,
   setData: (data: IUser) => void
 ) => {
-  console.log('formData', formData)
-
   hookUpdate(formData, {
     onSuccess: (res: IBaseResponseData<IUser>) => {
       if (!isUpdating && (res.statusCode === 200 || res.statusCode === 201)) {
@@ -43,8 +41,6 @@ export const handleUpdateCredentialInformation = (
   isUpdating: boolean,
   resetForm: React.Dispatch<React.SetStateAction<ICredentialInformationForm>>
 ) => {
-  console.log('formData', formData)
-
   hookUpdate(formData, {
     onSuccess: (res: IBaseResponseData<IUser>) => {
       if (!isUpdating && (res.statusCode === 200 || res.statusCode === 201)) {

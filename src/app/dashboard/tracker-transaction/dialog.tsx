@@ -2,8 +2,20 @@ import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
-import { contentDialogForm } from './constants'
 import { DataTable } from '@/components/dashboard/DataTable'
+import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  defineContentClassifyingTransactionDialog,
+  initClassifyTransactionForm,
+  initCreateTrackerTransactionForm
+} from '../transaction/constants'
+import { handleCreateTrackerTransaction } from './handlers'
+import { IClassifyTransactionFormData, ICreateTransactionFormData } from '@/core/transaction/models'
+import { useMemo, useState } from 'react'
+import { Separator } from '@/components/ui/separator'
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { defineContentCreateTransactionDialog } from './constants'
+import { IAccountSource } from '@/core/account-source/models'
 
 export interface ITrackerTransactionDialogProps {
   columns: any[]
@@ -13,6 +25,14 @@ export interface ITrackerTransactionDialogProps {
   setDataTable: React.Dispatch<React.SetStateAction<any[]>>
   tableConfig: IDataTableConfig
   setTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  dataTrackerTransactionType: ITrackerTransactionType[]
+  formDataClassify: IClassifyTransactionFormData
+  setFormDataClassify: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+  formDataCreate: ICreateTransactionFormData
+  setFormDataCreate: React.Dispatch<React.SetStateAction<ICreateTransactionFormData>>
+  hookUpdateCache: any
+  createTrackerTransaction: any
+  accountSourceData: IAccountSource[]
 }
 export default function TrackerTransactionDialog({
   columns,
@@ -21,8 +41,73 @@ export default function TrackerTransactionDialog({
   dataTable,
   setDataTable,
   tableConfig,
-  setTableConfig
+  setTableConfig,
+  dataTrackerTransactionType,
+  formDataClassify,
+  setFormDataClassify,
+  formDataCreate,
+  setFormDataCreate,
+  hookUpdateCache,
+  createTrackerTransaction,
+  accountSourceData
 }: ITrackerTransactionDialogProps) {
+  // useStates
+  const [newItemTrackerType, setItemTrackerType] = useState<string>('')
+  const [isAddingNewTrackerType, setIsAddingNewTrackerType] = useState<boolean>(false)
+
+  const classifyingTransactionConfigDialogContent = useMemo(
+    () =>
+      defineContentClassifyingTransactionDialog({
+        formData: formDataClassify,
+        setFormData: setFormDataClassify,
+        newItemTrackerType,
+        setItemTrackerType,
+        isAddingNewTrackerType,
+        setIsAddingNewTrackerType,
+        trackerTransactionType: dataTrackerTransactionType
+      }),
+    [dataTrackerTransactionType]
+  )
+  const classifyingTransactionConfigDialog: IDialogConfig = {
+    content: classifyingTransactionConfigDialogContent,
+    footer: (
+      <Button
+        onClick={() =>
+          handleCreateTrackerTransaction({
+            formData: formDataCreate,
+            setFormData: setFormDataCreate,
+            hookCreate: createTrackerTransaction,
+            hookUpdateCache: hookUpdateCache,
+            setIsDialogOpen
+          })
+        }
+        type='button'
+      >
+        Save changes
+      </Button>
+    ),
+    description: 'Please fill in the information below to classify transaction.',
+    title: 'Classify Transaction',
+    isOpen: isDialogOpen.isDialogClassifyOpen,
+    onClose: () => {
+      setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyOpen: false }))
+      setFormDataClassify(initClassifyTransactionForm)
+    }
+  }
+  const contentDialogForm = useMemo(
+    () =>
+      defineContentCreateTransactionDialog({
+        formData: formDataCreate,
+        setFormData: setFormDataCreate,
+        newItemTrackerType,
+        setItemTrackerType,
+        isAddingNewTrackerType,
+        setIsAddingNewTrackerType,
+        trackerTransactionType: dataTrackerTransactionType,
+        accountSourceData
+      }),
+    [dataTrackerTransactionType, accountSourceData]
+  )
   const createConfigDialog: IDialogConfig = {
     content: contentDialogForm,
     footer: <Button type='submit'>Save changes</Button>,
@@ -31,13 +116,7 @@ export default function TrackerTransactionDialog({
     isOpen: isDialogOpen.isDialogCreateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-      // setFormData((prev) => ({
-      //   ...prev,
-      //   name: '',
-      //   type: EAccountSourceType.WALLET,
-      //   initAmount: 0,
-      //   currency: ''
-      // }))
+      setFormDataCreate(initCreateTrackerTransactionForm)
     }
   }
 
@@ -66,6 +145,7 @@ export default function TrackerTransactionDialog({
     <div>
       <CustomDialog config={createConfigDialog} />
       <CustomDialog config={classifyConfigDialog} />
+      <CustomDialog config={classifyingTransactionConfigDialog} />
     </div>
   )
 }

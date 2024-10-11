@@ -10,7 +10,6 @@ export const useUpdateUser = (opts?: IUseQueryHookOptions) => {
     method: 'patch',
     mutateOption: {
       onError: (error) => {
-        console.log('error', error)
         if (error.response?.status) {
           return toast.error(`${(error.response?.data as { message: string }).message} !`)
         }

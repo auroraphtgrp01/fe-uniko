@@ -72,14 +72,12 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
 export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (oldData: T, newData: Updater<T>) => T) => {
   const queryClient = useQueryClient()
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
-  console.log('trước', queryClient.getQueryData(key))
 
   const setData = (newData: Updater<T>) => {
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)
     })
-    console.log('sau', queryClient.getQueryData(key))
   }
 
   const resetData = () => {

@@ -54,6 +54,16 @@ export const initClassifyTransactionForm = {
   description: ''
 }
 
+export const initCreateTrackerTransactionForm = {
+  accountSourceId: '',
+  trackerTypeId: '',
+  reasonName: '',
+  description: '',
+  direction: '',
+  amount: 0,
+  currency: ''
+}
+
 export const defineContentClassifyingTransactionDialog = ({
   formData,
   setFormData,
@@ -100,11 +110,13 @@ export const defineContentClassifyingTransactionDialog = ({
             <SelectValue placeholder='Select a tracker type' />
           </SelectTrigger>
           <SelectContent>
-            {trackerTransactionType.map((item: ITrackerTransactionType) => (
-              <SelectItem key={item.id} value={item.id}>
-                {item.name}
-              </SelectItem>
-            ))}
+            {trackerTransactionType.length > 0
+              ? trackerTransactionType.map((item: ITrackerTransactionType) => (
+                  <SelectItem key={item.id} value={item.id}>
+                    {item.name}
+                  </SelectItem>
+                ))
+              : ''}
             {isAddingNewTrackerType ? (
               <div className='flex items-center'>
                 <Input

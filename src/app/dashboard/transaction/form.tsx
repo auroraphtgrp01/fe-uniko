@@ -39,7 +39,7 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import toast from 'react-hot-toast'
 import { useTrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/hooks'
-import { initTodayAndUnclassifiedTx } from '../tracker-transaction/handlers'
+import { initDataTableTransaction } from '../tracker-transaction/handlers'
 
 export default function TransactionForm() {
   // states
@@ -72,7 +72,8 @@ export default function TransactionForm() {
   const { getAllTrackerTransactionType } = useTrackerTransactionType()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { getTransactions, refetchPayment } = useTransaction()
-  const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
+  // const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
+  const { isGetPayment, dataPayment } = getTransactions(queryOptions)
   const { getAccountBank } = useAccountBank()
   const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
   const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
@@ -80,13 +81,11 @@ export default function TransactionForm() {
   const { setData } = useUpdateModel<IGetTransactionResponse>(query, updateDataCache)
 
   // effects
+  useEffect(() => {}, [transactionTodayData, unclassifiedTransactionData])
   useEffect(() => {
-    if (dataTable && dataTable.length > 0)
-      initTodayAndUnclassifiedTx(dataTable, setTransactionTodayData, setUnclassifiedTransactionData)
-  }, [dataTable])
-  useEffect(() => {
-    if (dataTransaction) setDataTable(modifyTransactionHandler(dataTransaction))
-  }, [dataTransaction])
+    if (dataPayment)
+      initDataTableTransaction(dataPayment.data, setDataTable, setUnclassifiedTransactionData, setTransactionTodayData)
+  }, [dataPayment])
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
@@ -114,8 +113,8 @@ export default function TransactionForm() {
         setAccountBankRefetchingQueue,
         reloadDataFunction: () => {
           resetData()
-          while (!isGetTransaction) {
-            if (dataTransaction?.statusCode === 200) toast.success('Reload data successfully!')
+          while (!isGetPayment) {
+            if (dataPayment?.statusCode === 200) toast.success('Reload data successfully!')
             else toast.error('Failed to get transaction !')
             break
           }
@@ -182,7 +181,7 @@ export default function TransactionForm() {
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(unclassifiedTransactionData.totalTransaction, 'VND', 'vi-vn')}
+                {formatCurrency(unclassifiedTransactionData.totalAmount, 'VND', 'vi-vn')}
               </div>
             </div>
           </CardContent>
@@ -197,7 +196,8 @@ export default function TransactionForm() {
               config={dataTableConfig}
               setConfig={setDataTableConfig}
               onRowClick={onRowClick}
-              isLoading={isGetTransaction}
+              // isLoading={isGetTransaction}
+              isLoading={isGetPayment}
               buttons={dataTableButtons}
             />
           </div>

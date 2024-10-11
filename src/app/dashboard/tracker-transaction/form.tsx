@@ -1,14 +1,12 @@
 'use client'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { format } from 'date-fns'
-import { Button } from '@/components/ui/button'
 import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
-import { getConvertedKeysToTitleCase } from '@/libraries/utils'
+import { formatCurrency, getConvertedKeysToTitleCase } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
@@ -20,105 +18,63 @@ import { initButtonInDataTableHeader, initDialogFlag } from './constants'
 import TrackerTransactionDialog from './dialog'
 import { initTableConfig } from '@/constants/data-table'
 import { initQueryOptions } from '@/constants/init-query-options'
-import { IDataTransactionTable, Transaction } from '@/core/transaction/models'
+import {
+  IClassifyTransactionFormData,
+  ICreateTransactionFormData,
+  IDataTransactionTable,
+  Transaction
+} from '@/core/transaction/models'
+import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
+import { useTrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/hooks'
+import { initClassifyTransactionForm, initCreateTrackerTransactionForm } from '../transaction/constants'
+import { useAccountSource } from '@/core/account-source/hooks'
 
 export default function TrackerTransactionForm() {
-  const [fetchedData, setFetchedData] = useState<ITrackerTransaction[]>([])
-  const [fetchedTransactionData, setFetchedTransactionData] = useState<Transaction[]>([])
   const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
-  const [tableData, setTableData] = useState<ITrackerTransactionDataFormat[]>([])
+  const [tableData, setTableData] = useState<ITrackerTransaction[]>([]) // ITrackerTransactionDataFormat[]
   const [tableClassifyData, setTableClassifyData] = useState<IDataTransactionTable[]>([])
-  // const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
+  const [formDataClassify, setFormDataClassify] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
+  const [formDataCreate, setFormDataCreate] = useState<ICreateTransactionFormData>(initCreateTrackerTransactionForm)
+
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [dataTableClassifyConfig, setDataTableClassifyConfig] = useState<IDataTableConfig>(initTableConfig)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
+  const [chartData, setChartData] = useState<IPayloadDataChart[]>([])
+  const [accountChartData, setAccountChartData] = useState<IPayloadDataChart[]>([])
 
   // memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
-    return getColumns<ITrackerTransactionDataFormat>(titles, true)
+    return getColumns<ITrackerTransaction>(titles, true) // ITrackerTransactionDataFormat
   }, [tableData])
   const tableClassifyTitles = useMemo(() => getConvertedKeysToTitleCase(tableClassifyData[0]), [tableClassifyData])
   const tableClassifyColumns = useMemo(() => {
     if (tableData.length === 0) return []
-    return getColumns<ITrackerTransactionDataFormat>(titles, true)
+    return getColumns<ITrackerTransaction>(titles, true) // ITrackerTransactionDataFormat
   }, [tableData])
 
-  const data = [
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Con cái',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
+  // hooks
+  const { getAdvancedAccountSource } = useAccountSource()
+  const { getAdvancedData, getStatisticData } = useTrackerTransaction()
+  const { getAllTrackerTransactionType } = useTrackerTransactionType()
+  const { dataTrackerTransactionType } = getAllTrackerTransactionType()
+  const { statisticData } = getStatisticData()
+  const { advancedTrackerTxData } = getAdvancedData({ query: queryOptions })
+  const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
+  useEffect(() => {
+    if (advancedTrackerTxData) {
+      setTableData(advancedTrackerTxData.data)
     }
-  ]
+  }, [advancedTrackerTxData])
 
-  const chartData: IPayloadDataChart[] = [
-    {
-      name: 'Food & Drink',
-      value: 20
-    },
-    {
-      name: 'Transport',
-      value: 30
-    },
-    {
-      name: 'Shopping',
-      value: 10
-    },
-    {
-      name: 'Health',
-      value: 40
-    },
-    {
-      name: 'Entertainment',
-      value: 25
-    },
-    {
-      name: 'Housing',
-      value: 35
-    },
-    {
-      name: 'Education',
-      value: 15
-    },
-    {
-      name: 'Travel',
-      value: 50
-    },
-    {
-      name: 'Utilities',
-      value: 22
-    },
-    {
-      name: 'Miscellaneous',
-      value: 18
+  useEffect(() => {
+    if (statisticData) {
+      setChartData(statisticData.data.trackerTypeStats)
+      setAccountChartData(statisticData.data.trackerAccStats)
     }
-  ]
-
-  const accountData: IPayloadDataChart[] = [
-    {
-      name: 'TP Bank',
-      value: '500.000'
-    },
-    {
-      name: 'Wallet',
-      value: '700.000'
-    },
-    {
-      name: 'Vietcombank',
-      value: '700.000'
-    },
-    {
-      name: 'Techcombank',
-      value: '700.000'
-    }
-  ]
+  }, [statisticData])
 
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
@@ -133,7 +89,9 @@ export default function TrackerTransactionForm() {
               <div className='space-y-2'>
                 <CardTitle className='text-nowrap text-sm sm:text-base lg:text-lg'>Total spending today</CardTitle>
                 <CardDescription>
-                  <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>1,000,000 VND</span>
+                  <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>
+                    {formatCurrency(statisticData?.data.totalSpendingToday ?? 0, 'VND', 'vi-vn')}
+                  </span>
                 </CardDescription>
               </div>
               <Icons.banknote className='hidden text-green-500 lg:h-8 lg:w-8 2xl:block' />
@@ -152,7 +110,7 @@ export default function TrackerTransactionForm() {
                   </div>
                 </CardHeader>
                 <p className='mt-2 text-nowrap text-lg font-bold text-green-700 dark:text-green-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                  10,000,000 VND
+                  {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
                 </p>
               </div>
 
@@ -165,7 +123,7 @@ export default function TrackerTransactionForm() {
                   </div>
                 </CardHeader>
                 <p className='mt-2 text-nowrap text-lg font-bold text-rose-500 dark:text-rose-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                  5,000,000 VND
+                  {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
                 </p>
               </div>
             </div>
@@ -205,7 +163,7 @@ export default function TrackerTransactionForm() {
         <div className='flex items-center justify-center p-0'>
           <Card className='mt-4 w-full'>
             <DonutChart
-              data={accountData}
+              data={accountChartData}
               className='mb-[5%] mt-[-8%] h-[350px] w-full sm:mt-[-1%] md:h-[300px] lg:mt-[-5%] xl:h-[300px]'
               types='donut'
             />
@@ -223,6 +181,14 @@ export default function TrackerTransactionForm() {
         setIsDialogOpen={setIsDialogOpen}
         setTableConfig={setDataTableClassifyConfig}
         tableConfig={dataTableClassifyConfig}
+        dataTrackerTransactionType={dataTrackerTransactionType?.data ?? []}
+        formDataClassify={formDataClassify}
+        setFormDataClassify={setFormDataClassify}
+        formDataCreate={formDataCreate}
+        setFormDataCreate={setFormDataCreate}
+        createTrackerTransaction={null}
+        hookUpdateCache={null}
+        accountSourceData={dataAdvancedAccountSource?.data ?? []}
       />
     </div>
   )

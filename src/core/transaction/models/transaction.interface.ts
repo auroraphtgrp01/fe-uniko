@@ -49,3 +49,13 @@ export interface IClassifyTransactionFormData {
   reasonName: string
   description: string
 }
+
+export interface ICreateTransactionFormData {
+  trackerTypeId: string
+  reasonName: string
+  description?: string
+  direction: string
+  amount: number
+  currency: string
+  accountSourceId: string
+}

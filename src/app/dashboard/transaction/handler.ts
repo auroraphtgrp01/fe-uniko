@@ -1,16 +1,11 @@
-import { IAccountBank, IGetAccountBankResponse } from '@/core/account-bank/models'
-import {
-  IClassifyTransactionFormData,
-  IDataTransactionTable,
-  IDialogTransaction,
-  IGetTransactionResponse
-} from '@/core/transaction/models'
+import { IAccountBank } from '@/core/account-bank/models'
+import { IDataTransactionTable, Transaction } from '@/core/transaction/models'
 import { formatCurrency } from '@/libraries/utils'
 import React from 'react'
 import toast from 'react-hot-toast'
 
-export const modifyTransactionHandler = (payload: IGetTransactionResponse): IDataTransactionTable[] => {
-  return payload.data.map((item) => {
+export const modifyTransactionHandler = (payload: Transaction[]): IDataTransactionTable[] => {
+  return payload.map((item: Transaction) => {
     return {
       id: item.id,
       transactionId: item.transactionId,

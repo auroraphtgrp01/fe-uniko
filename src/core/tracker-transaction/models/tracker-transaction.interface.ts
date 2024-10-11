@@ -4,6 +4,7 @@ export interface IDialogTrackerTransaction {
   isDialogCreateOpen: boolean
   isDialogUpdateOpen: boolean
   isDialogClassifyOpen: boolean
+  // isDialogDetailOpen: boolean
 }
 
 export interface ITrackerTransaction {
@@ -34,3 +35,13 @@ export interface ITrackerTransactionBody {
   trackerType: string
   description: string
 }
+
+export interface IStatisticData {
+  trackerTypeStats: any[]
+  trackerAccStats: any[]
+  totalSpendingToday: number
+  totalIncomeToday: number
+  totalExpenseToday: number
+}
+
+export type IStatisticDataResponse = IBaseResponseData<IStatisticData>
