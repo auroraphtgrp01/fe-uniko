@@ -35,9 +35,9 @@ export interface IDataTransactionTable {
   transactionId: string
   amount: string
   direction: string
-  accountBank: string
+  accountBank: string | null
   currency: string
-  accountNo: string
+  accountNo: string | null
   description: string
   time: string
   trackerTransactionId: string

@@ -1,18 +1,7 @@
-// const handleAddNewItem = () => {
-//   if (newItemValue.trim() !== '') {
-//     const newItem = {
-//       value: newItemValue.toUpperCase().replace(/\s+/g, '_'),
-//       label: newItemValue.trim()
-//     }
-//     setItems([...items, newItem])
-//     setNewItemValue('')
-//     setIsAddingNew(false)
-//     onValueChange(newItem.value)
-//   }
-// }
-
 import {
+  IAdvancedTrackerTransactionResponse,
   IDialogTrackerTransaction,
+  ITrackerTransaction,
   ITrackerTransactionResponse
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import {
@@ -58,24 +47,30 @@ export const handleCreateTrackerTransaction = async ({
   })
 }
 
-export const handleClassifyTrackerTransaction = async ({
+export const handleClassifyTransaction = async ({
   formData,
   setFormData,
   hookCreate,
   hookUpdateCache,
-  setIsDialogOpen
+  setIsDialogOpen,
+  hookResetCacheStatistic,
+  hookResetTrackerTx
 }: {
   formData: IClassifyTransactionFormData
   setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
   hookCreate: any
   hookUpdateCache: any
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
+  hookResetCacheStatistic: any
+  hookResetTrackerTx: any
 }) => {
   hookCreate(formData, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
-        toast.success('Create tracker transaction successfully!')
+        hookResetCacheStatistic(res.data)
+        hookResetTrackerTx(res.data)
+        toast.success('Classify transaction successfully!')
         setFormData({ ...initCreateTrackerTransactionForm })
         setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
       }
@@ -102,9 +97,7 @@ export const initDataTableTransaction = (
   >
 ) => {
   setDataTable(modifyTransactionHandler(dataTransaction))
-  const transactionToday = dataTransaction.filter((item: Transaction) => {
-    isIsoStringInToday(item.time)
-  })
+  const transactionToday = dataTransaction.filter((item: Transaction) => isIsoStringInToday(item.time))
   const unclassifiedTransaction = dataTransaction.filter((item: Transaction) => !item.trackerTransactionId)
   const totalAmountToday = transactionToday.reduce((acc, item) => acc + item.amount, 0)
   const totalAmountUnclassified = unclassifiedTransaction.reduce((acc, item) => acc + item.amount, 0)
@@ -133,3 +126,23 @@ function isIsoStringInToday(isoString: string): boolean {
 
   return inputDate >= startOfToday && inputDate <= endOfToday
 }
+
+export const updateCacheDataUpdate = (
+  oldData: IAdvancedTrackerTransactionResponse,
+  newData: any
+): IAdvancedTrackerTransactionResponse => {
+  return { ...oldData, data: oldData.data.filter((item: ITrackerTransaction) => item.id !== newData.transactionId) }
+}
+
+// const handleAddNewItem = () => {
+//   if (newItemValue.trim() !== '') {
+//     const newItem = {
+//       value: newItemValue.toUpperCase().replace(/\s+/g, '_'),
+//       label: newItemValue.trim()
+//     }
+//     setItems([...items, newItem])
+//     setNewItemValue('')
+//     setIsAddingNew(false)
+//     onValueChange(newItem.value)
+//   }
+// }

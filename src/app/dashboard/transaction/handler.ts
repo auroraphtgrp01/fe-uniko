@@ -1,8 +1,16 @@
 import { IAccountBank } from '@/core/account-bank/models'
-import { IDataTransactionTable, IGetTransactionResponse, Transaction } from '@/core/transaction/models'
+import { ITrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import {
+  IClassifyTransactionFormData,
+  IDataTransactionTable,
+  IDialogTransaction,
+  IGetTransactionResponse,
+  Transaction
+} from '@/core/transaction/models'
 import { formatCurrency } from '@/libraries/utils'
 import React from 'react'
 import toast from 'react-hot-toast'
+import { initCreateTrackerTransactionForm } from './constants'
 
 export const modifyTransactionHandler = (payload: Transaction[]): IDataTransactionTable[] => {
   return payload.map((item: Transaction) => {
@@ -13,7 +21,7 @@ export const modifyTransactionHandler = (payload: Transaction[]): IDataTransacti
       direction: item.direction,
       accountBank: item.accountBankId,
       currency: item.currency,
-      accountNo: item.ofAccount.accountNo,
+      accountNo: item.ofAccount ? item.ofAccount.accountNo : null,
       description: item.description,
       time: item.time,
       trackerTransactionId: item.trackerTransactionId
@@ -64,4 +72,29 @@ export const updateCacheDataUpdate = (oldData: IGetTransactionResponse, newData:
     return item.id === newData.transactionId ? { ...item, trackerTransactionId: newData.id } : item
   })
   return { ...oldData, data: updatedData }
+}
+
+export const handleClassifyTransaction = async ({
+  formData,
+  setFormData,
+  hookCreate,
+  hookUpdateCache,
+  setIsDialogOpen
+}: {
+  formData: IClassifyTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+  hookCreate: any
+  hookUpdateCache: any
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
+}) => {
+  hookCreate(formData, {
+    onSuccess: (res: ITrackerTransactionResponse) => {
+      if (res.statusCode === 200 || res.statusCode === 201) {
+        hookUpdateCache(res.data)
+        toast.success('Classify transaction successfully!')
+        setFormData(initCreateTrackerTransactionForm)
+        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
+      }
+    }
+  })
 }

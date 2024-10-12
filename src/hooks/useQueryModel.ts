@@ -49,6 +49,7 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
   const mergedOptions: QueryOptions = { ...defaultOptions, ...options }
   const query = mergeQueryParams(mergedOptions.query ?? {})
   const queryKey = [modelName, mergedOptions.condition ?? '', query]
+  console.log('🚀 ~ useModelQuery ~ queryKey:', queryKey)
 
   const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
 
@@ -74,13 +75,10 @@ export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (old
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
 
   const setData = (newData: Updater<T>) => {
-    console.log('Truoc', queryClient.getQueryData(key))
-
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)
     })
-    console.log('sau', queryClient.getQueryData(key))
   }
 
   const resetData = () => {

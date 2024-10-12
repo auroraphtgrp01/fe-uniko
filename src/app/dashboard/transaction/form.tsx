@@ -12,7 +12,6 @@ import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
   handleAccountBankRefetching,
   handleRefetchPaymentCompletion,
-  modifyTransactionHandler,
   updateCacheDataUpdate
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
@@ -68,12 +67,12 @@ export default function TransactionForm() {
   const query = useMemo(() => [TRANSACTION_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
 
   // hooks
-  const { createTrackerTransaction } = useTrackerTransaction()
+  const { classifyTransaction } = useTrackerTransaction()
   const { getAllTrackerTransactionType } = useTrackerTransactionType()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { getTransactions, refetchPayment } = useTransaction()
-  // const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
-  const { isGetPayment, dataPayment } = getTransactions(queryOptions)
+  const { getTransactions, refetchPayment, getPayments } = useTransaction()
+  const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
+  const { isGetPayment, dataPayment } = getPayments(queryOptions)
   const { getAccountBank } = useAccountBank()
   const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
   const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
@@ -82,15 +81,14 @@ export default function TransactionForm() {
 
   // effects
   useEffect(() => {
-    console.log('🚀 ~ TransactionForm ~ dataPayment:', dataPayment)
-  }, [dataPayment])
-  useEffect(() => {
-    console.log('🚀 ~ TransactionForm ~ unclassifiedTransactionData:', unclassifiedTransactionData)
-  }, [unclassifiedTransactionData])
-  useEffect(() => {
-    if (dataPayment)
-      initDataTableTransaction(dataPayment.data, setDataTable, setUnclassifiedTransactionData, setTransactionTodayData)
-  }, [dataPayment])
+    if (dataTransaction)
+      initDataTableTransaction(
+        dataTransaction.data,
+        setDataTable,
+        setUnclassifiedTransactionData,
+        setTransactionTodayData
+      )
+  }, [dataTransaction])
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
@@ -201,8 +199,8 @@ export default function TransactionForm() {
               config={dataTableConfig}
               setConfig={setDataTableConfig}
               onRowClick={onRowClick}
-              // isLoading={isGetTransaction}
-              isLoading={isGetPayment}
+              isLoading={isGetTransaction}
+              // isLoading={isGetPayment}
               buttons={dataTableButtons}
             />
           </div>
@@ -225,7 +223,7 @@ export default function TransactionForm() {
           classifyDialog={{
             formData,
             setFormData,
-            createTrackerTransaction,
+            classifyTransaction,
             trackerTransactionType: dataTrackerTransactionType?.data ?? [],
             hookUpdateCache: setData
           }}

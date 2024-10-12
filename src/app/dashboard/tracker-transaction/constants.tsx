@@ -26,7 +26,7 @@ export const initButtonInDataTableHeader = ({
     {
       title: 'Classify',
       onClick: () => {
-        setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyOpen: true }))
+        setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
       }
     }
   ]
@@ -35,7 +35,8 @@ export const initButtonInDataTableHeader = ({
 export const initDialogFlag: IDialogTrackerTransaction = {
   isDialogCreateOpen: false,
   isDialogUpdateOpen: false,
-  isDialogClassifyOpen: false
+  isDialogClassifyTransactionOpen: false,
+  isDialogUnclassifiedOpen: false
 }
 
 export const defineContentCreateTransactionDialog = ({
@@ -57,7 +58,6 @@ export const defineContentCreateTransactionDialog = ({
   trackerTransactionType: any
   accountSourceData: IAccountSource[]
 }) => {
-  console.log(trackerTransactionType)
   return (
     <div className='grid gap-4 py-4'>
       <div className='grid grid-cols-4 items-center gap-4'>

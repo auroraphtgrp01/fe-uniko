@@ -1,5 +1,5 @@
 export const trackerTransactionRoutes = {
-  create: 'tracker-transactions/classify',
+  classify: 'tracker-transactions/classify',
   statistics: 'tracker-transactions/statistics',
   getAdvanced: 'tracker-transactions'
 }

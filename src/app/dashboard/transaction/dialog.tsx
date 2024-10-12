@@ -8,8 +8,8 @@ import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { defineContentClassifyingTransactionDialog, initClassifyTransactionForm } from './constants'
-import { handleClassifyTrackerTransaction } from '../tracker-transaction/handlers'
 import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { handleClassifyTransaction } from './handler'
 
 export interface ITransactionDialogProps {
   dataTable: {
@@ -29,7 +29,7 @@ export interface ITransactionDialogProps {
   classifyDialog: {
     formData: IClassifyTransactionFormData
     setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
-    createTrackerTransaction: any
+    classifyTransaction: any
     trackerTransactionType: ITrackerTransactionType[]
     hookUpdateCache: any
   }
@@ -51,6 +51,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
             <div className='flex w-full items-center justify-between'>
               <p className='text-xl font-bold'>{dataTable.dataDetail.amount}</p>
               <Button
+                disabled={!dataTable.dataDetail.accountNo && !dataTable.dataDetail.accountBank}
                 variant={'greenPastel1'}
                 type='button'
                 onClick={() =>
@@ -137,7 +138,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       </div>
     ),
     className: 'sm:max-w-[425px] md:max-w-[1080px]',
-    description: 'Overview of today`s transactions',
+    description: 'Overview of unclassified`s transactions',
     title: 'Unclassified Transaction',
     isOpen: dialogState.isDialogOpen.isDialogUnclassifiedTransactionOpen,
     onClose: () => {
@@ -158,10 +159,10 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
     footer: (
       <Button
         onClick={() =>
-          handleClassifyTrackerTransaction({
+          handleClassifyTransaction({
             formData,
             setFormData,
-            hookCreate: classifyDialog.createTrackerTransaction,
+            hookCreate: classifyDialog.classifyTransaction,
             hookUpdateCache: classifyDialog.hookUpdateCache,
             setIsDialogOpen: dialogState.setIsDialogOpen
           })

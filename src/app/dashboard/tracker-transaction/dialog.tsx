@@ -9,76 +9,92 @@ import {
   initClassifyTransactionForm,
   initCreateTrackerTransactionForm
 } from '../transaction/constants'
-import { handleCreateTrackerTransaction } from './handlers'
-import { IClassifyTransactionFormData, ICreateTransactionFormData } from '@/core/transaction/models'
+import { handleClassifyTransaction, handleCreateTrackerTransaction } from './handlers'
+import {
+  IClassifyTransactionFormData,
+  ICreateTransactionFormData,
+  IDataTransactionTable,
+  Transaction
+} from '@/core/transaction/models'
 import { useMemo, useState } from 'react'
-import { Separator } from '@/components/ui/separator'
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { defineContentCreateTransactionDialog } from './constants'
 import { IAccountSource } from '@/core/account-source/models'
 
-export interface ITrackerTransactionDialogProps {
+interface IUnclassifiedTxDialog {
   columns: any[]
-  isDialogOpen: IDialogTrackerTransaction
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
-  dataTable: any[]
-  setDataTable: React.Dispatch<React.SetStateAction<any[]>>
+  unclassifiedTxTableData: IDataTransactionTable[]
   tableConfig: IDataTableConfig
   setTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
-  dataTrackerTransactionType: ITrackerTransactionType[]
-  formDataClassify: IClassifyTransactionFormData
-  setFormDataClassify: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
-  formDataCreate: ICreateTransactionFormData
-  setFormDataCreate: React.Dispatch<React.SetStateAction<ICreateTransactionFormData>>
+}
+interface IClassifyTransactionDialog {
+  formData: IClassifyTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+  classifyTransaction: any
   hookUpdateCache: any
-  createTrackerTransaction: any
+  resetCacheTrackerTx: any
+}
+interface ICreateTrackerTransactionDialog {
+  formData: ICreateTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<ICreateTransactionFormData>>
   accountSourceData: IAccountSource[]
+  createTrackerTransaction: any
+  hookUpdateCache: any
+}
+interface ISharedDialogElements {
+  dataTrackerTransactionType: ITrackerTransactionType[]
+  isDialogOpen: IDialogTrackerTransaction
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  hookResetCacheStatistic: any
+}
+
+interface ITrackerTransactionDialogProps {
+  unclassifiedTxDialog: IUnclassifiedTxDialog
+  classifyTransactionDialog: IClassifyTransactionDialog
+  createTrackerTransactionDialog: ICreateTrackerTransactionDialog
+  sharedDialogElements: ISharedDialogElements
 }
 export default function TrackerTransactionDialog({
-  columns,
-  isDialogOpen,
-  setIsDialogOpen,
-  dataTable,
-  setDataTable,
-  tableConfig,
-  setTableConfig,
-  dataTrackerTransactionType,
-  formDataClassify,
-  setFormDataClassify,
-  formDataCreate,
-  setFormDataCreate,
-  hookUpdateCache,
-  createTrackerTransaction,
-  accountSourceData
+  unclassifiedTxDialog,
+  classifyTransactionDialog,
+  createTrackerTransactionDialog,
+  sharedDialogElements
 }: ITrackerTransactionDialogProps) {
   // useStates
   const [newItemTrackerType, setItemTrackerType] = useState<string>('')
   const [isAddingNewTrackerType, setIsAddingNewTrackerType] = useState<boolean>(false)
+  const contentCreateTrackerTxDialogDialog = defineContentCreateTransactionDialog({
+    formData: createTrackerTransactionDialog.formData,
+    setFormData: createTrackerTransactionDialog.setFormData,
+    newItemTrackerType,
+    setItemTrackerType,
+    isAddingNewTrackerType,
+    setIsAddingNewTrackerType,
+    trackerTransactionType: sharedDialogElements.dataTrackerTransactionType,
+    accountSourceData: createTrackerTransactionDialog.accountSourceData
+  })
+  const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
+    formData: classifyTransactionDialog.formData,
+    setFormData: classifyTransactionDialog.setFormData,
+    newItemTrackerType,
+    setItemTrackerType,
+    isAddingNewTrackerType,
+    setIsAddingNewTrackerType,
+    trackerTransactionType: sharedDialogElements.dataTrackerTransactionType
+  })
 
-  const classifyingTransactionConfigDialogContent = useMemo(
-    () =>
-      defineContentClassifyingTransactionDialog({
-        formData: formDataClassify,
-        setFormData: setFormDataClassify,
-        newItemTrackerType,
-        setItemTrackerType,
-        isAddingNewTrackerType,
-        setIsAddingNewTrackerType,
-        trackerTransactionType: dataTrackerTransactionType
-      }),
-    [dataTrackerTransactionType]
-  )
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: classifyingTransactionConfigDialogContent,
     footer: (
       <Button
         onClick={() =>
-          handleCreateTrackerTransaction({
-            formData: formDataCreate,
-            setFormData: setFormDataCreate,
-            hookCreate: createTrackerTransaction,
-            hookUpdateCache: hookUpdateCache,
-            setIsDialogOpen
+          handleClassifyTransaction({
+            formData: classifyTransactionDialog.formData,
+            setFormData: classifyTransactionDialog.setFormData,
+            hookCreate: classifyTransactionDialog.classifyTransaction,
+            hookUpdateCache: classifyTransactionDialog.hookUpdateCache,
+            setIsDialogOpen: sharedDialogElements.setIsDialogOpen,
+            hookResetCacheStatistic: sharedDialogElements.hookResetCacheStatistic,
+            hookResetTrackerTx: classifyTransactionDialog.resetCacheTrackerTx
           })
         }
         type='button'
@@ -88,63 +104,53 @@ export default function TrackerTransactionDialog({
     ),
     description: 'Please fill in the information below to classify transaction.',
     title: 'Classify Transaction',
-    isOpen: isDialogOpen.isDialogClassifyOpen,
+    isOpen: sharedDialogElements.isDialogOpen.isDialogClassifyTransactionOpen,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyOpen: false }))
-      setFormDataClassify(initClassifyTransactionForm)
-    }
-  }
-  const contentDialogForm = useMemo(
-    () =>
-      defineContentCreateTransactionDialog({
-        formData: formDataCreate,
-        setFormData: setFormDataCreate,
-        newItemTrackerType,
-        setItemTrackerType,
-        isAddingNewTrackerType,
-        setIsAddingNewTrackerType,
-        trackerTransactionType: dataTrackerTransactionType,
-        accountSourceData
-      }),
-    [dataTrackerTransactionType, accountSourceData]
-  )
-  const createConfigDialog: IDialogConfig = {
-    content: contentDialogForm,
-    footer: <Button type='submit'>Save changes</Button>,
-    description: 'Please fill in the information below to create a new transaction.',
-    title: 'Create Transaction',
-    isOpen: isDialogOpen.isDialogCreateOpen,
-    onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-      setFormDataCreate(initCreateTrackerTransactionForm)
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: false }))
+      classifyTransactionDialog.setFormData(initClassifyTransactionForm)
     }
   }
 
-  const classifyConfigDialog: IDialogConfig = {
+  const createConfigDialog: IDialogConfig = {
+    content: contentCreateTrackerTxDialogDialog,
+    footer: <Button type='button'>Save changes</Button>,
+    description: 'Please fill in the information below to create a new transaction.',
+    title: 'Create Transaction',
+    isOpen: sharedDialogElements.isDialogOpen.isDialogCreateOpen,
+    onClose: () => {
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
+      createTrackerTransactionDialog.setFormData(initCreateTrackerTransactionForm)
+    }
+  }
+
+  const unclassifiedConfigDialog: IDialogConfig = {
     content: (
       <div className='overflow-x-auto'>
         <DataTable
-          columns={columns}
-          data={dataTable}
-          config={tableConfig}
-          setConfig={setTableConfig}
-          onRowClick={() => {}}
+          columns={unclassifiedTxDialog.columns}
+          data={unclassifiedTxDialog.unclassifiedTxTableData}
+          config={unclassifiedTxDialog.tableConfig}
+          setConfig={unclassifiedTxDialog.setTableConfig}
+          onRowClick={(rowData) => {
+            classifyTransactionDialog.setFormData((prev) => ({ ...prev, transactionId: rowData.id }))
+            sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
+          }}
         />
       </div>
     ),
     className: 'sm:max-w-[425px] md:max-w-[1080px]',
-    description: 'Please fill in the information below to classify a transaction',
-    title: 'Classify transactions',
-    isOpen: isDialogOpen.isDialogClassifyOpen,
+    description: 'Overview of unclassified`s transactions',
+    title: 'Unclassified transactions',
+    isOpen: sharedDialogElements.isDialogOpen.isDialogUnclassifiedOpen,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyOpen: false }))
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: false }))
     }
   }
 
   return (
     <div>
       <CustomDialog config={createConfigDialog} />
-      <CustomDialog config={classifyConfigDialog} />
+      <CustomDialog config={unclassifiedConfigDialog} />
       <CustomDialog config={classifyingTransactionConfigDialog} />
     </div>
   )

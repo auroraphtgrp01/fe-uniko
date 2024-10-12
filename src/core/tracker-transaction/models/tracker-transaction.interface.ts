@@ -3,8 +3,8 @@ import { IBaseResponseData } from '@/types/common.i'
 export interface IDialogTrackerTransaction {
   isDialogCreateOpen: boolean
   isDialogUpdateOpen: boolean
-  isDialogClassifyOpen: boolean
-  // isDialogDetailOpen: boolean
+  isDialogClassifyTransactionOpen: boolean
+  isDialogUnclassifiedOpen: boolean
 }
 
 export interface ITrackerTransaction {

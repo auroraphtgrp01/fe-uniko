@@ -5,9 +5,9 @@ import toast from 'react-hot-toast'
 import { ITrackerTransactionBody, ITrackerTransactionResponse } from '../models/tracker-transaction.interface'
 import { trackerTransactionRoutes } from '../configs'
 
-export const useCreateTrackerTransaction = (opts?: IUseQueryHookOptions) => {
+export const useClassifyTransaction = (opts?: IUseQueryHookOptions) => {
   return useMutationCustom<ITrackerTransactionBody, ITrackerTransactionResponse>({
-    pathUrl: trackerTransactionRoutes.create,
+    pathUrl: trackerTransactionRoutes.classify,
     mutateOption: {
       onError: (error: AxiosError | any) => {
         if (error.response?.status === 401) {
