@@ -50,12 +50,12 @@ export interface IClassifyTransactionFormData {
   description: string
 }
 
-export interface ICreateTransactionFormData {
+export interface ICreateTrackerTransactionFormData {
   trackerTypeId: string
   reasonName: string
   description?: string
   direction: string
-  amount: number
+  amount?: number
   currency: string
   accountSourceId: string
 }

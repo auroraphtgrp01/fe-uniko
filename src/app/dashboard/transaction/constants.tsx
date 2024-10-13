@@ -25,7 +25,7 @@ export const initButtonInDataTableHeader = ({
     {
       title: 'Refetch in bank',
       onClick: () => {
-        toast.loading('Refetching payment ... Please wait until it is completed!')
+        toast.loading('Sending request... Please wait until it is completed!')
 
         if (dataAccountBank && dataAccountBank.data.length > 0) setAccountBankRefetchingQueue([...dataAccountBank.data])
       },
@@ -60,7 +60,6 @@ export const initCreateTrackerTransactionForm = {
   reasonName: '',
   description: '',
   direction: '',
-  amount: 0,
   currency: ''
 }
 

@@ -48,7 +48,9 @@ export const handleRefetchPaymentCompletion = ({
   if (accountBankRefetching && dataRefetchPayment) {
     if (dataRefetchPayment.statusCode === 200 && dataRefetchPayment.data === true)
       setTimeout(() => {
-        toast.success(`Refetch payment in bank ${accountBankRefetching.login_id} success!`)
+        toast.success(
+          `Refetching payment in bank ${accountBankRefetching.login_id}. Please wait a few minutes to complete the request!`
+        )
       }, 5000)
     else
       setTimeout(() => {

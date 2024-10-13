@@ -4,7 +4,7 @@ import { PlusCircle, PlusIcon, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ICreateTransactionFormData } from '@/core/transaction/models'
+import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
@@ -49,8 +49,8 @@ export const defineContentCreateTransactionDialog = ({
   trackerTransactionType,
   accountSourceData
 }: {
-  formData: ICreateTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<ICreateTransactionFormData>>
+  formData: ICreateTrackerTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
   newItemTrackerType: string
   setItemTrackerType: React.Dispatch<React.SetStateAction<string>>
   isAddingNewTrackerType: boolean
@@ -72,6 +72,21 @@ export const defineContentCreateTransactionDialog = ({
           }}
           className='col-span-3'
           placeholder='Reason name *'
+        />
+      </div>
+      <div className='grid grid-cols-4 items-center gap-4'>
+        <Label htmlFor='amount' className='text-right'>
+          Amount
+        </Label>
+        <Input
+          value={formData.amount}
+          required
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, amount: parseFloat(e.target.value) }))
+          }}
+          className='col-span-3'
+          placeholder='Amount *'
+          type='number'
         />
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>
@@ -139,6 +154,53 @@ export const defineContentCreateTransactionDialog = ({
                   </SelectItem>
                 ))
               : ''}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className='grid grid-cols-4 items-center gap-4'>
+        <Label htmlFor='direction' className='text-right'>
+          Direction
+        </Label>
+        <Select
+          required
+          onValueChange={(value) => setFormData((prev) => ({ ...prev, direction: value }))}
+          value={formData.direction}
+        >
+          <SelectTrigger className='col-span-3'>
+            <SelectValue placeholder='Select a direction' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem key={'INCOMING'} value={'INCOMING'}>
+              Incoming
+            </SelectItem>
+            <SelectItem key={'EXPENSE'} value={'EXPENSE'}>
+              Expense
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className='grid grid-cols-4 items-center gap-4'>
+        <Label htmlFor='currency' className='text-right'>
+          Currency
+        </Label>
+        <Select
+          required
+          onValueChange={(value) => setFormData((prev) => ({ ...prev, currency: value }))}
+          value={formData.currency}
+        >
+          <SelectTrigger className='col-span-3'>
+            <SelectValue placeholder='Select a currency' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem key={'USD'} value={'USD'}>
+              USD
+            </SelectItem>
+            <SelectItem key={'VND'} value={'VND'}>
+              VND
+            </SelectItem>
+            <SelectItem key={'EUR'} value={'EUR'}>
+              EUR
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>

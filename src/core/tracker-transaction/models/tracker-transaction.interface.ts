@@ -29,7 +29,7 @@ export interface ITrackerTransactionDataFormat {
   checkType?: string
 }
 
-export interface ITrackerTransactionBody {
+export interface IClassifyTransactionBody {
   id?: string
   transactionId?: string
   trackerType: string

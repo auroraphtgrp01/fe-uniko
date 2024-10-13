@@ -6,7 +6,7 @@ import {
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import {
   IClassifyTransactionFormData,
-  ICreateTransactionFormData,
+  ICreateTrackerTransactionFormData,
   IDataTransactionTable,
   IDialogTransaction,
   Transaction
@@ -15,6 +15,7 @@ import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
+import { IBaseResponsePagination } from '@/types/common.i'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -27,21 +28,24 @@ export const handleCreateTrackerTransaction = async ({
   setFormData,
   hookCreate,
   hookUpdateCache,
-  setIsDialogOpen
+  setIsDialogOpen,
+  hookResetCacheStatistic
 }: {
-  formData: ICreateTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<ICreateTransactionFormData>>
+  formData: ICreateTrackerTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
   hookCreate: any
   hookUpdateCache: any
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  hookResetCacheStatistic: any
 }) => {
   hookCreate(formData, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
+        hookResetCacheStatistic()
         toast.success('Create tracker transaction successfully!')
-        setFormData({ ...initCreateTrackerTransactionForm })
-        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyOpen: false }))
+        setFormData(initCreateTrackerTransactionForm)
+        setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
       }
     }
   })
@@ -134,6 +138,15 @@ export const updateCacheDataUpdate = (
   return { ...oldData, data: oldData.data.filter((item: ITrackerTransaction) => item.id !== newData.transactionId) }
 }
 
+export const updateCacheDataCreate = (
+  oldData: IAdvancedTrackerTransactionResponse,
+  newData: ITrackerTransaction
+): IAdvancedTrackerTransactionResponse => {
+  const updatedData = [newData, ...oldData.data]
+
+  if (updatedData.length > (oldData.pagination as IBaseResponsePagination).limit) updatedData.pop()
+  return { ...oldData, data: updatedData }
+}
 // const handleAddNewItem = () => {
 //   if (newItemValue.trim() !== '') {
 //     const newItem = {

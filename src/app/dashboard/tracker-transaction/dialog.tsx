@@ -12,7 +12,7 @@ import {
 import { handleClassifyTransaction, handleCreateTrackerTransaction } from './handlers'
 import {
   IClassifyTransactionFormData,
-  ICreateTransactionFormData,
+  ICreateTrackerTransactionFormData,
   IDataTransactionTable,
   Transaction
 } from '@/core/transaction/models'
@@ -34,8 +34,8 @@ interface IClassifyTransactionDialog {
   resetCacheTrackerTx: any
 }
 interface ICreateTrackerTransactionDialog {
-  formData: ICreateTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<ICreateTransactionFormData>>
+  formData: ICreateTrackerTransactionFormData
+  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
   accountSourceData: IAccountSource[]
   createTrackerTransaction: any
   hookUpdateCache: any
@@ -113,9 +113,25 @@ export default function TrackerTransactionDialog({
 
   const createConfigDialog: IDialogConfig = {
     content: contentCreateTrackerTxDialogDialog,
-    footer: <Button type='button'>Save changes</Button>,
-    description: 'Please fill in the information below to create a new transaction.',
-    title: 'Create Transaction',
+    footer: (
+      <Button
+        type='button'
+        onClick={() =>
+          handleCreateTrackerTransaction({
+            formData: createTrackerTransactionDialog.formData,
+            setFormData: createTrackerTransactionDialog.setFormData,
+            hookCreate: createTrackerTransactionDialog.createTrackerTransaction,
+            hookUpdateCache: createTrackerTransactionDialog.hookUpdateCache,
+            setIsDialogOpen: sharedDialogElements.setIsDialogOpen,
+            hookResetCacheStatistic: sharedDialogElements.hookResetCacheStatistic
+          })
+        }
+      >
+        Save changes
+      </Button>
+    ),
+    description: 'Please fill in the information below to create a new tracker transaction.',
+    title: 'Create Tracker Transaction',
     isOpen: sharedDialogElements.isDialogOpen.isDialogCreateOpen,
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))

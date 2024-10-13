@@ -22,7 +22,7 @@ import { initTableConfig } from '@/constants/data-table'
 import { initQueryOptions } from '@/constants/init-query-options'
 import {
   IClassifyTransactionFormData,
-  ICreateTransactionFormData,
+  ICreateTrackerTransactionFormData,
   IDataTransactionTable,
   Transaction
 } from '@/core/transaction/models'
@@ -38,7 +38,7 @@ import { useTransaction } from '@/core/transaction/hooks'
 import { modifyTransactionHandler } from '../transaction/handler'
 import { STATISTIC_TRACKER_TRANSACTION_KEY, TRACKER_TRANSACTION_MODEL_KEY } from '@/core/tracker-transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
-import { updateCacheDataUpdate } from './handlers'
+import { updateCacheDataCreate, updateCacheDataUpdate } from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 
 export default function TrackerTransactionForm() {
@@ -50,7 +50,9 @@ export default function TrackerTransactionForm() {
   const [tableData, setTableData] = useState<ITrackerTransaction[]>([]) // ITrackerTransactionDataFormat[]
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataClassify, setFormDataClassify] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
-  const [formDataCreate, setFormDataCreate] = useState<ICreateTransactionFormData>(initCreateTrackerTransactionForm)
+  const [formDataCreate, setFormDataCreate] = useState<ICreateTrackerTransactionFormData>(
+    initCreateTrackerTransactionForm
+  )
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
@@ -77,7 +79,7 @@ export default function TrackerTransactionForm() {
 
   // hooks
   const { getAdvancedAccountSource } = useAccountSource()
-  const { getAdvancedData, getStatisticData } = useTrackerTransaction()
+  const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
   const { getAllTrackerTransactionType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
@@ -88,7 +90,7 @@ export default function TrackerTransactionForm() {
   const { classifyTransaction } = useTrackerTransaction()
   const { resetData: resetCacheTrackerTx, setData } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     queryTrackerTransaction,
-    (oldData, newData) => oldData
+    updateCacheDataCreate
   )
   const { resetData: resetCacheStatistic } = useUpdateModel<any>(queryStatisticTrackerTx, () => {})
   const { setData: setCacheUnclassifiedTxs } = useUpdateModel<any>(queryTransaction, updateCacheDataUpdate)
@@ -219,9 +221,9 @@ export default function TrackerTransactionForm() {
         createTrackerTransactionDialog={{
           formData: formDataCreate,
           setFormData: setFormDataCreate,
-          createTrackerTransaction: null,
+          createTrackerTransaction: createTransaction,
           accountSourceData: dataAdvancedAccountSource?.data ?? [],
-          hookUpdateCache: null
+          hookUpdateCache: setData
         }}
         sharedDialogElements={{
           isDialogOpen,

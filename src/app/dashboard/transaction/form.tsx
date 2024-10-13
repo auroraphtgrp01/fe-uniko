@@ -72,12 +72,10 @@ export default function TransactionForm() {
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { getTransactions, refetchPayment, getPayments } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
-  const { isGetPayment, dataPayment } = getPayments(queryOptions)
   const { getAccountBank } = useAccountBank()
   const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
   const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
-  const { resetData } = useUpdateModel<IGetTransactionResponse>(query, (oldData, newData) => oldData)
-  const { setData } = useUpdateModel<IGetTransactionResponse>(query, updateCacheDataUpdate)
+  const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(query, updateCacheDataUpdate)
 
   // effects
   useEffect(() => {
@@ -116,8 +114,8 @@ export default function TransactionForm() {
         setAccountBankRefetchingQueue,
         reloadDataFunction: () => {
           resetData()
-          while (!isGetPayment) {
-            if (dataPayment?.statusCode === 200) toast.success('Reload data successfully!')
+          while (!isGetTransaction) {
+            if (dataTransaction?.statusCode === 200) toast.success('Reload data successfully!')
             else toast.error('Failed to get transaction !')
             break
           }
@@ -200,7 +198,7 @@ export default function TransactionForm() {
               setConfig={setDataTableConfig}
               onRowClick={onRowClick}
               isLoading={isGetTransaction}
-              // isLoading={isGetPayment}
+              // isLoading={isGetTransaction}
               buttons={dataTableButtons}
             />
           </div>
