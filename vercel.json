@@ -3,5 +3,11 @@
         "env": {
             "ENABLE_EXPERIMENTAL_COREPACK": "1"
         }
-    }
+    },
+    "rewrites": [
+        {
+            "source": "/api/:path*",
+            "destination": "http://20.39.199.57/api/:path*"
+        }
+    ]
 }
