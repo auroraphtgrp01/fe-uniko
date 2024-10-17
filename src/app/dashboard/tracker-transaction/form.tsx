@@ -196,11 +196,7 @@ export default function TrackerTransactionForm() {
         {/* DonutChart 1 */}
         <Card className='w-full'>
           <CardContent className='flex items-center justify-center'>
-            <DonutChart
-              data={chartData}
-              className={'mt-[2%] h-[490px] w-full lg:mt-[2%] xl:h-[450px]'}
-              types='nightingale'
-            />
+            <DonutChart data={chartData} className={'mt-[2%] h-[490px] w-full lg:mt-[2%] xl:h-[450px]'} types='donut' />
           </CardContent>
         </Card>
 

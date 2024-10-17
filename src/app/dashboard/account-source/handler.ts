@@ -43,12 +43,16 @@ export const handleCreateAccountSource = ({
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setDataCreate: any
 }) => {
-  const payload: IAccountSourceBody = {
+  const payload = {
     name: formData.name,
-    type: formData.type,
+    accountSourceType: formData.accountSourceType,
     initAmount: formData.initAmount,
     currency: formData.currency,
-    id: formData.id
+    accountBankId: formData.accountBankId,
+    password: formData.password,
+    login_id: formData.login_id,
+    accounts: [formData.account],
+    type: formData.type
   }
   createAccountSource(payload, {
     onSuccess: (res: IAccountSourceResponse) => {

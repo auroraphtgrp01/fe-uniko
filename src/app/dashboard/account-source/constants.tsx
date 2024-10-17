@@ -41,8 +41,8 @@ export const contentDialogAccountSourceForm = ({
       </Label>
       <Select
         required
-        onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value as EAccountSourceType }))}
-        value={formData.type}
+        onValueChange={(value) => setFormData((prev) => ({ ...prev, accountSourceType: value as EAccountSourceType }))}
+        value={formData.accountSourceType}
       >
         <SelectTrigger className='col-span-3'>
           <SelectValue placeholder='Select a source type' />
@@ -53,6 +53,74 @@ export const contentDialogAccountSourceForm = ({
         </SelectContent>
       </Select>
     </div>
+    {/* --------------- */}
+    {formData.accountSourceType === EAccountSourceType.BANKING && (
+      <>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='type' className='text-right'>
+            Account Bank Type
+          </Label>
+          <Select
+            required
+            onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
+            value={formData.type}
+          >
+            <SelectTrigger className='col-span-3'>
+              <SelectValue placeholder='Select a account bank type' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='MB_BANK'>MB Bank</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='login_id' className='text-right'>
+            Login ID
+          </Label>
+          <Input
+            value={formData.login_id}
+            required
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, login_id: e.target.value }))
+            }}
+            className='col-span-3'
+            placeholder='Login Id *'
+          />
+        </div>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='password' className='text-right'>
+            Password
+          </Label>
+          <Input
+            value={formData.password}
+            type='password'
+            required
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, password: e.target.value }))
+            }}
+            className='col-span-3'
+            placeholder='Password *'
+          />
+        </div>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='accounts' className='text-right'>
+            Account
+          </Label>
+          <Input
+            value={formData.account}
+            required
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, account: e.target.value }))
+            }}
+            className='col-span-3'
+            placeholder='Account *'
+          />
+        </div>
+      </>
+    )}
+
+    {/* --------------- */}
+
     <div className='grid grid-cols-4 items-center gap-4'>
       <Label htmlFor='initialAmount' className='text-right'>
         Initial Amount

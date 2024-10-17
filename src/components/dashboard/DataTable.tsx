@@ -54,6 +54,7 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
+  const [selectedRowData, setSelectedRowData] = useState<TData | null>(null)
 
   const table = useReactTable({
     data,
@@ -211,6 +212,11 @@ export function DataTable<TData, TValue>({
                       }
                     }}
                     onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
+                    onContextMenu={(event: React.MouseEvent) => {
+                      event.preventDefault()
+                      setContextMenuPosition({ x: event.clientX, y: event.clientY })
+                      setSelectedRowData(row.original) // Lưu dữ liệu dòng được chọn
+                    }}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
