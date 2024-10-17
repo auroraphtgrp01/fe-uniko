@@ -1,200 +1,127 @@
 'use client'
-import React, { useState } from 'react'
-import CardInHeader from '@/components/dashboard/CardInHeader'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import BadgeType from '@/components/common/BadgeType'
-import { format } from 'date-fns'
-import { Button } from '@/components/ui/button'
 import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
-import { getTypes } from '@/libraries/utils'
+import { formatCurrency, getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
+import {
+  IAdvancedTrackerTransactionResponse,
+  IDialogTrackerTransaction,
+  ITrackerTransaction,
+  ITrackerTransactionDataFormat,
+  ITrackerTransactionResponse
+} from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { initButtonInDataTableHeader, initDialogFlag } from './constants'
+import TrackerTransactionDialog from './dialog'
+import { initTableConfig } from '@/constants/data-table'
+import { initQueryOptions } from '@/constants/init-query-options'
+import {
+  IClassifyTransactionFormData,
+  ICreateTrackerTransactionFormData,
+  IDataTransactionTable,
+  Transaction
+} from '@/core/transaction/models'
+import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
+import {
+  initClassifyTransactionForm,
+  initCreateTrackerTransactionForm,
+  transactionHeaders
+} from '../transaction/constants'
+import { useAccountSource } from '@/core/account-source/hooks'
+import { useTransaction } from '@/core/transaction/hooks'
+import { modifyTransactionHandler } from '../transaction/handler'
+import {
+  STATISTIC_TRACKER_TRANSACTION_KEY,
+  TRACKER_TRANSACTION_MODEL_KEY,
+  TRACKER_TRANSACTION_TYPE_MODEL_KEY
+} from '@/core/tracker-transaction/constants'
+import { useUpdateModel } from '@/hooks/useQueryModel'
+import { updateCacheDataCreate, updateCacheDataUpdate } from './handlers'
+import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 
 export default function TrackerTransactionForm() {
-  const [totalPage, setTotalPage] = useState<number>(0)
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [limit, setLimit] = useState<number>(10)
-  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
-    totalPage: 0,
-    currentPage: 1,
-    limit: 10,
-    types: [],
-    selectedTypes: [],
-    isPaginate: true,
-    isVisibleSortType: true,
-    classNameOfScroll: 'h-[calc(100vh-30rem)]'
+  const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
+  const queryStatisticTrackerTx = [STATISTIC_TRACKER_TRANSACTION_KEY, '', '']
+  const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
+
+  // states
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const [tableData, setTableData] = useState<ITrackerTransaction[]>([]) // ITrackerTransactionDataFormat[]
+  const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
+  const [formDataClassify, setFormDataClassify] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
+  const [formDataCreate, setFormDataCreate] = useState<ICreateTrackerTransactionFormData>(
+    initCreateTrackerTransactionForm
+  )
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
-  const [queryOptions, setQueryOptions] = useState<IQueryOptions>({
-    page: dataTableConfig.currentPage,
-    limit: dataTableConfig.limit,
-    condition: '',
-    isExactly: false,
-    sort: '',
-    includePopulate: true
+  const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
+  const [chartData, setChartData] = useState<IPayloadDataChart[]>([])
+  const [accountChartData, setAccountChartData] = useState<IPayloadDataChart[]>([])
+
+  // memos
+  const queryTrackerTransaction = useMemo(
+    () => [TRACKER_TRANSACTION_MODEL_KEY, '', mergeQueryParams(queryOptions)],
+    [queryOptions]
+  )
+  const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
+  const columns = useMemo(() => {
+    if (tableData.length === 0) return []
+    return getColumns<ITrackerTransaction>(titles, true) // ITrackerTransactionDataFormat
+  }, [tableData])
+  const columnUnclassifiedTxTables = useMemo(() => {
+    if (tableData.length === 0) return []
+    return getColumns<IDataTransactionTable>(transactionHeaders, true)
+  }, [tableData])
+
+  // hooks
+  const { getAdvancedAccountSource } = useAccountSource()
+  const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
+  const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
+  const { getUnclassifiedTransactions } = useTransaction()
+  const { dataTrackerTransactionType } = getAllTrackerTransactionType()
+  const { statisticData } = getStatisticData()
+  const { advancedTrackerTxData } = getAdvancedData({ query: queryOptions })
+  const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
+  const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
+  const { classifyTransaction } = useTrackerTransaction()
+  const { resetData: resetCacheTrackerTx, setData } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
+    queryTrackerTransaction,
+    updateCacheDataCreate
+  )
+  const { resetData: resetCacheStatistic } = useUpdateModel<any>(queryStatisticTrackerTx, () => {})
+  const { setData: setCacheUnclassifiedTxs } = useUpdateModel<any>(queryTransaction, updateCacheDataUpdate)
+  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(queryTrackerTxType, (oldData, newData) => {
+    return { ...oldData, data: [...oldData.data, newData] }
   })
-  const titles: string[] = ['Transaction Name', 'Type', 'Amount', 'Date', 'From Account', 'Description']
-  const columns = getColumns(titles, true)
-  const data = [
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Con cái',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Ăn uống',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Ăn uống',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Thể thao',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Điện thoại',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Con cái',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '68ed37c0-9861-4599-8ee6-9b20bff47cce',
-      transactionName: 'Mỳ xíu mại',
-      type: 'Con cái',
-      amount: '500000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-04T10:10:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
 
-    {
-      id: '4c7a5fbd-3d8d-4a88-9c5e-1a3f7b742de1',
-      transactionName: 'Bàn phím mới',
-      type: 'Con cái',
-      amount: '750000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-05T11:15:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: '9a7c3a7b-52d9-4f62-98d4-c0c4b98a0e64',
-      transactionName: 'Thay nhớt',
-      type: 'Con cái',
-      amount: '300000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-06T12:20:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
-    },
-    {
-      id: 'e8d4c1d0-4528-4c13-8bcd-1cfd5d2c6ad5',
-      transactionName: 'Đổ xăng',
-      type: 'Di chuyển',
-      amount: '600000 VND',
-      fromAccount: <Button variant={'outline'}>TP Bank</Button>,
-      date: format('2024-09-07T13:25:00.000Z', 'HH:mm dd/MM/yyyy'),
-      description: 'Mua mỳ xíu mại ở quán gần nhà'
+  // effects
+  useEffect(() => {
+    if (dataUnclassifiedTxs) setUnclassifiedTxTableData(modifyTransactionHandler(dataUnclassifiedTxs.data))
+  }, [dataUnclassifiedTxs])
+
+  useEffect(() => {
+    if (advancedTrackerTxData) {
+      setTableData(advancedTrackerTxData.data)
     }
-  ]
+  }, [advancedTrackerTxData])
 
-  const types = getTypes(data)
-
-  const chartData: IPayloadDataChart[] = [
-    {
-      name: 'Food & Drink',
-      value: 20
-    },
-    {
-      name: 'Transport',
-      value: 30
-    },
-    {
-      name: 'Shopping',
-      value: 10
-    },
-    {
-      name: 'Health',
-      value: 40
-    },
-    {
-      name: 'Entertainment',
-      value: 25
-    },
-    {
-      name: 'Housing',
-      value: 35
-    },
-    {
-      name: 'Education',
-      value: 15
-    },
-    {
-      name: 'Travel',
-      value: 50
-    },
-    {
-      name: 'Utilities',
-      value: 22
-    },
-    {
-      name: 'Miscellaneous',
-      value: 18
+  useEffect(() => {
+    if (statisticData) {
+      setChartData(statisticData.data.trackerTypeStats)
+      setAccountChartData(statisticData.data.trackerAccStats)
     }
-  ]
+  }, [statisticData])
 
-  const accountData: IPayloadDataChart[] = [
-    {
-      name: 'TP Bank',
-      value: '500.000'
-    },
-    {
-      name: 'Wallet',
-      value: '700.000'
-    },
-    {
-      name: 'Vietcombank',
-      value: '700.000'
-    },
-    {
-      name: 'Techcombank',
-      value: '700.000'
-    }
-  ]
+  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
@@ -207,7 +134,9 @@ export default function TrackerTransactionForm() {
               <div className='space-y-2'>
                 <CardTitle className='text-nowrap text-sm sm:text-base lg:text-lg'>Total spending today</CardTitle>
                 <CardDescription>
-                  <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>1,000,000 VND</span>
+                  <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>
+                    {formatCurrency(statisticData?.data.totalSpendingToday ?? 0, 'VND', 'vi-vn')}
+                  </span>
                 </CardDescription>
               </div>
               <Icons.banknote className='hidden text-green-500 lg:h-8 lg:w-8 2xl:block' />
@@ -226,7 +155,7 @@ export default function TrackerTransactionForm() {
                   </div>
                 </CardHeader>
                 <p className='mt-2 text-nowrap text-lg font-bold text-green-700 dark:text-green-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                  10,000,000 VND
+                  {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
                 </p>
               </div>
 
@@ -239,7 +168,7 @@ export default function TrackerTransactionForm() {
                   </div>
                 </CardHeader>
                 <p className='mt-2 text-nowrap text-lg font-bold text-rose-500 dark:text-rose-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                  5,000,000 VND
+                  {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
                 </p>
               </div>
             </div>
@@ -250,7 +179,13 @@ export default function TrackerTransactionForm() {
         <div className='mt-4 flex-1'>
           <Card className='h-full w-full'>
             <CardContent>
-              <DataTable columns={columns} data={data} config={dataTableConfig} setConfig={setDataTableConfig} />
+              <DataTable
+                columns={columns}
+                data={tableData}
+                config={dataTableConfig}
+                setConfig={setDataTableConfig}
+                buttons={dataTableButtons}
+              />
             </CardContent>
           </Card>
         </div>
@@ -261,11 +196,7 @@ export default function TrackerTransactionForm() {
         {/* DonutChart 1 */}
         <Card className='w-full'>
           <CardContent className='flex items-center justify-center'>
-            <DonutChart
-              data={chartData}
-              className={'mt-[2%] h-[490px] w-full lg:mt-[2%] xl:h-[450px]'}
-              types='nightingale'
-            />
+            <DonutChart data={chartData} className={'mt-[2%] h-[490px] w-full lg:mt-[2%] xl:h-[450px]'} types='donut' />
           </CardContent>
         </Card>
 
@@ -273,7 +204,7 @@ export default function TrackerTransactionForm() {
         <div className='flex items-center justify-center p-0'>
           <Card className='mt-4 w-full'>
             <DonutChart
-              data={accountData}
+              data={accountChartData}
               className='mb-[5%] mt-[-8%] h-[350px] w-full sm:mt-[-1%] md:h-[300px] lg:mt-[-5%] xl:h-[300px]'
               types='donut'
             />
@@ -283,6 +214,36 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
+      <TrackerTransactionDialog
+        classifyTransactionDialog={{
+          formData: formDataClassify,
+          setFormData: setFormDataClassify,
+          classifyTransaction,
+          hookUpdateCache: setCacheUnclassifiedTxs,
+          resetCacheTrackerTx
+        }}
+        createTrackerTransactionDialog={{
+          formData: formDataCreate,
+          setFormData: setFormDataCreate,
+          createTrackerTransaction: createTransaction,
+          accountSourceData: dataAdvancedAccountSource?.data ?? [],
+          hookUpdateCache: setData
+        }}
+        sharedDialogElements={{
+          isDialogOpen,
+          setIsDialogOpen,
+          dataTrackerTransactionType: dataTrackerTransactionType?.data ?? [],
+          hookResetCacheStatistic: resetCacheStatistic,
+          hookCreateTrackerTxType: createTrackerTxType,
+          hookSetCacheTrackerTxType: setCacheTrackerTxType
+        }}
+        unclassifiedTxDialog={{
+          columns: columnUnclassifiedTxTables,
+          unclassifiedTxTableData,
+          setTableConfig: setDataTableUnclassifiedConfig,
+          tableConfig: dataTableUnclassifiedConfig
+        }}
+      />
     </div>
   )
 }

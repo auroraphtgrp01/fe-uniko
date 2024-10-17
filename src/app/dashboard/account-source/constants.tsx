@@ -1,3 +1,4 @@
+import { MoneyInput } from '@/components/core/MoneyInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -6,10 +7,11 @@ import {
   IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
-  IAccountSourceDialogFlag
+  IDialogAccountSource
 } from '@/core/account-source/models'
-import { formatCurrency } from '@/libraries/utils'
-import { HandCoins, Landmark, Wallet2 } from 'lucide-react'
+import { formatArrayData, formatCurrency } from '@/libraries/utils'
+import { IButtonInDataTableHeader } from '@/types/core.i'
+import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
 
 export const contentDialogAccountSourceForm = ({
   setFormData,
@@ -25,6 +27,7 @@ export const contentDialogAccountSourceForm = ({
       </Label>
       <Input
         value={formData.name}
+        required
         onChange={(e) => {
           setFormData((prev) => ({ ...prev, name: e.target.value }))
         }}
@@ -37,8 +40,9 @@ export const contentDialogAccountSourceForm = ({
         Type
       </Label>
       <Select
-        onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value as EAccountSourceType }))}
-        value={formData.type}
+        required
+        onValueChange={(value) => setFormData((prev) => ({ ...prev, accountSourceType: value as EAccountSourceType }))}
+        value={formData.accountSourceType}
       >
         <SelectTrigger className='col-span-3'>
           <SelectValue placeholder='Select a source type' />
@@ -49,18 +53,86 @@ export const contentDialogAccountSourceForm = ({
         </SelectContent>
       </Select>
     </div>
+    {/* --------------- */}
+    {formData.accountSourceType === EAccountSourceType.BANKING && (
+      <>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='type' className='text-right'>
+            Account Bank Type
+          </Label>
+          <Select
+            required
+            onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
+            value={formData.type}
+          >
+            <SelectTrigger className='col-span-3'>
+              <SelectValue placeholder='Select a account bank type' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='MB_BANK'>MB Bank</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='login_id' className='text-right'>
+            Login ID
+          </Label>
+          <Input
+            value={formData.login_id}
+            required
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, login_id: e.target.value }))
+            }}
+            className='col-span-3'
+            placeholder='Login Id *'
+          />
+        </div>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='password' className='text-right'>
+            Password
+          </Label>
+          <Input
+            value={formData.password}
+            type='password'
+            required
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, password: e.target.value }))
+            }}
+            className='col-span-3'
+            placeholder='Password *'
+          />
+        </div>
+        <div className='grid grid-cols-4 items-center gap-4'>
+          <Label htmlFor='accounts' className='text-right'>
+            Account
+          </Label>
+          <Input
+            value={formData.account}
+            required
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, account: e.target.value }))
+            }}
+            className='col-span-3'
+            placeholder='Account *'
+          />
+        </div>
+      </>
+    )}
+
+    {/* --------------- */}
+
     <div className='grid grid-cols-4 items-center gap-4'>
       <Label htmlFor='initialAmount' className='text-right'>
         Initial Amount
       </Label>
-      <Input
-        type='number'
+      <MoneyInput
+        required
+        className='col-span-3'
         defaultValue={formData.initAmount}
+        placeholder='Init Amount'
         onChange={(e) => {
           setFormData((prev) => ({ ...prev, initAmount: Number(e.target.value) }))
         }}
-        className='col-span-3'
-        placeholder='Init Amount *'
       />
     </div>
     <div className='grid grid-cols-4 items-center gap-4'>
@@ -68,6 +140,7 @@ export const contentDialogAccountSourceForm = ({
         Currency
       </Label>
       <Select
+        required
         onValueChange={(value) => setFormData((prev) => ({ ...prev, currency: value }))}
         value={formData.currency}
       >
@@ -107,7 +180,7 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
     initAmount: formatCurrency(initAmount, currency),
     accountBank: accountBank?.type,
     currency,
-    currentAmount: formatCurrency(currentAmount, 'VND'),
+    currentAmount: formatCurrency(currentAmount, currency),
     checkType: type
   }
 }
@@ -120,8 +193,22 @@ export const initAccountSourceFormData: IAccountSourceBody = {
   id: ''
 }
 
-export const initDialogFlag: IAccountSourceDialogFlag = {
+export const initDialogFlag: IDialogAccountSource = {
   isDialogCreateOpen: false,
   isDialogUpdateOpen: false,
-  isCloseConfirmationDialog: false
+  isDialogRefetchMoneyOpen: false
+}
+
+export const initButtonInDataTableHeader = ({
+  setIsDialogOpen
+}: {
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+}): IButtonInDataTableHeader[] => {
+  return [
+    {
+      title: 'Create',
+      onClick: () => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true })),
+      icon: <PlusIcon className='ml-2 h-4 w-4' />
+    }
+  ]
 }

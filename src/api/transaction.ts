@@ -1,3 +1,6 @@
 export const transactionRoutes = {
-  getTransactionById: 'payment/all'
+  getAllPayment: 'payment/all',
+  getAdvancedTransaction: 'transactions',
+  refetchPayment: 'payment/refetch/:id',
+  getUnclassifiedTransactions: 'transactions/unclassified'
 }

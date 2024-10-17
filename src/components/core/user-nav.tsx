@@ -12,11 +12,27 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { motion } from 'framer-motion'
-import { getUserInfoFromLocalStorage } from '@/libraries/helpers'
+import { getAccessTokenFromLocalStorage, getBaseClientUrl, getUserInfoFromLocalStorage } from '@/libraries/helpers'
 import Link from 'next/link'
+import { useUser } from '@/core/users/hooks'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export function UserNav() {
+  const baseUrl = getBaseClientUrl()
+  const router = useRouter()
+  const [isLogout, setIsLogout] = useState(false)
   const user = getUserInfoFromLocalStorage()
+  const { logout } = useUser()
+  const { userLogoutData } = logout(isLogout)
+  useEffect(() => {
+    if (userLogoutData) {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('userInfo')
+      router.push(baseUrl)
+    }
+  }, [userLogoutData])
   return (
     <div className='ms-1 select-none'>
       <DropdownMenu>
@@ -51,7 +67,12 @@ export function UserNav() {
             </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              const accessToken = getAccessTokenFromLocalStorage()
+              if (accessToken) setIsLogout(true)
+            }}
+          >
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>

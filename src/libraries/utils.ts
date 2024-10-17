@@ -18,19 +18,18 @@ export const convertToCamelCase = (str: string) => {
 }
 
 export const formatCurrency = (amount: number, currency = 'USD', locale = 'en-US') => {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currency
-  }).format(amount)
+  const formattedAmount = new Intl.NumberFormat(locale).format(amount)
+  return `${formattedAmount} ${currency}`
 }
-export const formatDateTimeVN = (date: string) => {
+
+export const formatDateTimeVN = (date: string, hasTime: boolean) => {
   return new Intl.DateTimeFormat('vi-VN', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
+    hour: hasTime ? '2-digit' : undefined,
+    minute: hasTime ? '2-digit' : undefined,
+    second: hasTime ? '2-digit' : undefined
   }).format(new Date(date))
 }
 export const getTypes = (data: any): string[] => {
@@ -48,6 +47,7 @@ const camelCaseToTitleCase = (input: string): string => {
 
 export const getConvertedKeysToTitleCase = (obj: Record<string, any> = {}): string[] =>
   Object.keys(obj).map(camelCaseToTitleCase)
+
 export const formatArrayData = <T, R>(data: T[], formatFunc: (item: T) => R): R[] => {
   return data.map((item: T) => {
     return formatFunc(item)
@@ -58,4 +58,18 @@ export function replaceParams(pathUrl: string, params: IDynamicType) {
   return pathUrl.replace(/:(\w+)/g, (_, key) => {
     return params[key] ? params[key] : `:${key}`
   })
+}
+
+export function mergeQueryParams(query: IDynamicType): string {
+  return Object.keys(query)
+    .map((key) => `${key}=${encodeURIComponent(query ? query[key] : '')}`)
+    .join('&')
+}
+
+export function formatDateToInput(dateString: string) {
+  const date = new Date(dateString)
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0, nên cần +1
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }

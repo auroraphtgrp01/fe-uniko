@@ -16,5 +16,5 @@ export interface IQueryOptions {
   condition?: string
   isExactly?: boolean
   sort?: string
-  includePopulate?: boolean
+  includePopulate?: string
 }

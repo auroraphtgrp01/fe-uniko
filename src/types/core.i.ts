@@ -1,4 +1,5 @@
 import { Icons } from '@/components/ui/icons'
+import { IDynamicType } from './common.i'
 
 export interface NavItem {
   title: string
@@ -31,3 +32,9 @@ export interface FooterItem {
 export type MainNavItem = NavItemWithOptionalChildren
 
 export type SidebarNavItem = NavItemWithChildren
+
+export interface IButtonInDataTableHeader {
+  title: string
+  onClick: () => void
+  icon?: any
+}

@@ -27,18 +27,16 @@ export interface IAccountSourceDataFormat {
 export interface IAccountSourceBody {
   id: string
   name?: string
-  type?: EAccountSourceType
+  accountSourceType?: EAccountSourceType
   initAmount?: number
   currency?: string
   userId?: string
   currentAmount?: number
   accountBankId?: string
-}
-
-export interface IAccountSourceDialogFlag {
-  isDialogCreateOpen: boolean
-  isDialogUpdateOpen: boolean
-  isCloseConfirmationDialog: boolean
+  password?: string
+  login_id?: string
+  type?: string
+  account?: string
 }
 
 export enum EAccountSourceType {
@@ -49,5 +47,5 @@ export enum EAccountSourceType {
 export interface IDialogAccountSource {
   isDialogCreateOpen: boolean
   isDialogUpdateOpen: boolean
-  isCloseConfirmationDialog: boolean
+  isDialogRefetchMoneyOpen: boolean
 }

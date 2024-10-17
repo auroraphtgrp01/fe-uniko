@@ -11,6 +11,10 @@ export function getBaseUrl() {
   return vercelUrl ? `https://${vercelUrl}` : localhost
 }
 
+export function getBaseClientUrl() {
+  return process.env.NEXT_PUBLIC_URL || ''
+}
+
 export function getHeaders() {
   return {
     'Content-type': 'application/json'

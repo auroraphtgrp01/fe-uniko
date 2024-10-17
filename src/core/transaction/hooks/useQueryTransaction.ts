@@ -11,7 +11,7 @@ export const useQueryTransaction = (query: IDynamicType) => {
     isPending: isGetTransaction,
     data: dataTransaction,
     error
-  } = useModelQuery<IGetTransactionResponse>(TRANSACTION_MODEL_KEY, transactionRoutes.getTransactionById, {
+  } = useModelQuery<IGetTransactionResponse>(TRANSACTION_MODEL_KEY, transactionRoutes.getAdvancedTransaction, {
     query,
     retry: TRANSACTION_RETRY
   })

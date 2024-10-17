@@ -19,17 +19,19 @@ import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
 import { IDataTableConfig } from '@/types/common.i'
+import { IButtonInDataTableHeader } from '@/types/core.i'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   config: IDataTableConfig
   setConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
-  onCreateButtonClick?: () => void
   getRowClassName?: (row: TData) => string
   onRowClick?: (row: TData) => void
   onRowDoubleClick?: (row: TData) => void
   isLoading?: boolean
+  buttons?: IButtonInDataTableHeader[]
+  buttonInContextMenu?: IButtonInDataTableHeader[]
 }
 
 export function DataTable<TData, TValue>({
@@ -37,18 +39,23 @@ export function DataTable<TData, TValue>({
   data,
   config,
   setConfig,
-  onCreateButtonClick,
   getRowClassName,
   onRowClick,
   onRowDoubleClick,
-  isLoading
+  buttonInContextMenu,
+  isLoading,
+  buttons
 }: DataTableProps<TData, TValue>) {
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
     config
+  console.log('🚀 ~ isVisibleSortType:', isVisibleSortType)
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
+  const [selectedRowData, setSelectedRowData] = useState<TData | null>(null)
+
   const table = useReactTable({
     data,
     columns,
@@ -68,6 +75,10 @@ export function DataTable<TData, TValue>({
     }
   })
 
+  useEffect(() => {
+    table.setPagination({ pageIndex: currentPage - 1, pageSize: limit })
+  }, [data, config])
+
   const toggleType = (type: string) => {
     if (selectedTypes)
       setConfig((prev) => ({
@@ -81,26 +92,26 @@ export function DataTable<TData, TValue>({
   return (
     <div className='w-full p-1'>
       <div className='flex items-center justify-between py-4'>
-        <div className='min-w-0 max-w-md'>
-          <Input
-            placeholder='Filter'
-            defaultValue={''}
-            onChange={(event) => {
-              table.setGlobalFilter(event.target.value)
-            }}
-            className='w-50 mr-2'
-          />
-        </div>
-        {isVisibleSortType && (
-          <div className='ms-2 flex-1'>
+        <div className='flex items-center space-x-2'>
+          <div className='min-w-0'>
+            <Input
+              placeholder='Filter'
+              defaultValue={''}
+              onChange={(event) => {
+                table.setGlobalFilter(event.target.value)
+              }}
+              className='w-[200px]'
+            />
+          </div>
+          {isVisibleSortType && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='whitespace-nowrap'>
-                  <span className='mr-2 hidden sm:inline-block'>Types</span>
-                  <ChevronDown className='h-4 w-4' />
+                  Types
+                  <ChevronDown className='ml-2 h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='w-[200px]'>
+              <DropdownMenuContent align='start' className='w-[200px]'>
                 {types && types.length > 0 ? (
                   types.map((type) => (
                     <DropdownMenuCheckboxItem
@@ -117,26 +128,32 @@ export function DataTable<TData, TValue>({
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        )}
-        <div className='flex items-center space-x-2'>
-          {onCreateButtonClick && (
-            <Button variant='outline' className='whitespace-nowrap' onClick={onCreateButtonClick}>
-              <span className='mr-2 hidden sm:inline-block'>Create</span>
-              <PlusIcon className='h-4 w-4' />
-            </Button>
           )}
+        </div>
+        <div className='flex items-center space-x-2'>
+          {buttons && buttons.length > 0
+            ? buttons.map((button: IButtonInDataTableHeader) => (
+                <Button
+                  key={button.title}
+                  variant='outline'
+                  className='whitespace-nowrap'
+                  onClick={() => button.onClick()}
+                >
+                  {button.title} {button.icon}
+                </Button>
+              ))
+            : ''}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
-                <span className='mr-2 hidden sm:inline-block'>Columns</span>
-                <ChevronDown className='h-4 w-4' />
+                Columns
+                <ChevronDown className='ml-2 h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[200px]'>
               {table
                 .getAllColumns()
-                .filter((column) => column.getCanHide())
+                .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType')
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
@@ -186,22 +203,20 @@ export function DataTable<TData, TValue>({
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={(event: any) => {
-                      console.log(onRowClick)
-
-                      console.log(
-                        event.currentTarget.getAttribute('role') === null ||
-                          event.currentTarget.getAttribute('role') !== 'checkbox'
-                      )
-
                       if (
-                        (event.currentTarget.getAttribute('role') === null ||
-                          event.currentTarget.getAttribute('role') !== 'checkbox') &&
+                        (event.target.getAttribute('role') === null ||
+                          event.target.getAttribute('role') !== 'checkbox') &&
                         onRowClick
                       ) {
                         onRowClick(row.original)
                       }
                     }}
                     onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
+                    onContextMenu={(event: React.MouseEvent) => {
+                      event.preventDefault()
+                      setContextMenuPosition({ x: event.clientX, y: event.clientY })
+                      setSelectedRowData(row.original) // Lưu dữ liệu dòng được chọn
+                    }}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>

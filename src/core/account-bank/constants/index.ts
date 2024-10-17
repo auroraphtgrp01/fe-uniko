@@ -1,0 +1,2 @@
+export const ACCOUNT_BANK_RETRY = 1
+export const ACCOUNT_BANK_MODEL_KEY = 'ACCOUNT_BANK'
