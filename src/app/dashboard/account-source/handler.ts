@@ -37,12 +37,7 @@ export const handleCreateAccountSource = ({
   setDataCreate
 }: {
   formData: IAccountSourceBody
-  setIsDialogOpen: React.Dispatch<
-    React.SetStateAction<{
-      isDialogCreateOpen: boolean
-      isDialogUpdateOpen: boolean
-    }>
-  >
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   createAccountSource: any
   setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
@@ -80,12 +75,7 @@ export const handleUpdateAccountSource = ({
   setIdRowClicked
 }: {
   formData: IAccountSourceBody
-  setIsDialogOpen: React.Dispatch<
-    React.SetStateAction<{
-      isDialogCreateOpen: boolean
-      isDialogUpdateOpen: boolean
-    }>
-  >
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   updateAccountSource: any
   setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>

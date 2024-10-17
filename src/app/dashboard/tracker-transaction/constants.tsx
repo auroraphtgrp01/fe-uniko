@@ -7,8 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
+import { handleCreateTrackerTxType } from './handlers'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -42,21 +46,25 @@ export const initDialogFlag: IDialogTrackerTransaction = {
 export const defineContentCreateTransactionDialog = ({
   formData,
   setFormData,
-  newItemTrackerType,
-  setItemTrackerType,
+  formDataCreateTrackerTxType,
+  setFormDataCreateTrackerTxType,
   isAddingNewTrackerType,
   setIsAddingNewTrackerType,
   trackerTransactionType,
-  accountSourceData
+  accountSourceData,
+  hookCreateTrackerTxType,
+  hookSetCacheTrackerTxType
 }: {
   formData: ICreateTrackerTransactionFormData
   setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
-  newItemTrackerType: string
-  setItemTrackerType: React.Dispatch<React.SetStateAction<string>>
+  formDataCreateTrackerTxType: ITrackerTransactionTypeBody
+  setFormDataCreateTrackerTxType: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
   isAddingNewTrackerType: boolean
   setIsAddingNewTrackerType: React.Dispatch<React.SetStateAction<boolean>>
   trackerTransactionType: any
   accountSourceData: IAccountSource[]
+  hookCreateTrackerTxType: any
+  hookSetCacheTrackerTxType: any
 }) => {
   return (
     <div className='grid gap-4 py-4'>
@@ -113,10 +121,17 @@ export const defineContentCreateTransactionDialog = ({
               <div className='flex items-center'>
                 <Input
                   type='text'
-                  value={''}
-                  onChange={(e) => console.log(e.target.value)}
+                  value={formDataCreateTrackerTxType.name}
+                  onChange={(e) => setFormDataCreateTrackerTxType((prev) => ({ ...prev, name: e.target.value }))}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') console.log('Enter key')
+                    if (e.key === 'Enter')
+                      handleCreateTrackerTxType({
+                        formData: formDataCreateTrackerTxType,
+                        setFormData: setFormDataCreateTrackerTxType,
+                        hookCreateTrackerTxType,
+                        hookSetCacheTrackerTxType,
+                        setIsAddingNewTrackerType
+                      })
                   }}
                   placeholder='Enter new item'
                   className='flex-grow'

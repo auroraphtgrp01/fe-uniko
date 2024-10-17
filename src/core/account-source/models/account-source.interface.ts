@@ -43,4 +43,5 @@ export enum EAccountSourceType {
 export interface IDialogAccountSource {
   isDialogCreateOpen: boolean
   isDialogUpdateOpen: boolean
+  isDialogRefetchMoneyOpen: boolean
 }

@@ -14,7 +14,7 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
@@ -31,6 +31,7 @@ interface DataTableProps<TData, TValue> {
   onRowDoubleClick?: (row: TData) => void
   isLoading?: boolean
   buttons?: IButtonInDataTableHeader[]
+  buttonInContextMenu?: IButtonInDataTableHeader[]
 }
 
 export function DataTable<TData, TValue>({
@@ -41,15 +42,18 @@ export function DataTable<TData, TValue>({
   getRowClassName,
   onRowClick,
   onRowDoubleClick,
+  buttonInContextMenu,
   isLoading,
   buttons
 }: DataTableProps<TData, TValue>) {
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
     config
+  console.log('🚀 ~ isVisibleSortType:', isVisibleSortType)
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
   const table = useReactTable({
     data,

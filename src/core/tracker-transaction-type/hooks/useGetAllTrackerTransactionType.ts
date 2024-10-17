@@ -1,5 +1,8 @@
 import { useModelQuery } from '@/hooks/useQueryModel'
-import { TRACKER_TRANSACTION_TYPE_MODEL_KEY, TRACKER_TRANSACTION_TYPE_MODEL_RETRY } from '../../constants'
+import {
+  TRACKER_TRANSACTION_TYPE_MODEL_KEY,
+  TRACKER_TRANSACTION_TYPE_MODEL_RETRY
+} from '../../tracker-transaction/constants'
 import { trackerTransactionTypeRoutes } from '../configs'
 import { IAdvancedTrackerTransactionTypeResponse } from '../models/tracker-transaction-type.interface'
 

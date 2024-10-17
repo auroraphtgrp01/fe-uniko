@@ -9,3 +9,8 @@ export interface ITrackerTransactionType {
   description: string
   ownerIds: string[]
 }
+
+export interface ITrackerTransactionTypeBody {
+  name: string
+  description?: string
+}

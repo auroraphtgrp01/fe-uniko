@@ -37,13 +37,17 @@ import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import toast from 'react-hot-toast'
-import { useTrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/hooks'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { initDataTableTransaction } from '../tracker-transaction/handlers'
+import { TRACKER_TRANSACTION_TYPE_MODEL_KEY } from '@/core/tracker-transaction/constants'
 
 export default function TransactionForm() {
+  const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
+
   // states
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
+    isVisibleSortType: false,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
   const [dataDetail, setDataDetail] = useState<IDataTransactionTable>()
@@ -68,7 +72,7 @@ export default function TransactionForm() {
 
   // hooks
   const { classifyTransaction } = useTrackerTransaction()
-  const { getAllTrackerTransactionType } = useTrackerTransactionType()
+  const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { getTransactions, refetchPayment, getPayments } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
@@ -76,16 +80,21 @@ export default function TransactionForm() {
   const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
   const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
   const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(query, updateCacheDataUpdate)
+  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(queryTrackerTxType, (oldData, newData) => {
+    return { ...oldData, data: [...oldData.data, newData] }
+  })
 
   // effects
   useEffect(() => {
-    if (dataTransaction)
+    if (dataTransaction) {
       initDataTableTransaction(
         dataTransaction.data,
         setDataTable,
         setUnclassifiedTransactionData,
         setTransactionTodayData
       )
+      setDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataTransaction?.pagination?.totalPage) }))
+    }
   }, [dataTransaction])
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
@@ -223,7 +232,9 @@ export default function TransactionForm() {
             setFormData,
             classifyTransaction,
             trackerTransactionType: dataTrackerTransactionType?.data ?? [],
-            hookUpdateCache: setData
+            hookUpdateCache: setData,
+            hookCreateTrackerTxType: createTrackerTxType,
+            hookSetCacheTrackerTxType: setCacheTrackerTxType
           }}
         />
       </Card>

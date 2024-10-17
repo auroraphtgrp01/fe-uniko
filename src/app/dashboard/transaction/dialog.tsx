@@ -8,7 +8,10 @@ import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { defineContentClassifyingTransactionDialog, initClassifyTransactionForm } from './constants'
-import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { handleClassifyTransaction } from './handler'
 
 export interface ITransactionDialogProps {
@@ -32,12 +35,16 @@ export interface ITransactionDialogProps {
     classifyTransaction: any
     trackerTransactionType: ITrackerTransactionType[]
     hookUpdateCache: any
+    hookCreateTrackerTxType: any
+    hookSetCacheTrackerTxType: any
   }
 }
 
 export default function TransactionDialog(params: ITransactionDialogProps) {
   // useStates
-  const [newItemTrackerType, setItemTrackerType] = useState<string>('')
+  const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] = useState<ITrackerTransactionTypeBody>({
+    name: ''
+  })
   const [isAddingNewTrackerType, setIsAddingNewTrackerType] = useState<boolean>(false)
 
   const { dataTable, dialogState, classifyDialog } = params
@@ -148,11 +155,13 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
     formData,
     setFormData,
-    newItemTrackerType,
-    setItemTrackerType,
+    formDataCreateTrackerTxType,
+    setFormDataCreateTrackerTxType,
     isAddingNewTrackerType,
     setIsAddingNewTrackerType,
-    trackerTransactionType: classifyDialog.trackerTransactionType
+    trackerTransactionType: classifyDialog.trackerTransactionType,
+    hookCreateTrackerTxType: classifyDialog.hookCreateTrackerTxType,
+    hookSetCacheTrackerTxType: classifyDialog.hookSetCacheTrackerTxType
   })
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: classifyingTransactionConfigDialogContent,

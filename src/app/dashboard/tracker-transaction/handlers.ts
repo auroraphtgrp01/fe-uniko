@@ -16,6 +16,7 @@ import { initCreateTrackerTransactionForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
 import { IBaseResponsePagination } from '@/types/common.i'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -159,3 +160,28 @@ export const updateCacheDataCreate = (
 //     onValueChange(newItem.value)
 //   }
 // }
+
+export const handleCreateTrackerTxType = ({
+  formData,
+  setFormData,
+  hookCreateTrackerTxType,
+  hookSetCacheTrackerTxType,
+  setIsAddingNewTrackerType
+}: {
+  formData: ITrackerTransactionTypeBody
+  setFormData: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
+  hookCreateTrackerTxType: any
+  hookSetCacheTrackerTxType: any
+  setIsAddingNewTrackerType: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  hookCreateTrackerTxType(formData, {
+    onSuccess: (res: ITrackerTransactionResponse) => {
+      if (res.statusCode === 200 || res.statusCode === 201) {
+        hookSetCacheTrackerTxType(res.data)
+        toast.success('Create tracker transaction type successfully!')
+        setFormData({ name: '' })
+        setIsAddingNewTrackerType(false)
+      }
+    }
+  })
+}

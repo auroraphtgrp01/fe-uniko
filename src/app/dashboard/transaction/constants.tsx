@@ -4,11 +4,15 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { IAccountBank, IGetAccountBankResponse } from '@/core/account-bank/models'
-import { ITrackerTransactionType } from '@/core/tracker-transaction/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IClassifyTransactionFormData } from '@/core/transaction/models'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { ArrowDownToLineIcon, PlusCircle, RotateCcwIcon, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { handleCreateTrackerTxType } from '../tracker-transaction/handlers'
 
 export const transactionHeaders = ['Transaction Id', 'Amount', 'Direction', 'Currency', 'Account Bank', 'Account No']
 
@@ -66,19 +70,23 @@ export const initCreateTrackerTransactionForm = {
 export const defineContentClassifyingTransactionDialog = ({
   formData,
   setFormData,
-  newItemTrackerType,
-  setItemTrackerType,
+  formDataCreateTrackerTxType,
+  setFormDataCreateTrackerTxType,
   isAddingNewTrackerType,
   setIsAddingNewTrackerType,
-  trackerTransactionType
+  trackerTransactionType,
+  hookCreateTrackerTxType,
+  hookSetCacheTrackerTxType
 }: {
   formData: IClassifyTransactionFormData
   setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
-  newItemTrackerType: string
-  setItemTrackerType: React.Dispatch<React.SetStateAction<string>>
+  formDataCreateTrackerTxType: ITrackerTransactionTypeBody
+  setFormDataCreateTrackerTxType: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
   isAddingNewTrackerType: boolean
   setIsAddingNewTrackerType: React.Dispatch<React.SetStateAction<boolean>>
   trackerTransactionType: any
+  hookCreateTrackerTxType: any
+  hookSetCacheTrackerTxType: any
 }) => {
   return (
     <div className='grid gap-4 py-4'>
@@ -120,10 +128,17 @@ export const defineContentClassifyingTransactionDialog = ({
               <div className='flex items-center'>
                 <Input
                   type='text'
-                  value={''}
-                  onChange={(e) => console.log(e.target.value)}
+                  value={formDataCreateTrackerTxType.name}
+                  onChange={(e) => setFormDataCreateTrackerTxType({ name: e.target.value })}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') console.log('Enter key')
+                    if (e.key === 'Enter')
+                      handleCreateTrackerTxType({
+                        formData: formDataCreateTrackerTxType,
+                        setFormData: setFormDataCreateTrackerTxType,
+                        hookCreateTrackerTxType,
+                        hookSetCacheTrackerTxType,
+                        setIsAddingNewTrackerType
+                      })
                   }}
                   placeholder='Enter new item'
                   className='flex-grow'
