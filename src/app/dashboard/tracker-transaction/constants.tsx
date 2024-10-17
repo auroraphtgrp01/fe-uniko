@@ -13,6 +13,7 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
 import { handleCreateTrackerTxType } from './handlers'
+import { MoneyInput } from '@/components/core/MoneyInput'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -86,15 +87,14 @@ export const defineContentCreateTransactionDialog = ({
         <Label htmlFor='amount' className='text-right'>
           Amount
         </Label>
-        <Input
-          value={formData.amount}
+        <MoneyInput
+          defaultValue={formData.amount}
           required
           onChange={(e) => {
-            setFormData((prev) => ({ ...prev, amount: parseFloat(e.target.value) }))
+            setFormData((prev) => ({ ...prev, amount: Number(e.target.value) }))
           }}
           className='col-span-3'
           placeholder='Amount *'
-          type='number'
         />
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>

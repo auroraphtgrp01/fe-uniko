@@ -19,7 +19,6 @@ import {
   updateCacheDetailData
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
-import AccountSourceDialog from './dialog'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
@@ -34,6 +33,7 @@ import {
 import { initQueryOptions } from '@/constants/init-query-options'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { ACCOUNT_SOURCE_MODEL_KEY } from '@/core/account-source/constants'
+import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 
 export default function AccountSourceForm() {
   // States

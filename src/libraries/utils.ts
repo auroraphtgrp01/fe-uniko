@@ -18,11 +18,10 @@ export const convertToCamelCase = (str: string) => {
 }
 
 export const formatCurrency = (amount: number, currency = 'USD', locale = 'en-US') => {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currency
-  }).format(amount)
+  const formattedAmount = new Intl.NumberFormat(locale).format(amount)
+  return `${formattedAmount} ${currency}`
 }
+
 export const formatDateTimeVN = (date: string, hasTime: boolean) => {
   return new Intl.DateTimeFormat('vi-VN', {
     day: '2-digit',

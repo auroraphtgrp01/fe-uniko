@@ -1,3 +1,4 @@
+import { MoneyInput } from '@/components/core/MoneyInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -56,15 +57,14 @@ export const contentDialogAccountSourceForm = ({
       <Label htmlFor='initialAmount' className='text-right'>
         Initial Amount
       </Label>
-      <Input
-        type='number'
+      <MoneyInput
         required
+        className='col-span-3'
         defaultValue={formData.initAmount}
+        placeholder='Init Amount'
         onChange={(e) => {
           setFormData((prev) => ({ ...prev, initAmount: Number(e.target.value) }))
         }}
-        className='col-span-3'
-        placeholder='Init Amount *'
       />
     </div>
     <div className='grid grid-cols-4 items-center gap-4'>
