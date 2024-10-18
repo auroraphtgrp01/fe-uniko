@@ -7,7 +7,7 @@
     "rewrites": [
         {
             "source": "/:path*",
-            "destination": "https://40.83.203.55/api/:path*"
+            "destination": "https://dev.minhtuandng.id.vn/api/:path*"
         }
     ]
 }
