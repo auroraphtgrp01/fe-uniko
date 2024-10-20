@@ -65,8 +65,8 @@ export default function AccountSourceForm() {
 
   // Effects
   useEffect(() => {
-    setTableData(filterDataAccountSource(fetchedData, dataTableConfig.selectedTypes as string[]))
-  }, [dataTableConfig.selectedTypes])
+    console.log('🚀 ~ formData:', formData)
+  }, [formData])
 
   useEffect(() => {
     initDataTable(isGetAdvancedPending, getAdvancedData, setDataTableConfig, setFetchedData, setTableData)
