@@ -15,6 +15,15 @@ export interface IPayloadDataChart {
   value: number | string
   name: string
 }
+export interface IChartData {
+  incomingTransactionTypeStats: IPayloadDataChart[]
+  expenseTransactionTypeStats: IPayloadDataChart[]
+  incomingTransactionAccountTypeStats: IPayloadDataChart[]
+  expenseTransactionAccountTypeStats: IPayloadDataChart[]
+  totalIncomeToday: number
+  totalSpendingToday: number
+  totalExpenseToday: number
+}
 
 const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) => {
   const chartRef = useRef(null)
