@@ -13,7 +13,8 @@ import {
   DateRange,
   IAdvancedTrackerTransactionResponse,
   ICustomTrackerTransaction,
-  IDialogTrackerTransaction
+  IDialogTrackerTransaction,
+  ITrackerTransaction
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { initButtonInDataTableHeader, initDialogFlag } from './constants'
 import TrackerTransactionDialog from './dialog'
@@ -40,7 +41,7 @@ import {
   TRACKER_TRANSACTION_TYPE_MODEL_KEY
 } from '@/core/tracker-transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
-import { updateCacheDataCreate, updateCacheDataUpdate } from './handlers'
+import { initTrackerTransactionDataTable, updateCacheDataCreate, updateCacheDataUpdate } from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { DateTimePicker } from '@/components/core/DateTimePicker'
 import ChartCard from '@/app/dashboard/tracker-transaction/Chartcard'
@@ -51,6 +52,7 @@ export default function TrackerTransactionForm() {
   const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
 
   // states
+  const [fetchedData, setFetchedData] = useState<ITrackerTransaction[]>([]) // State để lưu dữ liệu đã fetch
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
@@ -75,7 +77,7 @@ export default function TrackerTransactionForm() {
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
-    return getColumns<ICustomTrackerTransaction>(titles, true) // ITrackerTransactionDataFormat
+    return getColumns<ICustomTrackerTransaction>(titles, true)
   }, [tableData])
   const columnUnclassifiedTxTables = useMemo(() => {
     if (tableData.length === 0) return []
@@ -89,7 +91,7 @@ export default function TrackerTransactionForm() {
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { statisticData } = getStatisticData(dates || {}) //--
-  const { advancedTrackerTxData } = getAdvancedData({ query: queryOptions })
+  const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({ query: queryOptions })
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
   const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
   const { classifyTransaction } = useTrackerTransaction()
@@ -105,11 +107,28 @@ export default function TrackerTransactionForm() {
 
   // effects
   useEffect(() => {
+    console.log('dataTableConfig.currentPage : ', dataTableConfig.currentPage)
+
+    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
+  }, [dataTableConfig])
+
+  useEffect(() => {
+    initTrackerTransactionDataTable(
+      isGetAdvancedPending,
+      advancedTrackerTxData,
+      setDataTableConfig,
+      setFetchedData,
+      setTableData
+    )
+  }, [isGetAdvancedPending, advancedTrackerTxData])
+
+  useEffect(() => {
     if (dataUnclassifiedTxs) setUnclassifiedTxTableData(modifyTransactionHandler(dataUnclassifiedTxs.data))
   }, [dataUnclassifiedTxs])
 
   useEffect(() => {
     if (advancedTrackerTxData && statisticData?.data) {
+      console.log('querioption: ', queryOptions)
       const transformedData: ICustomTrackerTransaction[] = advancedTrackerTxData.data.map((item) => {
         return {
           id: item.id,

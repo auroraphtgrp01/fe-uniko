@@ -8,7 +8,6 @@ import { DateRange } from '@/core/tracker-transaction/models/tracker-transaction
 export const useTrackerTransaction = (opts?: IUseQueryHookOptions) => {
   const { mutate: classifyTransaction, isPending: isClassing } = useClassifyTransaction(opts)
   const { mutate: createTransaction, isPending: isCreating } = useCreateTrackerTransaction(opts)
-
   return {
     classifyTransaction,
     isClassing,
