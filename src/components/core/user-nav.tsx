@@ -38,11 +38,7 @@ export function UserNav() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='relative h-10 w-10 rounded-full p-0'>
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className='h-full w-full rounded-full bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 p-[1px]'
-            >
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className='h-full w-full rounded-full'>
               <Avatar className='h-full w-full rounded-full'>
                 <AvatarImage src={'https://github.com/shadcn.png'} className='rounded-full' />
                 <AvatarFallback className='rounded-full'>{JSON.stringify(user?.fullName)}</AvatarFallback>

@@ -57,6 +57,7 @@
     "nprogress": "^0.2.0",
     "prettier-plugin-tailwindcss": "^0.6.6",
     "react": "^18",
+    "react-day-picker": "^9",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "recharts": "^2.12.7",

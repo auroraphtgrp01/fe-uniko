@@ -1,4 +1,4 @@
-import { contentDialogAccountSourceForm } from '@/app/dashboard/account-source/constants'
+import { contentDialogAccountSourceForm, initAccountSourceFormData } from '@/app/dashboard/account-source/constants'
 import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dashboard/account-source/handler'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
@@ -81,13 +81,7 @@ export default function AccountSourceDialog({
     isOpen: isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
-      setFormData((prev) => ({
-        ...prev,
-        name: '',
-        type: EAccountSourceType.WALLET,
-        initAmount: 0,
-        currency: ''
-      }))
+      setFormData(initAccountSourceFormData)
       setIdRowClicked('')
     }
   }
@@ -100,13 +94,7 @@ export default function AccountSourceDialog({
     isOpen: isDialogOpen.isDialogCreateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-      setFormData((prev) => ({
-        ...prev,
-        name: '',
-        type: EAccountSourceType.WALLET,
-        initAmount: 0,
-        currency: ''
-      }))
+      setFormData(initAccountSourceFormData)
     }
   }
   return (
