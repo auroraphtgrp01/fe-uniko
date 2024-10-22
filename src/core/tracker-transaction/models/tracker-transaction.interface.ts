@@ -54,7 +54,7 @@ export interface ITrackerTransactionDataFormat {
   transactionName: string
   type: string
   amount: string
-  fromAccount: string // tên ví hoăc tên ngân hàng
+  fromAccount: string
   description?: string
   checkType?: string
 }
@@ -70,3 +70,8 @@ export interface IStatisticData extends IChartData {
   statusCode: number
 }
 export type IStatisticDataResponse = IBaseResponseData<IStatisticData>
+
+export interface DateRange {
+  startDay?: string
+  endDay?: string
+}
