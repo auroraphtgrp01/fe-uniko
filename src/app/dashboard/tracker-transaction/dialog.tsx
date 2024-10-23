@@ -12,15 +12,13 @@ import {
   initClassifyTransactionForm,
   initCreateTrackerTransactionForm
 } from '../transaction/constants'
-import { handleClassifyTransaction, handleCreateTrackerTransaction } from './handlers'
+import { handleClassifyTransaction, handleCreateTrackerTransaction, handleCreateTrackerTxType } from './handlers'
 import {
   IClassifyTransactionFormData,
   ICreateTrackerTransactionFormData,
-  IDataTransactionTable,
-  Transaction
+  IDataTransactionTable
 } from '@/core/transaction/models'
-import { useState } from 'react'
-import { defineContentCreateTransactionDialog } from './constants'
+import { defineContentCreateTrackerTxTypeDialog, defineContentCreateTransactionDialog } from './constants'
 import { IAccountSource } from '@/core/account-source/models'
 
 interface IUnclassifiedTxDialog {
@@ -43,13 +41,19 @@ interface ICreateTrackerTransactionDialog {
   createTrackerTransaction: any
   hookUpdateCache: any
 }
+
+interface ICreateTrackerTransactionTypeDialog {
+  formData: ITrackerTransactionTypeBody
+  setFormData: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
+  createTrackerTransactionType: any
+  hookUpdateCache: any
+}
+
 interface ISharedDialogElements {
   dataTrackerTransactionType: ITrackerTransactionType[]
   isDialogOpen: IDialogTrackerTransaction
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
-  hookCreateTrackerTxType: any
-  hookSetCacheTrackerTxType: any
 }
 
 interface ITrackerTransactionDialogProps {
@@ -57,40 +61,32 @@ interface ITrackerTransactionDialogProps {
   classifyTransactionDialog: IClassifyTransactionDialog
   createTrackerTransactionDialog: ICreateTrackerTransactionDialog
   sharedDialogElements: ISharedDialogElements
+  createTrackerTransactionTypeDialog: ICreateTrackerTransactionTypeDialog
 }
+
 export default function TrackerTransactionDialog({
   unclassifiedTxDialog,
   classifyTransactionDialog,
   createTrackerTransactionDialog,
-  sharedDialogElements
+  sharedDialogElements,
+  createTrackerTransactionTypeDialog
 }: ITrackerTransactionDialogProps) {
-  // useStates
-  const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] = useState<ITrackerTransactionTypeBody>({
-    name: ''
-  })
-  const [isAddingNewTrackerType, setIsAddingNewTrackerType] = useState<boolean>(false)
   const contentCreateTrackerTxDialogDialog = defineContentCreateTransactionDialog({
     formData: createTrackerTransactionDialog.formData,
     setFormData: createTrackerTransactionDialog.setFormData,
-    formDataCreateTrackerTxType,
-    setFormDataCreateTrackerTxType,
-    isAddingNewTrackerType,
-    setIsAddingNewTrackerType,
     trackerTransactionType: sharedDialogElements.dataTrackerTransactionType,
     accountSourceData: createTrackerTransactionDialog.accountSourceData,
-    hookCreateTrackerTxType: sharedDialogElements.hookCreateTrackerTxType,
-    hookSetCacheTrackerTxType: sharedDialogElements.hookSetCacheTrackerTxType
+    setIsDialogOpen: sharedDialogElements.setIsDialogOpen
   })
   const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
     formData: classifyTransactionDialog.formData,
     setFormData: classifyTransactionDialog.setFormData,
-    formDataCreateTrackerTxType,
-    setFormDataCreateTrackerTxType,
-    isAddingNewTrackerType,
-    setIsAddingNewTrackerType,
     trackerTransactionType: sharedDialogElements.dataTrackerTransactionType,
-    hookCreateTrackerTxType: sharedDialogElements.hookCreateTrackerTxType,
-    hookSetCacheTrackerTxType: sharedDialogElements.hookSetCacheTrackerTxType
+    setIsDialogOpen: sharedDialogElements.setIsDialogOpen
+  })
+  const contentCreateTrackerTxTypeDialog = defineContentCreateTrackerTxTypeDialog({
+    formData: createTrackerTransactionTypeDialog.formData,
+    setFormData: createTrackerTransactionTypeDialog.setFormData
   })
 
   const classifyingTransactionConfigDialog: IDialogConfig = {
@@ -174,11 +170,38 @@ export default function TrackerTransactionDialog({
     }
   }
 
+  const createTrackerTransactionTypeConfigDialog: IDialogConfig = {
+    content: contentCreateTrackerTxTypeDialog,
+    description: 'Please fill in the information below to create a new tracker transaction type.',
+    title: 'Create Tracker Transaction Type',
+    isOpen: sharedDialogElements.isDialogOpen.isDialogCreateTrackerTxTypeOpen,
+    onClose: () => {
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: false }))
+    },
+    footer: (
+      <Button
+        onClick={() =>
+          handleCreateTrackerTxType({
+            formData: createTrackerTransactionTypeDialog.formData,
+            setFormData: createTrackerTransactionTypeDialog.setFormData,
+            hookCreateTrackerTxType: createTrackerTransactionTypeDialog.createTrackerTransactionType,
+            hookSetCacheTrackerTxType: createTrackerTransactionTypeDialog.hookUpdateCache,
+            setIsDialogOpen: sharedDialogElements.setIsDialogOpen
+          })
+        }
+        type='button'
+      >
+        Save changes
+      </Button>
+    )
+  }
+
   return (
     <div>
       <CustomDialog config={createConfigDialog} />
       <CustomDialog config={unclassifiedConfigDialog} />
       <CustomDialog config={classifyingTransactionConfigDialog} />
+      <CustomDialog config={createTrackerTransactionTypeConfigDialog} />
     </div>
   )
 }

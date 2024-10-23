@@ -6,6 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 export const normalizePath = (path: string) => {
   return path.startsWith('/') ? path.slice(1) : path
 }
@@ -32,8 +36,13 @@ export const formatDateTimeVN = (date: string, hasTime: boolean) => {
     second: hasTime ? '2-digit' : undefined
   }).format(new Date(date))
 }
-export const getTypes = (data: any): string[] => {
-  const types: string[] = data.map((item: any) => item.type)
+const getPropertyByPath = (data: any, propertyPath: string): any => {
+  const properties = propertyPath.split('.')
+  return properties.reduce((prev, curr) => prev && prev[curr], data)
+}
+
+export const getTypes = (data: any, propertyName: string): string[] => {
+  const types: string[] = data.map((item: any) => getPropertyByPath(item, propertyName))
   return Array.from(new Set(types))
 }
 
@@ -69,7 +78,7 @@ export function mergeQueryParams(query: IDynamicType): string {
 export function formatDateToInput(dateString: string) {
   const date = new Date(dateString)
   const year = date.getUTCFullYear()
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0, nên cần +1
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
   const day = String(date.getUTCDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }

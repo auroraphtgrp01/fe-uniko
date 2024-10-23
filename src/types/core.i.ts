@@ -38,3 +38,11 @@ export interface IButtonInDataTableHeader {
   onClick: () => void
   icon?: any
 }
+
+export type IErrorResponseBase = {
+  timestamp: string
+  errorName: string
+  errorCode: string
+  message: string
+  details: string[]
+}
