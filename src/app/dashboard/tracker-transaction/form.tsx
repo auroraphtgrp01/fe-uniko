@@ -174,13 +174,11 @@ export default function TrackerTransactionForm() {
   }
 
   return (
-    <div className='grid max-h-[400px] min-h-[300px] grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+    <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {/* Left Section */}
-
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
           {/* Total Spending Card */}
-
           <Card className='col-span-1 h-full w-full overflow-hidden sm:col-span-2 md:w-full lg:w-full xl:col-span-1'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <div className='space-y-2'>
@@ -228,9 +226,9 @@ export default function TrackerTransactionForm() {
         </div>
 
         {/* DataTable Section */}
-        <div className='mt-4 flex-1'>
+        <div className='mt-4 flex h-full flex-1'>
           <Card className='h-full w-full'>
-            <CardContent>
+            <CardContent className='h-full'>
               <DataTable
                 columns={columns}
                 data={tableData}
@@ -245,17 +243,17 @@ export default function TrackerTransactionForm() {
       </div>
 
       {/* Right Section */}
-      <div className='flex w-full flex-col md:col-span-2 lg:col-span-1'>
+      <div className='flex h-full w-full flex-col md:col-span-2 lg:col-span-1'>
         <TrackerTransactionChart
           defaultValue='incomingChart'
           incomingChartData={chartData?.incomingTransactionTypeStats ?? []}
           expenseChartData={chartData?.expenseTransactionTypeStats ?? []}
           incomingLabel='Incoming Chart'
           expenseLabel='Expense Chart'
-          incomingChartHeight='h-[490px]'
-          expenseChartHeight='h-[490px]'
+          className='h-full'
         />
       </div>
+
       <TrackerTransactionDialog
         classifyTransactionDialog={{
           formData: formDataClassify,

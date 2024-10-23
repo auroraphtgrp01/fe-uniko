@@ -46,16 +46,12 @@ export default function TrackerTransactionChart({
           <TabsContent value='incomingChart' className='h-fit'>
             <DonutChart
               data={incomingChartData ? incomingChartData : []}
-              className={`mt-[2%] h-[300px] w-full`}
+              className={`h-[30rem] w-full`}
               types='donut'
             />
           </TabsContent>
           <TabsContent value='expenseChart' className='h-fit'>
-            <DonutChart
-              data={expenseChartData ? expenseChartData : []}
-              className={`mt-[2%] h-[300px] w-full`}
-              types='donut'
-            />
+            <DonutChart data={expenseChartData ? expenseChartData : []} className={`h-[30rem] w-full`} types='donut' />
           </TabsContent>
         </CardContent>
       </Card>
