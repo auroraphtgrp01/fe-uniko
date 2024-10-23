@@ -44,7 +44,7 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import { initTrackerTransactionDataTable, updateCacheDataCreate, updateCacheDataUpdate } from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { DateTimePicker } from '@/components/core/DateTimePicker'
-import ChartCard from '@/app/dashboard/tracker-transaction/Chartcard'
+import TrackerTransactionChart from '@/components/dashboard/TrackerTransactionChart'
 
 export default function TrackerTransactionForm() {
   const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
@@ -52,7 +52,7 @@ export default function TrackerTransactionForm() {
   const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
 
   // states
-  const [fetchedData, setFetchedData] = useState<ITrackerTransaction[]>([]) // State để lưu dữ liệu đã fetch
+  const [fetchedData, setFetchedData] = useState<ITrackerTransaction[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
@@ -90,7 +90,7 @@ export default function TrackerTransactionForm() {
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { statisticData } = getStatisticData(dates || {}) //--
+  const { statisticData } = getStatisticData(dates || {})
   const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({ query: queryOptions })
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
   const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
@@ -107,8 +107,6 @@ export default function TrackerTransactionForm() {
 
   // effects
   useEffect(() => {
-    console.log('dataTableConfig.currentPage : ', dataTableConfig.currentPage)
-
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
 
@@ -128,7 +126,6 @@ export default function TrackerTransactionForm() {
 
   useEffect(() => {
     if (advancedTrackerTxData && statisticData?.data) {
-      console.log('querioption: ', queryOptions)
       const transformedData: ICustomTrackerTransaction[] = advancedTrackerTxData.data.map((item) => {
         return {
           id: item.id,
@@ -267,7 +264,7 @@ export default function TrackerTransactionForm() {
 
         {/* Right Section */}
         <div className='flex w-full flex-col md:col-span-2 lg:col-span-1'>
-          <ChartCard
+          <TrackerTransactionChart
             defaultValue='incomingChart'
             incomingChartData={chartData?.incomingTransactionTypeStats ?? []}
             expenseChartData={chartData?.expenseTransactionTypeStats ?? []}
@@ -278,7 +275,7 @@ export default function TrackerTransactionForm() {
           />
 
           <div className='flex items-center justify-center p-0'>
-            <ChartCard
+            <TrackerTransactionChart
               defaultValue='incomingChart'
               incomingChartData={chartData?.incomingTransactionAccountTypeStats ?? []}
               expenseChartData={chartData?.expenseTransactionAccountTypeStats ?? []}

@@ -10,11 +10,7 @@ export default function DashboardMainForm() {
       <div className='flex w-full flex-col md:col-span-1'>
         <div className='grid flex-1 grid-cols-1 gap-4'>
           <DateTimePicker onChange={() => {}} value={new Date('2024-10-22T01:25:55.239Z')} showTime={false} />
-          <DateRangePicker
-            onChange={(range) => {
-              console.log(range)
-            }}
-          ></DateRangePicker>
+          <DateRangePicker onChange={(range) => {}}></DateRangePicker>
           <CardInHeader className='h-full w-full' />
         </div>
       </div>

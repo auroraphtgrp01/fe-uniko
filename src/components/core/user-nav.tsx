@@ -23,7 +23,6 @@ export function UserNav() {
   const router = useRouter()
   const [isLogout, setIsLogout] = useState(false)
   const user = getUserInfoFromLocalStorage()
-  console.log('sd',user)
   const { logout } = useUser()
   const { userLogoutData } = logout(isLogout)
   useEffect(() => {

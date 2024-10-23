@@ -18,7 +18,6 @@ export const handleShowDetailAccountSource = (
   getAccountSourceById: any
 ) => {
   const data = getAccountSourceById.data
-  console.log('🚀 ~ data:', data)
 
   setFormData({
     id: data.id,
