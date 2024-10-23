@@ -5,6 +5,7 @@ import { useSignIn } from '@/core/auth/hooks/useSignIn'
 import { useSignUp } from '@/core/auth/hooks/useSignUp'
 import { IUseQueryHookOptions } from '@/types/query.interface'
 import { useVerifyEmail } from '@/core/auth/hooks/useVerifyEmail'
+import { useLogout } from '@/core/auth/hooks/useLogout'
 
 export const useAuth = (opts?: IUseQueryHookOptions) => {
   const [isRememberMe, setIsRememberMe] = useState(true)
@@ -19,6 +20,7 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
     setIsRememberMe,
     signUp,
     isSigningUp,
-    useVerifyEmail
+    useVerifyEmail,
+    useLogout
   }
 }

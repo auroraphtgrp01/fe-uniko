@@ -15,25 +15,31 @@ import { useUser } from '@/core/users/hooks'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {
   const router = useRouter()
-  const [accessToken, setAccessToken] = useState<string | undefined>()
+  const [executeGetMe, setExecuteGetMe] = useState<boolean>(false)
+  const [countLogin, setCountLogin] = useState<number>(0)
 
   const mutation = useMutationCustom<ISignInBody, ISignInResponse>({
     pathUrl: authServices.signIn,
     mutateOption: {
       retry: AUTH_RETRY,
       onSuccess: (data) => {
-        setAccessTokenToLocalStorage(data.data.accessToken)
-        setRefreshTokenToLocalStorage(data.data.refreshToken)
-
-        setAccessToken(data.data.accessToken)
-
-        toast.success('Login successful - Welcome back!')
+        setCountLogin(countLogin + 1)
+        if (data.data.user.status === 'ACTIVE') {
+          setAccessTokenToLocalStorage(data.data.accessToken)
+          setRefreshTokenToLocalStorage(data.data.refreshToken)
+          setExecuteGetMe(true)
+          toast.success('Login successfully 🚀 ')
+          router.push('/dashboard')
+        }
+        if (data.data.user.status === 'UNVERIFY' && countLogin < 0) {
+          toast.error('Account is inactive, please contact the administrator !')
+        }
       },
       onError: (error) => {
         if (error.response?.status) {
           return toast.error(`${(error.response?.data as { message: string }).message} !`)
         }
-        toast.error('An error occurred. Please try again later.')
+        toast.error('User not found !')
 
         opts?.callBackOnError?.()
       }
@@ -42,14 +48,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
 
   const { getMe } = useUser()
 
-  const { userGetMeData, isGetMeUserPending } = getMe(accessToken)
-
-  useEffect(() => {
-    if (!isGetMeUserPending && userGetMeData) {
-      setUserInfoToLocalStorage(userGetMeData.data)
-      router.push('/dashboard')
-    }
-  }, [userGetMeData, isGetMeUserPending, router])
+  getMe(executeGetMe)
 
   return mutation
 }

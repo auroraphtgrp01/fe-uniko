@@ -19,22 +19,24 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AvatarDefault from '@/images/avatar.jpg'
 import Image from 'next/image'
+import { useAuth } from '@/core/auth/hooks'
 
 export function UserNav() {
   const baseUrl = getBaseClientUrl()
   const router = useRouter()
   const [isLogout, setIsLogout] = useState(false)
   const user = getUserInfoFromLocalStorage()
-  const { logout } = useUser()
-  const { userLogoutData } = logout(isLogout)
+  console.log('user', user)
+
   useEffect(() => {
-    if (userLogoutData) {
+    if (isLogout === true) {
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
       localStorage.removeItem('userInfo')
+      setIsLogout(false)
       router.push(baseUrl)
     }
-  }, [userLogoutData])
+  }, [isLogout])
   return (
     <div className='ms-1 select-none'>
       <DropdownMenu>

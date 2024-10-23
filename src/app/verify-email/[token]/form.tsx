@@ -5,7 +5,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import Logo2 from '@/images/logo-2.png'
 import Image from 'next/image'
 import { useAuth } from '@/core/auth/hooks'
-import { useEffect, useState } from 'react'
 
 export default function VerifyEmailForm({ token }: { token: string }) {
   const { useVerifyEmail } = useAuth()
@@ -38,7 +37,7 @@ export default function VerifyEmailForm({ token }: { token: string }) {
               <p className='mt-2 text-center text-sm text-muted-foreground'>
                 Your account is active. Click the button below to go to the dashboard.
               </p>
-              <Link href={'/sign-in'}>
+              <Link href={'/dashboard'}>
                 <Button className='mt-5 w-full text-center text-sm'>Go to Dashboard</Button>
               </Link>
             </div>
