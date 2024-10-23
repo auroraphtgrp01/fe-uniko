@@ -40,7 +40,7 @@ export default function TrackerTransactionChart({
             </TabsTrigger>
             <TabsTrigger value='expenseChart'>{expenseLabel}</TabsTrigger>
           </TabsList>
-          <div className='mt-2'>
+          <div className='mt-4'>
             <DateRangePicker onChange={(range) => {}}></DateRangePicker>
           </div>
           <TabsContent value='incomingChart' className='h-fit'>

@@ -1,4 +1,5 @@
 import { IBaseResponseData } from '@/types/common.i'
+import { IErrorResponseBase } from '@/types/core.i'
 
 export interface ISignInBody {
   email: string
@@ -21,3 +22,5 @@ export type ISignUpResponse = ISignInResponse & {
     email: string
   }
 }
+
+export type IVerifyEmailResponse = IBaseResponseData<any> & IErrorResponseBase
