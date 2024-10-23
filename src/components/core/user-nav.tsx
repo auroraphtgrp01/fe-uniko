@@ -17,6 +17,8 @@ import Link from 'next/link'
 import { useUser } from '@/core/users/hooks'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import AvatarDefault from '@/images/avatar.jpg'
+import Image from 'next/image'
 
 export function UserNav() {
   const baseUrl = getBaseClientUrl()
@@ -40,10 +42,11 @@ export function UserNav() {
           <Button variant='ghost' className='relative h-10 w-10 rounded-full p-0'>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className='h-full w-full rounded-full'>
               <Avatar className='rounded-full hover:cursor-pointer'>
-                <AvatarImage
+                {/* <AvatarImage
                   className='h-full w-full object-cover'
                   src={`${process.env.NEXT_PUBLIC_API_ENDPOINT}${user?.avatar}`}
-                />
+                /> */}
+                <Image alt='' className='h-full w-full object-cover' src={AvatarDefault as any} />
                 <AvatarFallback>
                   <img
                     src='https://s3.ap-southeast-1.amazonaws.com/cdn.vntre.vn/default/avatar-cute-dong-vat-1725201830.jpg'
