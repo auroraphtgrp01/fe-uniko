@@ -37,8 +37,8 @@ export default function VerifyEmailForm({ token }: { token: string }) {
               <p className='mt-2 text-center text-sm text-muted-foreground'>
                 Your account is active. Click the button below to go to the dashboard.
               </p>
-              <Link href={'/dashboard'}>
-                <Button className='mt-5 w-full text-center text-sm'>Go to Dashboard</Button>
+              <Link href={'/sign-in'}>
+                <Button className='mt-5 w-full text-center text-sm'>Sign-in now</Button>
               </Link>
             </div>
           ) : (
