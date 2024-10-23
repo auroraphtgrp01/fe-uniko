@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { IChartData } from '@/components/core/charts/DonutChart'
+import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { Icons } from '../../../components/ui/icons'
 import { ArrowDownIcon, ArrowUpIcon, ArrowRight } from 'lucide-react'
 import { formatCurrency, formatDateTimeVN, getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
@@ -50,8 +50,8 @@ import {
 } from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { DateTimePicker } from '@/components/core/DateTimePicker'
-import ChartCard from './chartcard'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import TrackerTransactionChart from '@/components/dashboard/TrackerTransactionChart'
 
 export default function TrackerTransactionForm() {
   const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
@@ -174,166 +174,122 @@ export default function TrackerTransactionForm() {
   }
 
   return (
-    <div>
-      <div className='mb-2 flex flex-col items-center gap-4 space-y-1 md:flex-row md:space-y-0'>
-        <div>
-          <DateTimePicker
-            value={dates.startDay ? new Date(dates.startDay) : new Date()}
-            onChange={(date: Date) =>
-              setDates((prev) => ({
-                ...prev,
-                startDay: date.toISOString().split('T')[0]
-              }))
-            }
-            showTime={false}
-          />
+    <div className='grid max-h-[400px] min-h-[300px] grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+      {/* Left Section */}
+
+      <div className='flex w-full flex-col md:col-span-2'>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
+          {/* Total Spending Card */}
+
+          <Card className='col-span-1 h-full w-full overflow-hidden sm:col-span-2 md:w-full lg:w-full xl:col-span-1'>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <div className='space-y-2'>
+                <CardTitle className='text-nowrap text-sm sm:text-base lg:text-lg'>Total spending today</CardTitle>
+                <CardDescription>
+                  <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>
+                    {formatCurrency(statisticData?.data.totalSpendingToday ?? 0, 'VND', 'vi-vn')}
+                  </span>
+                </CardDescription>
+              </div>
+              <Icons.banknote className='hidden text-green-500 lg:h-8 lg:w-8 2xl:block' />
+            </CardHeader>
+          </Card>
+
+          {/* Incoming vs Expense Transaction Card */}
+          <Card className='col-span-1 w-full overflow-hidden sm:col-span-2 lg:w-full'>
+            <div className='flex flex-col md:flex-row'>
+              {/* Incoming Transaction */}
+              <div className='flex-1 bg-gradient-to-br from-green-100 to-green-200 p-4 dark:from-green-700 dark:to-green-800 sm:p-6'>
+                <CardHeader className='p-0 lg:w-full'>
+                  <div className='flex items-center space-x-2 text-green-600 dark:text-green-100'>
+                    <ArrowDownIcon className='h-4 w-4 sm:h-5 sm:w-5' />
+                    <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>Incoming Transaction</h3>
+                  </div>
+                </CardHeader>
+                <p className='mt-2 text-nowrap text-lg font-bold text-green-700 dark:text-green-100 sm:mt-4 sm:text-xl lg:text-2xl'>
+                  {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
+                </p>
+              </div>
+
+              {/* Expense Transaction */}
+              <div className='flex-1 bg-gradient-to-br from-rose-100 to-rose-200 p-4 dark:from-rose-700 dark:to-rose-800 sm:p-6'>
+                <CardHeader className='p-0'>
+                  <div className='flex items-center space-x-2 text-rose-500 dark:text-rose-100'>
+                    <ArrowUpIcon className='h-4 w-4 sm:h-5 sm:w-5' />
+                    <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>Expense Transaction</h3>
+                  </div>
+                </CardHeader>
+                <p className='mt-2 text-nowrap text-lg font-bold text-rose-500 dark:text-rose-100 sm:mt-4 sm:text-xl lg:text-2xl'>
+                  {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
+                </p>
+              </div>
+            </div>
+          </Card>
         </div>
-        <ArrowRight className='stroke-slate-400 font-extralight' />
-        <div>
-          <DateTimePicker
-            value={dates.endDay ? new Date(dates.endDay) : new Date()}
-            onChange={(date: Date) =>
-              setDates((prev) => ({
-                ...prev,
-                endDay: date.toISOString().split('T')[0]
-              }))
-            }
-            showTime={false}
-          />
+
+        {/* DataTable Section */}
+        <div className='mt-4 flex-1'>
+          <Card className='h-full w-full'>
+            <CardContent>
+              <DataTable
+                columns={columns}
+                data={tableData}
+                config={dataTableConfig}
+                setConfig={setDataTableConfig}
+                buttons={dataTableButtons}
+                onRowClick={onRowClick}
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        {/* Left Section */}
 
-        <div className='flex w-full flex-col md:col-span-2'>
-          <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
-            {/* Total Spending Card */}
-
-            <Card className='col-span-1 h-full w-full overflow-hidden sm:col-span-2 md:w-full lg:w-full xl:col-span-1'>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <div className='space-y-2'>
-                  <CardTitle className='text-nowrap text-sm sm:text-base lg:text-lg'>Total spending today</CardTitle>
-                  <CardDescription>
-                    <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>
-                      {formatCurrency(statisticData?.data.totalSpendingToday ?? 0, 'VND', 'vi-vn')}
-                    </span>
-                  </CardDescription>
-                </div>
-                <Icons.banknote className='hidden text-green-500 lg:h-8 lg:w-8 2xl:block' />
-              </CardHeader>
-            </Card>
-
-            {/* Incoming vs Expense Transaction Card */}
-            <Card className='col-span-1 w-full overflow-hidden sm:col-span-2 lg:w-full'>
-              <div className='flex flex-col md:flex-row'>
-                {/* Incoming Transaction */}
-                <div className='flex-1 bg-gradient-to-br from-green-100 to-green-200 p-4 dark:from-green-700 dark:to-green-800 sm:p-6'>
-                  <CardHeader className='p-0 lg:w-full'>
-                    <div className='flex items-center space-x-2 text-green-600 dark:text-green-100'>
-                      <ArrowDownIcon className='h-4 w-4 sm:h-5 sm:w-5' />
-                      <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>
-                        Incoming Transaction
-                      </h3>
-                    </div>
-                  </CardHeader>
-                  <p className='mt-2 text-nowrap text-lg font-bold text-green-700 dark:text-green-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                    {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
-                  </p>
-                </div>
-
-                {/* Expense Transaction */}
-                <div className='flex-1 bg-gradient-to-br from-rose-100 to-rose-200 p-4 dark:from-rose-700 dark:to-rose-800 sm:p-6'>
-                  <CardHeader className='p-0'>
-                    <div className='flex items-center space-x-2 text-rose-500 dark:text-rose-100'>
-                      <ArrowUpIcon className='h-4 w-4 sm:h-5 sm:w-5' />
-                      <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>Expense Transaction</h3>
-                    </div>
-                  </CardHeader>
-                  <p className='mt-2 text-nowrap text-lg font-bold text-rose-500 dark:text-rose-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                    {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* DataTable Section */}
-          <div className='mt-4 flex-1'>
-            <Card className='h-full w-full'>
-              <CardContent>
-                <DataTable
-                  columns={columns}
-                  data={tableData}
-                  config={dataTableConfig}
-                  setConfig={setDataTableConfig}
-                  buttons={dataTableButtons}
-                  onRowClick={onRowClick}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Right Section */}
-        <div className='flex w-full flex-col md:col-span-2 lg:col-span-1'>
-          <ChartCard
-            defaultValue='incomingChart'
-            incomingChartData={chartData?.incomingTransactionTypeStats ?? []}
-            expenseChartData={chartData?.expenseTransactionTypeStats ?? []}
-            incomingLabel='Incoming Chart'
-            expenseLabel='Expense Chart'
-            incomingChartHeight='h-[490px]'
-            expenseChartHeight='h-[490px]'
-          />
-
-          <div className='flex items-center justify-center p-0'>
-            <ChartCard
-              defaultValue='incomingChart'
-              incomingChartData={chartData?.incomingTransactionAccountTypeStats ?? []}
-              expenseChartData={chartData?.expenseTransactionAccountTypeStats ?? []}
-              incomingLabel='Income Account Chart'
-              expenseLabel='Expense Account Chart'
-              incomingChartHeight='h-[350px]'
-              expenseChartHeight='h-[350px]'
-              className='mt-4'
-            />
-          </div>
-        </div>
-        <TrackerTransactionDialog
-          classifyTransactionDialog={{
-            formData: formDataClassify,
-            setFormData: setFormDataClassify,
-            classifyTransaction,
-            hookUpdateCache: setCacheUnclassifiedTxs,
-            resetCacheTrackerTx
-          }}
-          createTrackerTransactionDialog={{
-            formData: formDataCreate,
-            setFormData: setFormDataCreate,
-            createTrackerTransaction: createTransaction,
-            accountSourceData: dataAdvancedAccountSource?.data ?? [],
-            hookUpdateCache: setData
-          }}
-          sharedDialogElements={{
-            isDialogOpen,
-            setIsDialogOpen,
-            dataTrackerTransactionType: dataTrackerTransactionType?.data ?? [],
-            hookResetCacheStatistic: resetCacheStatistic
-          }}
-          unclassifiedTxDialog={{
-            columns: columnUnclassifiedTxTables,
-            unclassifiedTxTableData,
-            setTableConfig: setDataTableUnclassifiedConfig,
-            tableConfig: dataTableUnclassifiedConfig
-          }}
-          createTrackerTransactionTypeDialog={{
-            formData: formDataCreateTrackerTxType,
-            setFormData: setFormDataCreateTrackerTxType,
-            createTrackerTransactionType: createTrackerTxType,
-            hookUpdateCache: setCacheTrackerTxType
-          }}
+      {/* Right Section */}
+      <div className='flex w-full flex-col md:col-span-2 lg:col-span-1'>
+        <TrackerTransactionChart
+          defaultValue='incomingChart'
+          incomingChartData={chartData?.incomingTransactionTypeStats ?? []}
+          expenseChartData={chartData?.expenseTransactionTypeStats ?? []}
+          incomingLabel='Incoming Chart'
+          expenseLabel='Expense Chart'
+          incomingChartHeight='h-[490px]'
+          expenseChartHeight='h-[490px]'
         />
       </div>
+      <TrackerTransactionDialog
+        classifyTransactionDialog={{
+          formData: formDataClassify,
+          setFormData: setFormDataClassify,
+          classifyTransaction,
+          hookUpdateCache: setCacheUnclassifiedTxs,
+          resetCacheTrackerTx
+        }}
+        createTrackerTransactionDialog={{
+          formData: formDataCreate,
+          setFormData: setFormDataCreate,
+          createTrackerTransaction: createTransaction,
+          accountSourceData: dataAdvancedAccountSource?.data ?? [],
+          hookUpdateCache: setData
+        }}
+        sharedDialogElements={{
+          isDialogOpen,
+          setIsDialogOpen,
+          dataTrackerTransactionType: dataTrackerTransactionType?.data ?? [],
+          hookResetCacheStatistic: resetCacheStatistic
+        }}
+        unclassifiedTxDialog={{
+          columns: columnUnclassifiedTxTables,
+          unclassifiedTxTableData,
+          setTableConfig: setDataTableUnclassifiedConfig,
+          tableConfig: dataTableUnclassifiedConfig
+        }}
+        createTrackerTransactionTypeDialog={{
+          formData: formDataCreateTrackerTxType,
+          setFormData: setFormDataCreateTrackerTxType,
+          createTrackerTransactionType: createTrackerTxType,
+          hookUpdateCache: setCacheTrackerTxType
+        }}
+      />
     </div>
   )
 }
