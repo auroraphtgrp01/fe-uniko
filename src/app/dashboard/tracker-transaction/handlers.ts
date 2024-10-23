@@ -1,6 +1,7 @@
 import {
   IAdvancedTrackerTransactionResponse,
   ICustomTrackerTransaction,
+  ICustomTrackerTransaction,
   IDialogTrackerTransaction,
   ITrackerTransaction,
   ITrackerTransactionResponse
@@ -16,6 +17,7 @@ import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm, initCreateTrackerTxTypeForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
+import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'

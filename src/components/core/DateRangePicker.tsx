@@ -254,7 +254,7 @@ export function DateRangePicker({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className='w-full p-5'>
+      <PopoverContent className='w-full p-3'>
         <div className='flex items-center justify-between'>
           <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
             <Button variant='ghost' size='icon' onClick={onPrevMonth}>

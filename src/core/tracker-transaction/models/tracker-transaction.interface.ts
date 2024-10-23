@@ -1,4 +1,4 @@
-import { IChartData, IPayloadDataChart } from '@/components/core/charts/DonutChart'
+import { IChartData } from '@/components/core/charts/DonutChart'
 import { IBaseResponseData } from '@/types/common.i'
 
 export interface IDialogTrackerTransaction {
@@ -73,6 +73,11 @@ export interface IStatisticData extends IChartData {
   statusCode: number
 }
 export type IStatisticDataResponse = IBaseResponseData<IStatisticData>
+
+export interface DateRange {
+  startDay?: string
+  endDay?: string
+}
 
 export interface DateRange {
   startDay?: string
