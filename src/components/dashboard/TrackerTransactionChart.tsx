@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 
-interface ChartCardProps {
+interface TrackerTransactionChartProps {
   defaultValue: string
   incomingChartData: IPayloadDataChart[]
   expenseChartData: IPayloadDataChart[]
@@ -14,7 +14,7 @@ interface ChartCardProps {
   className?: string
 }
 
-export default function ChartCard({
+export default function TrackerTransactionChart({
   defaultValue,
   incomingChartData,
   expenseChartData,
@@ -23,7 +23,7 @@ export default function ChartCard({
   incomingChartHeight,
   expenseChartHeight,
   className = ''
-}: ChartCardProps) {
+}: TrackerTransactionChartProps) {
   const [currentTab, setCurrentTab] = useState(defaultValue)
   useEffect(() => {
     setCurrentTab(defaultValue)
