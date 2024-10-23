@@ -48,7 +48,6 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
     config
-
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -80,17 +79,18 @@ export function DataTable<TData, TValue>({
   }, [data, config])
 
   const toggleType = (type: string) => {
-    if (selectedTypes)
+    if (selectedTypes) {
       setConfig((prev) => ({
         ...prev,
         selectedTypes: selectedTypes.includes(type)
           ? selectedTypes.filter((selectedType) => selectedType !== type)
           : [...selectedTypes, type]
       }))
+    }
   }
 
   return (
-    <div className='w-full p-1'>
+    <div className='h-full w-full p-1'>
       <div className='flex items-center justify-between py-4'>
         <div className='flex items-center space-x-2'>
           <div className='min-w-0'>

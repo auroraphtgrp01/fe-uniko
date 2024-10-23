@@ -143,7 +143,7 @@ export const initDataTable = (
     )
     setDataTableConfig((prev) => ({
       ...prev,
-      types: getTypes(getAdvancedData.data),
+      types: getTypes(getAdvancedData.data, 'type'),
       totalPage: Number(getAdvancedData.pagination?.totalPage)
     }))
     setFetchedData(getAdvancedData.data)

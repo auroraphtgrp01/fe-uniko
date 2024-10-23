@@ -8,11 +8,12 @@ import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { IClassifyTransactionFormData } from '@/core/transaction/models'
+import { IClassifyTransactionFormData, IDialogTransaction } from '@/core/transaction/models'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { ArrowDownToLineIcon, PlusCircle, RotateCcwIcon, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { handleCreateTrackerTxType } from '../tracker-transaction/handlers'
+import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 
 export const transactionHeaders = ['Transaction Id', 'Amount', 'Direction', 'Currency', 'Account Bank', 'Account No']
 
@@ -49,12 +50,19 @@ export const initDialogFlag = {
   isDialogDetailOpen: false,
   isDialogTransactionTodayOpen: false,
   isDialogUnclassifiedTransactionOpen: false,
-  isDialogClassifyTransactionOpen: false
+  isDialogClassifyTransactionOpen: false,
+  isDialogCreateTrackerTxTypeOpen: false
 }
 
 export const initClassifyTransactionForm = {
   trackerTypeId: '',
   reasonName: '',
+  description: ''
+}
+
+export const initCreateTrackerTxTypeForm = {
+  name: '',
+  type: '',
   description: ''
 }
 
@@ -70,23 +78,15 @@ export const initCreateTrackerTransactionForm = {
 export const defineContentClassifyingTransactionDialog = ({
   formData,
   setFormData,
-  formDataCreateTrackerTxType,
-  setFormDataCreateTrackerTxType,
-  isAddingNewTrackerType,
-  setIsAddingNewTrackerType,
   trackerTransactionType,
-  hookCreateTrackerTxType,
-  hookSetCacheTrackerTxType
+  setIsDialogOpen
 }: {
   formData: IClassifyTransactionFormData
   setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
-  formDataCreateTrackerTxType: ITrackerTransactionTypeBody
-  setFormDataCreateTrackerTxType: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
-  isAddingNewTrackerType: boolean
-  setIsAddingNewTrackerType: React.Dispatch<React.SetStateAction<boolean>>
   trackerTransactionType: any
-  hookCreateTrackerTxType: any
-  hookSetCacheTrackerTxType: any
+  setIsDialogOpen:
+    | React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+    | React.Dispatch<React.SetStateAction<IDialogTransaction>>
 }) => {
   return (
     <div className='grid gap-4 py-4'>
@@ -124,35 +124,14 @@ export const defineContentClassifyingTransactionDialog = ({
                   </SelectItem>
                 ))
               : ''}
-            {isAddingNewTrackerType ? (
-              <div className='flex items-center'>
-                <Input
-                  type='text'
-                  value={formDataCreateTrackerTxType.name}
-                  onChange={(e) => setFormDataCreateTrackerTxType({ name: e.target.value })}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter')
-                      handleCreateTrackerTxType({
-                        formData: formDataCreateTrackerTxType,
-                        setFormData: setFormDataCreateTrackerTxType,
-                        hookCreateTrackerTxType,
-                        hookSetCacheTrackerTxType,
-                        setIsAddingNewTrackerType
-                      })
-                  }}
-                  placeholder='Enter new item'
-                  className='flex-grow'
-                />
-                <Button onClick={() => setIsAddingNewTrackerType(false)} size='sm' className='ml-2'>
-                  <X className='h-4 w-4' />
-                </Button>
-              </div>
-            ) : (
-              <Button onClick={() => setIsAddingNewTrackerType(true)} variant='ghost' className='w-full justify-start'>
-                <PlusCircle className='mr-2 h-4 w-4' />
-                Add new item
-              </Button>
-            )}
+            <Button
+              onClick={() => setIsDialogOpen((prev: any) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: true }))}
+              variant='ghost'
+              className='w-full justify-start'
+            >
+              <PlusCircle className='mr-2 h-4 w-4' />
+              Add new item
+            </Button>
           </SelectContent>
         </Select>
       </div>

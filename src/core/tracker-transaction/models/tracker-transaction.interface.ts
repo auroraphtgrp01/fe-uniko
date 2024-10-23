@@ -1,4 +1,4 @@
-import { IChartData, IPayloadDataChart } from '@/components/core/charts/DonutChart'
+import { IChartData } from '@/components/core/charts/DonutChart'
 import { IBaseResponseData } from '@/types/common.i'
 
 export interface IDialogTrackerTransaction {
@@ -6,6 +6,7 @@ export interface IDialogTrackerTransaction {
   isDialogUpdateOpen: boolean
   isDialogClassifyTransactionOpen: boolean
   isDialogUnclassifiedOpen: boolean
+  isDialogCreateTrackerTxTypeOpen: boolean
 }
 
 export interface ITrackerTransaction {
@@ -39,11 +40,13 @@ export interface ITrackerTransaction {
 
 export interface ICustomTrackerTransaction {
   id: string
-  trackerTypeId: string
+  reasonName: string
+  trackerTypeName: string
   type: string
   amount: string
   transactionDate: string
-  source: string
+  accountSourceName: string
+  checkType: string
 }
 
 export type ITrackerTransactionResponse = IBaseResponseData<ITrackerTransaction>
@@ -70,6 +73,11 @@ export interface IStatisticData extends IChartData {
   statusCode: number
 }
 export type IStatisticDataResponse = IBaseResponseData<IStatisticData>
+
+export interface DateRange {
+  startDay?: string
+  endDay?: string
+}
 
 export interface DateRange {
   startDay?: string

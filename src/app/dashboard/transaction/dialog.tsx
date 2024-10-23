@@ -7,7 +7,11 @@ import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useState } from 'react'
-import { defineContentClassifyingTransactionDialog, initClassifyTransactionForm } from './constants'
+import {
+  defineContentClassifyingTransactionDialog,
+  initClassifyTransactionForm,
+  initCreateTrackerTxTypeForm
+} from './constants'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
@@ -42,9 +46,8 @@ export interface ITransactionDialogProps {
 
 export default function TransactionDialog(params: ITransactionDialogProps) {
   // useStates
-  const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] = useState<ITrackerTransactionTypeBody>({
-    name: ''
-  })
+  const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
+    useState<ITrackerTransactionTypeBody>(initCreateTrackerTxTypeForm)
   const [isAddingNewTrackerType, setIsAddingNewTrackerType] = useState<boolean>(false)
 
   const { dataTable, dialogState, classifyDialog } = params
@@ -155,13 +158,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
     formData,
     setFormData,
-    formDataCreateTrackerTxType,
-    setFormDataCreateTrackerTxType,
-    isAddingNewTrackerType,
-    setIsAddingNewTrackerType,
     trackerTransactionType: classifyDialog.trackerTransactionType,
-    hookCreateTrackerTxType: classifyDialog.hookCreateTrackerTxType,
-    hookSetCacheTrackerTxType: classifyDialog.hookSetCacheTrackerTxType
+    setIsDialogOpen: dialogState.setIsDialogOpen
   })
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: classifyingTransactionConfigDialogContent,
