@@ -1,4 +1,5 @@
 import { MoneyInput } from '@/components/core/MoneyInput'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -11,7 +12,7 @@ import {
 } from '@/core/account-source/models'
 import { formatArrayData, formatCurrency } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
-import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
+import { HandCoins, Landmark, PlusCircle, PlusIcon, Trash2, Wallet2 } from 'lucide-react'
 
 export const contentDialogAccountSourceForm = ({
   setFormData,
@@ -41,7 +42,15 @@ export const contentDialogAccountSourceForm = ({
       </Label>
       <Select
         required
-        onValueChange={(value) => setFormData((prev) => ({ ...prev, accountSourceType: value as EAccountSourceType }))}
+        onValueChange={(value) => {
+          setFormData((prev) => ({ ...prev, accountSourceType: value as EAccountSourceType }))
+          if (value === EAccountSourceType.BANKING) setFormData((prev) => ({ ...prev, accounts: [''] }))
+          else
+            setFormData((prev) => {
+              const { accounts, ...rest } = prev
+              return rest
+            })
+        }}
         value={formData.accountSourceType}
       >
         <SelectTrigger className='col-span-3'>
@@ -53,7 +62,6 @@ export const contentDialogAccountSourceForm = ({
         </SelectContent>
       </Select>
     </div>
-    {/* --------------- */}
     {formData.accountSourceType === EAccountSourceType.BANKING && (
       <>
         <div className='grid grid-cols-4 items-center gap-4'>
@@ -102,25 +110,58 @@ export const contentDialogAccountSourceForm = ({
             placeholder='Password *'
           />
         </div>
+
+        {formData.accounts && formData.accounts.length > 0
+          ? formData.accounts.map((account, index) =>
+              index > 0 ? (
+                <div key={index} className='grid grid-cols-4 items-center gap-4'>
+                  <Label htmlFor='accounts' className='text-right'></Label>
+                  <Input
+                    value={account}
+                    required
+                    onChange={(e) => {
+                      const newAccounts = [...(formData.accounts as string[])]
+                      newAccounts[index] = e.target.value
+                      setFormData((prev) => ({ ...prev, accounts: newAccounts }))
+                    }}
+                    className='col-span-3'
+                    placeholder={`Account ${index + 1} *`}
+                  />
+                </div>
+              ) : (
+                <div key={index} className='grid grid-cols-4 items-center gap-4'>
+                  <Label htmlFor='accounts' className='text-right'>
+                    Account
+                  </Label>
+                  <Input
+                    value={account}
+                    required
+                    onChange={(e) => {
+                      const newAccounts = [...(formData.accounts as string[])]
+                      newAccounts[index] = e.target.value
+                      setFormData((prev) => ({ ...prev, accounts: newAccounts }))
+                    }}
+                    className='col-span-3'
+                    placeholder={`Account ${index + 1} *`}
+                  />
+                </div>
+              )
+            )
+          : ''}
         <div className='grid grid-cols-4 items-center gap-4'>
-          <Label htmlFor='accounts' className='text-right'>
-            Account
-          </Label>
-          <Input
-            value={formData.account}
-            required
-            onChange={(e) => {
-              setFormData((prev) => ({ ...prev, account: e.target.value }))
+          <Label htmlFor='initialAmount' className='text-right'></Label>
+          <Button
+            onClick={() => {
+              setFormData((prev) => ({ ...prev, accounts: [...(formData.accounts as string[]), ''] }))
             }}
-            className='col-span-3'
-            placeholder='Account *'
-          />
+            variant='outline'
+            size='sm'
+          >
+            <PlusCircle className='mr-2 h-4 w-4' /> Add Account
+          </Button>
         </div>
       </>
     )}
-
-    {/* --------------- */}
-
     <div className='grid grid-cols-4 items-center gap-4'>
       <Label htmlFor='initialAmount' className='text-right'>
         Initial Amount
@@ -134,25 +175,6 @@ export const contentDialogAccountSourceForm = ({
           setFormData((prev) => ({ ...prev, initAmount: Number(e.target.value) }))
         }}
       />
-    </div>
-    <div className='grid grid-cols-4 items-center gap-4'>
-      <Label htmlFor='currency' className='text-right'>
-        Currency
-      </Label>
-      <Select
-        required
-        onValueChange={(value) => setFormData((prev) => ({ ...prev, currency: value }))}
-        value={formData.currency}
-      >
-        <SelectTrigger className='col-span-3'>
-          <SelectValue placeholder='Select a currency' />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value='USD'>USD</SelectItem>
-          <SelectItem value='EUR'>EUR</SelectItem>
-          <SelectItem value='VND'>VND</SelectItem>
-        </SelectContent>
-      </Select>
     </div>
   </div>
 )
@@ -187,10 +209,8 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
 
 export const initAccountSourceFormData: IAccountSourceBody = {
   name: '',
-  type: EAccountSourceType.WALLET,
   initAmount: 0,
-  currency: '',
-  id: ''
+  accountSourceType: EAccountSourceType.WALLET
 }
 
 export const initDialogFlag: IDialogAccountSource = {

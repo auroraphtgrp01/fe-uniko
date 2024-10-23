@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import configProject from '@/config/configService'
 import {
   getAccessTokenFromLocalStorage,
@@ -7,8 +7,9 @@ import {
   setRefreshTokenToLocalStorage
 } from '@/libraries/helpers'
 import { normalizePath } from '@/libraries/utils'
-import { IDynamicType, IMutateData } from '@/types/common.i'
-
+import { IMutateData } from '@/types/common.i'
+import toast from 'react-hot-toast'
+import Router from 'next/router'
 export class HttpError extends Error {
   status: number
   payload: Record<string, any>
@@ -47,33 +48,24 @@ axiosInstance.interceptors.request.use((config) => {
   return config
 })
 
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   async (error: AxiosError) => {
-//     const { response } = error
-//     if (response?.status === AUTHENTICATION_ERROR_STATUS && isClient) {
-//       if (!clientLogoutRequest) {
-//         clientLogoutRequest = axiosInstance.post('/api/auth/logout')
-//         try {
-//           await clientLogoutRequest
-//         } catch {
-//           // Handle error silently
-//         } finally {
-//           removeTokensFromLocalStorage()
-//           clientLogoutRequest = null
-//           // window.location.href = `/sign-in`
-//         }
-//       }
-//     }
-//     return Promise.reject(
-//       new HttpError({
-//         status: response?.status || 0,
-//         payload: response?.data || {},
-//         message: error.message
-//       })
-//     )
-//   }
-// )
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const { response } = error
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      toast.error('Unauthorized or Account inactive, please sign-in again !')
+      window.location.href = '/sign-in'
+    }
+    removeTokensFromLocalStorage()
+    return Promise.reject(
+      new HttpError({
+        status: response?.status || 0,
+        payload: response?.data || {},
+        message: error.message
+      })
+    )
+  }
+)
 
 const request = async <TResponseponse>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',

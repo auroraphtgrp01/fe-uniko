@@ -25,18 +25,17 @@ export interface IAccountSourceDataFormat {
 }
 
 export interface IAccountSourceBody {
-  id: string
-  name?: string
-  accountSourceType?: EAccountSourceType
-  initAmount?: number
-  currency?: string
+  id?: string
+  name: string
+  accountSourceType: EAccountSourceType
+  initAmount: number
   userId?: string
   currentAmount?: number
   accountBankId?: string
   password?: string
   login_id?: string
   type?: string
-  account?: string
+  accounts?: string[]
 }
 
 export enum EAccountSourceType {

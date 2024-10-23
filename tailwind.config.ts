@@ -16,7 +16,21 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans]
+        sans: ['var(--font-sans)', ...fontFamily.sans],
+        sm: '0.875rem',
+        base: '0.9375rem',
+        lg: '1.0625rem',
+        xl: '1.1875rem'
+      },
+      padding: {
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem'
+      },
+      margin: {
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem'
       },
       colors: {
         border: 'hsl(var(--border))',

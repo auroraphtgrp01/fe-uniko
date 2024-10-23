@@ -3,18 +3,18 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
+import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { Icons } from '../../../components/ui/icons'
-import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react'
-import { formatCurrency, getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
+import { ArrowDownIcon, ArrowUpIcon, ArrowRight } from 'lucide-react'
+import { formatCurrency, formatDateTimeVN, getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
+  DateRange,
   IAdvancedTrackerTransactionResponse,
+  ICustomTrackerTransaction,
   IDialogTrackerTransaction,
-  ITrackerTransaction,
-  ITrackerTransactionDataFormat,
-  ITrackerTransactionResponse
+  ITrackerTransaction
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { initButtonInDataTableHeader, initDialogFlag } from './constants'
 import TrackerTransactionDialog from './dialog'
@@ -23,14 +23,14 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import {
   IClassifyTransactionFormData,
   ICreateTrackerTransactionFormData,
-  IDataTransactionTable,
-  Transaction
+  IDataTransactionTable
 } from '@/core/transaction/models'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import {
   initClassifyTransactionForm,
   initCreateTrackerTransactionForm,
+  initCreateTrackerTxTypeForm,
   transactionHeaders
 } from '../transaction/constants'
 import { useAccountSource } from '@/core/account-source/hooks'
@@ -42,8 +42,16 @@ import {
   TRACKER_TRANSACTION_TYPE_MODEL_KEY
 } from '@/core/tracker-transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
-import { updateCacheDataCreate, updateCacheDataUpdate } from './handlers'
+import {
+  filterTrackerTransactionWithType,
+  initTrackerTransactionDataTable,
+  updateCacheDataCreate,
+  updateCacheDataUpdate
+} from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
+import { DateTimePicker } from '@/components/core/DateTimePicker'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import TrackerTransactionChart from '@/components/dashboard/TrackerTransactionChart'
 
 export default function TrackerTransactionForm() {
   const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
@@ -52,9 +60,11 @@ export default function TrackerTransactionForm() {
 
   // states
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
-  const [tableData, setTableData] = useState<ITrackerTransaction[]>([]) // ITrackerTransactionDataFormat[]
+  const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataClassify, setFormDataClassify] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
+  const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
+    useState<ITrackerTransactionTypeBody>(initCreateTrackerTxTypeForm)
   const [formDataCreate, setFormDataCreate] = useState<ICreateTrackerTransactionFormData>(
     initCreateTrackerTransactionForm
   )
@@ -64,8 +74,8 @@ export default function TrackerTransactionForm() {
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
-  const [chartData, setChartData] = useState<IPayloadDataChart[]>([])
-  const [accountChartData, setAccountChartData] = useState<IPayloadDataChart[]>([])
+  const [chartData, setChartData] = useState<IChartData>()
+  const [dates, setDates] = useState<DateRange>({})
 
   // memos
   const queryTrackerTransaction = useMemo(
@@ -75,7 +85,7 @@ export default function TrackerTransactionForm() {
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
-    return getColumns<ITrackerTransaction>(titles, true) // ITrackerTransactionDataFormat
+    return getColumns<ICustomTrackerTransaction>(titles, true)
   }, [tableData])
   const columnUnclassifiedTxTables = useMemo(() => {
     if (tableData.length === 0) return []
@@ -88,8 +98,8 @@ export default function TrackerTransactionForm() {
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { statisticData } = getStatisticData()
-  const { advancedTrackerTxData } = getAdvancedData({ query: queryOptions })
+  const { statisticData } = getStatisticData(dates || {})
+  const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({ query: queryOptions })
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
   const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
   const { classifyTransaction } = useTrackerTransaction()
@@ -105,26 +115,66 @@ export default function TrackerTransactionForm() {
 
   // effects
   useEffect(() => {
+    setTableData(
+      filterTrackerTransactionWithType(dataTableConfig.selectedTypes || [], advancedTrackerTxData?.data || [])
+    )
+  }, [dataTableConfig.selectedTypes])
+
+  useEffect(() => {
+    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
+  }, [dataTableConfig])
+
+  useEffect(() => {
+    initTrackerTransactionDataTable(isGetAdvancedPending, advancedTrackerTxData, setDataTableConfig, setTableData)
+  }, [isGetAdvancedPending, advancedTrackerTxData])
+
+  useEffect(() => {
     if (dataUnclassifiedTxs) setUnclassifiedTxTableData(modifyTransactionHandler(dataUnclassifiedTxs.data))
   }, [dataUnclassifiedTxs])
 
   useEffect(() => {
-    if (advancedTrackerTxData) {
-      setTableData(advancedTrackerTxData.data)
+    if (advancedTrackerTxData && statisticData?.data) {
+      const transformedData: ICustomTrackerTransaction[] = advancedTrackerTxData.data.map(
+        (item: ITrackerTransaction) => {
+          return {
+            id: item.id || '',
+            reasonName: item.reasonName || '',
+            type: item.Transaction.direction || '',
+            checkType: item.Transaction.direction || '',
+            trackerTypeName: item.TrackerType.name || '',
+            amount: `${new Intl.NumberFormat('en-US').format(item.Transaction?.amount || 0)} ${item.Transaction?.currency}`,
+            transactionDate: item.time ? formatDateTimeVN(item.time, false) : '',
+            accountSourceName: item.Transaction?.accountSource?.name || ''
+          }
+        }
+      )
+      setTableData(transformedData)
     }
-  }, [advancedTrackerTxData])
+  }, [advancedTrackerTxData, statisticData])
 
   useEffect(() => {
     if (statisticData) {
-      setChartData(statisticData.data.trackerTypeStats)
-      setAccountChartData(statisticData.data.trackerAccStats)
+      setChartData(statisticData.data)
     }
   }, [statisticData])
 
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+  const onRowClick = (rowData: ICustomTrackerTransaction) => {
+    if (advancedTrackerTxData) {
+      const transactionData = advancedTrackerTxData.data.find((item) => item.id === rowData.id)
+      setFormDataClassify((prev) => ({
+        ...prev,
+        transactionId: transactionData?.transactionId || '',
+        trackerTypeId: transactionData?.trackerTypeId || '',
+        reasonName: transactionData?.reasonName || '',
+        description: transactionData?.description || ''
+      }))
+      setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
+    }
+  }
 
   return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+    <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
@@ -176,15 +226,16 @@ export default function TrackerTransactionForm() {
         </div>
 
         {/* DataTable Section */}
-        <div className='mt-4 flex-1'>
+        <div className='mt-4 flex h-full flex-1'>
           <Card className='h-full w-full'>
-            <CardContent>
+            <CardContent className='h-full'>
               <DataTable
                 columns={columns}
                 data={tableData}
                 config={dataTableConfig}
                 setConfig={setDataTableConfig}
                 buttons={dataTableButtons}
+                onRowClick={onRowClick}
               />
             </CardContent>
           </Card>
@@ -192,28 +243,17 @@ export default function TrackerTransactionForm() {
       </div>
 
       {/* Right Section */}
-      <div className='flex w-full flex-col md:col-span-2 lg:col-span-1'>
-        {/* DonutChart 1 */}
-        <Card className='w-full'>
-          <CardContent className='flex items-center justify-center'>
-            <DonutChart data={chartData} className={'mt-[2%] h-[490px] w-full lg:mt-[2%] xl:h-[450px]'} types='donut' />
-          </CardContent>
-        </Card>
-
-        {/* DonutChart 2 with Total */}
-        <div className='flex items-center justify-center p-0'>
-          <Card className='mt-4 w-full'>
-            <DonutChart
-              data={accountChartData}
-              className='mb-[5%] mt-[-8%] h-[350px] w-full sm:mt-[-1%] md:h-[300px] lg:mt-[-5%] xl:h-[300px]'
-              types='donut'
-            />
-            {/* <div className='h-full ms-[-60px]'>
-                <div>Total: 1.000.000 VND</div>
-              </div> */}
-          </Card>
-        </div>
+      <div className='flex h-full w-full flex-col md:col-span-2 lg:col-span-1'>
+        <TrackerTransactionChart
+          defaultValue='incomingChart'
+          incomingChartData={chartData?.incomingTransactionTypeStats ?? []}
+          expenseChartData={chartData?.expenseTransactionTypeStats ?? []}
+          incomingLabel='Incoming Chart'
+          expenseLabel='Expense Chart'
+          className='h-full'
+        />
       </div>
+
       <TrackerTransactionDialog
         classifyTransactionDialog={{
           formData: formDataClassify,
@@ -233,15 +273,19 @@ export default function TrackerTransactionForm() {
           isDialogOpen,
           setIsDialogOpen,
           dataTrackerTransactionType: dataTrackerTransactionType?.data ?? [],
-          hookResetCacheStatistic: resetCacheStatistic,
-          hookCreateTrackerTxType: createTrackerTxType,
-          hookSetCacheTrackerTxType: setCacheTrackerTxType
+          hookResetCacheStatistic: resetCacheStatistic
         }}
         unclassifiedTxDialog={{
           columns: columnUnclassifiedTxTables,
           unclassifiedTxTableData,
           setTableConfig: setDataTableUnclassifiedConfig,
           tableConfig: dataTableUnclassifiedConfig
+        }}
+        createTrackerTransactionTypeDialog={{
+          formData: formDataCreateTrackerTxType,
+          setFormData: setFormDataCreateTrackerTxType,
+          createTrackerTransactionType: createTrackerTxType,
+          hookUpdateCache: setCacheTrackerTxType
         }}
       />
     </div>

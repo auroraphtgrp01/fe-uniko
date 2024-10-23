@@ -21,7 +21,7 @@ export default function SignInForm() {
   }
 
   return (
-    <div className='relative flex min-h-screen w-full items-center justify-center overflow-hidden rounded-md bg-black/[0.8] px-4 py-12 pb-[5rem] pt-[5rem] antialiased bg-dot-white/[0.2] sm:px-6 md:items-center md:justify-center lg:px-8'>
+    <div className='relative flex min-h-screen w-full items-center justify-center overflow-hidden rounded-md bg-background px-4 py-12 pb-[5rem] pt-[5rem] antialiased sm:px-6 md:items-center md:justify-center lg:px-8'>
       <Card className='w-full max-w-md rounded-lg bg-background_nav shadow-lg'>
         <div className='flex items-center justify-center p-4'>
           <div className='h-32 w-32'>
@@ -89,7 +89,7 @@ export default function SignInForm() {
               Sign in
             </Button>
             <div className='relative mt-4'>
-              <div className='absolute inset-0 flex items-center'>
+              <div className='absolute flex items-center'>
                 <span className='w-full border-t border-muted-foreground/30' />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>
@@ -104,7 +104,7 @@ export default function SignInForm() {
               </Link>
             </div>
             <div className='relative mt-6'>
-              <div className='absolute inset-0 flex items-center'>
+              <div className='absolute flex items-center'>
                 <span className='w-full border-t border-muted-foreground/30' />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>

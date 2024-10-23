@@ -22,7 +22,7 @@ export default function ProfileForm() {
 
   // hooks
   const { getMe, updateUser, isUpdating, isPasswordUpdating, updatePassword } = useUser()
-  const { userGetMeData, isGetMeUserPending } = getMe(accessToken as string)
+  const { userGetMeData, isGetMeUserPending } = getMe(true)
   const { setData } = useUpdateModel<IUserGetMeResponse>(['USER', 'me', ''], (oldData, newData) => {
     return { ...oldData, data: newData }
   })

@@ -1,22 +1,28 @@
 import { apiService } from '@/api'
 import { USER_MODEL_KEY, USER_RETRY } from '@/core/users/constants'
 import { useModelQuery } from '@/hooks/useQueryModel'
+import { setUserInfoToLocalStorage } from '@/libraries/helpers'
 import { IUserGetMeResponse } from '@/types/user.i'
+import { useEffect } from 'react'
 
 const userApi = apiService.user
 
-export const useGetMeUser = (accessToken: string | undefined) => {
+export const useGetMeUser = (execute: boolean) => {
   const { isPending: isGetMeUserPending, data: userGetMeData } = useModelQuery<IUserGetMeResponse>(
     USER_MODEL_KEY,
     userApi.getMe,
     {
+      enable: !!execute,
       condition: 'me',
-      enable: !!accessToken,
-      retry: USER_RETRY,
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+      retry: USER_RETRY
     }
   )
+
+  useEffect(() => {
+    if (!isGetMeUserPending && userGetMeData) {
+      setUserInfoToLocalStorage(userGetMeData.data)
+    }
+  }, [userGetMeData, isGetMeUserPending])
+
   return { isGetMeUserPending, userGetMeData }
 }

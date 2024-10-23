@@ -1,10 +1,12 @@
 'use client'
-import { IUserFromToken } from '@/types/user.i' // Ensure this path is correct
+import { IUserFromToken } from '@/types/user.i'
 import { createContext, useState, useEffect, useContext, ReactNode, Dispatch, SetStateAction, FC } from 'react'
 
 interface AppContextType {
   user: IUserFromToken | null
   setUser: Dispatch<SetStateAction<IUserFromToken | null>>
+  loading: boolean
+  setLoading: Dispatch<SetStateAction<boolean>>
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -15,7 +17,7 @@ interface AppProviderProps {
 
 export const AppProvider: FC<AppProviderProps> = ({ children }) => {
   const [user, setUser] = useState<IUserFromToken | null>(null)
-
+  const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
@@ -23,7 +25,7 @@ export const AppProvider: FC<AppProviderProps> = ({ children }) => {
     }
   }, [])
 
-  const value = { user, setUser }
+  const value = { user, setUser, loading, setLoading }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

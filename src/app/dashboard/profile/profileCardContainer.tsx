@@ -4,6 +4,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { formatDateTimeVN } from '@/libraries/utils'
 import { IUser } from '@/types/user.i'
 import { BriefcaseBusiness, Cake, MapPin, Phone, User } from 'lucide-react'
+import AvatarDefault from '@/images/avatar.jpg'
+import Image from 'next/image'
 
 export default function ProfileCardContainer({ data }: { data: IUser }) {
   return (
@@ -13,8 +15,12 @@ export default function ProfileCardContainer({ data }: { data: IUser }) {
           <Popover>
             <PopoverTrigger asChild>
               <Avatar className='mx-5 h-44 w-44 rounded-full hover:cursor-pointer md:h-44 md:w-44'>
-                <AvatarImage src='https://github.com/shadcn.png' />
-                <AvatarFallback>CN</AvatarFallback>
+                {/* <AvatarImage
+                  className='h-full w-full object-cover'
+                  src={`${process.env.NEXT_PUBLIC_API_ENDPOINT}${data?.avatar}`}
+                /> */}
+                <Image alt='' className='h-full w-full object-cover' src={AvatarDefault} />
+                <AvatarFallback>UK</AvatarFallback>
               </Avatar>
             </PopoverTrigger>
             <PopoverContent className='w-64'>

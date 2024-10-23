@@ -1,5 +1,6 @@
 import {
   IAdvancedTrackerTransactionResponse,
+  ICustomTrackerTransaction,
   IDialogTrackerTransaction,
   ITrackerTransaction,
   ITrackerTransactionResponse
@@ -12,11 +13,12 @@ import {
   Transaction
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
-import { initCreateTrackerTransactionForm } from '../transaction/constants'
+import { initCreateTrackerTransactionForm, initCreateTrackerTxTypeForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
-import { IBaseResponsePagination } from '@/types/common.i'
+import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -166,22 +168,66 @@ export const handleCreateTrackerTxType = ({
   setFormData,
   hookCreateTrackerTxType,
   hookSetCacheTrackerTxType,
-  setIsAddingNewTrackerType
+  setIsDialogOpen
 }: {
   formData: ITrackerTransactionTypeBody
   setFormData: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
   hookCreateTrackerTxType: any
   hookSetCacheTrackerTxType: any
-  setIsAddingNewTrackerType: React.Dispatch<React.SetStateAction<boolean>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
 }) => {
   hookCreateTrackerTxType(formData, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookSetCacheTrackerTxType(res.data)
         toast.success('Create tracker transaction type successfully!')
-        setFormData({ name: '' })
-        setIsAddingNewTrackerType(false)
+        setFormData(initCreateTrackerTxTypeForm)
+        setIsDialogOpen((prev) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: false }))
       }
     }
   })
+}
+
+export const initTrackerTransactionDataTable = (
+  isGetAdvancedPending: boolean,
+  getAdvancedData: IAdvancedTrackerTransactionResponse | undefined,
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>,
+  setTableData: React.Dispatch<React.SetStateAction<ICustomTrackerTransaction[]>>
+) => {
+  if (!isGetAdvancedPending && getAdvancedData) {
+    const formattedData: ICustomTrackerTransaction[] = formatArrayData(
+      getAdvancedData.data,
+      formatTrackerTransactionData
+    )
+
+    setDataTableConfig((prev) => ({
+      ...prev,
+      types: getTypes(getAdvancedData.data, 'Transaction.direction'),
+      totalPage: Number(getAdvancedData.pagination?.totalPage)
+    }))
+    setTableData(formattedData)
+  }
+}
+
+export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustomTrackerTransaction => {
+  return {
+    id: data.id || '',
+    reasonName: data.reasonName || '',
+    type: data.Transaction.direction || '',
+    checkType: data.Transaction.direction || '',
+    trackerTypeName: data.TrackerType.name || '',
+    amount: `${new Intl.NumberFormat('en-US').format(data.Transaction?.amount || 0)} ${data.Transaction?.currency}`,
+    transactionDate: data.time ? formatDateTimeVN(data.time, false) : '',
+    accountSourceName: data.Transaction?.accountSource?.name || ''
+  }
+}
+
+export const filterTrackerTransactionWithType = (selectedTypes: string[], data: ITrackerTransaction[]) => {
+  if (selectedTypes.length === 0)
+    return formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(data, formatTrackerTransactionData)
+  const validValues = data.filter((item: ITrackerTransaction) =>
+    selectedTypes.includes(item.Transaction.direction as string)
+  )
+
+  return formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(validValues, formatTrackerTransactionData)
 }

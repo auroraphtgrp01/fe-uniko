@@ -1,3 +1,4 @@
+import { IChartData } from '@/components/core/charts/DonutChart'
 import { IBaseResponseData } from '@/types/common.i'
 
 export interface IDialogTrackerTransaction {
@@ -5,6 +6,7 @@ export interface IDialogTrackerTransaction {
   isDialogUpdateOpen: boolean
   isDialogClassifyTransactionOpen: boolean
   isDialogUnclassifiedOpen: boolean
+  isDialogCreateTrackerTxTypeOpen: boolean
 }
 
 export interface ITrackerTransaction {
@@ -14,6 +16,37 @@ export interface ITrackerTransaction {
   description: string | null
   userId: string
   transactionId: string | null
+  Transaction: {
+    id: string
+    direction: string
+    amount: number
+    currency: string
+    accountSource: {
+      id: string
+      name: string
+      type: string
+      currentAmount: number
+    }
+  }
+  TrackerType: {
+    id: string
+    name: string
+    type: string
+    description: string
+    ownerIds: string[]
+  }
+  time: string
+}
+
+export interface ICustomTrackerTransaction {
+  id: string
+  reasonName: string
+  trackerTypeName: string
+  type: string
+  amount: string
+  transactionDate: string
+  accountSourceName: string
+  checkType: string
 }
 
 export type ITrackerTransactionResponse = IBaseResponseData<ITrackerTransaction>
@@ -24,7 +57,7 @@ export interface ITrackerTransactionDataFormat {
   transactionName: string
   type: string
   amount: string
-  fromAccount: string // tên ví hoăc tên ngân hàng
+  fromAccount: string
   description?: string
   checkType?: string
 }
@@ -36,12 +69,17 @@ export interface IClassifyTransactionBody {
   description: string
 }
 
-export interface IStatisticData {
-  trackerTypeStats: any[]
-  trackerAccStats: any[]
-  totalSpendingToday: number
-  totalIncomeToday: number
-  totalExpenseToday: number
+export interface IStatisticData extends IChartData {
+  statusCode: number
+}
+export type IStatisticDataResponse = IBaseResponseData<IStatisticData>
+
+export interface DateRange {
+  startDay?: string
+  endDay?: string
 }
 
-export type IStatisticDataResponse = IBaseResponseData<IStatisticData>
+export interface DateRange {
+  startDay?: string
+  endDay?: string
+}

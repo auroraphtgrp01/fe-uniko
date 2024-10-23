@@ -37,7 +37,7 @@ export interface IUser {
   forgetPasswordToken: string
   refresh_token: string
   emailVerifyToken: string
-  avatarId: string
+  avatar: string
 }
 
 export type IUserGetMeResponse = IBaseResponseData<IUser>
