@@ -100,7 +100,7 @@ export function DateTimePicker({
     },
     [setDate, setMonth]
   )
-  const onSumbit = useCallback(() => {
+  const onSubmit = useCallback(() => {
     onChange(new Date(date))
     setOpen(false)
   }, [date, onChange])
@@ -160,33 +160,39 @@ export function DateTimePicker({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className='w-auto p-2'>
+      <PopoverContent className='w-auto p-3'>
         <div className='flex items-center justify-between'>
-          <div className='text-md ms-2 flex cursor-pointer items-center font-bold'>
-            <div>
-              <span onClick={() => setMonthYearPicker(monthYearPicker === 'month' ? false : 'month')}>
-                {format(month, 'MMMM')}
-              </span>
-              <span className='ms-1' onClick={() => setMonthYearPicker(monthYearPicker === 'year' ? false : 'year')}>
-                {format(month, 'yyyy')}
-              </span>
-            </div>
-            <Button variant='ghost' size='icon' onClick={() => setMonthYearPicker(monthYearPicker ? false : 'year')}>
-              {monthYearPicker ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
+            <Button variant='ghost' size='icon' onClick={onPrevMonth}>
+              <ChevronLeftIcon className='w-5' />
+            </Button>
+          </div>
+          <div className='text-md flex cursor-pointer items-center pb-1 font-bold'>
+            <Button
+              className='w-full p-2'
+              variant='ghost'
+              size='icon'
+              onClick={() => setMonthYearPicker(monthYearPicker === 'month' ? false : 'month')}
+            >
+              <span className=''>{format(month, 'MMMM')}</span>{' '}
+            </Button>
+            <Button
+              className='w-full p-2'
+              variant='ghost'
+              size='icon'
+              onClick={() => setMonthYearPicker(monthYearPicker ? false : 'year')}
+            >
+              <span className=''>{format(month, 'yyyy')}</span>{' '}
             </Button>
           </div>
           <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
-            <Button variant='ghost' size='icon' onClick={onPrevMonth}>
-              <ChevronLeftIcon />
-            </Button>
             <Button variant='ghost' size='icon' onClick={onNextMonth}>
-              <ChevronRightIcon />
+              <ChevronRightIcon className='w-5' />
             </Button>
           </div>
         </div>
         <div className='relative overflow-hidden'>
           <DayPicker
-            timeZone={timezone}
             mode='single'
             selected={date}
             onSelect={(d) => d && onDayChanged(d)}
@@ -205,19 +211,18 @@ export function DateTimePicker({
               weekdays: 'flex justify-between mt-2',
               weekday: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
               week: 'flex w-full justify-between mt-2',
-              day: 'h-9 w-9 text-center text-sm p-0 relative flex items-center justify-center [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 rounded-1',
+              day: 'h-10 w-10 mx-1 text-center text-sm relative flex items-center justify-center',
               day_button: cn(
                 buttonVariants({ variant: 'ghost' }),
-                'size-9 rounded-md p-0 font-normal aria-selected:opacity-100'
+                'rounded-md font-normal transition-all hover:bg-primary dark:text-white hover:text-primary-foreground'
               ),
-              range_end: 'day-range-end',
               selected:
-                'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-l-md rounded-r-md',
-              today: 'bg-accent text-accent-foreground',
+                'bg-primary h-10 w-10 text-primary-foreground dark:text-white hover:bg-primary focus:bg-primary focus:text-primary-foreground rounded-md border border-primary-light shadow-md',
+              today: 'bg-accent text-accent-foreground rounded-md',
               outside:
-                'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
+                'text-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
               disabled: 'text-muted-foreground opacity-50',
-              range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
+              range_middle: 'bg-accent-light text-accent-foreground rounded-md',
               hidden: 'invisible'
             }}
             showOutsideDays={true}
@@ -235,22 +240,12 @@ export function DateTimePicker({
             className={cn('absolute bottom-0 left-0 right-0 top-0', monthYearPicker ? '' : 'hidden')}
           />
         </div>
-        <div className='flex flex-col gap-2'>
-          {showTime && (
-            <TimePicker value={date} onChange={setDate} use12HourFormat={use12HourFormat} min={minDate} max={maxDate} />
-          )}
-          <div className='flex flex-row-reverse items-center justify-between'>
-            <Button className='ms-2 h-7 px-2' onClick={onSumbit}>
-              Done
-            </Button>
-            {timezone && (
-              <div className='text-sm'>
-                <span>Timezone:</span>
-                <span className='ms-1 font-semibold'>{timezone}</span>
-              </div>
-            )}
-          </div>
-        </div>
+        {showTime && (
+          <TimePicker value={date} onChange={setDate} use12HourFormat={use12HourFormat} min={minDate} max={maxDate} />
+        )}
+        <Button className='mt-4 w-full' onClick={onSubmit}>
+          Done
+        </Button>
       </PopoverContent>
     </Popover>
   )
@@ -546,82 +541,84 @@ function TimePicker({
   }, [value, use12HourFormat])
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button variant='outline' role='combobox' aria-expanded={open} className='justify-between'>
-          <Clock className='mr-2 size-4' />
-          {display}
-          <ChevronDownIcon className='ml-2 size-4 shrink-0 opacity-50' />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className='p-0' side='top'>
-        <div className='flex-col gap-2 p-2'>
-          <div className='flex h-56 grow'>
-            <ScrollArea className='h-full flex-grow'>
-              <div className='flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2'>
-                {hours.map((v) => (
-                  <div key={v.value} ref={v.value === hour ? hourRef : undefined}>
-                    <TimeItem
-                      option={v}
-                      selected={v.value === hour}
-                      onSelect={onHourChange}
-                      className='h-8'
-                      disabled={v.disabled}
-                    />
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-            <ScrollArea className='h-full flex-grow'>
-              <div className='flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2'>
-                {minutes.map((v) => (
-                  <div key={v.value} ref={v.value === minute ? minuteRef : undefined}>
-                    <TimeItem
-                      option={v}
-                      selected={v.value === minute}
-                      onSelect={onMinuteChange}
-                      className='h-8'
-                      disabled={v.disabled}
-                    />
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-            <ScrollArea className='h-full flex-grow'>
-              <div className='flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2'>
-                {seconds.map((v) => (
-                  <div key={v.value} ref={v.value === second ? secondRef : undefined}>
-                    <TimeItem
-                      option={v}
-                      selected={v.value === second}
-                      onSelect={(v) => setSecond(v.value)}
-                      className='h-8'
-                      disabled={v.disabled}
-                    />
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-            {use12HourFormat && (
+    <div className='w-full'>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild className='w-full'>
+          <Button variant='outline' role='combobox' aria-expanded={open} className='justify-between'>
+            <Clock className='mr-2 size-4' />
+            {display}
+            <ChevronDownIcon className='ml-2 size-4 shrink-0 opacity-50' />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className='p-0' side='top'>
+          <div className='flex-col gap-2 p-2'>
+            <div className='flex h-56 grow'>
               <ScrollArea className='h-full flex-grow'>
-                <div className='flex grow flex-col items-stretch overflow-y-auto pe-2'>
-                  {ampmOptions.map((v) => (
-                    <TimeItem
-                      key={v.value}
-                      option={v}
-                      selected={v.value === ampm}
-                      onSelect={onAmpmChange}
-                      className='h-8'
-                      disabled={v.disabled}
-                    />
+                <div className='flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2'>
+                  {hours.map((v) => (
+                    <div key={v.value} ref={v.value === hour ? hourRef : undefined}>
+                      <TimeItem
+                        option={v}
+                        selected={v.value === hour}
+                        onSelect={onHourChange}
+                        className='h-8'
+                        disabled={v.disabled}
+                      />
+                    </div>
                   ))}
                 </div>
               </ScrollArea>
-            )}
+              <ScrollArea className='h-full flex-grow'>
+                <div className='flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2'>
+                  {minutes.map((v) => (
+                    <div key={v.value} ref={v.value === minute ? minuteRef : undefined}>
+                      <TimeItem
+                        option={v}
+                        selected={v.value === minute}
+                        onSelect={onMinuteChange}
+                        className='h-8'
+                        disabled={v.disabled}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              <ScrollArea className='h-full flex-grow'>
+                <div className='flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2'>
+                  {seconds.map((v) => (
+                    <div key={v.value} ref={v.value === second ? secondRef : undefined}>
+                      <TimeItem
+                        option={v}
+                        selected={v.value === second}
+                        onSelect={(v) => setSecond(v.value)}
+                        className='h-8'
+                        disabled={v.disabled}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              {use12HourFormat && (
+                <ScrollArea className='h-full flex-grow'>
+                  <div className='flex grow flex-col items-stretch overflow-y-auto pe-2'>
+                    {ampmOptions.map((v) => (
+                      <TimeItem
+                        key={v.value}
+                        option={v}
+                        selected={v.value === ampm}
+                        onSelect={onAmpmChange}
+                        className='h-8'
+                        disabled={v.disabled}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </div>
           </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+    </div>
   )
 }
 
