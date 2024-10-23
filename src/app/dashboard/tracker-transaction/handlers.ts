@@ -13,12 +13,12 @@ import {
   Transaction
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
-import { initCreateTrackerTransactionForm } from '../transaction/constants'
+import { initCreateTrackerTransactionForm, initCreateTrackerTxTypeForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
 import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { formatDateTimeVN } from '@/libraries/utils'
+import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -168,21 +168,21 @@ export const handleCreateTrackerTxType = ({
   setFormData,
   hookCreateTrackerTxType,
   hookSetCacheTrackerTxType,
-  setIsAddingNewTrackerType
+  setIsDialogOpen
 }: {
   formData: ITrackerTransactionTypeBody
   setFormData: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
   hookCreateTrackerTxType: any
   hookSetCacheTrackerTxType: any
-  setIsAddingNewTrackerType: React.Dispatch<React.SetStateAction<boolean>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
 }) => {
   hookCreateTrackerTxType(formData, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookSetCacheTrackerTxType(res.data)
         toast.success('Create tracker transaction type successfully!')
-        setFormData({ name: '' })
-        setIsAddingNewTrackerType(false)
+        setFormData(initCreateTrackerTxTypeForm)
+        setIsDialogOpen((prev) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: false }))
       }
     }
   })
@@ -192,23 +192,42 @@ export const initTrackerTransactionDataTable = (
   isGetAdvancedPending: boolean,
   getAdvancedData: IAdvancedTrackerTransactionResponse | undefined,
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>,
-  setFetchedData: React.Dispatch<React.SetStateAction<ITrackerTransaction[]>>,
   setTableData: React.Dispatch<React.SetStateAction<ICustomTrackerTransaction[]>>
 ) => {
   if (!isGetAdvancedPending && getAdvancedData) {
-    const formattedData: ICustomTrackerTransaction[] = getAdvancedData.data.map((item) => ({
-      id: item.id,
-      trackerTypeId: item.trackerTypeId ?? '',
-      type: item.TrackerType?.name ?? '',
-      amount: `${new Intl.NumberFormat('en-US').format(item.Transaction?.amount || 0)} ${item.Transaction?.currency}`,
-      transactionDate: item.time ? formatDateTimeVN(item.time, false) : '',
-      source: item.Transaction?.accountSource.name ?? ''
-    }))
+    const formattedData: ICustomTrackerTransaction[] = formatArrayData(
+      getAdvancedData.data,
+      formatTrackerTransactionData
+    )
+
     setDataTableConfig((prev) => ({
       ...prev,
+      types: getTypes(getAdvancedData.data, 'Transaction.direction'),
       totalPage: Number(getAdvancedData.pagination?.totalPage)
     }))
-    setFetchedData(getAdvancedData.data)
     setTableData(formattedData)
   }
+}
+
+export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustomTrackerTransaction => {
+  return {
+    id: data.id || '',
+    reasonName: data.reasonName || '',
+    type: data.Transaction.direction || '',
+    checkType: data.Transaction.direction || '',
+    trackerTypeName: data.TrackerType.name || '',
+    amount: `${new Intl.NumberFormat('en-US').format(data.Transaction?.amount || 0)} ${data.Transaction?.currency}`,
+    transactionDate: data.time ? formatDateTimeVN(data.time, false) : '',
+    accountSourceName: data.Transaction?.accountSource?.name || ''
+  }
+}
+
+export const filterTrackerTransactionWithType = (selectedTypes: string[], data: ITrackerTransaction[]) => {
+  if (selectedTypes.length === 0)
+    return formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(data, formatTrackerTransactionData)
+  const validValues = data.filter((item: ITrackerTransaction) =>
+    selectedTypes.includes(item.Transaction.direction as string)
+  )
+
+  return formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(validValues, formatTrackerTransactionData)
 }

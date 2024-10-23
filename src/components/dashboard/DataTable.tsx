@@ -48,8 +48,6 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
     config
-  console.log('currentPage: ', currentPage + ' - totalPage: ', totalPage)
-
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -81,13 +79,14 @@ export function DataTable<TData, TValue>({
   }, [data, config])
 
   const toggleType = (type: string) => {
-    if (selectedTypes)
+    if (selectedTypes) {
       setConfig((prev) => ({
         ...prev,
         selectedTypes: selectedTypes.includes(type)
           ? selectedTypes.filter((selectedType) => selectedType !== type)
           : [...selectedTypes, type]
       }))
+    }
   }
 
   return (

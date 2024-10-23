@@ -18,8 +18,6 @@ export const handleShowDetailAccountSource = (
   getAccountSourceById: any
 ) => {
   const data = getAccountSourceById.data
-  console.log('🚀 ~ data:', data)
-
   setFormData({
     id: data.id,
     name: data.name as string,
@@ -144,7 +142,7 @@ export const initDataTable = (
     )
     setDataTableConfig((prev) => ({
       ...prev,
-      types: getTypes(getAdvancedData.data),
+      types: getTypes(getAdvancedData.data, 'type'),
       totalPage: Number(getAdvancedData.pagination?.totalPage)
     }))
     setFetchedData(getAdvancedData.data)

@@ -63,13 +63,10 @@ export default function AccountSourceForm() {
   const { setData: setCacheDetailData } = useUpdateModel<IAccountSourceResponse>(queryGetDetail, updateCacheDetailData)
   const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataUpdate)
 
-  console.log('queryOptions account-source : ', queryOptions)
-  console.log('dataTableConfig.currentPage : ', dataTableConfig.currentPage)
-
   // Effects
   useEffect(() => {
-    console.log('🚀 ~ formData:', formData)
-  }, [formData])
+    setTableData(filterDataAccountSource(fetchedData, dataTableConfig.selectedTypes as string[]))
+  }, [dataTableConfig.selectedTypes])
 
   useEffect(() => {
     initDataTable(isGetAdvancedPending, getAdvancedData, setDataTableConfig, setFetchedData, setTableData)

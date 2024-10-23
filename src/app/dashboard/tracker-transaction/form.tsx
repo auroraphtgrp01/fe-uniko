@@ -30,6 +30,7 @@ import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks
 import {
   initClassifyTransactionForm,
   initCreateTrackerTransactionForm,
+  initCreateTrackerTxTypeForm,
   transactionHeaders
 } from '../transaction/constants'
 import { useAccountSource } from '@/core/account-source/hooks'
@@ -41,10 +42,16 @@ import {
   TRACKER_TRANSACTION_TYPE_MODEL_KEY
 } from '@/core/tracker-transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
-import { initTrackerTransactionDataTable, updateCacheDataCreate, updateCacheDataUpdate } from './handlers'
+import {
+  filterTrackerTransactionWithType,
+  initTrackerTransactionDataTable,
+  updateCacheDataCreate,
+  updateCacheDataUpdate
+} from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { DateTimePicker } from '@/components/core/DateTimePicker'
-import ChartCard from '@/app/dashboard/tracker-transaction/Chartcard'
+import ChartCard from './chartcard'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export default function TrackerTransactionForm() {
   const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
@@ -52,11 +59,12 @@ export default function TrackerTransactionForm() {
   const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
 
   // states
-  const [fetchedData, setFetchedData] = useState<ITrackerTransaction[]>([]) // State để lưu dữ liệu đã fetch
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataClassify, setFormDataClassify] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
+  const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
+    useState<ITrackerTransactionTypeBody>(initCreateTrackerTxTypeForm)
   const [formDataCreate, setFormDataCreate] = useState<ICreateTrackerTransactionFormData>(
     initCreateTrackerTransactionForm
   )
@@ -90,7 +98,7 @@ export default function TrackerTransactionForm() {
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { statisticData } = getStatisticData(dates || {}) //--
+  const { statisticData } = getStatisticData(dates || {})
   const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({ query: queryOptions })
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
   const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
@@ -107,19 +115,17 @@ export default function TrackerTransactionForm() {
 
   // effects
   useEffect(() => {
-    console.log('dataTableConfig.currentPage : ', dataTableConfig.currentPage)
+    setTableData(
+      filterTrackerTransactionWithType(dataTableConfig.selectedTypes || [], advancedTrackerTxData?.data || [])
+    )
+  }, [dataTableConfig.selectedTypes])
 
+  useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
 
   useEffect(() => {
-    initTrackerTransactionDataTable(
-      isGetAdvancedPending,
-      advancedTrackerTxData,
-      setDataTableConfig,
-      setFetchedData,
-      setTableData
-    )
+    initTrackerTransactionDataTable(isGetAdvancedPending, advancedTrackerTxData, setDataTableConfig, setTableData)
   }, [isGetAdvancedPending, advancedTrackerTxData])
 
   useEffect(() => {
@@ -128,17 +134,20 @@ export default function TrackerTransactionForm() {
 
   useEffect(() => {
     if (advancedTrackerTxData && statisticData?.data) {
-      console.log('querioption: ', queryOptions)
-      const transformedData: ICustomTrackerTransaction[] = advancedTrackerTxData.data.map((item) => {
-        return {
-          id: item.id,
-          trackerTypeId: item.trackerTypeId ?? '',
-          type: item.TrackerType?.name ?? '',
-          amount: `${new Intl.NumberFormat('en-US').format(item.Transaction?.amount || 0)} ${item.Transaction?.currency}`,
-          transactionDate: item.time ? formatDateTimeVN(item.time, false) : '',
-          source: item.Transaction?.accountSource.name ?? ''
+      const transformedData: ICustomTrackerTransaction[] = advancedTrackerTxData.data.map(
+        (item: ITrackerTransaction) => {
+          return {
+            id: item.id || '',
+            reasonName: item.reasonName || '',
+            type: item.Transaction.direction || '',
+            checkType: item.Transaction.direction || '',
+            trackerTypeName: item.TrackerType.name || '',
+            amount: `${new Intl.NumberFormat('en-US').format(item.Transaction?.amount || 0)} ${item.Transaction?.currency}`,
+            transactionDate: item.time ? formatDateTimeVN(item.time, false) : '',
+            accountSourceName: item.Transaction?.accountSource?.name || ''
+          }
         }
-      })
+      )
       setTableData(transformedData)
     }
   }, [advancedTrackerTxData, statisticData])
@@ -309,15 +318,19 @@ export default function TrackerTransactionForm() {
             isDialogOpen,
             setIsDialogOpen,
             dataTrackerTransactionType: dataTrackerTransactionType?.data ?? [],
-            hookResetCacheStatistic: resetCacheStatistic,
-            hookCreateTrackerTxType: createTrackerTxType,
-            hookSetCacheTrackerTxType: setCacheTrackerTxType
+            hookResetCacheStatistic: resetCacheStatistic
           }}
           unclassifiedTxDialog={{
             columns: columnUnclassifiedTxTables,
             unclassifiedTxTableData,
             setTableConfig: setDataTableUnclassifiedConfig,
             tableConfig: dataTableUnclassifiedConfig
+          }}
+          createTrackerTransactionTypeDialog={{
+            formData: formDataCreateTrackerTxType,
+            setFormData: setFormDataCreateTrackerTxType,
+            createTrackerTransactionType: createTrackerTxType,
+            hookUpdateCache: setCacheTrackerTxType
           }}
         />
       </div>

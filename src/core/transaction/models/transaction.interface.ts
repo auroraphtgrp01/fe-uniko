@@ -28,6 +28,7 @@ export interface IDialogTransaction {
   isDialogTransactionTodayOpen: boolean
   isDialogUnclassifiedTransactionOpen: boolean
   isDialogClassifyTransactionOpen: boolean
+  isDialogCreateTrackerTxTypeOpen: boolean
 }
 
 export interface IDataTransactionTable {
@@ -56,6 +57,5 @@ export interface ICreateTrackerTransactionFormData {
   description?: string
   direction: string
   amount?: number
-  currency: string
   accountSourceId: string
 }
