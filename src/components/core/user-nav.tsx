@@ -34,7 +34,7 @@ export function UserNav() {
       localStorage.removeItem('refreshToken')
       localStorage.removeItem('userInfo')
       setIsLogout(false)
-      router.push(baseUrl)
+      router.push('/')
     }
   }, [isLogout])
   return (
