@@ -1,4 +1,4 @@
-import { formatAccountSourceData } from '@/app/dashboard/account-source/constants'
+import { formatAccountSourceData, initAccountSourceFormData } from '@/app/dashboard/account-source/constants'
 import {
   EAccountSourceType,
   IAccountSource,
@@ -18,12 +18,14 @@ export const handleShowDetailAccountSource = (
   getAccountSourceById: any
 ) => {
   const data = getAccountSourceById.data
+  console.log('🚀 ~ data:', data)
+
   setFormData({
     id: data.id,
     name: data.name as string,
     type: data.type,
     initAmount: Number(data.initAmount),
-    currency: data.currency
+    accountSourceType: data.type
   })
   setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
 }
@@ -43,24 +45,13 @@ export const handleCreateAccountSource = ({
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setDataCreate: any
 }) => {
-  const payload = {
-    name: formData.name,
-    accountSourceType: formData.accountSourceType,
-    initAmount: formData.initAmount,
-    currency: formData.currency,
-    accountBankId: formData.accountBankId,
-    password: formData.password,
-    login_id: formData.login_id,
-    accounts: [formData.account],
-    type: formData.type
-  }
-  createAccountSource(payload, {
+  createAccountSource(formData, {
     onSuccess: (res: IAccountSourceResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
         setFetchedData((prev) => [res.data, ...prev])
         setDataCreate(res.data)
-        setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
+        setFormData(initAccountSourceFormData)
         toast.success('Create account source successfully!')
       }
     }
@@ -88,14 +79,7 @@ export const handleUpdateAccountSource = ({
   setDetailData: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) => {
-  const payload: IAccountSourceBody = {
-    name: formData.name,
-    type: formData.type,
-    initAmount: formData.initAmount,
-    currency: formData.currency,
-    id: formData.id
-  }
-  updateAccountSource(payload, {
+  updateAccountSource(formData, {
     onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
         const clonedData = JSON.parse(JSON.stringify(res))

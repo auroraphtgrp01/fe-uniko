@@ -1,6 +1,6 @@
 import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
-import { PlusCircle, PlusIcon, X } from 'lucide-react'
+import { PlusCircle, PlusIcon, X, Check } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -136,7 +136,27 @@ export const defineContentCreateTransactionDialog = ({
                   placeholder='Enter new item'
                   className='flex-grow'
                 />
-                <Button onClick={() => setIsAddingNewTrackerType(false)} size='sm' className='ml-2'>
+                <Button
+                  onClick={() =>
+                    handleCreateTrackerTxType({
+                      formData: formDataCreateTrackerTxType,
+                      setFormData: setFormDataCreateTrackerTxType,
+                      hookCreateTrackerTxType,
+                      hookSetCacheTrackerTxType,
+                      setIsAddingNewTrackerType
+                    })
+                  }
+                  size='sm'
+                  className='ml-2'
+                >
+                  <Check className='h-4 w-4' />
+                </Button>
+                <Button
+                  onClick={() => setIsAddingNewTrackerType(false)}
+                  variant={'destructive'}
+                  size='sm'
+                  className='ml-2'
+                >
                   <X className='h-4 w-4' />
                 </Button>
               </div>

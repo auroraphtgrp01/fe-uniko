@@ -46,7 +46,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
 
   useEffect(() => {
     if (!isGetMeUserPending && userGetMeData) {
-      setUserInfoToLocalStorage(userGetMeData)
+      setUserInfoToLocalStorage(userGetMeData.data)
       router.push('/dashboard')
     }
   }, [userGetMeData, isGetMeUserPending, router])

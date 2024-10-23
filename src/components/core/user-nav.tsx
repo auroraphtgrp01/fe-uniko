@@ -23,6 +23,7 @@ export function UserNav() {
   const router = useRouter()
   const [isLogout, setIsLogout] = useState(false)
   const user = getUserInfoFromLocalStorage()
+  console.log('sd',user)
   const { logout } = useUser()
   const { userLogoutData } = logout(isLogout)
   useEffect(() => {
@@ -38,14 +39,18 @@ export function UserNav() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='relative h-10 w-10 rounded-full p-0'>
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className='h-full w-full rounded-full bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 p-[1px]'
-            >
-              <Avatar className='h-full w-full rounded-full'>
-                <AvatarImage src={'https://github.com/shadcn.png'} className='rounded-full' />
-                <AvatarFallback className='rounded-full'>{JSON.stringify(user?.fullName)}</AvatarFallback>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className='h-full w-full rounded-full'>
+              <Avatar className='rounded-full hover:cursor-pointer'>
+                <AvatarImage
+                  className='h-full w-full object-cover'
+                  src={`${process.env.NEXT_PUBLIC_API_ENDPOINT}${user?.avatar}`}
+                />
+                <AvatarFallback>
+                  <img
+                    src='https://s3.ap-southeast-1.amazonaws.com/cdn.vntre.vn/default/avatar-cute-dong-vat-1725201830.jpg'
+                    className='h-full w-full object-cover'
+                  />
+                </AvatarFallback>
               </Avatar>
             </motion.div>
           </Button>

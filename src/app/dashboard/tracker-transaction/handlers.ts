@@ -1,5 +1,6 @@
 import {
   IAdvancedTrackerTransactionResponse,
+  ICustomTrackerTransaction,
   IDialogTrackerTransaction,
   ITrackerTransaction,
   ITrackerTransactionResponse
@@ -15,8 +16,9 @@ import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
-import { IBaseResponsePagination } from '@/types/common.i'
+import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { formatDateTimeVN } from '@/libraries/utils'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -184,4 +186,29 @@ export const handleCreateTrackerTxType = ({
       }
     }
   })
+}
+
+export const initTrackerTransactionDataTable = (
+  isGetAdvancedPending: boolean,
+  getAdvancedData: IAdvancedTrackerTransactionResponse | undefined,
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>,
+  setFetchedData: React.Dispatch<React.SetStateAction<ITrackerTransaction[]>>,
+  setTableData: React.Dispatch<React.SetStateAction<ICustomTrackerTransaction[]>>
+) => {
+  if (!isGetAdvancedPending && getAdvancedData) {
+    const formattedData: ICustomTrackerTransaction[] = getAdvancedData.data.map((item) => ({
+      id: item.id,
+      trackerTypeId: item.trackerTypeId ?? '',
+      type: item.TrackerType?.name ?? '',
+      amount: `${new Intl.NumberFormat('en-US').format(item.Transaction?.amount || 0)} ${item.Transaction?.currency}`,
+      transactionDate: item.time ? formatDateTimeVN(item.time, false) : '',
+      source: item.Transaction?.accountSource.name ?? ''
+    }))
+    setDataTableConfig((prev) => ({
+      ...prev,
+      totalPage: Number(getAdvancedData.pagination?.totalPage)
+    }))
+    setFetchedData(getAdvancedData.data)
+    setTableData(formattedData)
+  }
 }

@@ -13,8 +13,16 @@ export default function ProfileCardContainer({ data }: { data: IUser }) {
           <Popover>
             <PopoverTrigger asChild>
               <Avatar className='mx-5 h-44 w-44 rounded-full hover:cursor-pointer md:h-44 md:w-44'>
-                <AvatarImage src='https://github.com/shadcn.png' />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage
+                  className='h-full w-full object-cover'
+                  src={`${process.env.NEXT_PUBLIC_API_ENDPOINT}${data?.avatar}`}
+                />
+                <AvatarFallback>
+                  <img
+                    src='https://s3.ap-southeast-1.amazonaws.com/cdn.vntre.vn/default/avatar-cute-dong-vat-1725201830.jpg'
+                    className='h-full w-full object-cover'
+                  />
+                </AvatarFallback>
               </Avatar>
             </PopoverTrigger>
             <PopoverContent className='w-64'>

@@ -117,3 +117,20 @@
   /* Màu của spinner */
   border-left-color: #419c7e !important;
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+  background-color: hsl(var(--background));
+  border-radius: 8px;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar-thumb {
+  color: hsl(var(--primary));
+  background-color: hsl(var(--primary));
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: hsl(var(--background));
+}
