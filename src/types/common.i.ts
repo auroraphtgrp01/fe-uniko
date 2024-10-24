@@ -52,3 +52,12 @@ export interface IMutateData<TBody> {
   headers?: Record<string, string>
   method: 'post' | 'put' | 'patch'
 }
+
+export interface IEmoji {
+  id: string
+  name: string
+  native: string
+  unified: string
+  keywords: string[]
+  shortcodes: string
+}
