@@ -2,8 +2,8 @@ import { useMutationCustom } from '@/hooks/useMutationCustom'
 import toast from 'react-hot-toast'
 import { authServices } from '../configs'
 import { AUTH_RETRY } from '@/core/auth/constants'
-import { IResetPasswordDetailBody, IResetPasswordDetailResponse } from '@/app/forgot-password/forgot-password.i'
 import { useRouter } from 'next/navigation'
+import { IResetPasswordDetailBody, IResetPasswordDetailResponse } from '@/core/auth/models'
 export const useResetPassword = () => {
   const router = useRouter()
   const mutation = useMutationCustom<IResetPasswordDetailBody, IResetPasswordDetailResponse>({

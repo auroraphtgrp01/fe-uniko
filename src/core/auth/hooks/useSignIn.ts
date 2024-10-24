@@ -1,17 +1,13 @@
-import { ISignInBody, ISignInResponse } from '@/app/sign-in/sign-in.i'
-import {
-  setAccessTokenToLocalStorage,
-  setRefreshTokenToLocalStorage,
-  setUserInfoToLocalStorage
-} from '@/libraries/helpers'
+import { setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/libraries/helpers'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { authServices } from '../configs'
 import { AUTH_RETRY } from '@/core/auth/constants'
 import { IUseQueryHookOptions } from '@/types/query.interface'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useMutationCustom } from '@/hooks/useMutationCustom'
 import { useUser } from '@/core/users/hooks'
+import { ISignInBody, ISignInResponse } from '@/core/auth/models'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {
   const router = useRouter()

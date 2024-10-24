@@ -8,13 +8,13 @@ import { Label } from '@/components/ui/label'
 import Logo2 from '@/images/logo-2.png'
 import { useState } from 'react'
 import { useAuth } from '@/core/auth/hooks'
-export default function ResetPasswordform() {
+export default function ResetPasswordForm() {
   const [formGetTokenData, setFormGetTokenData] = useState({
     email: '',
     execute: false
   })
   const { forgotPassword } = useAuth()
-  const { isForgotPasswordLoading, forgotPasswordData } = forgotPassword(formGetTokenData)
+  const { isForgotPasswordLoading } = forgotPassword(formGetTokenData)
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setFormGetTokenData((prev) => ({ ...prev, execute: true }))

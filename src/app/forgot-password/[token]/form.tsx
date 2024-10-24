@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import Logo2 from '@/images/logo-2.png'
 import { useAuth } from '@/core/auth/hooks'
-export default function ForgotpasswordDetail({ params }: { params: { token: string } }) {
+export default function ForgotPasswordDetail({ params }: { params: { token: string } }) {
   const [password, setPassword] = useState<string>('')
   const [confirmPassword, setConfirmPassword] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(false)

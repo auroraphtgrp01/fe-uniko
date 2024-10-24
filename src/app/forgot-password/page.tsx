@@ -1,9 +1,9 @@
-import ForgotPasswordform from './form'
+import ForgotPasswordForm from './form'
 
 export default function page() {
   return (
     <div>
-      <ForgotPasswordform />
+      <ForgotPasswordForm />
     </div>
   )
 }
