@@ -1,6 +1,6 @@
 import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
-import { PlusCircle, PlusIcon, X, Check } from 'lucide-react'
+import { PlusCircle, PlusIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -12,9 +12,9 @@ import {
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
-import { handleCreateTrackerTxType } from './handlers'
 import { MoneyInput } from '@/components/core/MoneyInput'
 import React from 'react'
+import { EmojiPicker } from '../../../components/common/EmojiPicker'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -195,15 +195,21 @@ export const defineContentCreateTrackerTxTypeDialog = ({
         <Label htmlFor='name' className='text-right'>
           Name
         </Label>
-        <Input
-          value={formData.name}
-          required
-          onChange={(e) => {
-            setFormData((prev) => ({ ...prev, name: e.target.value }))
-          }}
-          className='col-span-3'
-          placeholder='Name *'
-        />
+        <div className='col-span-3 flex gap-2'>
+          <Input
+            value={formData.name}
+            required
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, name: e.target.value }))
+            }}
+            placeholder='Name *'
+          />
+          <EmojiPicker
+            onChangeValue={(value) => {
+              setFormData((prev) => ({ ...prev, name: prev.name + value.native }))
+            }}
+          />
+        </div>
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='type' className='text-right'>

@@ -3,11 +3,5 @@
         "env": {
             "ENABLE_EXPERIMENTAL_COREPACK": "1"
         }
-    },
-    "rewrites": [
-        {
-            "source": "/:path*",
-            "destination": "https://dev.minhtuandng.id.vn/api/:path*"
-        }
-    ]
+    }
 }
