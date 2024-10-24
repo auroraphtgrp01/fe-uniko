@@ -74,12 +74,7 @@ export interface IStatisticData extends IChartData {
 }
 export type IStatisticDataResponse = IBaseResponseData<IStatisticData>
 
-export interface DateRange {
-  startDay?: string
-  endDay?: string
-}
-
-export interface DateRange {
-  startDay?: string
-  endDay?: string
+export interface IDateRange {
+  startDay?: Date
+  endDay?: Date
 }

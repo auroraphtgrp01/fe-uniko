@@ -131,18 +131,6 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className='flex items-center space-x-2'>
-          {buttons && buttons.length > 0
-            ? buttons.map((button: IButtonInDataTableHeader) => (
-                <Button
-                  key={button.title}
-                  variant='outline'
-                  className='whitespace-nowrap'
-                  onClick={() => button.onClick()}
-                >
-                  {button.title} {button.icon}
-                </Button>
-              ))
-            : ''}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
@@ -168,6 +156,18 @@ export function DataTable<TData, TValue>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+          {buttons && buttons.length > 0
+            ? buttons.map((button: IButtonInDataTableHeader) => (
+                <Button
+                  key={button.title}
+                  variant={button.variants ? button.variants : 'default'}
+                  className='whitespace-nowrap'
+                  onClick={() => button.onClick()}
+                >
+                  {button.title} {button.icon}
+                </Button>
+              ))
+            : ''}
         </div>
       </div>
       <div className='rounded-md border'>
@@ -215,7 +215,7 @@ export function DataTable<TData, TValue>({
                     onContextMenu={(event: React.MouseEvent) => {
                       event.preventDefault()
                       setContextMenuPosition({ x: event.clientX, y: event.clientY })
-                      setSelectedRowData(row.original) // Lưu dữ liệu dòng được chọn
+                      setSelectedRowData(row.original)
                     }}
                   >
                     {row.getVisibleCells().map((cell) => (

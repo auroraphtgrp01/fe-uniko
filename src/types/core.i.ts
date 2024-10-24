@@ -37,6 +37,18 @@ export interface IButtonInDataTableHeader {
   title: string
   onClick: () => void
   icon?: any
+  variants:
+    | 'link'
+    | 'default'
+    | 'blueCol'
+    | 'blueVin'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'greenPastel1'
+    | null
+    | undefined
 }
 
 export type IErrorResponseBase = {

@@ -8,6 +8,7 @@ import {
   DialogFooter
 } from '@/components/ui/dialog'
 import { IDialogConfig } from '@/types/common.i'
+import { DialogOverlay } from '@radix-ui/react-dialog'
 interface CustomDialogProps {
   config: IDialogConfig
   onSubmit?: (e: FormEvent) => void

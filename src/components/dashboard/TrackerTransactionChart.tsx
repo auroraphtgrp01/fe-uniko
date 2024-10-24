@@ -3,56 +3,64 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import DonutChart, { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 import { DateRangePicker } from '../core/DateRangePicker'
+import { IDateRange } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 
-interface TrackerTransactionChartProps {
-  defaultValue: string
-  incomingChartData: IPayloadDataChart[]
-  expenseChartData: IPayloadDataChart[]
-  incomingLabel: string
-  expenseLabel: string
-  incomingChartHeight?: string
-  expenseChartHeight?: string
-  className?: string
+interface ITabContent {
+  labels: string
+  value: string
+  content: JSX.Element
 }
 
-export default function TrackerTransactionChart({
-  defaultValue,
-  incomingChartData,
-  expenseChartData,
-  incomingLabel,
-  expenseLabel,
-  incomingChartHeight,
-  expenseChartHeight,
-  className = ''
-}: TrackerTransactionChartProps) {
-  const [currentTab, setCurrentTab] = useState(defaultValue)
-  useEffect(() => {
-    setCurrentTab(defaultValue)
-  }, [defaultValue])
+export interface ITabConfig {
+  tabContents: ITabContent[]
+  default: string
+}
+
+export interface IStatisticDateRange {
+  dates: IDateRange
+  setDates: React.Dispatch<React.SetStateAction<IDateRange>>
+}
+
+interface ITrackerTransactionChartProps {
+  tabConfig: ITabConfig
+  statisticDateRange: IStatisticDateRange
+}
+
+export default function TrackerTransactionChart({ tabConfig, statisticDateRange }: ITrackerTransactionChartProps) {
+  const [currentTab, setCurrentTab] = useState(tabConfig.default)
 
   return (
     <Tabs value={currentTab} onValueChange={setCurrentTab} className='h-full flex-1 rounded-md'>
-      <Card className={`w-full ${className}`}>
+      <Card className='h-full w-full'>
         <CardContent className='items-center justify-center'>
           <TabsList className='col-span-2 mt-5 grid w-full grid-cols-2'>
-            <TabsTrigger className='me-2' value='incomingChart'>
-              {incomingLabel}
-            </TabsTrigger>
-            <TabsTrigger value='expenseChart'>{expenseLabel}</TabsTrigger>
+            {tabConfig.tabContents.length > 0
+              ? tabConfig.tabContents.map((tabContent: ITabContent) => (
+                  <>
+                    <TabsTrigger value={tabContent.value}>{tabContent.labels}</TabsTrigger>
+                  </>
+                ))
+              : ''}
           </TabsList>
           <div className='mt-4'>
-            <DateRangePicker onChange={(range) => {}}></DateRangePicker>
-          </div>
-          <TabsContent value='incomingChart' className='h-fit'>
-            <DonutChart
-              data={incomingChartData ? incomingChartData : []}
-              className={`h-[30rem] w-full`}
-              types='donut'
+            <DateRangePicker
+              value={{ from: statisticDateRange.dates.startDay, to: statisticDateRange.dates.endDay }}
+              onChange={(range) => {
+                console.log('range', range)
+
+                if (range) statisticDateRange.setDates({ startDay: range.from, endDay: range.to })
+              }}
             />
-          </TabsContent>
-          <TabsContent value='expenseChart' className='h-fit'>
-            <DonutChart data={expenseChartData ? expenseChartData : []} className={`h-[30rem] w-full`} types='donut' />
-          </TabsContent>
+          </div>
+          {tabConfig.tabContents.length > 0
+            ? tabConfig.tabContents.map((tabContent: ITabContent) => (
+                <>
+                  <TabsContent value={tabContent.value} className='h-fit'>
+                    {tabContent.content}
+                  </TabsContent>
+                </>
+              ))
+            : ''}
         </CardContent>
       </Card>
     </Tabs>

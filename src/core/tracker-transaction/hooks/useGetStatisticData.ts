@@ -1,6 +1,6 @@
 import { useModelQuery } from '@/hooks/useQueryModel'
 import { trackerTransactionRoutes } from '../configs'
-import { DateRange, IStatisticDataResponse } from '../models/tracker-transaction.interface'
+import { IStatisticDataResponse } from '../models/tracker-transaction.interface'
 import { STATISTIC_TRACKER_TRANSACTION_KEY, TRACKER_TRANSACTION_MODEL_RETRY } from '../constants'
 import { IDynamicType } from '@/types/common.i'
 
