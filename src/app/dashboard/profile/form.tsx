@@ -49,7 +49,7 @@ export default function ProfileForm() {
             <TabsTrigger value='account'>Common Information</TabsTrigger>
             <TabsTrigger value='password'>Credential Information</TabsTrigger>
           </TabsList>
-          <TabsContent value='account' className='h-fit'>
+          <TabsContent value='account' className='h-fit py-2'>
             <CommonInformationForm
               formData={commonInfFormData}
               setFormData={setCommonInfFormData}
@@ -59,7 +59,7 @@ export default function ProfileForm() {
               setData={setData}
             />
           </TabsContent>
-          <TabsContent value='password' className='h-fit min-[1490px]:mt-2'>
+          <TabsContent value='password' className='h-fit py-2 min-[1490px]:mt-2'>
             <CredentialInformationForm
               formData={credentialInfFormData}
               setFormData={setCredentialInfFormData}

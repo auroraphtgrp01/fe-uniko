@@ -6,12 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
-import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  ITrackerTransactionType,
-  ITrackerTransactionTypeBody
-} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
 import { MoneyInput } from '@/components/core/MoneyInput'
 import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
@@ -28,17 +24,19 @@ export const initButtonInDataTableHeader = ({
 }): IButtonInDataTableHeader[] => {
   return [
     {
+      title: 'Classify',
+      variants: 'secondary',
+      onClick: () => {
+        setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
+      }
+    },
+    {
       title: 'Create',
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))
       },
+      variants: 'default',
       icon: <PlusIcon className='ml-2 h-4 w-4' />
-    },
-    {
-      title: 'Classify',
-      onClick: () => {
-        setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
-      }
     }
   ]
 }
