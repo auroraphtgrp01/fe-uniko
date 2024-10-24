@@ -76,6 +76,7 @@ export default function DashboardMainForm() {
       <div className='flex w-full flex-col md:col-span-1'>
         <div className='grid flex-1 grid-cols-1 gap-4'>
           <Combobox
+            onValueSelect={(newValue) => {}}
             setOpenEditDialog={setOpenEditDialog}
             dataArr={data}
             dialogEdit={EditTrackerTypeDialog({

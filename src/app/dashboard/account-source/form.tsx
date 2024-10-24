@@ -34,6 +34,7 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { ACCOUNT_SOURCE_MODEL_KEY } from '@/core/account-source/constants'
 import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
 
 export default function AccountSourceForm() {
   // States
@@ -62,10 +63,15 @@ export default function AccountSourceForm() {
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataCreate)
   const { setData: setCacheDetailData } = useUpdateModel<IAccountSourceResponse>(queryGetDetail, updateCacheDetailData)
   const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataUpdate)
+  const { setAccountSourceData } = useStoreLocal()
   // Effects
   useEffect(() => {
     initDataTable(isGetAdvancedPending, getAdvancedData, setDataTableConfig, setFetchedData, setTableData)
   }, [getAdvancedData])
+
+  useEffect(() => {
+    setAccountSourceData(fetchedData)
+  }, [fetchedData])
 
   useEffect(() => {
     if (getDetailAccountSource !== undefined && idRowClicked !== '')

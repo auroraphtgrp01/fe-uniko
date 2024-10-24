@@ -6,7 +6,6 @@ import configProject from '../config/configService'
 import QueryProvider from '@/libraries/query-provider'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from '@/libraries/theme-provider'
-import { AppProvider } from '../context/app-context.provider'
 import { ReactNode } from 'react'
 import 'nprogress/nprogress.css'
 import dynamic from 'next/dynamic'
@@ -57,11 +56,9 @@ export default function RootLayout({
           containerStyle={{}}
         />
         <TopProgressBar />
-        <AppProvider>
-          <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-            <QueryProvider>{children}</QueryProvider>
-          </ThemeProvider>
-        </AppProvider>
+        <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+          <QueryProvider>{children}</QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

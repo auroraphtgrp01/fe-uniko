@@ -16,7 +16,6 @@ import { IAccountSource } from '@/core/account-source/models'
 import { MoneyInput } from '@/components/core/MoneyInput'
 import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
-import { useEffect, useState } from 'react'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
 import { Combobox } from '@/components/core/Combobox'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
@@ -67,8 +66,6 @@ export const defineContentCreateTransactionDialog = ({
   openEditTrackerTxTypeDialog: boolean
   setOpenEditTrackerTxTypeDialog: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  console.log('openEditTrackerTxTypeDialog', openEditTrackerTxTypeDialog)
-
   return (
     <div className='grid gap-4 py-4'>
       <div className='grid grid-cols-4 items-center gap-4'>
@@ -103,33 +100,10 @@ export const defineContentCreateTransactionDialog = ({
         <Label htmlFor='trackerTypeId' className='text-right'>
           Tracker Type
         </Label>
-        {/* <Select
-          required
-          onValueChange={(value) => setFormData((prev) => ({ ...prev, trackerTypeId: value }))}
-          value={formData.trackerTypeId}
-        >
-          <SelectTrigger className='col-span-3'>
-            <SelectValue placeholder='Select a tracker type' />
-          </SelectTrigger>
-          <SelectContent>
-            {trackerTransactionType.length > 0
-              ? trackerTransactionType.map((item: ITrackerTransactionType) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.name}
-                  </SelectItem>
-                ))
-              : ''}
-            <Button
-              onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: true }))}
-              variant='ghost'
-              className='w-full justify-start'
-            >
-              <PlusCircle className='mr-2 h-4 w-4' />
-              Add new item
-            </Button>
-          </SelectContent>
-        </Select> */}
         <Combobox
+          onValueSelect={(value) => {
+            setFormData((prev) => ({ ...prev, trackerTypeId: value }))
+          }}
           setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
           dataArr={modifiedTrackerTypeForComboBox(trackerTransactionType)}
           dialogEdit={EditTrackerTypeDialog({

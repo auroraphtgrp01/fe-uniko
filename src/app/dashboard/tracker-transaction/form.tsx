@@ -10,6 +10,7 @@ import {
   formatCurrency,
   formatDateTimeVN,
   getConvertedKeysToTitleCase,
+  getCurrentMonthDateRange,
   mergeQueryParams
 } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
@@ -58,6 +59,7 @@ import {
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
 
 export default function TrackerTransactionForm() {
   const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
@@ -81,7 +83,7 @@ export default function TrackerTransactionForm() {
   })
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
   const [chartData, setChartData] = useState<IChartData>()
-  const [dates, setDates] = useState<IDateRange>({})
+  const [dates, setDates] = useState<IDateRange>(getCurrentMonthDateRange())
 
   // memos
   const queryTrackerTransaction = useMemo(
@@ -119,6 +121,13 @@ export default function TrackerTransactionForm() {
   const { setData: setCacheTrackerTxType } = useUpdateModel<any>(queryTrackerTxType, (oldData, newData) => {
     return { ...oldData, data: [...oldData.data, newData] }
   })
+  const { accountSourceData, setAccountSourceData } = useStoreLocal()
+
+  useEffect(() => {
+    if (dataAdvancedAccountSource && accountSourceData.length === 0) {
+      setAccountSourceData(dataAdvancedAccountSource.data)
+    }
+  }, [dataAdvancedAccountSource])
 
   // effects
   useEffect(() => {
@@ -248,7 +257,7 @@ export default function TrackerTransactionForm() {
           formData: formDataCreate,
           setFormData: setFormDataCreate,
           createTrackerTransaction: createTransaction,
-          accountSourceData: dataAdvancedAccountSource?.data ?? [],
+          accountSourceData: accountSourceData,
           hookUpdateCache: setData
         }}
         sharedDialogElements={{
