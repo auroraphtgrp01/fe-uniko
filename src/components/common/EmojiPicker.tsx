@@ -6,14 +6,16 @@ import { cn } from '@/libraries/utils'
 import { IEmoji } from '@/types/common.i'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 
 export function EmojiPicker({
   onChangeValue,
-  className
+  className,
+  disabled
 }: {
   onChangeValue: (value: IEmoji) => void
   className?: string
+  disabled?: boolean
 }) {
   const [emoji, setEmoji] = useState<IEmoji>(defaultEmoji)
   const [isOpenPopover, setIsOpenPopover] = useState(false)
@@ -27,8 +29,8 @@ export function EmojiPicker({
   return (
     <div className={cn(className)}>
       <Popover>
-        <PopoverTrigger>
-          <Button variant={'outline'} className='h-10 w-10' type='button'>
+        <PopoverTrigger disabled={disabled}>
+          <Button variant={'outline'} className='h-10 w-10' type='button' disabled={disabled}>
             {emoji?.native}
           </Button>
         </PopoverTrigger>
