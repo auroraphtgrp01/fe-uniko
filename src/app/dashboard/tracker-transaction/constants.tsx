@@ -198,7 +198,6 @@ export const defineContentCreateTrackerTxTypeDialog = ({
         <div className='col-span-3 flex gap-2'>
           <Input
             value={formData.name}
-            required
             onChange={(e) => {
               setFormData((prev) => ({ ...prev, name: e.target.value }))
             }}
@@ -215,11 +214,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
         <Label htmlFor='type' className='text-right'>
           Type
         </Label>
-        <Select
-          required
-          onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
-          value={formData.type}
-        >
+        <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))} value={formData.type}>
           <SelectTrigger className='col-span-3'>
             <SelectValue placeholder='Select a type' />
           </SelectTrigger>
@@ -239,7 +234,6 @@ export const defineContentCreateTrackerTxTypeDialog = ({
         </Label>
         <Textarea
           value={formData.description}
-          required
           onChange={(e) => {
             setFormData((prev) => ({ ...prev, description: e.target.value }))
           }}

@@ -17,7 +17,6 @@ export function EmojiPicker({
 }) {
   const [emoji, setEmoji] = useState<IEmoji>(defaultEmoji)
   const [isOpenPopover, setIsOpenPopover] = useState(false)
-  const popoverRef = useRef<HTMLDivElement>(null)
 
   const onSelectEmoji = (item: IEmoji) => {
     onChangeValue(item)
@@ -25,37 +24,15 @@ export function EmojiPicker({
     setIsOpenPopover(false)
   }
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
-        setIsOpenPopover(false)
-      }
-    }
-    if (isOpenPopover) {
-      document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpenPopover])
-
   return (
     <div className={cn(className)}>
-      <Popover open={isOpenPopover}>
+      <Popover>
         <PopoverTrigger>
-          <Button
-            variant={'outline'}
-            className='h-10 w-10'
-            onClick={() => {
-              setIsOpenPopover(!isOpenPopover)
-            }}
-          >
+          <Button variant={'outline'} className='h-10 w-10' type='button'>
             {emoji?.native}
           </Button>
         </PopoverTrigger>
-        <PopoverContent ref={popoverRef} className='border-none bg-transparent bg-none'>
+        <PopoverContent className='border-none bg-transparent bg-none'>
           <Picker
             className='bg-transparent'
             previewPosition={'none'}
