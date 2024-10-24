@@ -20,6 +20,7 @@ import {
 } from '@/core/transaction/models'
 import { defineContentCreateTrackerTxTypeDialog, defineContentCreateTransactionDialog } from './constants'
 import { IAccountSource } from '@/core/account-source/models'
+import { useEffect, useState } from 'react'
 
 interface IUnclassifiedTxDialog {
   columns: any[]
@@ -71,12 +72,16 @@ export default function TrackerTransactionDialog({
   sharedDialogElements,
   createTrackerTransactionTypeDialog
 }: ITrackerTransactionDialogProps) {
+  // states
+  const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
+
   const contentCreateTrackerTxDialogDialog = defineContentCreateTransactionDialog({
     formData: createTrackerTransactionDialog.formData,
     setFormData: createTrackerTransactionDialog.setFormData,
     trackerTransactionType: sharedDialogElements.dataTrackerTransactionType,
     accountSourceData: createTrackerTransactionDialog.accountSourceData,
-    setIsDialogOpen: sharedDialogElements.setIsDialogOpen
+    openEditTrackerTxTypeDialog,
+    setOpenEditTrackerTxTypeDialog
   })
   const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
     formData: classifyTransactionDialog.formData,

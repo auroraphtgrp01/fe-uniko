@@ -57,15 +57,17 @@ export const defineContentCreateTransactionDialog = ({
   setFormData,
   trackerTransactionType,
   accountSourceData,
-  setIsDialogOpen
+  openEditTrackerTxTypeDialog,
+  setOpenEditTrackerTxTypeDialog
 }: {
   formData: ICreateTrackerTransactionFormData
   setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
   trackerTransactionType: any
   accountSourceData: IAccountSource[]
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  openEditTrackerTxTypeDialog: boolean
+  setOpenEditTrackerTxTypeDialog: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  // const [openEditDialog, setOpenEditDialog] = useState(false)
+  console.log('openEditTrackerTxTypeDialog', openEditTrackerTxTypeDialog)
 
   return (
     <div className='grid gap-4 py-4'>
@@ -127,17 +129,17 @@ export const defineContentCreateTransactionDialog = ({
             </Button>
           </SelectContent>
         </Select> */}
-        {/* <Combobox
-          setOpenEditDialog={setOpenEditDialog}
+        <Combobox
+          setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
           dataArr={modifiedTrackerTypeForComboBox(trackerTransactionType)}
           dialogEdit={EditTrackerTypeDialog({
-            openEditDialog: openEditDialog,
-            setOpenEditDialog: setOpenEditDialog,
+            openEditDialog: openEditTrackerTxTypeDialog,
+            setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
             dataArr: modifiedTrackerTypeForComboBox(trackerTransactionType)
           })}
           label='Tracker Transaction Type'
           className='col-span-3'
-        /> */}
+        />
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='accountSourceId' className='text-right'>

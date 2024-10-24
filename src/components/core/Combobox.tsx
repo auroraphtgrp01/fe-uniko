@@ -19,7 +19,14 @@ export interface IComboboxProps {
 export function Combobox({ className, label, dataArr, dialogEdit, setOpenEditDialog }: IComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState('')
+  const [searchValue, setSearchValue] = React.useState('')
+  const [filteredDataArr, setFilteredDataArr] = React.useState<{ value: string; label: string }[]>(dataArr)
+  React.useEffect(() => {
+    console.log(searchValue)
+    console.log(dataArr.filter((data) => data.label.toLowerCase().includes(searchValue.toLowerCase())))
 
+    setFilteredDataArr(dataArr.filter((data) => data.label.toLowerCase().includes(searchValue.toLowerCase())))
+  }, [searchValue])
   return (
     <div className={cn(className)}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -31,11 +38,15 @@ export function Combobox({ className, label, dataArr, dialogEdit, setOpenEditDia
         </PopoverTrigger>
         <PopoverContent className='w-full p-2'>
           <Command>
-            <CommandInput placeholder={`Search ${label ? label : 'item'}`} />
+            <CommandInput
+              value={searchValue}
+              onInput={(e) => setSearchValue(e.currentTarget.value)}
+              placeholder={`Search ${label ? label : 'item'}`}
+            />
             <CommandList>
-              <CommandEmpty>No {label ? label : 'item'} found.</CommandEmpty>
+              {/* <CommandEmpty>No {label ? label : 'item'} found.</CommandEmpty> */}
               <CommandGroup>
-                {dataArr.map((data) => (
+                {filteredDataArr.map((data) => (
                   <CommandItem
                     key={data.value}
                     value={data.value}
