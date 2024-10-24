@@ -1,3 +1,4 @@
+import { IDateRange } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IDynamicType } from '@/types/common.i'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -81,4 +82,16 @@ export function formatDateToInput(dateString: string) {
   const month = String(date.getUTCMonth() + 1).padStart(2, '0')
   const day = String(date.getUTCDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
+}
+
+export const getCurrentMonthDateRange = (): IDateRange => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = today.getMonth()
+  const startDay = new Date(year, month, 1)
+  const endDay = new Date(year, month + 1, 0)
+  return {
+    startDay,
+    endDay
+  }
 }

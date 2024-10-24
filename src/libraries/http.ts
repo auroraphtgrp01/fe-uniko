@@ -55,8 +55,8 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 || error.response?.status === 403) {
       toast.error('Unauthorized or Account inactive, please sign-in again !')
       window.location.href = '/sign-in'
+      removeTokensFromLocalStorage()
     }
-    removeTokensFromLocalStorage()
     return Promise.reject(
       new HttpError({
         status: response?.status || 0,

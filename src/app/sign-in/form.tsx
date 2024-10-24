@@ -81,7 +81,7 @@ export default function SignInForm() {
                   Remember me
                 </Label>
               </div>
-              <Link href='#' className='text-sm font-medium text-muted-foreground'>
+              <Link href='/forgot-password' className='text-sm font-medium text-muted-foreground'>
                 Forgot password?
               </Link>
             </div>

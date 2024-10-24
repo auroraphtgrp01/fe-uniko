@@ -227,6 +227,7 @@ export const initButtonInDataTableHeader = ({
   return [
     {
       title: 'Create',
+      variants: 'default',
       onClick: () => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true })),
       icon: <PlusIcon className='ml-2 h-4 w-4' />
     }

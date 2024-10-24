@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useSignIn } from '@/core/auth/hooks/useSignIn'
 import { useSignUp } from '@/core/auth/hooks/useSignUp'
 import { IUseQueryHookOptions } from '@/types/query.interface'
+import { useForgotPassword } from '@/core/auth/hooks/useForgotPassword'
+import { useResetPassword } from '@/core/auth/hooks/useResetPassword'
 import { useVerifyEmail } from '@/core/auth/hooks/useVerifyEmail'
 import { useLogout } from '@/core/auth/hooks/useLogout'
 
@@ -12,7 +14,7 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
 
   const { mutate: signIn, isPending: isSigningIn } = useSignIn(isRememberMe, opts)
   const { mutate: signUp, isPending: isSigningUp } = useSignUp(opts)
-
+  const { mutate: resetPassword, isPending: isResetPassword } = useResetPassword()
   return {
     signIn,
     isSigningIn,
@@ -20,6 +22,9 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
     setIsRememberMe,
     signUp,
     isSigningUp,
+    forgotPassword: useForgotPassword,
+    resetPassword,
+    isResetPassword,
     useVerifyEmail,
     useLogout
   }

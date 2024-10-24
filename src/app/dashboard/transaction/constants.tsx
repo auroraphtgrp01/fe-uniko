@@ -29,15 +29,16 @@ export const initButtonInDataTableHeader = ({
   return [
     {
       title: 'Refetch in bank',
+      variants: 'default',
       onClick: () => {
         toast.loading('Sending request... Please wait until it is completed!')
-
         if (dataAccountBank && dataAccountBank.data.length > 0) setAccountBankRefetchingQueue([...dataAccountBank.data])
       },
       icon: <ArrowDownToLineIcon className='ml-2 h-4 w-4' />
     },
     {
       title: 'Reload data',
+      variants: 'secondary',
       onClick: () => {
         reloadDataFunction()
       },
