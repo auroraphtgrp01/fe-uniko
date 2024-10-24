@@ -1,3 +1,4 @@
+'use client'
 import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { PlusCircle, PlusIcon } from 'lucide-react'
@@ -13,8 +14,11 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
 import { MoneyInput } from '@/components/core/MoneyInput'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
+import { Combobox } from '@/components/core/Combobox'
+import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
+import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -59,6 +63,8 @@ export const defineContentCreateTransactionDialog = ({
   accountSourceData: IAccountSource[]
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
 }) => {
+  // const [openEditDialog, setOpenEditDialog] = useState(false)
+
   return (
     <div className='grid gap-4 py-4'>
       <div className='grid grid-cols-4 items-center gap-4'>
@@ -93,7 +99,7 @@ export const defineContentCreateTransactionDialog = ({
         <Label htmlFor='trackerTypeId' className='text-right'>
           Tracker Type
         </Label>
-        <Select
+        {/* <Select
           required
           onValueChange={(value) => setFormData((prev) => ({ ...prev, trackerTypeId: value }))}
           value={formData.trackerTypeId}
@@ -118,7 +124,18 @@ export const defineContentCreateTransactionDialog = ({
               Add new item
             </Button>
           </SelectContent>
-        </Select>
+        </Select> */}
+        {/* <Combobox
+          setOpenEditDialog={setOpenEditDialog}
+          dataArr={modifiedTrackerTypeForComboBox(trackerTransactionType)}
+          dialogEdit={EditTrackerTypeDialog({
+            openEditDialog: openEditDialog,
+            setOpenEditDialog: setOpenEditDialog,
+            dataArr: modifiedTrackerTypeForComboBox(trackerTransactionType)
+          })}
+          label='Tracker Transaction Type'
+          className='col-span-3'
+        /> */}
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='accountSourceId' className='text-right'>
@@ -198,7 +215,6 @@ export const defineContentCreateTrackerTxTypeDialog = ({
         <div className='col-span-3 flex gap-2'>
           <Input
             value={formData.name}
-            required
             onChange={(e) => {
               setFormData((prev) => ({ ...prev, name: e.target.value }))
             }}
@@ -215,11 +231,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
         <Label htmlFor='type' className='text-right'>
           Type
         </Label>
-        <Select
-          required
-          onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
-          value={formData.type}
-        >
+        <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))} value={formData.type}>
           <SelectTrigger className='col-span-3'>
             <SelectValue placeholder='Select a type' />
           </SelectTrigger>
@@ -239,7 +251,6 @@ export const defineContentCreateTrackerTxTypeDialog = ({
         </Label>
         <Textarea
           value={formData.description}
-          required
           onChange={(e) => {
             setFormData((prev) => ({ ...prev, description: e.target.value }))
           }}

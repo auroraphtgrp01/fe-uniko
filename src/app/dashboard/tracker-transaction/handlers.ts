@@ -231,3 +231,11 @@ export const filterTrackerTransactionWithType = (selectedTypes: string[], data: 
 
   return formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(validValues, formatTrackerTransactionData)
 }
+
+export const modifiedTrackerTypeForComboBox = (type: any) => {
+  return type.map((item: any) => ({
+    value: item.id,
+    label: item.name,
+    ...item
+  }))
+}
