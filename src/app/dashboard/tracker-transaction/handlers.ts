@@ -232,6 +232,25 @@ export const filterTrackerTransactionWithType = (selectedTypes: string[], data: 
   return formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(validValues, formatTrackerTransactionData)
 }
 
+export const onRowClick = (
+  rowData: ICustomTrackerTransaction,
+  advancedTrackerTxData: IAdvancedTrackerTransactionResponse | undefined,
+  setFormDataClassify: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>,
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+) => {
+  if (advancedTrackerTxData) {
+    const transactionData = advancedTrackerTxData.data.find((item) => item.id === rowData.id)
+    setFormDataClassify((prev) => ({
+      ...prev,
+      transactionId: transactionData?.transactionId || '',
+      trackerTypeId: transactionData?.trackerTypeId || '',
+      reasonName: transactionData?.reasonName || '',
+      description: transactionData?.description || ''
+    }))
+    setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
+  }
+}
+
 export const modifiedTrackerTypeForComboBox = (type: any) => {
   return type.map((item: any) => ({
     value: item.id,

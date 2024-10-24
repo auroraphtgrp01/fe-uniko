@@ -3,20 +3,25 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
-import { Icons } from '../../../components/ui/icons'
-import { ArrowDownIcon, ArrowUpIcon, ArrowRight } from 'lucide-react'
-import { formatCurrency, formatDateTimeVN, getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
+import { IChartData } from '@/components/core/charts/DonutChart'
+import { ArrowDownIcon, ArrowUpIcon, HandCoins } from 'lucide-react'
+import {
+  formatArrayData,
+  formatCurrency,
+  formatDateTimeVN,
+  getConvertedKeysToTitleCase,
+  mergeQueryParams
+} from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
-  DateRange,
+  IDateRange,
   IAdvancedTrackerTransactionResponse,
   ICustomTrackerTransaction,
   IDialogTrackerTransaction,
   ITrackerTransaction
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
-import { initButtonInDataTableHeader, initDialogFlag } from './constants'
+import { initButtonInDataTableHeader, initDialogFlag, initTrackerTransactionTab } from './constants'
 import TrackerTransactionDialog from './dialog'
 import { initTableConfig } from '@/constants/data-table'
 import { initQueryOptions } from '@/constants/init-query-options'
@@ -44,14 +49,15 @@ import {
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import {
   filterTrackerTransactionWithType,
+  formatTrackerTransactionData,
   initTrackerTransactionDataTable,
+  onRowClick,
   updateCacheDataCreate,
   updateCacheDataUpdate
 } from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
-import { DateTimePicker } from '@/components/core/DateTimePicker'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import TrackerTransactionChart from '@/components/dashboard/TrackerTransactionChart'
+import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 
 export default function TrackerTransactionForm() {
   const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
@@ -75,7 +81,7 @@ export default function TrackerTransactionForm() {
   })
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
   const [chartData, setChartData] = useState<IChartData>()
-  const [dates, setDates] = useState<DateRange>({})
+  const [dates, setDates] = useState<IDateRange>({})
 
   // memos
   const queryTrackerTransaction = useMemo(
@@ -91,6 +97,7 @@ export default function TrackerTransactionForm() {
     if (tableData.length === 0) return []
     return getColumns<IDataTransactionTable>(transactionHeaders, true)
   }, [tableData])
+  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData), [chartData])
 
   // hooks
   const { getAdvancedAccountSource } = useAccountSource()
@@ -133,23 +140,13 @@ export default function TrackerTransactionForm() {
   }, [dataUnclassifiedTxs])
 
   useEffect(() => {
-    if (advancedTrackerTxData && statisticData?.data) {
-      const transformedData: ICustomTrackerTransaction[] = advancedTrackerTxData.data.map(
-        (item: ITrackerTransaction) => {
-          return {
-            id: item.id || '',
-            reasonName: item.reasonName || '',
-            type: item.Transaction.direction || '',
-            checkType: item.Transaction.direction || '',
-            trackerTypeName: item.TrackerType.name || '',
-            amount: `${new Intl.NumberFormat('en-US').format(item.Transaction?.amount || 0)} ${item.Transaction?.currency}`,
-            transactionDate: item.time ? formatDateTimeVN(item.time, false) : '',
-            accountSourceName: item.Transaction?.accountSource?.name || ''
-          }
-        }
+    if (advancedTrackerTxData && statisticData?.data)
+      setTableData(
+        formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(
+          advancedTrackerTxData.data,
+          formatTrackerTransactionData
+        )
       )
-      setTableData(transformedData)
-    }
   }, [advancedTrackerTxData, statisticData])
 
   useEffect(() => {
@@ -159,69 +156,59 @@ export default function TrackerTransactionForm() {
   }, [statisticData])
 
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
-  const onRowClick = (rowData: ICustomTrackerTransaction) => {
-    if (advancedTrackerTxData) {
-      const transactionData = advancedTrackerTxData.data.find((item) => item.id === rowData.id)
-      setFormDataClassify((prev) => ({
-        ...prev,
-        transactionId: transactionData?.transactionId || '',
-        trackerTypeId: transactionData?.trackerTypeId || '',
-        reasonName: transactionData?.reasonName || '',
-        description: transactionData?.description || ''
-      }))
-      setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
-    }
-  }
 
   return (
     <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
-          {/* Total Spending Card */}
-          <Card className='col-span-1 h-full w-full overflow-hidden sm:col-span-2 md:w-full lg:w-full xl:col-span-1'>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <div className='space-y-2'>
-                <CardTitle className='text-nowrap text-sm sm:text-base lg:text-lg'>Total spending today</CardTitle>
-                <CardDescription>
-                  <span className='text-nowrap text-lg font-semibold sm:text-xl lg:text-2xl'>
-                    {formatCurrency(statisticData?.data.totalSpendingToday ?? 0, 'VND', 'vi-vn')}
-                  </span>
-                </CardDescription>
-              </div>
-              <Icons.banknote className='hidden text-green-500 lg:h-8 lg:w-8 2xl:block' />
+          <Card className='bg-gradient-to-br from-purple-500 to-indigo-600'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-medium text-white'>Total Balance</CardTitle>
             </CardHeader>
+            <CardContent>
+              <div className='flex items-center justify-between'>
+                <HandCoins className='h-12 w-12 text-white opacity-75' />
+                <div className='text-right'>
+                  <p className='text-2xl font-bold text-white'>
+                    {formatCurrency(statisticData?.data.totalBalance ?? 0, 'VND', 'vi-vn')}
+                  </p>
+                  <p className='text-sm text-purple-200'>+2.5% from last month</p>
+                </div>
+              </div>
+            </CardContent>
           </Card>
-
-          {/* Incoming vs Expense Transaction Card */}
-          <Card className='col-span-1 w-full overflow-hidden sm:col-span-2 lg:w-full'>
-            <div className='flex flex-col md:flex-row'>
-              {/* Incoming Transaction */}
-              <div className='flex-1 bg-gradient-to-br from-green-100 to-green-200 p-4 dark:from-green-700 dark:to-green-800 sm:p-6'>
-                <CardHeader className='p-0 lg:w-full'>
-                  <div className='flex items-center space-x-2 text-green-600 dark:text-green-100'>
-                    <ArrowDownIcon className='h-4 w-4 sm:h-5 sm:w-5' />
-                    <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>Incoming Transaction</h3>
-                  </div>
-                </CardHeader>
-                <p className='mt-2 text-nowrap text-lg font-bold text-green-700 dark:text-green-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                  {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
-                </p>
+          <Card className='bg-gradient-to-br from-green-400 to-emerald-600'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-medium text-white'>Incoming Transaction</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center justify-between'>
+                <ArrowDownIcon className='h-12 w-12 text-white opacity-75' />
+                <div className='text-right'>
+                  <p className='text-2xl font-bold text-white'>
+                    {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
+                  </p>
+                  <p className='text-sm text-green-200'>No change from yesterday</p>
+                </div>
               </div>
-
-              {/* Expense Transaction */}
-              <div className='flex-1 bg-gradient-to-br from-rose-100 to-rose-200 p-4 dark:from-rose-700 dark:to-rose-800 sm:p-6'>
-                <CardHeader className='p-0'>
-                  <div className='flex items-center space-x-2 text-rose-500 dark:text-rose-100'>
-                    <ArrowUpIcon className='h-4 w-4 sm:h-5 sm:w-5' />
-                    <h3 className='text-nowrap text-sm font-semibold sm:text-base lg:text-lg'>Expense Transaction</h3>
-                  </div>
-                </CardHeader>
-                <p className='mt-2 text-nowrap text-lg font-bold text-rose-500 dark:text-rose-100 sm:mt-4 sm:text-xl lg:text-2xl'>
-                  {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
-                </p>
+            </CardContent>
+          </Card>
+          <Card className='bg-gradient-to-br from-red-400 to-rose-600'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-medium text-white'>Expense Transaction</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center justify-between'>
+                <ArrowUpIcon className='h-12 w-12 text-white opacity-75' />
+                <div className='text-right'>
+                  <p className='text-2xl font-bold text-white'>
+                    {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
+                  </p>
+                  <p className='text-sm text-red-200'>+15% from yesterday</p>
+                </div>
               </div>
-            </div>
+            </CardContent>
           </Card>
         </div>
 
@@ -235,7 +222,9 @@ export default function TrackerTransactionForm() {
                 config={dataTableConfig}
                 setConfig={setDataTableConfig}
                 buttons={dataTableButtons}
-                onRowClick={onRowClick}
+                onRowClick={(rowData) =>
+                  onRowClick(rowData, advancedTrackerTxData, setFormDataClassify, setIsDialogOpen)
+                }
               />
             </CardContent>
           </Card>
@@ -244,14 +233,7 @@ export default function TrackerTransactionForm() {
 
       {/* Right Section */}
       <div className='flex h-full w-full flex-col md:col-span-2 lg:col-span-1'>
-        <TrackerTransactionChart
-          defaultValue='incomingChart'
-          incomingChartData={chartData?.incomingTransactionTypeStats ?? []}
-          expenseChartData={chartData?.expenseTransactionTypeStats ?? []}
-          incomingLabel='Incoming Chart'
-          expenseLabel='Expense Chart'
-          className='h-full'
-        />
+        <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
       </div>
 
       <TrackerTransactionDialog

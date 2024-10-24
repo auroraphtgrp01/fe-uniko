@@ -14,7 +14,9 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
 import { MoneyInput } from '@/components/core/MoneyInput'
-import React, { useEffect, useState } from 'react'
+import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
+import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
+import { useEffect, useState } from 'react'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
 import { Combobox } from '@/components/core/Combobox'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
@@ -260,4 +262,34 @@ export const defineContentCreateTrackerTxTypeDialog = ({
       </div>
     </div>
   )
+}
+
+export const initTrackerTransactionTab = (data: IChartData | undefined): ITabConfig => {
+  return {
+    default: 'expenseChart',
+    tabContents: [
+      {
+        content: (
+          <DonutChart
+            data={data ? data.expenseTransactionTypeStats : []}
+            className={`h-[30rem] w-full`}
+            types='donut'
+          />
+        ),
+        labels: 'Expense Chart',
+        value: 'expenseChart'
+      },
+      {
+        content: (
+          <DonutChart
+            data={data ? data.incomingTransactionTypeStats : []}
+            className={`h-[30rem] w-full`}
+            types='donut'
+          />
+        ),
+        labels: 'Incoming Chart',
+        value: 'incomingChart'
+      }
+    ]
+  }
 }

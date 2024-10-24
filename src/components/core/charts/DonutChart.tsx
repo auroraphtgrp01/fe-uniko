@@ -21,7 +21,7 @@ export interface IChartData {
   incomingTransactionAccountTypeStats: IPayloadDataChart[]
   expenseTransactionAccountTypeStats: IPayloadDataChart[]
   totalIncomeToday: number
-  totalSpendingToday: number
+  totalBalance: number
   totalExpenseToday: number
 }
 
