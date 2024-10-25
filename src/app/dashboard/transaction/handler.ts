@@ -5,15 +5,15 @@ import {
   IDataTransactionTable,
   IDialogTransaction,
   IGetTransactionResponse,
-  Transaction
+  ITransaction
 } from '@/core/transaction/models'
 import { formatCurrency } from '@/libraries/utils'
 import React from 'react'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm } from './constants'
 
-export const modifyTransactionHandler = (payload: Transaction[]): IDataTransactionTable[] => {
-  return payload.map((item: Transaction) => {
+export const modifyTransactionHandler = (payload: ITransaction[]): IDataTransactionTable[] => {
+  return payload.map((item: ITransaction) => {
     return {
       id: item.id,
       transactionId: item.transactionId,
@@ -24,7 +24,7 @@ export const modifyTransactionHandler = (payload: Transaction[]): IDataTransacti
       accountNo: item.ofAccount ? item.ofAccount.accountNo : null,
       description: item.description,
       time: item.time,
-      trackerTransactionId: item.trackerTransactionId
+      TrackerTransaction: item.TrackerTransaction
     }
   })
 }
@@ -70,10 +70,14 @@ export const handleAccountBankRefetching = (
 }
 
 export const updateCacheDataUpdate = (oldData: IGetTransactionResponse, newData: any): IGetTransactionResponse => {
-  const updatedData = oldData.data.map((item: Transaction) => {
-    return item.id === newData.transactionId ? { ...item, trackerTransactionId: newData.id } : item
-  })
-  return { ...oldData, data: updatedData }
+  return {
+    ...oldData,
+    data: oldData.data.map((item: ITransaction) => {
+      return item.id === newData.transactionId
+        ? { ...item, TrackerTransaction: newData.Transaction.TrackerTransaction }
+        : item
+    })
+  }
 }
 
 export const handleClassifyTransaction = async ({

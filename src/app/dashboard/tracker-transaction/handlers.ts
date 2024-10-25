@@ -9,15 +9,17 @@ import {
   IClassifyTransactionFormData,
   ICreateTrackerTransactionFormData,
   IDataTransactionTable,
-  IDialogTransaction,
-  Transaction
+  ITransaction
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm, initCreateTrackerTxTypeForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
 import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
-import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -86,7 +88,7 @@ export const handleClassifyTransaction = async ({
 }
 
 export const initDataTableTransaction = (
-  dataTransaction: Transaction[],
+  dataTransaction: ITransaction[],
   setDataTable: React.Dispatch<React.SetStateAction<IDataTransactionTable[]>>,
   setDataTableUnclassifiedTransaction: React.Dispatch<
     React.SetStateAction<{
@@ -103,9 +105,10 @@ export const initDataTableTransaction = (
     }>
   >
 ) => {
+  console.log('dataTransaction', dataTransaction)
   setDataTable(modifyTransactionHandler(dataTransaction))
-  const transactionToday = dataTransaction.filter((item: Transaction) => isIsoStringInToday(item.time))
-  const unclassifiedTransaction = dataTransaction.filter((item: Transaction) => !item.trackerTransactionId)
+  const transactionToday = dataTransaction.filter((item: ITransaction) => isIsoStringInToday(item.time))
+  const unclassifiedTransaction = dataTransaction.filter((item: ITransaction) => !item.TrackerTransaction)
   const totalAmountToday = transactionToday.reduce((acc, item) => acc + item.amount, 0)
   const totalAmountUnclassified = unclassifiedTransaction.reduce((acc, item) => acc + item.amount, 0)
 
@@ -257,4 +260,13 @@ export const modifiedTrackerTypeForComboBox = (type: any) => {
     label: item.name,
     ...item
   }))
+}
+
+export const initTrackerTypeData = (
+  data: ITrackerTransactionType[],
+  setIncomingTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>,
+  setExpenseTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>
+) => {
+  setIncomingTrackerType(data.filter((item) => item.type === 'INCOMING'))
+  setExpenseTrackerType(data.filter((item) => item.type === 'EXPENSE'))
 }
