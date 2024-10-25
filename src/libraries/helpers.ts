@@ -63,6 +63,16 @@ export const removeTokensFromLocalStorage = () => {
   isClient && localStorage.removeItem('refreshToken')
 }
 
+export const setTimeCountRefetchLimit = () => {
+  if (isClient) {
+    const now = Date.now()
+    localStorage.setItem('timeCountRefetchLimit', now.toString())
+  }
+}
+export const getTimeCountRefetchLimit = () => {
+  return isClient ? Number(localStorage.getItem('timeCountRefetchLimit') || '0') : 0
+}
+
 export const setEmailWhenRegister = (value: string) => isClient && localStorage.setItem('registerData', value)
 
 export const getEmailWhenRegister = () => (isClient ? localStorage.getItem('registerData') : null)

@@ -22,19 +22,24 @@ export const transactionHeaders = ['Transaction Id', 'Amount', 'Direction', 'Cur
 export const initButtonInDataTableHeader = ({
   dataAccountBank,
   setAccountBankRefetchingQueue,
-  reloadDataFunction
+  reloadDataFunction,
+  refetchTransactionBySocket,
+  isPendingRefetch
 }: {
   dataAccountBank: IGetAccountBankResponse | undefined
   setAccountBankRefetchingQueue: React.Dispatch<React.SetStateAction<IAccountBank[]>>
   reloadDataFunction: () => void
+  isPendingRefetch: boolean
+  refetchTransactionBySocket: () => void
 }): IButtonInDataTableHeader[] => {
   return [
     {
       title: 'Refetch in bank',
       variants: 'default',
+      disabled: isPendingRefetch,
       onClick: () => {
-        toast.loading('Sending request... Please wait until it is completed!')
-        if (dataAccountBank && dataAccountBank.data.length > 0) setAccountBankRefetchingQueue([...dataAccountBank.data])
+        refetchTransactionBySocket()
+        // if (dataAccountBank && dataAccountBank.data.length > 0) setAccountBankRefetchingQueue([...dataAccountBank.data])
       },
       icon: <ArrowDownToLineIcon className='ml-2 h-4 w-4' />
     },

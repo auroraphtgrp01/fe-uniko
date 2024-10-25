@@ -12,6 +12,14 @@ export interface IUserFromToken {
   }
 }
 
+export interface IUserPayloadForSocket {
+  userId: string
+  email: string
+  fullName: string
+  roleId?: string
+  status: EUserStatus
+}
+
 /* eslint-disable no-unused-vars */
 export enum EUserStatus {
   ACTIVE = 'ACTIVE',

@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/libraries/theme-provider'
 import { ReactNode } from 'react'
 import 'nprogress/nprogress.css'
 import dynamic from 'next/dynamic'
+import { SocketProvider } from '../libraries/useSocketIo'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -56,9 +57,11 @@ export default function RootLayout({
           containerStyle={{}}
         />
         <TopProgressBar />
-        <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-          <QueryProvider>{children}</QueryProvider>
-        </ThemeProvider>
+        <SocketProvider>
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+            <QueryProvider>{children}</QueryProvider>
+          </ThemeProvider>
+        </SocketProvider>
       </body>
     </html>
   )
