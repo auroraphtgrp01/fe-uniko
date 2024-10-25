@@ -51,7 +51,8 @@ interface ICreateTrackerTransactionTypeDialog {
 }
 
 interface ISharedDialogElements {
-  dataTrackerTransactionType: ITrackerTransactionType[]
+  incomeTrackerType: ITrackerTransactionType[]
+  expenseTrackerType: ITrackerTransactionType[]
   isDialogOpen: IDialogTrackerTransaction
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
@@ -74,11 +75,13 @@ export default function TrackerTransactionDialog({
 }: ITrackerTransactionDialogProps) {
   // states
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
+  const [classifyTrackerTransactionType, setClassifyTrackerTransactionType] = useState<ITrackerTransactionType[]>([])
 
   const contentCreateTrackerTxDialogDialog = defineContentCreateTransactionDialog({
     formData: createTrackerTransactionDialog.formData,
     setFormData: createTrackerTransactionDialog.setFormData,
-    trackerTransactionType: sharedDialogElements.dataTrackerTransactionType,
+    incomeTrackerType: sharedDialogElements.incomeTrackerType,
+    expenseTrackerType: sharedDialogElements.expenseTrackerType,
     accountSourceData: createTrackerTransactionDialog.accountSourceData,
     openEditTrackerTxTypeDialog,
     setOpenEditTrackerTxTypeDialog
@@ -86,8 +89,9 @@ export default function TrackerTransactionDialog({
   const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
     formData: classifyTransactionDialog.formData,
     setFormData: classifyTransactionDialog.setFormData,
-    trackerTransactionType: sharedDialogElements.dataTrackerTransactionType,
-    setIsDialogOpen: sharedDialogElements.setIsDialogOpen
+    trackerTransactionType: classifyTrackerTransactionType,
+    openEditTrackerTxTypeDialog,
+    setOpenEditTrackerTxTypeDialog
   })
   const contentCreateTrackerTxTypeDialog = defineContentCreateTrackerTxTypeDialog({
     formData: createTrackerTransactionTypeDialog.formData,
@@ -160,6 +164,9 @@ export default function TrackerTransactionDialog({
           config={unclassifiedTxDialog.tableConfig}
           setConfig={unclassifiedTxDialog.setTableConfig}
           onRowClick={(rowData) => {
+            if (rowData.direction === 'INCOME')
+              setClassifyTrackerTransactionType(sharedDialogElements.incomeTrackerType)
+            else setClassifyTrackerTransactionType(sharedDialogElements.expenseTrackerType)
             classifyTransactionDialog.setFormData((prev) => ({ ...prev, transactionId: rowData.id }))
             sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
           }}

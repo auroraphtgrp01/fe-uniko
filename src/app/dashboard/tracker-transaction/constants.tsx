@@ -7,7 +7,10 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
 import { Textarea } from '@/components/ui/textarea'
-import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
 import { MoneyInput } from '@/components/core/MoneyInput'
 import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
@@ -52,14 +55,16 @@ export const initDialogFlag: IDialogTrackerTransaction = {
 export const defineContentCreateTransactionDialog = ({
   formData,
   setFormData,
-  trackerTransactionType,
+  incomeTrackerType,
+  expenseTrackerType,
   accountSourceData,
   openEditTrackerTxTypeDialog,
   setOpenEditTrackerTxTypeDialog
 }: {
   formData: ICreateTrackerTransactionFormData
   setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
-  trackerTransactionType: any
+  incomeTrackerType: ITrackerTransactionType[]
+  expenseTrackerType: ITrackerTransactionType[]
   accountSourceData: IAccountSource[]
   openEditTrackerTxTypeDialog: boolean
   setOpenEditTrackerTxTypeDialog: React.Dispatch<React.SetStateAction<boolean>>
@@ -94,25 +99,7 @@ export const defineContentCreateTransactionDialog = ({
           placeholder='Amount *'
         />
       </div>
-      <div className='grid grid-cols-4 items-center gap-4'>
-        <Label htmlFor='trackerTypeId' className='text-right'>
-          Tracker Type
-        </Label>
-        <Combobox
-          onValueSelect={(value) => {
-            setFormData((prev) => ({ ...prev, trackerTypeId: value }))
-          }}
-          setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
-          dataArr={modifiedTrackerTypeForComboBox(trackerTransactionType)}
-          dialogEdit={EditTrackerTypeDialog({
-            openEditDialog: openEditTrackerTxTypeDialog,
-            setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
-            dataArr: modifiedTrackerTypeForComboBox(trackerTransactionType)
-          })}
-          label='Tracker Transaction Type'
-          className='col-span-3'
-        />
-      </div>
+
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='accountSourceId' className='text-right'>
           Account Source
@@ -157,6 +144,29 @@ export const defineContentCreateTransactionDialog = ({
             </SelectItem>
           </SelectContent>
         </Select>
+      </div>
+      <div className='grid grid-cols-4 items-center gap-4'>
+        <Label htmlFor='trackerTypeId' className='text-right'>
+          Tracker Type
+        </Label>
+        <Combobox
+          onValueSelect={(value) => {
+            setFormData((prev) => ({ ...prev, trackerTypeId: value }))
+          }}
+          setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
+          dataArr={modifiedTrackerTypeForComboBox(
+            formData.direction ? (formData.direction === 'INCOMING' ? incomeTrackerType : expenseTrackerType) : []
+          )}
+          dialogEdit={EditTrackerTypeDialog({
+            openEditDialog: openEditTrackerTxTypeDialog,
+            setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
+            dataArr: modifiedTrackerTypeForComboBox(
+              formData.direction ? (formData.direction === 'INCOMING' ? incomeTrackerType : expenseTrackerType) : []
+            )
+          })}
+          label='Tracker Transaction Type'
+          className='col-span-3'
+        />
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='description' className='text-right'>

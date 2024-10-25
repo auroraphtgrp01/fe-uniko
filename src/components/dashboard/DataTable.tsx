@@ -159,6 +159,7 @@ export function DataTable<TData, TValue>({
           {buttons && buttons.length > 0
             ? buttons.map((button: IButtonInDataTableHeader) => (
                 <Button
+                  disabled={button.disabled}
                   key={button.title}
                   variant={button.variants ? button.variants : 'default'}
                   className='whitespace-nowrap'

@@ -1,5 +1,6 @@
 import { IAccountSource } from '@/core/account-source/models'
-import { IUserFromToken } from '@/types/user.i'
+import { ITransaction } from '@/core/transaction/models'
+import { IUser, IUserFromToken } from '@/types/user.i'
 import { create } from 'zustand'
 
 interface StoreState {
@@ -7,8 +8,10 @@ interface StoreState {
   accountSourceData: IAccountSource[]
   setAccountSourceData: (data: IAccountSource[]) => void
   // user store
-  user: IUserFromToken | null
-  setUser: (user: IUserFromToken | null) => void
+  user: IUser | null
+  setUser: (user: IUser | null) => void
+  transactionData: ITransaction[]
+  setTransactionData: (data: ITransaction[]) => void
 }
 
 export const useStoreLocal = create<StoreState>((set) => ({
@@ -17,5 +20,7 @@ export const useStoreLocal = create<StoreState>((set) => ({
   setAccountSourceData: (data) => set({ accountSourceData: data }),
   // user store
   user: null,
-  setUser: (user) => set({ user })
+  setUser: (user) => set({ user }),
+  transactionData: [],
+  setTransactionData: (data) => set({ transactionData: data })
 }))

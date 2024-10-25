@@ -49,6 +49,7 @@ export interface IButtonInDataTableHeader {
     | 'greenPastel1'
     | null
     | undefined
+  disabled?: boolean
 }
 
 export type IErrorResponseBase = {

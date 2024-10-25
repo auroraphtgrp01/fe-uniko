@@ -48,7 +48,7 @@ const defaultOptions: QueryOptions = {
 export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, options: QueryOptions = {}) => {
   const mergedOptions: QueryOptions = { ...defaultOptions, ...options }
   const query = mergeQueryParams(mergedOptions.query ?? {})
-  const queryKey = [modelName, mergedOptions.condition ?? '', query]
+  const queryKey = [modelName]
   const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
   return useQuery<TResponse>({
     queryKey,

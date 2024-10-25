@@ -37,7 +37,8 @@ export interface ITransactionDialogProps {
     formData: IClassifyTransactionFormData
     setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
     classifyTransaction: any
-    trackerTransactionType: ITrackerTransactionType[]
+    incomeTrackerTransactionType: ITrackerTransactionType[]
+    expenseTrackerTransactionType: ITrackerTransactionType[]
     hookUpdateCache: any
     hookCreateTrackerTxType: any
     hookSetCacheTrackerTxType: any
@@ -49,6 +50,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
     useState<ITrackerTransactionTypeBody>(initCreateTrackerTxTypeForm)
   const [isAddingNewTrackerType, setIsAddingNewTrackerType] = useState<boolean>(false)
+  const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
+  const [classifyTrackerTransactionType, setClassifyTrackerTransactionType] = useState<ITrackerTransactionType[]>([])
 
   const { dataTable, dialogState, classifyDialog } = params
   const { formData, setFormData } = classifyDialog
@@ -64,9 +67,12 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
                 disabled={!dataTable.dataDetail.accountNo && !dataTable.dataDetail.accountBank}
                 variant={'greenPastel1'}
                 type='button'
-                onClick={() =>
+                onClick={() => {
+                  if (dataTable.dataDetail.direction === 'INCOMING')
+                    setClassifyTrackerTransactionType(classifyDialog.incomeTrackerTransactionType)
+                  else setClassifyTrackerTransactionType(classifyDialog.expenseTrackerTransactionType)
                   dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
-                }
+                }}
               >
                 Tracker Transaction
               </Button>
@@ -158,8 +164,9 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
     formData,
     setFormData,
-    trackerTransactionType: classifyDialog.trackerTransactionType,
-    setIsDialogOpen: dialogState.setIsDialogOpen
+    trackerTransactionType: classifyTrackerTransactionType,
+    openEditTrackerTxTypeDialog,
+    setOpenEditTrackerTxTypeDialog
   })
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: classifyingTransactionConfigDialogContent,
