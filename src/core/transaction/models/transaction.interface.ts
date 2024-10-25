@@ -1,6 +1,6 @@
 import { IBaseResponseData } from '@/types/common.i'
 
-export type Transaction = {
+export type ITransaction = {
   id: string
   direction: string
   transactionId: string
@@ -18,10 +18,10 @@ export type Transaction = {
     accountBankId: string
   }
   time: string
-  trackerTransactionId: string
+  TrackerTransaction: string
 }
 
-export type IGetTransactionResponse = IBaseResponseData<Transaction[]>
+export type IGetTransactionResponse = IBaseResponseData<ITransaction[]>
 
 export interface IDialogTransaction {
   isDialogDetailOpen: boolean
@@ -41,7 +41,7 @@ export interface IDataTransactionTable {
   accountNo: string | null
   description: string
   time: string
-  trackerTransactionId: string
+  TrackerTransaction: Object
 }
 
 export interface IClassifyTransactionFormData {

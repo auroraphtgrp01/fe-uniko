@@ -38,8 +38,9 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import toast from 'react-hot-toast'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
-import { initDataTableTransaction } from '../tracker-transaction/handlers'
+import { initDataTableTransaction, initTrackerTypeData } from '../tracker-transaction/handlers'
 import { TRACKER_TRANSACTION_TYPE_MODEL_KEY } from '@/core/tracker-transaction/constants'
+import { ITrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export default function TransactionForm() {
   const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
@@ -67,6 +68,8 @@ export default function TransactionForm() {
     totalAmount: number
     data: IDataTransactionTable[]
   }>(initEmptyDataTransactionTable)
+  const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
+  const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
 
   const query = useMemo(() => [TRANSACTION_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
 
@@ -85,6 +88,10 @@ export default function TransactionForm() {
   })
 
   // effects
+  useEffect(() => {
+    if (dataTrackerTransactionType)
+      initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
+  }, [dataTrackerTransactionType])
   useEffect(() => {
     if (dataTransaction) {
       initDataTableTransaction(
@@ -231,7 +238,8 @@ export default function TransactionForm() {
             formData,
             setFormData,
             classifyTransaction,
-            trackerTransactionType: dataTrackerTransactionType?.data ?? [],
+            incomeTrackerTransactionType: incomingTrackerType,
+            expenseTrackerTransactionType: expenseTrackerType,
             hookUpdateCache: setData,
             hookCreateTrackerTxType: createTrackerTxType,
             hookSetCacheTrackerTxType: setCacheTrackerTxType

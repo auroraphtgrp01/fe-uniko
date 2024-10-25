@@ -52,12 +52,16 @@ import {
   filterTrackerTransactionWithType,
   formatTrackerTransactionData,
   initTrackerTransactionDataTable,
+  initTrackerTypeData,
   onRowClick,
   updateCacheDataCreate,
   updateCacheDataUpdate
 } from './handlers'
 import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
-import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 
@@ -84,6 +88,8 @@ export default function TrackerTransactionForm() {
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
   const [chartData, setChartData] = useState<IChartData>()
   const [dates, setDates] = useState<IDateRange>(getCurrentMonthDateRange())
+  const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
+  const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
 
   // memos
   const queryTrackerTransaction = useMemo(
@@ -123,13 +129,16 @@ export default function TrackerTransactionForm() {
   })
   const { accountSourceData, setAccountSourceData } = useStoreLocal()
 
+  // effects
+  useEffect(() => {
+    if (dataTrackerTransactionType)
+      initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
+  }, [dataTrackerTransactionType])
   useEffect(() => {
     if (dataAdvancedAccountSource && accountSourceData.length === 0) {
       setAccountSourceData(dataAdvancedAccountSource.data)
     }
   }, [dataAdvancedAccountSource])
-
-  // effects
   useEffect(() => {
     setTableData(
       filterTrackerTransactionWithType(dataTableConfig.selectedTypes || [], advancedTrackerTxData?.data || [])
@@ -263,7 +272,8 @@ export default function TrackerTransactionForm() {
         sharedDialogElements={{
           isDialogOpen,
           setIsDialogOpen,
-          dataTrackerTransactionType: dataTrackerTransactionType?.data ?? [],
+          incomeTrackerType: incomingTrackerType,
+          expenseTrackerType: expenseTrackerType,
           hookResetCacheStatistic: resetCacheStatistic
         }}
         unclassifiedTxDialog={{
