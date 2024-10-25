@@ -17,14 +17,14 @@ export const handleShowDetailAccountSource = (
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>,
   getAccountSourceById: any
 ) => {
-  const data = getAccountSourceById.data
+  const data: IAccountSourceBody = getAccountSourceById
 
   setFormData({
     id: data.id,
-    name: data.name as string,
+    name: data.name,
     type: data.type,
-    initAmount: Number(data.initAmount),
-    accountSourceType: data.type
+    initAmount: data.initAmount,
+    accountSourceType: (data as IAccountSourceBody & { checkType?: string }).checkType as EAccountSourceType
   })
   setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
 }
