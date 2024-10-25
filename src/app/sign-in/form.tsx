@@ -10,8 +10,14 @@ import { useState, FormEvent } from 'react'
 import Logo2 from '@/images/logo-2.png'
 import Image from 'next/image'
 import { useAuth } from '@/core/auth/hooks'
+import { getAccessTokenFromLocalStorage } from '@/libraries/helpers'
+import { redirect } from 'next/navigation'
 
 export default function SignInForm() {
+  const isAuthenticated = getAccessTokenFromLocalStorage()
+  if (isAuthenticated) {
+    redirect('/dashboard')
+  }
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const { signIn, isSigningIn, isRememberMe, setIsRememberMe } = useAuth()

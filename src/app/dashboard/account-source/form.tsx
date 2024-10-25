@@ -45,7 +45,6 @@ export default function AccountSourceForm() {
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
-
   // Memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const query = useMemo(() => [ACCOUNT_SOURCE_MODEL_KEY, '', mergeQueryParams(queryOptions)], [queryOptions])
@@ -59,7 +58,6 @@ export default function AccountSourceForm() {
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource, useGetAccountSourceById } =
     useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
-  const { getDetailAccountSource } = useGetAccountSourceById(idRowClicked)
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataCreate)
   const { setData: setCacheDetailData } = useUpdateModel<IAccountSourceResponse>(queryGetDetail, updateCacheDetailData)
   const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(query, updateCacheDataUpdate)
@@ -74,9 +72,11 @@ export default function AccountSourceForm() {
   }, [fetchedData])
 
   useEffect(() => {
-    if (getDetailAccountSource !== undefined && idRowClicked !== '')
+    if (tableData !== undefined && idRowClicked !== '') {
+      const getDetailAccountSource = tableData.find((row) => row.id === idRowClicked)
       handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
-  }, [getDetailAccountSource, idRowClicked])
+    }
+  }, [tableData, idRowClicked])
 
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
@@ -88,8 +88,14 @@ export default function AccountSourceForm() {
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
-        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
-        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
+        <CardInHeader
+          className='flex-grow sm:w-1/2 lg:w-1/2'
+          contents={{ detail: 'Choose between E-Wallets to manage your digital funds.' }}
+        />
+        <CardInHeader
+          className='flex-grow sm:w-1/2 lg:w-1/2'
+          contents={{ detail: 'Use Bank Accounts to manage your physical funds.' }}
+        />
       </div>
       <Card className='mt-5'>
         <CardContent>
