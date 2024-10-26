@@ -1,10 +1,10 @@
 import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { IComboboxProps } from '@/components/core/Combobox'
 import { DateTimePickerProps } from '@/components/core/DateTimePicker'
 import { DateRangePickerProps } from '@/components/core/DateRangePicker'
 import { IDynamicType } from '@/types/common.i'
 import { ButtonProps } from 'react-day-picker'
+import { DefaultValues } from 'react-hook-form'
 
 export enum EFieldType {
   Input = 'Input',
@@ -18,16 +18,9 @@ export enum EFieldType {
 export type IFormSchemaZod<T extends z.ZodRawShape> = z.ZodObject<T>
 
 export interface IFormZodProps<T extends z.ZodRawShape> {
-  formSchema: IFormSchemaZod<T>
-  defaultValues?:
-    | Promise<{
-        [K in keyof T]: T[K] extends z.ZodTypeAny ? z.infer<T[K]> : any
-      }>
-    | {
-        [K in keyof T]: T[K] extends z.ZodTypeAny ? z.infer<T[K]> : any
-      }
-    | undefined
-  onSubmit: (values: z.infer<IFormSchemaZod<T>>) => void
+  formSchema: z.ZodObject<T>
+  defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>> | undefined
+  onSubmit: (values: z.infer<z.ZodObject<T>>) => void
   formFieldBody: IBodyFormField[]
   buttonConfig?: ButtonProps & { label?: string }
   classNameForm?: string
@@ -64,60 +57,3 @@ export interface IBodyFormField<T extends EFieldType = EFieldType> {
   dataSelector?: IDynamicType[] | undefined
   classNameTrigger?: string
 }
-
-export const formBody: IBodyFormField[] = [
-  {
-    name: 'username',
-    type: EFieldType.Input,
-    label: 'Username',
-    placeHolder: 'Enter your username',
-    props: {
-      onChange: (e: any) => console.log(e.target.value)
-    }
-  },
-  {
-    name: 'email',
-    type: EFieldType.Input,
-    label: 'Email',
-    placeHolder: 'Enter your email',
-    props: {
-      onChange: (e: any) => console.log(e.target.value)
-    }
-  },
-  {
-    name: 'date',
-    type: EFieldType.DatePicker,
-    label: 'Date',
-    placeHolder: 'Enter your date'
-  },
-  {
-    name: 'dateRange',
-    type: EFieldType.DateRangePicker,
-    label: 'Date Range',
-    placeHolder: 'Enter your date range'
-  },
-  {
-    name: 'options',
-    type: EFieldType.Combobox,
-    label: 'options',
-    placeHolder: 'Select your combobox',
-    props: {
-      dataArr: [
-        { label: 'Option 1', value: 'option1' },
-        { label: 'Option 2', value: 'option2' }
-      ]
-    }
-  }
-]
-
-export const registerSchema = z
-  .object({
-    username: z.string().trim().min(2).max(256),
-    email: z.string().email(),
-    date: z.date(),
-    dateRange: z.any(),
-    options: z.any()
-  })
-  .strict()
-
-export type RegisterBodyType = z.TypeOf<typeof registerSchema>

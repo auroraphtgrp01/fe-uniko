@@ -1,9 +1,9 @@
-import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from '@/components/ui/form'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
+import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from '@/components/ui/form'
 import { EFieldType, IFormZodProps, InputProps, TextareaProps } from '@/types/formZod.interface'
 import { Input } from '@/components/ui/input'
 import {
@@ -21,27 +21,23 @@ import { Textarea } from '@/components/ui/textarea'
 import { Combobox, IComboboxProps } from '@/components/core/Combobox'
 import { DateTimePicker, DateTimePickerProps } from '@/components/core/DateTimePicker'
 import { DateRangePicker, DateRangePickerProps } from '@/components/core/DateRangePicker'
+import { DateRange } from 'react-day-picker'
 
-export default function FormZod({
+export default function FormZod<T extends z.ZodRawShape>({
   formSchema,
   defaultValues,
   onSubmit,
   formFieldBody,
   buttonConfig,
   classNameForm
-}: IFormZodProps<z.ZodRawShape>) {
-  const form = useForm<z.infer<typeof formSchema>>({
+}: IFormZodProps<T>) {
+  const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(formSchema),
     defaultValues
   })
 
-  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log('Form submitted with data:', data)
-    try {
-      await onSubmit(data)
-    } catch (error) {
-      console.error('Error in form submission:', error)
-    }
+  function handleSubmit(value: z.infer<z.ZodObject<T>>) {
+    onSubmit(value)
   }
 
   return (
@@ -51,11 +47,11 @@ export default function FormZod({
           {formFieldBody.map((fieldItem, index) => (
             <FormField
               control={form.control}
-              name={fieldItem.name}
+              name={fieldItem.name as any}
               key={index}
               render={({ field }) => (
                 <FormItem>
-                  {fieldItem?.label && <FormLabel>{fieldItem.label}</FormLabel>}
+                  {fieldItem?.label && <FormLabel className='text-muted-foreground'>{fieldItem.label}</FormLabel>}
                   <FormControl>
                     <>
                       {fieldItem.type === EFieldType.Input && (
@@ -63,17 +59,13 @@ export default function FormZod({
                           placeholder={fieldItem.placeHolder}
                           {...(fieldItem.props as InputProps)}
                           {...field}
-                          onChange={(e) => {
-                            field.onChange(e)
-                            console.log(`${fieldItem.name} changed:`, e.target.value)
-                          }}
+                          value={String(field.value ?? '')}
                         />
                       )}
                       {fieldItem.type === EFieldType.Select && (
                         <Select
                           onValueChange={(value) => {
                             field.onChange(value)
-                            console.log(`${fieldItem.name} selected:`, value)
                           }}
                         >
                           <SelectTrigger className={cn('w-full', fieldItem?.classNameTrigger)}>
@@ -96,12 +88,10 @@ export default function FormZod({
                           {...field}
                           placeholder={fieldItem.placeHolder}
                           {...(fieldItem.props as TextareaProps)}
-                          onChange={(e) => {
-                            field.onChange(e)
-                            console.log(`${fieldItem.name} changed:`, e.target.value)
-                          }}
+                          value={String(field.value ?? '')}
                         />
                       )}
+
                       {fieldItem.type === EFieldType.Combobox && (
                         <Combobox
                           {...(fieldItem.props as IComboboxProps)}
@@ -117,7 +107,6 @@ export default function FormZod({
                           {...(fieldItem.props as DateTimePickerProps)}
                           onChange={(value) => {
                             field.onChange(value)
-                            console.log(`${fieldItem.name} changed:`, value)
                           }}
                         />
                       )}
@@ -125,9 +114,9 @@ export default function FormZod({
                         <DateRangePicker
                           {...field}
                           {...(fieldItem.props as DateRangePickerProps)}
+                          value={field.value as DateRange | undefined}
                           onChange={(value) => {
                             field.onChange(value)
-                            console.log(`${fieldItem.name} changed:`, value)
                           }}
                         />
                       )}
@@ -138,7 +127,7 @@ export default function FormZod({
               )}
             />
           ))}
-          <Button {...buttonConfig} type='submit' onClick={() => console.log('Submit button clicked')}>
+          <Button {...buttonConfig} type='submit'>
             {buttonConfig?.label ?? 'Submit'}
           </Button>
         </form>
