@@ -82,7 +82,7 @@ export default function DashboardMainForm() {
             dialogEdit={EditTrackerTypeDialog({
               openEditDialog: openEditDialog,
               setOpenEditDialog: setOpenEditDialog,
-              dataArr: data
+              dataArr: []
             })}
             label='Tracker Transaction Type'
           />

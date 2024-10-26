@@ -9,7 +9,9 @@ import {
   IClassifyTransactionFormData,
   ICreateTrackerTransactionFormData,
   IDataTransactionTable,
-  ITransaction
+  IGetTransactionResponse,
+  ITransaction,
+  ITransactionSummary
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm, initCreateTrackerTxTypeForm } from '../transaction/constants'
@@ -90,38 +92,19 @@ export const handleClassifyTransaction = async ({
 export const initDataTableTransaction = (
   dataTransaction: ITransaction[],
   setDataTable: React.Dispatch<React.SetStateAction<IDataTransactionTable[]>>,
-  setDataTableUnclassifiedTransaction: React.Dispatch<
-    React.SetStateAction<{
-      totalTransaction: number
-      totalAmount: number
-      data: IDataTransactionTable[]
-    }>
-  >,
-  setDataTableTransactionToday: React.Dispatch<
-    React.SetStateAction<{
-      totalTransaction: number
-      totalAmount: number
-      data: IDataTransactionTable[]
-    }>
-  >
+  setDataTransactionSummary: React.Dispatch<React.SetStateAction<ITransactionSummary>>
 ) => {
-  console.log('dataTransaction', dataTransaction)
-  setDataTable(modifyTransactionHandler(dataTransaction))
   const transactionToday = dataTransaction.filter((item: ITransaction) => isIsoStringInToday(item.time))
-  const unclassifiedTransaction = dataTransaction.filter((item: ITransaction) => !item.TrackerTransaction)
-  const totalAmountToday = transactionToday.reduce((acc, item) => acc + item.amount, 0)
-  const totalAmountUnclassified = unclassifiedTransaction.reduce((acc, item) => acc + item.amount, 0)
 
-  setDataTableTransactionToday({
-    totalTransaction: transactionToday.length,
-    totalAmount: totalAmountToday,
-    data: modifyTransactionHandler(transactionToday)
-  })
-  setDataTableUnclassifiedTransaction({
-    totalTransaction: unclassifiedTransaction.length,
-    totalAmount: totalAmountUnclassified,
-    data: modifyTransactionHandler(unclassifiedTransaction)
-  })
+  setDataTable(modifyTransactionHandler(dataTransaction))
+  setDataTransactionSummary((prev) => ({
+    ...prev,
+    transactionToday: {
+      count: transactionToday.length,
+      amount: transactionToday.reduce((acc, item) => acc + item.amount, 0),
+      data: modifyTransactionHandler(transactionToday)
+    }
+  }))
 }
 
 function isIsoStringInToday(isoString: string): boolean {
@@ -137,9 +120,9 @@ function isIsoStringInToday(isoString: string): boolean {
   return inputDate >= startOfToday && inputDate <= endOfToday
 }
 
-export const updateCacheDataUpdate = (
+export const updateCacheDataClassifyFeat = (
   oldData: IAdvancedTrackerTransactionResponse,
-  newData: any
+  newData: ITrackerTransaction | ITransaction
 ): IAdvancedTrackerTransactionResponse => {
   return { ...oldData, data: oldData.data.filter((item: ITrackerTransaction) => item.id !== newData.transactionId) }
 }

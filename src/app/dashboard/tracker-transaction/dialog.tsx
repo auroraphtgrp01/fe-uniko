@@ -154,7 +154,6 @@ export default function TrackerTransactionDialog({
       createTrackerTransactionDialog.setFormData(initCreateTrackerTransactionForm)
     }
   }
-
   const unclassifiedConfigDialog: IDialogConfig = {
     content: (
       <div className='overflow-x-auto'>

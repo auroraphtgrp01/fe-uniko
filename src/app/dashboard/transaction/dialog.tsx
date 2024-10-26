@@ -40,6 +40,7 @@ export interface ITransactionDialogProps {
     incomeTrackerTransactionType: ITrackerTransactionType[]
     expenseTrackerTransactionType: ITrackerTransactionType[]
     hookUpdateCache: any
+    hookUpdateCacheUnclassified: any
     hookCreateTrackerTxType: any
     hookSetCacheTrackerTxType: any
   }
@@ -177,6 +178,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
             formData,
             setFormData,
             hookCreate: classifyDialog.classifyTransaction,
+            hookUpdateCacheUnclassified: classifyDialog.hookUpdateCacheUnclassified,
             hookUpdateCache: classifyDialog.hookUpdateCache,
             setIsDialogOpen: dialogState.setIsDialogOpen
           })

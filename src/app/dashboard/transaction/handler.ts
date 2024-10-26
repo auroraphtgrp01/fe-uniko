@@ -84,12 +84,14 @@ export const handleClassifyTransaction = async ({
   formData,
   setFormData,
   hookCreate,
+  hookUpdateCacheUnclassified,
   hookUpdateCache,
   setIsDialogOpen
 }: {
   formData: IClassifyTransactionFormData
   setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
   hookCreate: any
+  hookUpdateCacheUnclassified: any
   hookUpdateCache: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
 }) => {
@@ -97,6 +99,7 @@ export const handleClassifyTransaction = async ({
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
+        hookUpdateCacheUnclassified(res.data)
         toast.success('Classify transaction successfully!')
         setFormData(initCreateTrackerTransactionForm)
         setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))

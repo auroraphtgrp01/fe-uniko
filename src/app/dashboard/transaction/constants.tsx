@@ -184,11 +184,14 @@ export const initEmptyDetailTransaction = {
   accountNo: '',
   description: '',
   time: '',
-  TrackerTransaction: {}
+  TrackerTransaction: null
 }
 
-export const initEmptyDataTransactionTable = {
-  totalTransaction: 0,
-  totalAmount: 0,
-  data: []
+export const initEmptyTransactionSummaryData = {
+  transactionToday: {
+    count: 0,
+    amount: 0,
+    data: []
+  },
+  unclassifiedTransaction: { count: 0, amount: 0, data: [] }
 }

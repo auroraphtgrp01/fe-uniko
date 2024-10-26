@@ -1,3 +1,4 @@
+import { ITrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IBaseResponseData } from '@/types/common.i'
 
 export type ITransaction = {
@@ -18,7 +19,7 @@ export type ITransaction = {
     accountBankId: string
   }
   time: string
-  TrackerTransaction: string
+  TrackerTransaction: ITrackerTransaction | null
 }
 
 export type IGetTransactionResponse = IBaseResponseData<ITransaction[]>
@@ -41,7 +42,7 @@ export interface IDataTransactionTable {
   accountNo: string | null
   description: string
   time: string
-  TrackerTransaction: Object
+  TrackerTransaction: ITrackerTransaction | null
 }
 
 export interface IClassifyTransactionFormData {
@@ -63,7 +64,7 @@ export interface ICreateTrackerTransactionFormData {
 interface ITransactionSummaryData {
   count: number
   amount: number
-  data: ITransaction[]
+  data: IDataTransactionTable[]
 }
 
 export interface ITransactionSummary {

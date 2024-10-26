@@ -12,6 +12,7 @@ import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
   handleAccountBankRefetching,
   handleRefetchPaymentCompletion,
+  modifyTransactionHandler,
   updateCacheDataUpdate
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
@@ -20,14 +21,15 @@ import {
   IClassifyTransactionFormData,
   IDataTransactionTable,
   IDialogTransaction,
-  IGetTransactionResponse
+  IGetTransactionResponse,
+  ITransactionSummary
 } from '@/core/transaction/models'
 import {
   initButtonInDataTableHeader,
   initClassifyTransactionForm,
   initDialogFlag,
-  initEmptyDataTransactionTable,
   initEmptyDetailTransaction,
+  initEmptyTransactionSummaryData,
   transactionHeaders
 } from './constants'
 import { useAccountBank } from '@/core/account-bank/hooks'
@@ -37,14 +39,18 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import toast from 'react-hot-toast'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
-import { initDataTableTransaction, initTrackerTypeData } from '../tracker-transaction/handlers'
+import {
+  initDataTableTransaction,
+  initTrackerTypeData,
+  updateCacheDataClassifyFeat
+} from '../tracker-transaction/handlers'
 import { ITrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useSocket } from '@/libraries/useSocketIo'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useUser } from '@/core/users/hooks'
 import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
-import { GET_ADVANCED_TRANSACTION_KEY } from '@/core/transaction/constants'
+import { GET_ADVANCED_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
 import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'
 
 export default function TransactionForm() {
@@ -62,16 +68,7 @@ export default function TransactionForm() {
   const [accountBankRefetching, setAccountBankRefetching] = useState<IAccountBank>()
   const [accountBankRefetchingQueue, setAccountBankRefetchingQueue] = useState<IAccountBank[]>([])
   const [formData, setFormData] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
-  const [transactionTodayData, setTransactionTodayData] = useState<{
-    totalTransaction: number
-    totalAmount: number
-    data: IDataTransactionTable[]
-  }>(initEmptyDataTransactionTable)
-  const [unclassifiedTransactionData, setUnclassifiedTransactionData] = useState<{
-    totalTransaction: number
-    totalAmount: number
-    data: IDataTransactionTable[]
-  }>(initEmptyDataTransactionTable)
+  const [transactionSummary, setTransactionSummary] = useState<ITransactionSummary>(initEmptyTransactionSummaryData)
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
 
@@ -97,7 +94,12 @@ export default function TransactionForm() {
       return { ...oldData, data: [...oldData.data, newData] }
     }
   )
-
+  const { setData: setCacheUnclassifiedTxs } = useUpdateModel(
+    [GET_UNCLASSIFIED_TRANSACTION_KEY],
+    updateCacheDataClassifyFeat
+  )
+  const { getUnclassifiedTransactions } = useTransaction()
+  const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
   const { isGetMeUserPending } = getMe(true)
 
   const refetchTransactionBySocket = () => {
@@ -128,6 +130,19 @@ export default function TransactionForm() {
   }
 
   // effects
+  useEffect(() => {
+    if (dataUnclassifiedTxs)
+      setTransactionSummary((prev) => ({
+        ...prev,
+        unclassifiedTransaction: {
+          data: modifyTransactionHandler(dataUnclassifiedTxs.data),
+          count: dataUnclassifiedTxs.data.length,
+          amount: dataUnclassifiedTxs.data.reduce((acc, cur) => {
+            return acc + cur.amount
+          }, 0)
+        }
+      }))
+  }, [dataUnclassifiedTxs])
 
   useEffect(() => {
     if (socket) {
@@ -158,12 +173,7 @@ export default function TransactionForm() {
   }, [dataTrackerTransactionType])
   useEffect(() => {
     if (dataTransaction) {
-      initDataTableTransaction(
-        dataTransaction.data,
-        setDataTable,
-        setUnclassifiedTransactionData,
-        setTransactionTodayData
-      )
+      initDataTableTransaction(dataTransaction.data, setDataTable, setTransactionSummary)
       setDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataTransaction?.pagination?.totalPage) }))
     }
   }, [dataTransaction])
@@ -235,12 +245,12 @@ export default function TransactionForm() {
           <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
               <div className='truncate'>Total Transactions</div>
-              <div className='text-lg font-bold sm:text-xl'>{transactionTodayData.totalTransaction}</div>
+              <div className='text-lg font-bold sm:text-xl'>{transactionSummary.transactionToday.count}</div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(transactionTodayData.totalAmount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.transactionToday.amount, 'VND', 'vi-vn')}
               </div>
             </div>
           </CardContent>
@@ -261,12 +271,12 @@ export default function TransactionForm() {
           <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
               <div className='truncate'>Total Transactions</div>
-              <div className='text-lg font-bold sm:text-xl'>{unclassifiedTransactionData.totalTransaction}</div>
+              <div className='text-lg font-bold sm:text-xl'>{transactionSummary.unclassifiedTransaction.count}</div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(unclassifiedTransactionData.totalAmount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.unclassifiedTransaction.amount, 'VND', 'vi-vn')}
               </div>
             </div>
           </CardContent>
@@ -291,8 +301,8 @@ export default function TransactionForm() {
           dataTable={{
             columns: columns,
             data: dataTable,
-            transactionTodayData: transactionTodayData.data,
-            unclassifiedTransactionData: unclassifiedTransactionData.data,
+            transactionTodayData: transactionSummary.transactionToday.data,
+            unclassifiedTransactionData: transactionSummary.unclassifiedTransaction.data,
             onRowClick: onRowClick,
             setConfig: setDataTableConfig,
             config: dataTableConfig,
@@ -309,6 +319,7 @@ export default function TransactionForm() {
             incomeTrackerTransactionType: incomingTrackerType,
             expenseTrackerTransactionType: expenseTrackerType,
             hookUpdateCache: setData,
+            hookUpdateCacheUnclassified: setCacheUnclassifiedTxs,
             hookCreateTrackerTxType: createTrackerTxType,
             hookSetCacheTrackerTxType: setCacheTrackerTxType
           }}
