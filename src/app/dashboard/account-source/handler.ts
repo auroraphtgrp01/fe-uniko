@@ -65,7 +65,6 @@ export const handleUpdateAccountSource = ({
   setFormData,
   updateAccountSource,
   setDataUpdate,
-  setDetailData,
   setIdRowClicked
 }: {
   formData: IAccountSourceBody
@@ -75,7 +74,6 @@ export const handleUpdateAccountSource = ({
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   fetchedData: IAccountSource[]
   setDataUpdate: any
-  setDetailData: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) => {
   updateAccountSource(formData, {
@@ -85,7 +83,6 @@ export const handleUpdateAccountSource = ({
         const updatedData = fetchedData.map((item) => (item.id === clonedData.data.id ? clonedData.data : item))
         setFetchedData(updatedData)
         setDataUpdate(res.data)
-        setDetailData(res.data)
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
         setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
         setIdRowClicked('')

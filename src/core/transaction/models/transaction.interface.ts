@@ -59,3 +59,14 @@ export interface ICreateTrackerTransactionFormData {
   amount?: number
   accountSourceId: string
 }
+
+interface ITransactionSummaryData {
+  count: number
+  amount: number
+  data: ITransaction[]
+}
+
+export interface ITransactionSummary {
+  transactionToday: ITransactionSummaryData
+  unclassifiedTransaction: ITransactionSummaryData
+}

@@ -33,23 +33,21 @@ import {
 import { useAccountBank } from '@/core/account-bank/hooks'
 import { IAccountBank } from '@/core/account-bank/models'
 import { initQueryOptions } from '@/constants/init-query-options'
-import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import toast from 'react-hot-toast'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { initDataTableTransaction, initTrackerTypeData } from '../tracker-transaction/handlers'
-import { TRACKER_TRANSACTION_TYPE_MODEL_KEY } from '@/core/tracker-transaction/constants'
 import { ITrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useSocket } from '@/libraries/useSocketIo'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useUser } from '@/core/users/hooks'
 import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
+import { GET_ADVANCED_TRANSACTION_KEY } from '@/core/transaction/constants'
+import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'
 
 export default function TransactionForm() {
-  const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
-
   // states
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
@@ -89,10 +87,16 @@ export default function TransactionForm() {
   const { getAccountBank } = useAccountBank()
   const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
   const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
-  const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(TRANSACTION_MODEL_KEY, updateCacheDataUpdate)
-  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(queryTrackerTxType, (oldData, newData) => {
-    return { ...oldData, data: [...oldData.data, newData] }
-  })
+  const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(
+    GET_ADVANCED_TRANSACTION_KEY,
+    updateCacheDataUpdate
+  )
+  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
+    [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
+    (oldData, newData) => {
+      return { ...oldData, data: [...oldData.data, newData] }
+    }
+  )
 
   const { isGetMeUserPending } = getMe(true)
 

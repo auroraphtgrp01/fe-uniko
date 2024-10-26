@@ -43,9 +43,9 @@ import { useAccountSource } from '@/core/account-source/hooks'
 import { useTransaction } from '@/core/transaction/hooks'
 import { modifyTransactionHandler } from '../transaction/handler'
 import {
-  STATISTIC_TRACKER_TRANSACTION_KEY,
-  TRACKER_TRANSACTION_MODEL_KEY,
-  TRACKER_TRANSACTION_TYPE_MODEL_KEY
+  GET_ADVANCED_TRACKER_TRANSACTION_KEY,
+  GET_ALL_TRACKER_TRANSACTION_TYPE_KEY,
+  STATISTIC_TRACKER_TRANSACTION_KEY
 } from '@/core/tracker-transaction/constants'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import {
@@ -57,7 +57,7 @@ import {
   updateCacheDataCreate,
   updateCacheDataUpdate
 } from './handlers'
-import { TRANSACTION_MODEL_KEY } from '@/core/transaction/constants'
+import { GET_ADVANCED_TRANSACTION_KEY } from '@/core/transaction/constants'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
@@ -66,9 +66,7 @@ import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/Trac
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 
 export default function TrackerTransactionForm() {
-  const queryTransaction = [TRANSACTION_MODEL_KEY, '', '']
   const queryStatisticTrackerTx = [STATISTIC_TRACKER_TRANSACTION_KEY, '', '']
-  const queryTrackerTxType = [TRACKER_TRANSACTION_TYPE_MODEL_KEY, '', '']
 
   // states
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
@@ -92,10 +90,6 @@ export default function TrackerTransactionForm() {
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
 
   // memos
-  const queryTrackerTransaction = useMemo(
-    () => [TRACKER_TRANSACTION_MODEL_KEY, '', mergeQueryParams(queryOptions)],
-    [queryOptions]
-  )
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
@@ -119,15 +113,22 @@ export default function TrackerTransactionForm() {
   const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
   const { classifyTransaction } = useTrackerTransaction()
   const { resetData: resetCacheTrackerTx, setData } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
-    queryTrackerTransaction,
+    [GET_ADVANCED_TRACKER_TRANSACTION_KEY],
     updateCacheDataCreate
   )
   const { resetData: resetCacheStatistic } = useUpdateModel<any>(queryStatisticTrackerTx, () => {})
-  const { setData: setCacheUnclassifiedTxs } = useUpdateModel<any>(queryTransaction, updateCacheDataUpdate)
-  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(queryTrackerTxType, (oldData, newData) => {
-    return { ...oldData, data: [...oldData.data, newData] }
-  })
-  const { accountSourceData, setAccountSourceData } = useStoreLocal()
+  const { setData: setCacheUnclassifiedTxs } = useUpdateModel<any>(
+    [GET_ADVANCED_TRANSACTION_KEY],
+    updateCacheDataUpdate
+  )
+  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
+    [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
+    (oldData, newData) => {
+      return { ...oldData, data: [...oldData.data, newData] }
+    }
+  )
+  const { accountSourceData, setAccountSourceData, unclassifiedTransactionData, setUnclassifiedTransactionData } =
+    useStoreLocal()
 
   // effects
   useEffect(() => {

@@ -23,7 +23,6 @@ export default function AccountSourceDialog({
   updateAccountSource,
   setDataCreate,
   setDataUpdate,
-  setDetailData,
   setIdRowClicked
 }: {
   formData: IAccountSourceBody
@@ -38,7 +37,6 @@ export default function AccountSourceDialog({
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   setDataCreate: any
   setDataUpdate: any
-  setDetailData: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) {
   function handleUpdateConfigDialogSubmit(e: FormEvent) {
@@ -51,7 +49,6 @@ export default function AccountSourceDialog({
       updateAccountSource,
       fetchedData,
       setDataUpdate,
-      setDetailData,
       setIdRowClicked
     })
   }
