@@ -13,15 +13,14 @@ import { useAuth } from '@/core/auth/hooks'
 import { getAccessTokenFromLocalStorage } from '@/libraries/helpers'
 
 export default function SignUpForm() {
-  const isAuthenticated = getAccessTokenFromLocalStorage()
-  if (isAuthenticated) {
-    redirect('/dashboard')
-  }
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const { signUp, isSigningUp } = useAuth()
   const router = useRouter()
+
+  const isAuthenticated = getAccessTokenFromLocalStorage()
+  if (isAuthenticated && isSigningUp) router.push('/dashboard')
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
