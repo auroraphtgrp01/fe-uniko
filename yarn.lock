@@ -404,6 +404,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hookform/resolvers@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@hookform/resolvers@npm:3.9.0"
+  peerDependencies:
+    react-hook-form: ^7.0.0
+  checksum: 64a1e77ea2eeeba521ec624f2cea33ec2d20c60de12847b59520393780a9c8b92b3d76b7b3eeabadef85e8c776826f7bc9016fa90a890580c4ed75503c060dd1
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.14":
   version: 0.11.14
   resolution: "@humanwhocodes/config-array@npm:0.11.14"
@@ -8140,6 +8149,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hook-form@npm:^7.53.1":
+  version: 7.53.1
+  resolution: "react-hook-form@npm:7.53.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: 6c0cb09335fda48dd533b5d144c9a7a5692de1d8af0ac4f1fffedefc9ccfb995e44f9213dd2c13a72b7b7cb46c55ab05dfed884c5e64e174b137ecc658da04b5
+  languageName: node
+  linkType: hard
+
 "react-hot-toast@npm:^2.4.1":
   version: 2.4.1
   resolution: "react-hot-toast@npm:2.4.1"
@@ -9706,6 +9724,7 @@ __metadata:
     "@commitlint/config-conventional": ^19.4.1
     "@emoji-mart/data": ^1.2.1
     "@emoji-mart/react": ^1.1.1
+    "@hookform/resolvers": ^3.9.0
     "@radix-ui/react-accordion": ^1.2.1
     "@radix-ui/react-alert-dialog": ^1.1.1
     "@radix-ui/react-avatar": ^1.1.0
@@ -9761,6 +9780,7 @@ __metadata:
     react: ^18
     react-day-picker: ^9
     react-dom: ^18
+    react-hook-form: ^7.53.1
     react-hot-toast: ^2.4.1
     recharts: ^2.12.7
     release-it: ^17.6.0

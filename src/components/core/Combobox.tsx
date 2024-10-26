@@ -13,7 +13,7 @@ export interface IComboboxProps {
   dataArr: { value: string; label: string }[]
   dialogEdit?: React.ReactNode
   setOpenEditDialog?: React.Dispatch<React.SetStateAction<boolean>>
-  onValueSelect: (value: string) => void
+  onValueSelect?: (value: string) => void
 }
 
 export function Combobox({ className, label, dataArr, dialogEdit, setOpenEditDialog, onValueSelect }: IComboboxProps) {
@@ -26,7 +26,10 @@ export function Combobox({ className, label, dataArr, dialogEdit, setOpenEditDia
   const handleSelect = (currentValue: string) => {
     const newValue = currentValue === value ? '' : currentValue
     setValue(newValue)
-    onValueSelect(newValue)
+
+    if (onValueSelect) {
+      onValueSelect(newValue)
+    }
     setOpen(false)
     setSearchValue('')
   }
