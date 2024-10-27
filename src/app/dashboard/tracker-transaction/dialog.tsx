@@ -7,20 +7,18 @@ import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import {
-  defineContentClassifyingTransactionDialog,
-  initClassifyTransactionForm,
-  initCreateTrackerTransactionForm
-} from '../transaction/constants'
+import { initClassifyTransactionForm, initCreateTrackerTransactionForm } from '../transaction/constants'
 import { handleClassifyTransaction, handleCreateTrackerTransaction, handleCreateTrackerTxType } from './handlers'
 import {
   IClassifyTransactionFormData,
   ICreateTrackerTransactionFormData,
   IDataTransactionTable
 } from '@/core/transaction/models'
-import { defineContentCreateTrackerTxTypeDialog, defineContentCreateTransactionDialog } from './constants'
+import { defineContentCreateTrackerTxTypeDialog } from './constants'
 import { IAccountSource } from '@/core/account-source/models'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
+import CreateTrackerTransactionForm from '@/components/dashboard/tracker-trasaction/CreateForm'
 
 interface IUnclassifiedTxDialog {
   columns: any[]
@@ -76,30 +74,21 @@ export default function TrackerTransactionDialog({
   // states
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
   const [classifyTrackerTransactionType, setClassifyTrackerTransactionType] = useState<ITrackerTransactionType[]>([])
+  const [dataEditTrackerType, setDataEditTrackerType] = useState<{ value: string; label: string }[]>([])
 
-  const contentCreateTrackerTxDialogDialog = defineContentCreateTransactionDialog({
-    formData: createTrackerTransactionDialog.formData,
-    setFormData: createTrackerTransactionDialog.setFormData,
-    incomeTrackerType: sharedDialogElements.incomeTrackerType,
-    expenseTrackerType: sharedDialogElements.expenseTrackerType,
-    accountSourceData: createTrackerTransactionDialog.accountSourceData,
-    openEditTrackerTxTypeDialog,
-    setOpenEditTrackerTxTypeDialog
-  })
-  const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
-    formData: classifyTransactionDialog.formData,
-    setFormData: classifyTransactionDialog.setFormData,
-    trackerTransactionType: classifyTrackerTransactionType,
-    openEditTrackerTxTypeDialog,
-    setOpenEditTrackerTxTypeDialog
-  })
   const contentCreateTrackerTxTypeDialog = defineContentCreateTrackerTxTypeDialog({
     formData: createTrackerTransactionTypeDialog.formData,
     setFormData: createTrackerTransactionTypeDialog.setFormData
   })
 
   const classifyingTransactionConfigDialog: IDialogConfig = {
-    content: classifyingTransactionConfigDialogContent,
+    content: ClassifyForm({
+      formData: classifyTransactionDialog.formData,
+      setFormData: classifyTransactionDialog.setFormData,
+      trackerTransactionType: classifyTrackerTransactionType,
+      openEditTrackerTxTypeDialog,
+      setOpenEditTrackerTxTypeDialog
+    }),
     footer: (
       <Button
         onClick={() =>
@@ -128,7 +117,17 @@ export default function TrackerTransactionDialog({
   }
 
   const createConfigDialog: IDialogConfig = {
-    content: contentCreateTrackerTxDialogDialog,
+    content: CreateTrackerTransactionForm({
+      formData: createTrackerTransactionDialog.formData,
+      setFormData: createTrackerTransactionDialog.setFormData,
+      incomeTrackerType: sharedDialogElements.incomeTrackerType,
+      expenseTrackerType: sharedDialogElements.expenseTrackerType,
+      accountSourceData: createTrackerTransactionDialog.accountSourceData,
+      openEditTrackerTxTypeDialog,
+      setOpenEditTrackerTxTypeDialog,
+      dataEditTrackerType,
+      setDataEditTrackerType
+    }),
     footer: (
       <Button
         type='button'
@@ -181,38 +180,38 @@ export default function TrackerTransactionDialog({
     }
   }
 
-  const createTrackerTransactionTypeConfigDialog: IDialogConfig = {
-    content: contentCreateTrackerTxTypeDialog,
-    description: 'Please fill in the information below to create a new tracker transaction type.',
-    title: 'Create Tracker Transaction Type',
-    isOpen: sharedDialogElements.isDialogOpen.isDialogCreateTrackerTxTypeOpen,
-    onClose: () => {
-      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: false }))
-    },
-    footer: (
-      <Button
-        onClick={() =>
-          handleCreateTrackerTxType({
-            formData: createTrackerTransactionTypeDialog.formData,
-            setFormData: createTrackerTransactionTypeDialog.setFormData,
-            hookCreateTrackerTxType: createTrackerTransactionTypeDialog.createTrackerTransactionType,
-            hookSetCacheTrackerTxType: createTrackerTransactionTypeDialog.hookUpdateCache,
-            setIsDialogOpen: sharedDialogElements.setIsDialogOpen
-          })
-        }
-        type='button'
-      >
-        Save changes
-      </Button>
-    )
-  }
+  // const createTrackerTransactionTypeConfigDialog: IDialogConfig = {
+  //   content: contentCreateTrackerTxTypeDialog,
+  //   description: 'Please fill in the information below to create a new tracker transaction type.',
+  //   title: 'Create Tracker Transaction Type',
+  //   isOpen: sharedDialogElements.isDialogOpen.isDialogCreateTrackerTxTypeOpen,
+  //   onClose: () => {
+  //     sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: false }))
+  //   },
+  //   footer: (
+  //     <Button
+  //       onClick={() =>
+  //         handleCreateTrackerTxType({
+  //           formData: createTrackerTransactionTypeDialog.formData,
+  //           setFormData: createTrackerTransactionTypeDialog.setFormData,
+  //           hookCreateTrackerTxType: createTrackerTransactionTypeDialog.createTrackerTransactionType,
+  //           hookSetCacheTrackerTxType: createTrackerTransactionTypeDialog.hookUpdateCache,
+  //           setIsDialogOpen: sharedDialogElements.setIsDialogOpen
+  //         })
+  //       }
+  //       type='button'
+  //     >
+  //       Save changes
+  //     </Button>
+  //   )
+  // }
 
   return (
     <div>
       <CustomDialog config={createConfigDialog} />
       <CustomDialog config={unclassifiedConfigDialog} />
       <CustomDialog config={classifyingTransactionConfigDialog} />
-      <CustomDialog config={createTrackerTransactionTypeConfigDialog} />
+      {/* <CustomDialog config={createTrackerTransactionTypeConfigDialog} /> */}
     </div>
   )
 }

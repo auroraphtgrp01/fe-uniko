@@ -1,5 +1,6 @@
-import { contentDialogAccountSourceForm, initAccountSourceFormData } from '@/app/dashboard/account-source/constants'
+import { initAccountSourceFormData } from '@/app/dashboard/account-source/constants'
 import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dashboard/account-source/handler'
+import CreateAndUpdateAccountSourceForm from '@/components/dashboard/account-source/Create&UpdateForm'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -65,13 +66,8 @@ export default function AccountSourceDialog({
     })
   }
 
-  const contentDialogForm = contentDialogAccountSourceForm({
-    formData,
-    setFormData
-  })
-
   const updateConfigDialog: IDialogConfig = {
-    content: contentDialogForm,
+    content: CreateAndUpdateAccountSourceForm({ formData, setFormData }),
     footer: <Button type='submit'>Save changes</Button>,
     description: 'Please fill in the information below to update a account source.',
     title: 'Update Account Source',
@@ -84,7 +80,7 @@ export default function AccountSourceDialog({
   }
 
   const createConfigDialog: IDialogConfig = {
-    content: contentDialogForm,
+    content: CreateAndUpdateAccountSourceForm({ formData, setFormData }),
     footer: <Button type='submit'>Save changes</Button>,
     description: 'Please fill in the information below to create a new account source.',
     title: 'Create Account Source',

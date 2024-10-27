@@ -132,12 +132,6 @@ export default function TrackerTransactionForm() {
   // effects
   useEffect(() => {
     setUnclassifiedTxTableData(modifyTransactionHandler(unclassifiedTransactionData))
-    console.log('>>>>>>', dataUnclassifiedTxs, unclassifiedTransactionData)
-
-    if (dataUnclassifiedTxs && dataUnclassifiedTxs.data.length > 0) {
-      const missingItem = dataUnclassifiedTxs.data.filter((x) => !unclassifiedTransactionData.includes(x))
-      console.log('missingItem', missingItem)
-    }
   }, [unclassifiedTransactionData])
   useEffect(() => {
     if (dataTrackerTransactionType)
