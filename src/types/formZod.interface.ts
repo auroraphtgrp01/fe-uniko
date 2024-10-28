@@ -5,6 +5,7 @@ import { DateRangePickerProps } from '@/components/core/DateRangePicker'
 import { IDynamicType } from '@/types/common.i'
 import { ButtonProps } from 'react-day-picker'
 import { DefaultValues } from 'react-hook-form'
+import { EEmojiPickerProps } from '@/components/common/EmojiPicker'
 
 export enum EFieldType {
   Input = 'Input',
@@ -12,7 +13,8 @@ export enum EFieldType {
   Textarea = 'Textarea',
   Combobox = 'Combobox',
   DatePicker = 'DatePicker',
-  DateRangePicker = 'DateRangePicker'
+  DateRangePicker = 'DateRangePicker',
+  EmojiPicker = 'EmojiPicker'
 }
 
 export type IFormSchemaZod<T extends z.ZodRawShape> = z.ZodObject<T>
@@ -46,7 +48,9 @@ type FieldProps<T extends EFieldType> = T extends EFieldType.Input
           ? DateTimePickerProps
           : T extends EFieldType.DateRangePicker
             ? DateRangePickerProps
-            : never
+            : T extends EFieldType.EmojiPicker
+              ? EEmojiPickerProps
+              : never
 
 export interface IBodyFormField<T extends EFieldType = EFieldType> {
   name: string

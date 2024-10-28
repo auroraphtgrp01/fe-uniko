@@ -14,11 +14,20 @@ export interface IComboboxProps {
   dialogEdit?: React.ReactNode
   setOpenEditDialog?: React.Dispatch<React.SetStateAction<boolean>>
   onValueSelect?: (value: string) => void
+  defaultValue?: string | undefined
 }
 
-export function Combobox({ className, label, dataArr, dialogEdit, setOpenEditDialog, onValueSelect }: IComboboxProps) {
+export function Combobox({
+  className,
+  label,
+  dataArr,
+  dialogEdit,
+  setOpenEditDialog,
+  onValueSelect,
+  defaultValue
+}: IComboboxProps) {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(defaultValue ?? '')
   const [searchValue, setSearchValue] = useState('')
 
   const filteredDataArr = dataArr.filter((data) => data.label.toLowerCase().includes(searchValue.trim().toLowerCase()))
