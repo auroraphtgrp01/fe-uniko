@@ -47,7 +47,3 @@ export type ISignInResponse = IBaseResponseData<{
   refreshToken: string
   user: IUser
 }>
-
-export type SignUpBodyForm = z.TypeOf<typeof signUpSchema>
-
-export type SignInBodyForm = z.TypeOf<typeof signInSchema>
