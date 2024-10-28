@@ -8,15 +8,13 @@ import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { useState } from 'react'
 
-export function EmojiPicker({
-  onChangeValue,
-  className,
-  disabled
-}: {
+export type EEmojiPickerProps = {
   onChangeValue: (value: IEmoji) => void
   className?: string
   disabled?: boolean
-}) {
+}
+
+export function EmojiPicker({ onChangeValue, className, disabled }: EEmojiPickerProps) {
   const [emoji, setEmoji] = useState<IEmoji>(defaultEmoji)
   const [isOpenPopover, setIsOpenPopover] = useState(false)
 
