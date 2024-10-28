@@ -159,31 +159,34 @@ export default function FormZod<T extends z.ZodRawShape>({
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className={cn(classNameForm, 'space-y-3')}>
-          {memoizedFormFieldBody.map((fieldItem, index) => (
-            <FormField
-              control={form.control}
-              name={fieldItem.name as any}
-              key={index}
-              render={({ field }) => (
-                <FormItem className={(fieldItem.props as any)?.className}>
-                  {fieldItem?.label && (
-                    <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
-                      {fieldItem.label}
-                    </FormLabel>
-                  )}
-                  <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
-                    <FormFieldComponent
-                      fieldItem={fieldItem}
-                      field={field}
-                      disabled={disabled || (fieldItem.props as any)?.disabled}
-                    />
-                  </FormControl>
-                  <FormMessage className='font-semibold text-rose-400' />
-                </FormItem>
-              )}
-            />
-          ))}
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <div className={cn('space-y-3', classNameForm)}>
+            {memoizedFormFieldBody.map((fieldItem, index) => (
+              <FormField
+                control={form.control}
+                name={fieldItem.name as any}
+                key={index}
+                render={({ field }) => (
+                  <FormItem className={(fieldItem.props as any)?.className}>
+                    {fieldItem?.label && (
+                      <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
+                        {fieldItem.label}
+                      </FormLabel>
+                    )}
+                    <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
+                      <FormFieldComponent
+                        fieldItem={fieldItem}
+                        field={field}
+                        disabled={disabled || (fieldItem.props as any)?.disabled}
+                      />
+                    </FormControl>
+                    <FormMessage className='font-semibold text-rose-400' />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+
           <Button {...buttonConfig} type='submit' disabled={disabled || buttonConfig?.disabled}>
             {buttonConfig?.label ?? 'Submit'}
           </Button>
