@@ -143,7 +143,8 @@ export default function FormZod<T extends z.ZodRawShape>({
   formFieldBody,
   buttonConfig,
   classNameForm,
-  disabled
+  disabled,
+  submitRef
 }: IFormZodProps<T> & { disabled?: boolean }) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(formSchema),
@@ -159,8 +160,8 @@ export default function FormZod<T extends z.ZodRawShape>({
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className={cn('space-y-3', classNameForm)}>
+        <form ref={submitRef} onSubmit={form.handleSubmit(handleSubmit)}>
+          <div className={cn('space-y-5', classNameForm)}>
             {memoizedFormFieldBody.map((fieldItem, index) => (
               <FormField
                 control={form.control}
@@ -168,11 +169,14 @@ export default function FormZod<T extends z.ZodRawShape>({
                 key={index}
                 render={({ field }) => (
                   <FormItem className={(fieldItem.props as any)?.className}>
-                    {fieldItem?.label && (
-                      <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
-                        {fieldItem.label}
-                      </FormLabel>
-                    )}
+                    <div className='flex justify-between'>
+                      {fieldItem?.label && (
+                        <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
+                          {fieldItem.label}
+                        </FormLabel>
+                      )}
+                      <FormMessage />
+                    </div>
                     <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
                       <FormFieldComponent
                         fieldItem={fieldItem}
@@ -180,16 +184,16 @@ export default function FormZod<T extends z.ZodRawShape>({
                         disabled={disabled || (fieldItem.props as any)?.disabled}
                       />
                     </FormControl>
-                    <FormMessage className='font-semibold text-rose-400' />
                   </FormItem>
                 )}
               />
             ))}
           </div>
-
-          <Button {...buttonConfig} type='submit' disabled={disabled || buttonConfig?.disabled}>
-            {buttonConfig?.label ?? 'Submit'}
-          </Button>
+          {!submitRef && (
+            <Button {...buttonConfig} type='submit' disabled={disabled || buttonConfig?.disabled}>
+              {buttonConfig?.label ?? 'Submit'}
+            </Button>
+          )}
         </form>
       </Form>
     </div>

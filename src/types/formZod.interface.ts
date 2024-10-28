@@ -6,6 +6,7 @@ import { IDynamicType } from '@/types/common.i'
 import { ButtonProps } from 'react-day-picker'
 import { DefaultValues } from 'react-hook-form'
 import { EEmojiPickerProps } from '@/components/common/EmojiPicker'
+import { RefObject } from 'react'
 
 export enum EFieldType {
   Input = 'Input',
@@ -26,6 +27,7 @@ export interface IFormZodProps<T extends z.ZodRawShape> {
   formFieldBody: IBodyFormField[]
   buttonConfig?: ButtonProps & { label?: string }
   classNameForm?: string
+  submitRef?: RefObject<HTMLFormElement>
 }
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
