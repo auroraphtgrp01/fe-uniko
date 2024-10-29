@@ -16,9 +16,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const socketInstance: Socket<DefaultEventsMap, DefaultEventsMap> = io(SOCKET_URL)
-    socketInstance.on('connect', () => {
-      console.log('Connected to WebSocket')
-    })
+    socketInstance.on('connect', () => {})
     setSocket(socketInstance)
     return () => {
       socketInstance.disconnect()

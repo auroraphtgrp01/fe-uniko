@@ -1,19 +1,20 @@
 import { userRoutes } from '@/api/user'
-import { ICommonInformationForm } from '@/core/users/models/user.interface'
+import { ICommonInformationForm, ICredentialInformationForm } from '@/core/users/models/user.interface'
 import { useMutationCustom } from '@/hooks/useMutationCustom'
-import { IUseQueryHookOptions } from '@/types/query.interface'
 import toast from 'react-hot-toast'
 
-export const useUpdatePassword = (opts?: IUseQueryHookOptions) => {
-  return useMutationCustom<ICommonInformationForm, any>({
+export const useUpdatePassword = () => {
+  return useMutationCustom<ICredentialInformationForm, any>({
     pathUrl: userRoutes.updatePassword,
     method: 'patch',
     mutateOption: {
       onError: (error: Error | any) => {
-        if (error.response?.status) {
-          return toast.error(`${(error.response?.data as { message: string }).message} !`)
+        return toast.error('Current password is incorrect')
+      },
+      onSuccess: (res) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          toast.success('Update password successfully')
         }
-        opts?.callBackOnError?.()
       }
     }
   })

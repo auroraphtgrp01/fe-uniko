@@ -1,6 +1,9 @@
+import { signInSchema } from '@/core/auth/constants/sign-in.constant'
+import { signUpSchema } from '@/core/auth/constants/sign-up.constant'
 import { IBaseResponseData } from '@/types/common.i'
 import { IErrorResponseBase } from '@/types/core.i'
 import { IUser } from '@/types/user.i'
+import { z } from 'zod'
 
 export interface ISignInBody {
   email: string
@@ -44,3 +47,8 @@ export type ISignInResponse = IBaseResponseData<{
   refreshToken: string
   user: IUser
 }>
+
+export interface ISignInGoogleBody {
+  access_token?: string
+  credential?: string
+}
