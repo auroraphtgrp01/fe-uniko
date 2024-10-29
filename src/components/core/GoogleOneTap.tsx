@@ -4,7 +4,15 @@ export default function GoogleOneTap() {
   useGoogleOneTapLogin({
     onSuccess: (response) => {
       console.log('Google response:', response)
+    },
+    onError: () => {
+      console.error('Login Failed')
+    },
+    promptMomentNotification: (notification) => {
+      if (notification.isDisplayMoment()) {
+      }
     }
   })
-  return <div></div>
+
+  return <div className='bg-transparent'></div>
 }

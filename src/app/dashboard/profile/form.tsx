@@ -8,16 +8,21 @@ import { IUser, IUserGetMeResponse } from '@/types/user.i'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { Button } from '@/components/ui/button'
 import FormZod from '../../../components/core/FormZod'
-import { updatePasswordFormBody, updatePassWordSchema } from '@/core/users/constants/update-password-schema.constant'
 import toast from 'react-hot-toast'
 import { updateUserFormBody, updateUserSchema } from '@/core/users/constants/update-user.constant'
 import { IBaseResponseData } from '@/types/common.i'
 import { USER_QUERY_ME } from '@/core/users/constants'
+import {
+  updatePasswordFormBodyWithCurrentPassword,
+  updatePasswordFormBodyWithoutCurrentPassword,
+  updatePassWordSchemaWithCurrentPassword,
+  updatePassWordSchemaWithoutCurrentPassword
+} from '@/core/users/constants/update-password-schema.constant'
 
 export default function ProfileForm() {
   const [defaultUser, setIsDefaultUser] = useState({})
   const { getMe, updateUser, isUpdating, isPasswordUpdating, updatePassword } = useUser()
-  const handleUpdatePassword = (formData: { currentPassword: string; newPassword: string }) => {
+  const handleUpdatePassword = (formData: { currentPassword?: string; newPassword: string }) => {
     updatePassword({
       ...formData,
       id: userGetMeData?.data.id as string
@@ -52,6 +57,7 @@ export default function ProfileForm() {
   })
   const formUpdateRef = useRef<HTMLFormElement>(null)
   const formUpdatePasswordRef = useRef<HTMLFormElement>(null)
+  const formUpdatePasswordRef1 = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (userGetMeData?.data && !isGetMeUserPending) {
@@ -111,12 +117,21 @@ export default function ProfileForm() {
                 <CardDescription>Change your password here. After saving, you will be logged out.</CardDescription>
               </CardHeader>
               <CardContent className='space-y-2'>
-                <FormZod
-                  submitRef={formUpdatePasswordRef}
-                  formFieldBody={updatePasswordFormBody}
-                  formSchema={updatePassWordSchema}
-                  onSubmit={handleUpdatePassword}
-                />
+                {userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword ? (
+                  <FormZod
+                    submitRef={formUpdatePasswordRef}
+                    formFieldBody={updatePasswordFormBodyWithoutCurrentPassword}
+                    formSchema={updatePassWordSchemaWithoutCurrentPassword}
+                    onSubmit={handleUpdatePassword}
+                  />
+                ) : (
+                  <FormZod
+                    submitRef={formUpdatePasswordRef1}
+                    formFieldBody={updatePasswordFormBodyWithCurrentPassword}
+                    formSchema={updatePassWordSchemaWithCurrentPassword}
+                    onSubmit={handleUpdatePassword}
+                  />
+                )}
               </CardContent>
               <CardFooter className='flex'>
                 <Button

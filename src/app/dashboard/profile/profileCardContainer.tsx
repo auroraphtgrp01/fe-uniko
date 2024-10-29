@@ -15,10 +15,7 @@ export default function ProfileCardContainer({ data }: { data: IUser }) {
           <Popover>
             <PopoverTrigger asChild>
               <Avatar className='mx-5 h-44 w-44 rounded-full hover:cursor-pointer md:h-44 md:w-44'>
-                {/* <AvatarImage
-                  className='h-full w-full object-cover'
-                  src={`${process.env.NEXT_PUBLIC_API_ENDPOINT}${data?.avatar}`}
-                /> */}
+                {/* <AvatarImage className='h-full w-full object-cover' src={data?.avatarUrl} /> */}
                 <Image alt='' className='h-full w-full object-cover' src={AvatarDefault} />
                 <AvatarFallback>UK</AvatarFallback>
               </Avatar>

@@ -170,10 +170,9 @@ export default function FormZod<T extends z.ZodRawShape>({
     reValidateMode: 'onSubmit'
   })
 
-  const handleFormSubmit = () =>
-    form.handleSubmit((data) => {
-      onSubmit(data)
-    })()
+  const handleFormSubmit = form.handleSubmit((data) => {
+    onSubmit(data)
+  })
 
   const memoizedFormFieldBody = useMemo(() => formFieldBody, [formFieldBody])
 
@@ -184,7 +183,7 @@ export default function FormZod<T extends z.ZodRawShape>({
   return (
     <div>
       <Form {...form}>
-        <form ref={submitRef} onSubmit={form.handleSubmit(handleFormSubmit)}>
+        <form ref={submitRef} onSubmit={handleFormSubmit}>
           <div className={cn('space-y-5', classNameForm)}>
             {memoizedFormFieldBody.map((fieldItem, index) =>
               !fieldItem.hidden ? (
