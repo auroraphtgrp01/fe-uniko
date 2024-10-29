@@ -21,17 +21,14 @@ import Image from 'next/image'
 
 export function UserNav() {
   const router = useRouter()
-  const [isLogout, setIsLogout] = useState(false)
   const user = getUserInfoFromLocalStorage()
-  useEffect(() => {
-    if (isLogout === true) {
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('userInfo')
-      setIsLogout(false)
-      router.push('/')
-    }
-  }, [isLogout])
+
+  const logOut = () => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('userInfo')
+    router.push('/')
+  }
   return (
     <div className='ms-1 select-none'>
       <DropdownMenu>
@@ -71,12 +68,7 @@ export function UserNav() {
             </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              const accessToken = getAccessTokenFromLocalStorage()
-              if (accessToken) setIsLogout(true)
-            }}
-          >
+          <DropdownMenuItem className='cursor-pointer' onClick={logOut}>
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>

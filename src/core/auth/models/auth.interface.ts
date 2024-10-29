@@ -49,5 +49,6 @@ export type ISignInResponse = IBaseResponseData<{
 }>
 
 export interface ISignInGoogleBody {
-  access_token: string
+  access_token?: string
+  credential?: string
 }

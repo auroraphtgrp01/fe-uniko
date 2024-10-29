@@ -12,7 +12,6 @@ import { useLogout } from '@/core/auth/hooks/useLogout'
 
 export const useAuth = (opts?: IUseQueryHookOptions) => {
   const [isRememberMe, setIsRememberMe] = useState(true)
-
   const { mutate: signIn, isPending: isSigningIn } = useSignIn(isRememberMe, opts)
   const { mutate: signUp, isPending: isSigningUp } = useSignUp(opts)
   const { mutate: resetPassword, isPending: isResetPassword } = useResetPassword()
