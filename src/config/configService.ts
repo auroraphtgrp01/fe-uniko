@@ -9,7 +9,7 @@ const configSchema = z.object({
 const configEnv = configSchema.safeParse({
   NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,
   NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
-  NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GGID
 })
 if (!configEnv.success) {
   console.error(configEnv.error.errors)
