@@ -70,7 +70,7 @@ export function DateTimePicker({
   min,
   max,
   timezone,
-  showTime = true,
+  showTime = false,
   use12HourFormat = true,
   disabled,
   className,

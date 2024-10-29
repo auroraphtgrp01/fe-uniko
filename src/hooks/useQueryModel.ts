@@ -71,7 +71,7 @@ export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (old
   const queryClient = useQueryClient()
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
 
-  const setData = (newData: Updater<T>) => {
+  const setData = (newData: Updater<T> | any) => {
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)

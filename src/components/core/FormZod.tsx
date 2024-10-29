@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -148,19 +148,26 @@ export default function FormZod<T extends z.ZodRawShape>({
 }: IFormZodProps<T> & { disabled?: boolean }) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(formSchema),
-    defaultValues
+    defaultValues,
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
   })
 
-  function handleSubmit(value: z.infer<z.ZodObject<T>>) {
-    onSubmit(value)
-  }
+  const handleFormSubmit = () =>
+    form.handleSubmit((data) => {
+      onSubmit(data)
+    })()
 
   const memoizedFormFieldBody = useMemo(() => formFieldBody, [formFieldBody])
+
+  useEffect(() => {
+    form.reset(defaultValues)
+  }, [defaultValues, form])
 
   return (
     <div>
       <Form {...form}>
-        <form ref={submitRef} onSubmit={form.handleSubmit(handleSubmit)}>
+        <form ref={submitRef} onSubmit={form.handleSubmit(handleFormSubmit)}>
           <div className={cn('space-y-5', classNameForm)}>
             {memoizedFormFieldBody.map((fieldItem, index) => (
               <FormField
