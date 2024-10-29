@@ -1,6 +1,6 @@
 import { useModelQuery } from '@/hooks/useQueryModel'
 import {
-  TRACKER_TRANSACTION_TYPE_MODEL_KEY,
+  GET_ALL_TRACKER_TRANSACTION_TYPE_KEY,
   TRACKER_TRANSACTION_TYPE_MODEL_RETRY
 } from '../../tracker-transaction/constants'
 import { trackerTransactionTypeRoutes } from '../configs'
@@ -9,7 +9,7 @@ import { IAdvancedTrackerTransactionTypeResponse } from '../models/tracker-trans
 export const useGetAllTrackerTransactionType = () => {
   const { data: dataTrackerTransactionType, status: isGettingTrackerTransactionType } =
     useModelQuery<IAdvancedTrackerTransactionTypeResponse>(
-      TRACKER_TRANSACTION_TYPE_MODEL_KEY,
+      GET_ALL_TRACKER_TRANSACTION_TYPE_KEY,
       trackerTransactionTypeRoutes.getAll,
       {
         retry: TRACKER_TRANSACTION_TYPE_MODEL_RETRY

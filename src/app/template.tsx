@@ -2,9 +2,12 @@
 
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useEffect } from 'react'
+import GoogleOneTap from '../components/core/GoogleOneTap'
+import { getAccessTokenFromLocalStorage } from '@/libraries/helpers'
 
 export default function Template({ children }: { children: React.ReactNode }) {
   const { user, setUser } = useStoreLocal()
+  const isAuthenticated = getAccessTokenFromLocalStorage()
 
   useEffect(() => {
     if (user === null) {
@@ -15,5 +18,10 @@ export default function Template({ children }: { children: React.ReactNode }) {
     }
   }, [user])
 
-  return <div>{children}</div>
+  return (
+    <div>
+      {!isAuthenticated && <GoogleOneTap></GoogleOneTap>}
+      {children}
+    </div>
+  )
 }

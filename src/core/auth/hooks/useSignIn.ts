@@ -32,10 +32,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
         }
       },
       onError: (error) => {
-        if (error.response?.status) {
-          return toast.error(`${(error.response?.data as { message: string }).message} !`)
-        }
-        toast.error('User not found !')
+        toast.error('Login failed, please try again !')
 
         opts?.callBackOnError?.()
       }

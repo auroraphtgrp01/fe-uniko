@@ -30,27 +30,25 @@ export const handleShowDetailAccountSource = (
 }
 
 export const handleCreateAccountSource = ({
-  formData,
+  payload,
   setIsDialogOpen,
-  setFormData,
   createAccountSource,
   setFetchedData,
   setDataCreate
 }: {
-  formData: IAccountSourceBody
+  payload: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   createAccountSource: any
   setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setDataCreate: any
 }) => {
-  createAccountSource(formData, {
+  createAccountSource(payload, {
     onSuccess: (res: IAccountSourceResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
         setFetchedData((prev) => [res.data, ...prev])
         setDataCreate(res.data)
-        setFormData(initAccountSourceFormData)
         toast.success('Create account source successfully!')
       }
     }
@@ -58,34 +56,31 @@ export const handleCreateAccountSource = ({
 }
 
 export const handleUpdateAccountSource = ({
-  formData,
+  payload,
   setIsDialogOpen,
   fetchedData,
   setFetchedData,
   setFormData,
   updateAccountSource,
   setDataUpdate,
-  setDetailData,
   setIdRowClicked
 }: {
-  formData: IAccountSourceBody
+  payload: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   updateAccountSource: any
   setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   fetchedData: IAccountSource[]
   setDataUpdate: any
-  setDetailData: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) => {
-  updateAccountSource(formData, {
+  updateAccountSource(payload, {
     onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
         const clonedData = JSON.parse(JSON.stringify(res))
         const updatedData = fetchedData.map((item) => (item.id === clonedData.data.id ? clonedData.data : item))
         setFetchedData(updatedData)
         setDataUpdate(res.data)
-        setDetailData(res.data)
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
         setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
         setIdRowClicked('')

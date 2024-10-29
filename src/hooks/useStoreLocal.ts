@@ -10,8 +10,9 @@ interface StoreState {
   // user store
   user: IUser | null
   setUser: (user: IUser | null) => void
-  transactionData: ITransaction[]
-  setTransactionData: (data: ITransaction[]) => void
+  // unclassified transaction store
+  unclassifiedTransactionData: ITransaction[]
+  setUnclassifiedTransactionData: (data: ITransaction[]) => void
 }
 
 export const useStoreLocal = create<StoreState>((set) => ({
@@ -21,6 +22,7 @@ export const useStoreLocal = create<StoreState>((set) => ({
   // user store
   user: null,
   setUser: (user) => set({ user }),
-  transactionData: [],
-  setTransactionData: (data) => set({ transactionData: data })
+  // unclassified transaction store
+  unclassifiedTransactionData: [],
+  setUnclassifiedTransactionData: (data) => set({ unclassifiedTransactionData: data })
 }))

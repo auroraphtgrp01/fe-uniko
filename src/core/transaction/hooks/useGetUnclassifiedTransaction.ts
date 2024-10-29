@@ -1,5 +1,5 @@
 import { transactionRoutes } from '@/api/transaction'
-import { TRANSACTION_MODEL_KEY, TRANSACTION_RETRY } from '@/core/transaction/constants'
+import { GET_UNCLASSIFIED_TRANSACTION_KEY, TRANSACTION_RETRY } from '@/core/transaction/constants'
 import { IGetTransactionResponse } from '@/core/transaction/models'
 import { useModelQuery } from '@/hooks/useQueryModel'
 import { useEffect } from 'react'
@@ -10,9 +10,13 @@ export const useGetUnclassifiedTransactions = () => {
     isPending: isGetUnclassifiedTxs,
     data: dataUnclassifiedTxs,
     error
-  } = useModelQuery<IGetTransactionResponse>(TRANSACTION_MODEL_KEY, transactionRoutes.getUnclassifiedTransactions, {
-    retry: TRANSACTION_RETRY
-  })
+  } = useModelQuery<IGetTransactionResponse>(
+    GET_UNCLASSIFIED_TRANSACTION_KEY,
+    transactionRoutes.getUnclassifiedTransactions,
+    {
+      retry: TRANSACTION_RETRY
+    }
+  )
 
   useEffect(() => {
     if (error) {

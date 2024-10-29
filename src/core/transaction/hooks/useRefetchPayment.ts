@@ -1,7 +1,6 @@
 import { transactionRoutes } from '@/api/transaction'
-import { PAYMENT_MODEL_KEY, PAYMENT_RETRY } from '@/core/transaction/constants'
+import { PAYMENT_RETRY, REFETCH_PAYMENT_KEY } from '@/core/transaction/constants'
 import { useModelQuery } from '@/hooks/useQueryModel'
-import { IBaseResponseData } from '@/types/common.i'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 
@@ -10,10 +9,11 @@ export const useRefetchPayment = (id: string) => {
     status: isRefetchPayment,
     data: dataRefetchPayment,
     error
-  } = useModelQuery<{ statusCode: number; data: boolean }>(PAYMENT_MODEL_KEY, transactionRoutes.refetchPayment, {
+  } = useModelQuery<{ statusCode: number; data: boolean }>(REFETCH_PAYMENT_KEY, transactionRoutes.refetchPayment, {
     condition: id,
     enable: !!id,
-    params: { id }
+    params: { id },
+    retry: PAYMENT_RETRY
   })
 
   useEffect(() => {

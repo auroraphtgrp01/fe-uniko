@@ -3,7 +3,7 @@ import { IDynamicType } from '@/types/common.i'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { IGetAccountBankResponse } from '../models'
-import { ACCOUNT_BANK_MODEL_KEY, ACCOUNT_BANK_RETRY } from '../constants'
+import { GET_ADVANCED_ACCOUNT_BANK_KEY, ACCOUNT_BANK_RETRY } from '../constants'
 import { accountBanksRoutes } from '@/api/account-bank'
 
 export const useQueryAccountBank = (query: IDynamicType) => {
@@ -11,7 +11,7 @@ export const useQueryAccountBank = (query: IDynamicType) => {
     isPending: isGetAccountBank,
     data: dataAccountBank,
     error
-  } = useModelQuery<IGetAccountBankResponse>(ACCOUNT_BANK_MODEL_KEY, accountBanksRoutes.getAdvanced, {
+  } = useModelQuery<IGetAccountBankResponse>(GET_ADVANCED_ACCOUNT_BANK_KEY, accountBanksRoutes.getAdvanced, {
     query,
     retry: ACCOUNT_BANK_RETRY
   })
