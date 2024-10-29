@@ -4,14 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
+import { formatCurrency } from '@/libraries/utils'
 import { useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
   handleAccountBankRefetching,
-  handleRefetchPaymentCompletion,
   modifyTransactionHandler,
   updateCacheDataUpdate
 } from '@/app/dashboard/transaction/handler'
@@ -153,7 +152,6 @@ export default function TransactionForm() {
     if (socket) {
       socket.off('refetchComplete')
       socket.on('refetchComplete', (data: { message: string; status: string }) => {
-        console.log('Refetch completed:', data)
         if (data.status == 'NO_NEW_TRANSACTION') {
           toast.success('No new transaction to fetch!', {
             duration: 2000

@@ -23,6 +23,7 @@ import { DateTimePicker, DateTimePickerProps } from '@/components/core/DateTimeP
 import { DateRangePicker, DateRangePickerProps } from '@/components/core/DateRangePicker'
 import { DateRange } from 'react-day-picker'
 import { EEmojiPickerProps, EmojiPicker } from '@/components/common/EmojiPicker'
+import MultiInput from '@/components/core/MultiInput'
 
 const FormFieldComponent = React.memo(
   ({ fieldItem, field, disabled }: { fieldItem: any; field: any; disabled?: boolean }) => {
@@ -38,10 +39,26 @@ const FormFieldComponent = React.memo(
       )
     }
 
+    if (fieldItem.type === EFieldType.MultiInput) {
+      return (
+        <MultiInput
+          props={{
+            ...fieldItem?.props,
+            placeholder: fieldItem.placeHolder
+          }}
+          value={field.value ?? []}
+          onValueChange={(value: any[]) => {
+            field.onChange(value)
+          }}
+        />
+      )
+    }
+
     if (fieldItem.type === EFieldType.Select) {
       return (
         <Select
           onValueChange={(value) => {
+            fieldItem?.props?.onchange?.(value)
             field.onChange(value)
           }}
           value={(field?.value as any) ?? undefined}
@@ -169,32 +186,34 @@ export default function FormZod<T extends z.ZodRawShape>({
       <Form {...form}>
         <form ref={submitRef} onSubmit={form.handleSubmit(handleFormSubmit)}>
           <div className={cn('space-y-5', classNameForm)}>
-            {memoizedFormFieldBody.map((fieldItem, index) => (
-              <FormField
-                control={form.control}
-                name={fieldItem.name as any}
-                key={index}
-                render={({ field }) => (
-                  <FormItem className={(fieldItem.props as any)?.className}>
-                    <div className='flex justify-between'>
-                      {fieldItem?.label && (
-                        <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
-                          {fieldItem.label}
-                        </FormLabel>
-                      )}
-                      <FormMessage />
-                    </div>
-                    <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
-                      <FormFieldComponent
-                        fieldItem={fieldItem}
-                        field={field}
-                        disabled={disabled || (fieldItem.props as any)?.disabled}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            ))}
+            {memoizedFormFieldBody.map((fieldItem, index) =>
+              !fieldItem.hidden ? (
+                <FormField
+                  control={form.control}
+                  name={fieldItem.name as any}
+                  key={index}
+                  render={({ field }) => (
+                    <FormItem className={(fieldItem.props as any)?.className}>
+                      <div className='flex justify-between'>
+                        {fieldItem?.label && (
+                          <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
+                            {fieldItem.label}
+                          </FormLabel>
+                        )}
+                        <FormMessage />
+                      </div>
+                      <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
+                        <FormFieldComponent
+                          fieldItem={fieldItem}
+                          field={field}
+                          disabled={disabled || (fieldItem.props as any)?.disabled}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              ) : null
+            )}
           </div>
           {!submitRef && (
             <Button {...buttonConfig} type='submit' disabled={disabled || buttonConfig?.disabled}>

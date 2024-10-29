@@ -15,7 +15,8 @@ export enum EFieldType {
   Combobox = 'Combobox',
   DatePicker = 'DatePicker',
   DateRangePicker = 'DateRangePicker',
-  EmojiPicker = 'EmojiPicker'
+  EmojiPicker = 'EmojiPicker',
+  MultiInput = 'MultiInput'
 }
 
 export type IFormSchemaZod<T extends z.ZodRawShape> = z.ZodObject<T>
@@ -57,6 +58,7 @@ type FieldProps<T extends EFieldType> = T extends EFieldType.Input
 export interface IBodyFormField<T extends EFieldType = EFieldType> {
   name: string
   type: T
+  hidden?: boolean
   label?: string
   placeHolder: string
   props?: FieldProps<T>

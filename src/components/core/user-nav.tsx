@@ -12,22 +12,17 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { motion } from 'framer-motion'
-import { getAccessTokenFromLocalStorage, getBaseClientUrl, getUserInfoFromLocalStorage } from '@/libraries/helpers'
+import { getAccessTokenFromLocalStorage, getUserInfoFromLocalStorage } from '@/libraries/helpers'
 import Link from 'next/link'
-import { useUser } from '@/core/users/hooks'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AvatarDefault from '@/images/avatar.jpg'
 import Image from 'next/image'
-import { useAuth } from '@/core/auth/hooks'
 
 export function UserNav() {
-  const baseUrl = getBaseClientUrl()
   const router = useRouter()
   const [isLogout, setIsLogout] = useState(false)
   const user = getUserInfoFromLocalStorage()
-  console.log('user', user)
-
   useEffect(() => {
     if (isLogout === true) {
       localStorage.removeItem('accessToken')

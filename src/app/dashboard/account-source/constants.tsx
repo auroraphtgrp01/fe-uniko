@@ -1,8 +1,3 @@
-import { MoneyInput } from '@/components/core/MoneyInput'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   EAccountSourceType,
   IAccountSource,
@@ -10,9 +5,9 @@ import {
   IAccountSourceDataFormat,
   IDialogAccountSource
 } from '@/core/account-source/models'
-import { formatArrayData, formatCurrency } from '@/libraries/utils'
+import { formatCurrency } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
-import { HandCoins, Landmark, PlusCircle, PlusIcon, Trash2, Wallet2 } from 'lucide-react'
+import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
 
 export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDataFormat => {
   const { id, name, type, initAmount, currency, currentAmount, accountBank } = data

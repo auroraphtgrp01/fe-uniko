@@ -1,176 +1,81 @@
-import { MoneyInput } from '@/components/core/MoneyInput'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { EAccountSourceType, IAccountSourceBody } from '@/core/account-source/models'
+import { EAccountSourceType } from '@/core/account-source/models'
 import { PlusCircle } from 'lucide-react'
+import FormZod from '../../core/FormZod'
+import {
+  createAccountSourceFormBody,
+  createAccountSourceSchema
+} from '@/core/account-source/constants/create-account-source.constant'
+import { useEffect, useRef, useState } from 'react'
+import {
+  createAccountBankFormBody,
+  createAccountBankSchema
+} from '@/core/account-source/constants/create-account-bank.constant'
 
-interface ICreateAndUpdateAccountSourceFormProps {
-  setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
-  formData: IAccountSourceBody
-}
+export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValue }: any) {
+  const [typeState, setTypeState] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
+  const [defaultValueData, setDefaultValueData] = useState<any>({})
+  const formCreateAccountSourceRef = useRef<HTMLFormElement>(null)
+  const formCreateAccountBankRef = useRef<HTMLFormElement>(null)
+  let payload = {}
+  const handleSubmit = (v: any) => {
+    payload = { ...v, initAmount: Number(v.initAmount), name: v.accountSourceName }
+    if (typeState !== EAccountSourceType.BANKING) {
+      callBack(payload)
+    }
+  }
 
-export default function CreateAndUpdateAccountSourceForm({
-  setFormData,
-  formData
-}: ICreateAndUpdateAccountSourceFormProps) {
+  const handleSubmitBank = (v: any) => {
+    payload = { ...payload, ...v }
+    callBack(payload)
+  }
+
+  const onSubmitAll = () => {
+    if (typeState === EAccountSourceType.BANKING) {
+      formCreateAccountBankRef.current?.requestSubmit()
+    }
+    formCreateAccountSourceRef.current?.requestSubmit()
+  }
+
+  useEffect(() => {
+    setDefaultValueData({
+      accountBank: {
+        type: defaultValue?.type,
+        login_id: defaultValue?.login_id,
+        password: defaultValue?.password,
+        accounts: defaultValue?.accounts
+      },
+      accountSource: {
+        accountSourceName: defaultValue?.accountSourceName,
+        accountSourceType: defaultValue?.accountSourceType,
+        initAmount: defaultValue?.initAmount
+      }
+    })
+  }, [defaultValue])
   return (
-    <div className='grid gap-4 py-4'>
-      <div className='grid grid-cols-4 items-center gap-4'>
-        <Label htmlFor='sourceName' className='text-right'>
-          Source Name
-        </Label>
-        <Input
-          value={formData.name}
-          required
-          onChange={(e) => {
-            setFormData((prev) => ({ ...prev, name: e.target.value }))
-          }}
-          className='col-span-3'
-          placeholder='Source Name *'
+    <div>
+      <FormZod
+        defaultValues={defaultValueData.accountSource}
+        classNameForm='space-y-4'
+        formSchema={createAccountSourceSchema}
+        formFieldBody={createAccountSourceFormBody(setTypeState)}
+        onSubmit={handleSubmit}
+        submitRef={formCreateAccountSourceRef}
+      />
+      {typeState === EAccountSourceType.BANKING && (
+        <FormZod
+          defaultValues={defaultValueData.accountBank}
+          classNameForm='space-y-4 mt-4'
+          formSchema={createAccountBankSchema}
+          formFieldBody={createAccountBankFormBody}
+          onSubmit={handleSubmitBank}
+          submitRef={formCreateAccountBankRef}
         />
-      </div>
-      <div className='grid grid-cols-4 items-center gap-4'>
-        <Label htmlFor='type' className='text-right'>
-          Type
-        </Label>
-        <Select
-          required
-          onValueChange={(value) => {
-            setFormData((prev) => ({ ...prev, accountSourceType: value as EAccountSourceType }))
-            if (value === EAccountSourceType.BANKING) setFormData((prev) => ({ ...prev, accounts: [''] }))
-            else
-              setFormData((prev) => {
-                const { accounts, ...rest } = prev
-                return rest
-              })
-          }}
-          value={formData.accountSourceType}
-        >
-          <SelectTrigger className='col-span-3'>
-            <SelectValue placeholder='Select a source type' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='WALLET'>Wallet</SelectItem>
-            <SelectItem value='BANKING'>Banking</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      {formData.accountSourceType === EAccountSourceType.BANKING && (
-        <>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='type' className='text-right'>
-              Account Bank Type
-            </Label>
-            <Select
-              required
-              onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))}
-              value={formData.type}
-            >
-              <SelectTrigger className='col-span-3'>
-                <SelectValue placeholder='Select a account bank type' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='MB_BANK'>MB Bank</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='login_id' className='text-right'>
-              Login ID
-            </Label>
-            <Input
-              value={formData.login_id}
-              required
-              onChange={(e) => {
-                setFormData((prev) => ({ ...prev, login_id: e.target.value }))
-              }}
-              className='col-span-3'
-              placeholder='Login Id *'
-            />
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='password' className='text-right'>
-              Password
-            </Label>
-            <Input
-              value={formData.password}
-              type='password'
-              required
-              onChange={(e) => {
-                setFormData((prev) => ({ ...prev, password: e.target.value }))
-              }}
-              className='col-span-3'
-              placeholder='Password *'
-            />
-          </div>
-
-          {formData.accounts && formData.accounts.length > 0
-            ? formData.accounts.map((account, index) =>
-                index > 0 ? (
-                  <div key={index} className='grid grid-cols-4 items-center gap-4'>
-                    <Label htmlFor='accounts' className='text-right'></Label>
-                    <Input
-                      value={account}
-                      required
-                      onChange={(e) => {
-                        const newAccounts = [...(formData.accounts as string[])]
-                        newAccounts[index] = e.target.value
-                        setFormData((prev) => ({ ...prev, accounts: newAccounts }))
-                      }}
-                      className='col-span-3'
-                      placeholder={`Account ${index + 1} *`}
-                    />
-                  </div>
-                ) : (
-                  <div key={index} className='grid grid-cols-4 items-center gap-4'>
-                    <Label htmlFor='accounts' className='text-right'>
-                      Account
-                    </Label>
-                    <Input
-                      value={account}
-                      required
-                      onChange={(e) => {
-                        const newAccounts = [...(formData.accounts as string[])]
-                        newAccounts[index] = e.target.value
-                        setFormData((prev) => ({ ...prev, accounts: newAccounts }))
-                      }}
-                      className='col-span-3'
-                      placeholder={`Account ${index + 1} *`}
-                    />
-                  </div>
-                )
-              )
-            : ''}
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='initialAmount' className='text-right'></Label>
-            <Button
-              onClick={() => {
-                setFormData((prev) => ({ ...prev, accounts: [...(formData.accounts as string[]), ''] }))
-              }}
-              variant='outline'
-              size='sm'
-            >
-              <PlusCircle className='mr-2 h-4 w-4' /> Add Account
-            </Button>
-          </div>
-        </>
       )}
-      <div className='grid grid-cols-4 items-center gap-4'>
-        <Label htmlFor='initialAmount' className='text-right'>
-          Initial Amount
-        </Label>
-        <MoneyInput
-          required
-          className='col-span-3'
-          defaultValue={formData.initAmount}
-          placeholder='Init Amount'
-          onChange={(e) => {
-            setFormData((prev) => ({ ...prev, initAmount: Number(e.target.value) }))
-          }}
-        />
-      </div>
+
+      <Button onClick={onSubmitAll} className='mt-4 w-full'>
+        Save Changes Account Source
+      </Button>
     </div>
   )
 }
