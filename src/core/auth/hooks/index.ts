@@ -1,4 +1,5 @@
 'use client'
+import { useSignInGoogle } from './useSignInGoogle'
 
 import { useState } from 'react'
 import { useSignIn } from '@/core/auth/hooks/useSignIn'
@@ -15,6 +16,7 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
   const { mutate: signIn, isPending: isSigningIn } = useSignIn(isRememberMe, opts)
   const { mutate: signUp, isPending: isSigningUp } = useSignUp(opts)
   const { mutate: resetPassword, isPending: isResetPassword } = useResetPassword()
+  const { mutate: signInGoogle, isPending: isSigningInGoogle } = useSignInGoogle()
   return {
     signIn,
     isSigningIn,
@@ -26,6 +28,8 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
     resetPassword,
     isResetPassword,
     useVerifyEmail,
-    useLogout
+    useLogout,
+    signInGoogle,
+    isSigningInGoogle
   }
 }

@@ -2,11 +2,10 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Icons } from '@/components/ui/icons'
 import { Card, CardContent } from '@/components/ui/card'
-import { useState, FormEvent, useRef } from 'react'
+import { useRef } from 'react'
 import Logo2 from '@/images/logo-2.png'
 import Image from 'next/image'
 import { useAuth } from '@/core/auth/hooks'
@@ -14,23 +13,25 @@ import { getAccessTokenFromLocalStorage } from '@/libraries/helpers'
 import { useRouter } from 'next/navigation'
 import FormZod from '../../components/core/FormZod'
 import { signInFormBody, signInSchema } from '@/core/auth/constants/sign-in.constant'
+import { useGoogleLogin } from '@react-oauth/google'
+import toast from 'react-hot-toast'
 export default function SignInForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
   const { signIn, isSigningIn, isRememberMe, setIsRememberMe } = useAuth()
-
   const formRef = useRef<HTMLFormElement>(null)
-
   const isAuthenticated = getAccessTokenFromLocalStorage()
   const router = useRouter()
   if (isAuthenticated && isSigningIn) router.push('/dashboard')
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault()
-    signIn({ email, password })
-  }
-
+  const { signInGoogle } = useAuth()
+  const loginGoogle = useGoogleLogin({
+    onSuccess: (credentialResponse) => {
+      signInGoogle({
+        access_token: credentialResponse.access_token
+      })
+    },
+    onError: () => {
+      toast.error('An error occurred. Please try again later.')
+    }
+  })
   return (
     <div className='relative flex min-h-screen w-full items-center justify-center overflow-hidden rounded-md bg-background px-4 py-12 pb-[5rem] pt-[5rem] antialiased sm:px-6 md:items-center md:justify-center lg:px-8'>
       <Card className='w-full max-w-md rounded-lg bg-background_nav shadow-lg'>
@@ -110,7 +111,7 @@ export default function SignInForm() {
             </div>
           </div>
           <div className='mt-4 flex flex-col sm:flex-row sm:space-x-2'>
-            <Button variant='greenPastel1' className='mb-2 me-5 w-full'>
+            <Button onClick={() => loginGoogle()} variant='greenPastel1' className='mb-2 me-5 w-full'>
               <Icons.google className='mr-2 h-5 w-5' />
               Sign in with Google
             </Button>

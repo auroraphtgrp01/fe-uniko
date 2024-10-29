@@ -2,6 +2,7 @@
 
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useEffect } from 'react'
+import GoogleOneTap from '../components/core/GoogleOneTap'
 
 export default function Template({ children }: { children: React.ReactNode }) {
   const { user, setUser } = useStoreLocal()
@@ -15,5 +16,10 @@ export default function Template({ children }: { children: React.ReactNode }) {
     }
   }, [user])
 
-  return <div>{children}</div>
+  return (
+    <div>
+      <GoogleOneTap></GoogleOneTap>
+      {children}
+    </div>
+  )
 }

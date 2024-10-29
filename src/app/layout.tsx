@@ -10,6 +10,8 @@ import { ReactNode } from 'react'
 import 'nprogress/nprogress.css'
 import dynamic from 'next/dynamic'
 import { SocketProvider } from '../libraries/useSocketIo'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import GoogleOneTap from '../components/core/GoogleOneTap'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -59,7 +61,9 @@ export default function RootLayout({
         <TopProgressBar />
         <SocketProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-            <QueryProvider>{children}</QueryProvider>
+            <GoogleOAuthProvider clientId={configProject.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+              <QueryProvider>{children}</QueryProvider>
+            </GoogleOAuthProvider>
           </ThemeProvider>
         </SocketProvider>
       </body>

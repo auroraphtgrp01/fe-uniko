@@ -47,3 +47,7 @@ export type ISignInResponse = IBaseResponseData<{
   refreshToken: string
   user: IUser
 }>
+
+export interface ISignInGoogleBody {
+  access_token: string
+}
