@@ -41,9 +41,14 @@ import {
   initDataTableTransaction,
   initTrackerTypeData,
   updateCacheDataClassifyFeat,
-  updateCacheDataCreate as updateCacheDataClassify
+  updateCacheDataCreate as updateCacheDataClassify,
+  handleClassifyTransaction,
+  handleCreateTrackerTxType
 } from '../tracker-transaction/handlers'
-import { ITrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useSocket } from '@/libraries/useSocketIo'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
@@ -64,7 +69,7 @@ export default function TransactionForm() {
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
-  const [dataDetail, setDataDetail] = useState<IDataTransactionTable>()
+  const [dataDetail, setDataDetail] = useState<IDataTransactionTable>(initEmptyDetailTransaction)
   const [dataTable, setDataTable] = useState<IDataTransactionTable[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTransaction>(initDialogFlag)
@@ -293,26 +298,41 @@ export default function TransactionForm() {
             data: dataTable,
             transactionTodayData: transactionSummary.transactionToday.data,
             unclassifiedTransactionData: transactionSummary.unclassifiedTransaction.data,
-            onRowClick: onRowClick,
             setConfig: setDataTableConfig,
             config: dataTableConfig,
-            dataDetail: dataDetail || initEmptyDetailTransaction
+            dataDetail: dataDetail,
+            setDataDetail
           }}
           dialogState={{
             isDialogOpen: isDialogOpen,
             setIsDialogOpen: setIsDialogOpen
           }}
           classifyDialog={{
-            formData,
-            setFormData,
-            classifyTransaction,
             incomeTrackerTransactionType: incomingTrackerType,
             expenseTrackerTransactionType: expenseTrackerType,
-            hookUpdateCache: setData,
-            hookUpdateCacheUnclassified: setCacheUnclassifiedTxs,
-            hookCreateTrackerTxType: createTrackerTxType,
-            hookSetCacheTrackerTxType: setCacheTrackerTxType,
-            hookSetDataTrackerTxs: setDataTrackerTxs
+            handleClassify: (data: IClassifyTransactionFormData) => {
+              handleClassifyTransaction({
+                payload: data,
+                hookCreate: classifyTransaction,
+                hookUpdateCache: setCacheUnclassifiedTxs,
+                setIsDialogOpen,
+                hookSetTrackerTx: setData
+              })
+            }
+          }}
+          dialogEditTrackerType={{
+            handleCreateTrackerType: (
+              data: ITrackerTransactionTypeBody,
+              setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+            ) => {
+              handleCreateTrackerTxType({
+                payload: data,
+                hookCreate: createTrackerTxType,
+                hookUpdateCache: setCacheTrackerTxType,
+                setIsCreating
+              })
+            },
+            handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
           }}
         />
       </Card>

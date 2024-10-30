@@ -43,7 +43,7 @@ export const initClassifyTransactionForm = {
   description: ''
 }
 
-export const initCreateTrackerTxTypeForm = {
+export const initTrackerTypeForm = {
   name: '',
   type: '',
   description: ''

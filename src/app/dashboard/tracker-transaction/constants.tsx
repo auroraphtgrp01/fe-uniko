@@ -1,24 +1,15 @@
 'use client'
 import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
-import { PlusCircle, PlusIcon } from 'lucide-react'
+import { PlusIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  ITrackerTransactionType,
-  ITrackerTransactionTypeBody
-} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { IAccountSource } from '@/core/account-source/models'
-import { MoneyInput } from '@/components/core/MoneyInput'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
-import { Combobox } from '@/components/core/Combobox'
-import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
-import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import React from 'react'
 
 export const initButtonInDataTableHeader = ({
