@@ -76,7 +76,6 @@ export const handleClassifyTransaction = async ({
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
-        hookResetTrackerTx(res.data)
         if (hookResetCacheStatistic) hookResetCacheStatistic(res.data)
         if (hookResetTrackerTx) hookResetTrackerTx(res.data)
         if (hookSetTrackerTx) hookSetTrackerTx(res.data)

@@ -3,16 +3,10 @@ import { Button } from '@/components/ui/button'
 import { IDialogConfig } from '@/types/common.i'
 import { ITrackerTransactionDialogProps } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { DataTable } from '@/components/dashboard/DataTable'
-import {
-  ITrackerTransactionType,
-  ITrackerTransactionTypeBody
-} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { initCreateTrackerTransactionForm, initTrackerTypeForm } from '../transaction/constants'
-import { handleCreateTrackerTransaction, modifiedTrackerTypeForComboBox } from './handlers'
-import { useEffect, useRef, useState } from 'react'
+import { initCreateTrackerTransactionForm } from '../transaction/constants'
+import { useRef, useState } from 'react'
 import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import CreateTrackerTransactionForm from '@/components/dashboard/tracker-transaction/CreateForm'
-import { IEditTrackerTypeDialogData } from '@/components/dashboard/EditTrackerType'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 export default function TrackerTransactionDialog({
@@ -24,6 +18,7 @@ export default function TrackerTransactionDialog({
   const formClassifyRef = useRef<HTMLFormElement>(null)
   const formCreateRef = useRef<HTMLFormElement>(null)
   // states
+  const [transactionIdClassifying, setTransactionIdClassifying] = useState<string>()
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
   const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
@@ -31,6 +26,7 @@ export default function TrackerTransactionDialog({
 
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: ClassifyForm({
+      transactionId: transactionIdClassifying as string,
       incomeTrackerType: sharedDialogElements.incomeTrackerType,
       expenseTrackerType: sharedDialogElements.expenseTrackerType,
       openEditTrackerTxTypeDialog,
@@ -89,6 +85,7 @@ export default function TrackerTransactionDialog({
           config={unclassifiedTxDialog.tableConfig}
           setConfig={unclassifiedTxDialog.setTableConfig}
           onRowClick={(rowData) => {
+            setTransactionIdClassifying(rowData.id)
             setTypeOfTrackerType(rowData.direction as ETypeOfTrackerTransactionType)
             sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
           }}

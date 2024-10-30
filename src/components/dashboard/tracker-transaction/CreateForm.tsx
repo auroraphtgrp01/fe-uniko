@@ -1,26 +1,16 @@
 import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
-import { Combobox } from '../../core/Combobox'
-import { MoneyInput } from '../../core/MoneyInput'
-import { Input } from '../../ui/input'
-import { Label } from '../../ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select'
-import { Textarea } from '../../ui/textarea'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IAccountSource } from '@/core/account-source/models'
-import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
-import EditTrackerTypeDialog, { IEditTrackerTypeDialogData } from '../EditTrackerType'
-import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
-import { z } from 'zod'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { useEffect, useState } from 'react'
 import FormZod from '@/components/core/FormZod'
 import {
   createTrackerTransactionSchema,
   defineCreateAccountSourceFormBody
-} from '@/core/tracker-transaction/constants/create-tracker-transaction'
+} from '@/core/tracker-transaction/constants/create-tracker-transaction.constant'
 
 interface ICreateTrackerTransactionFormProps {
   incomeTrackerType: ITrackerTransactionType[]

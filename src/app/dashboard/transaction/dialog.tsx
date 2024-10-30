@@ -51,6 +51,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )
+
   const detailsConfigDialog: IDialogConfig = {
     content: (
       <div className='py-4'>
@@ -161,6 +162,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   }
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: ClassifyForm({
+      transactionId: dataTable.dataDetail.id,
       incomeTrackerType: classifyDialog.incomeTrackerTransactionType,
       expenseTrackerType: classifyDialog.expenseTrackerTransactionType,
       openEditTrackerTxTypeDialog,
