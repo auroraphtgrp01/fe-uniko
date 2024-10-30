@@ -7,16 +7,13 @@ import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
 import React, { useState } from 'react'
-import {
-  defineContentClassifyingTransactionDialog,
-  initClassifyTransactionForm,
-  initCreateTrackerTxTypeForm
-} from './constants'
+import { initClassifyTransactionForm, initCreateTrackerTxTypeForm } from './constants'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { handleClassifyTransaction } from './handler'
+import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 
 export interface ITransactionDialogProps {
   dataTable: {
@@ -43,6 +40,7 @@ export interface ITransactionDialogProps {
     hookUpdateCacheUnclassified: any
     hookCreateTrackerTxType: any
     hookSetCacheTrackerTxType: any
+    hookSetDataTrackerTxs: any
   }
 }
 
@@ -162,15 +160,14 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedTransactionOpen: false }))
     }
   }
-  const classifyingTransactionConfigDialogContent = defineContentClassifyingTransactionDialog({
-    formData,
-    setFormData,
-    trackerTransactionType: classifyTrackerTransactionType,
-    openEditTrackerTxTypeDialog,
-    setOpenEditTrackerTxTypeDialog
-  })
   const classifyingTransactionConfigDialog: IDialogConfig = {
-    content: classifyingTransactionConfigDialogContent,
+    content: ClassifyForm({
+      formData,
+      setFormData,
+      trackerTransactionType: classifyTrackerTransactionType,
+      openEditTrackerTxTypeDialog,
+      setOpenEditTrackerTxTypeDialog
+    }),
     footer: (
       <Button
         onClick={() =>
@@ -180,7 +177,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
             hookCreate: classifyDialog.classifyTransaction,
             hookUpdateCacheUnclassified: classifyDialog.hookUpdateCacheUnclassified,
             hookUpdateCache: classifyDialog.hookUpdateCache,
-            setIsDialogOpen: dialogState.setIsDialogOpen
+            setIsDialogOpen: dialogState.setIsDialogOpen,
+            hookSetDataTrackerTxs: classifyDialog.hookSetDataTrackerTxs
           })
         }
         type='button'

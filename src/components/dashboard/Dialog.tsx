@@ -20,14 +20,12 @@ const CustomDialog: FC<CustomDialogProps> = ({ config, onSubmit }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={className ?? 'sm:max-w-[425px]'}>
-        <form onSubmit={onSubmit}>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {content}
-          <DialogFooter>{footer}</DialogFooter>
-        </form>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        {content}
+        <DialogFooter>{footer}</DialogFooter>
       </DialogContent>
     </Dialog>
   )

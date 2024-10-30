@@ -4,14 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
+import { formatCurrency } from '@/libraries/utils'
 import { useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
   handleAccountBankRefetching,
-  handleRefetchPaymentCompletion,
   modifyTransactionHandler,
   updateCacheDataUpdate
 } from '@/app/dashboard/transaction/handler'
@@ -32,7 +31,6 @@ import {
   initEmptyTransactionSummaryData,
   transactionHeaders
 } from './constants'
-import { useAccountBank } from '@/core/account-bank/hooks'
 import { IAccountBank } from '@/core/account-bank/models'
 import { initQueryOptions } from '@/constants/init-query-options'
 import { useUpdateModel } from '@/hooks/useQueryModel'
@@ -42,7 +40,8 @@ import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks
 import {
   initDataTableTransaction,
   initTrackerTypeData,
-  updateCacheDataClassifyFeat
+  updateCacheDataClassifyFeat,
+  updateCacheDataCreate as updateCacheDataClassify
 } from '../tracker-transaction/handlers'
 import { ITrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useSocket } from '@/libraries/useSocketIo'
@@ -51,7 +50,11 @@ import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useUser } from '@/core/users/hooks'
 import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
 import { GET_ADVANCED_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
-import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'
+import {
+  GET_ADVANCED_TRACKER_TRANSACTION_KEY,
+  GET_ALL_TRACKER_TRANSACTION_TYPE_KEY
+} from '@/core/tracker-transaction/constants'
+import { IAdvancedTrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 
 export default function TransactionForm() {
   // states
@@ -81,9 +84,6 @@ export default function TransactionForm() {
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { getTransactions, refetchPayment, getPayments } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
-  const { getAccountBank } = useAccountBank()
-  const { dataAccountBank } = getAccountBank({ page: 1, limit: 100 })
-  const { dataRefetchPayment } = refetchPayment(accountBankRefetching?.id ?? '')
   const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(
     GET_ADVANCED_TRANSACTION_KEY,
     updateCacheDataUpdate
@@ -94,13 +94,17 @@ export default function TransactionForm() {
       return { ...oldData, data: [...oldData.data, newData] }
     }
   )
-  const { setData: setCacheUnclassifiedTxs } = useUpdateModel(
+  const { setData: setCacheUnclassifiedTxs, resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
     [GET_UNCLASSIFIED_TRANSACTION_KEY],
     updateCacheDataClassifyFeat
   )
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
   const { isGetMeUserPending } = getMe(true)
+  const { setData: setDataTrackerTxs } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
+    [GET_ADVANCED_TRACKER_TRANSACTION_KEY],
+    updateCacheDataClassify
+  )
 
   const refetchTransactionBySocket = () => {
     const lastCalled = getTimeCountRefetchLimit()
@@ -148,13 +152,13 @@ export default function TransactionForm() {
     if (socket) {
       socket.off('refetchComplete')
       socket.on('refetchComplete', (data: { message: string; status: string }) => {
-        console.log('Refetch completed:', data)
         if (data.status == 'NO_NEW_TRANSACTION') {
           toast.success('No new transaction to fetch!', {
             duration: 2000
           })
         } else if (data.status == 'NEW_TRANSACTION') {
           reloadDataFunction()
+          resetCacheUnclassifiedTxs()
           toast.success('Refetch transaction successfully - Found new transaction!', {
             duration: 2000
           })
@@ -183,14 +187,6 @@ export default function TransactionForm() {
   useEffect(() => {
     handleAccountBankRefetching(accountBankRefetchingQueue, accountBankRefetching, setAccountBankRefetching)
   }, [accountBankRefetchingQueue])
-  useEffect(() => {
-    handleRefetchPaymentCompletion({
-      accountBankRefetching,
-      dataRefetchPayment,
-      setAccountBankRefetchingQueue,
-      setAccountBankRefetching
-    })
-  }, [dataRefetchPayment])
 
   const reloadDataFunction = () => {
     resetData()
@@ -206,17 +202,11 @@ export default function TransactionForm() {
     if (dataTable.length === 0) return []
     return getColumns<IDataTransactionTable>(transactionHeaders, true)
   }, [dataTable])
-  const dataTableButtons = useMemo(
-    () =>
-      initButtonInDataTableHeader({
-        dataAccountBank,
-        setAccountBankRefetchingQueue,
-        refetchTransactionBySocket,
-        isPendingRefetch,
-        reloadDataFunction
-      }),
-    [dataAccountBank]
-  )
+  const dataTableButtons = initButtonInDataTableHeader({
+    refetchTransactionBySocket,
+    isPendingRefetch,
+    reloadDataFunction
+  })
 
   const onRowClick = (rowData: any) => {
     setDataDetail(rowData)
@@ -321,7 +311,8 @@ export default function TransactionForm() {
             hookUpdateCache: setData,
             hookUpdateCacheUnclassified: setCacheUnclassifiedTxs,
             hookCreateTrackerTxType: createTrackerTxType,
-            hookSetCacheTrackerTxType: setCacheTrackerTxType
+            hookSetCacheTrackerTxType: setCacheTrackerTxType,
+            hookSetDataTrackerTxs: setDataTrackerTxs
           }}
         />
       </Card>

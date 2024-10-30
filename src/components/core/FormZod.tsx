@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -22,6 +22,136 @@ import { Combobox, IComboboxProps } from '@/components/core/Combobox'
 import { DateTimePicker, DateTimePickerProps } from '@/components/core/DateTimePicker'
 import { DateRangePicker, DateRangePickerProps } from '@/components/core/DateRangePicker'
 import { DateRange } from 'react-day-picker'
+import { EEmojiPickerProps, EmojiPicker } from '@/components/common/EmojiPicker'
+import MultiInput from '@/components/core/MultiInput'
+
+const FormFieldComponent = React.memo(
+  ({ fieldItem, field, disabled }: { fieldItem: any; field: any; disabled?: boolean }) => {
+    if (fieldItem.type === EFieldType.Input) {
+      return (
+        <Input
+          placeholder={fieldItem.placeHolder}
+          {...(fieldItem.props as InputProps)}
+          {...field}
+          disabled={disabled}
+          value={String(field.value ?? '')}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.MultiInput) {
+      return (
+        <MultiInput
+          props={{
+            ...fieldItem?.props,
+            placeholder: fieldItem.placeHolder
+          }}
+          value={field.value ?? []}
+          onValueChange={(value: any[]) => {
+            field.onChange(value)
+          }}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.Select) {
+      return (
+        <Select
+          onValueChange={(value) => {
+            fieldItem?.props?.onchange?.(value)
+            field.onChange(value)
+          }}
+          value={(field?.value as any) ?? undefined}
+          disabled={disabled}
+        >
+          <SelectTrigger className={cn('w-full', fieldItem?.classNameTrigger)}>
+            <SelectValue placeholder={fieldItem.placeHolder} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Select {fieldItem.label}</SelectLabel>
+              {fieldItem?.dataSelector?.map((item: IDynamicType) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      )
+    }
+
+    if (fieldItem.type === EFieldType.Textarea) {
+      return (
+        <Textarea
+          {...field}
+          placeholder={fieldItem.placeHolder}
+          {...(fieldItem.props as TextareaProps)}
+          disabled={disabled}
+          value={String(field.value ?? '')}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.Combobox) {
+      return (
+        <Combobox
+          {...(fieldItem.props as IComboboxProps)}
+          {...field}
+          disabled={disabled}
+          defaultValue={field.value as string}
+          onValueSelect={(value) => {
+            field.onChange(value)
+          }}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.DatePicker) {
+      return (
+        <DateTimePicker
+          {...field}
+          {...(fieldItem.props as DateTimePickerProps)}
+          disabled={disabled}
+          onChange={(value) => {
+            field.onChange(value)
+          }}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.DateRangePicker) {
+      return (
+        <DateRangePicker
+          {...field}
+          {...(fieldItem.props as DateRangePickerProps)}
+          disabled={disabled}
+          value={field.value as DateRange | undefined}
+          onChange={(value) => {
+            field.onChange(value)
+          }}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.EmojiPicker) {
+      return (
+        <EmojiPicker
+          {...field}
+          {...(fieldItem.props as EEmojiPickerProps)}
+          disabled={disabled}
+          onChangeValue={(value) => {
+            field.onChange(value)
+          }}
+        />
+      )
+    }
+
+    return null
+  }
+)
+
+FormFieldComponent.displayName = 'FormFieldComponent'
 
 export default function FormZod<T extends z.ZodRawShape>({
   formSchema,
@@ -29,16 +159,22 @@ export default function FormZod<T extends z.ZodRawShape>({
   onSubmit,
   formFieldBody,
   buttonConfig,
-  classNameForm
-}: IFormZodProps<T>) {
+  classNameForm,
+  disabled,
+  submitRef
+}: IFormZodProps<T> & { disabled?: boolean }) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(formSchema),
-    defaultValues
+    defaultValues,
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
   })
 
-  function handleSubmit(value: z.infer<z.ZodObject<T>>) {
-    onSubmit(value)
-  }
+  const handleFormSubmit = form.handleSubmit((data) => {
+    onSubmit(data)
+  })
+
+  const memoizedFormFieldBody = useMemo(() => formFieldBody, [formFieldBody])
 
   useEffect(() => {
     form.reset(defaultValues)
@@ -47,101 +183,42 @@ export default function FormZod<T extends z.ZodRawShape>({
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className={cn(classNameForm, 'space-y-3')}>
-          {formFieldBody.map((fieldItem, index) => (
-            <FormField
-              control={form.control}
-              name={fieldItem.name as any}
-              key={index}
-              render={({ field }) => {
-                return (
-                  <FormItem className={(fieldItem.props as any).className}>
-                    {fieldItem?.label && <FormLabel className='text-muted-foreground'>{fieldItem.label}</FormLabel>}
-                    <FormControl>
-                      <>
-                        {fieldItem.type === EFieldType.Input && (
-                          <Input
-                            placeholder={fieldItem.placeHolder}
-                            {...(fieldItem.props as InputProps)}
-                            {...field}
-                            onChange={(value) => {
-                              field.onChange(value)
-                            }}
-                          />
+        <form ref={submitRef} onSubmit={handleFormSubmit}>
+          <div className={cn('space-y-5', classNameForm)}>
+            {memoizedFormFieldBody.map((fieldItem, index) =>
+              !fieldItem.hidden ? (
+                <FormField
+                  control={form.control}
+                  name={fieldItem.name as any}
+                  key={index}
+                  render={({ field }) => (
+                    <FormItem className={(fieldItem.props as any)?.className}>
+                      <div className='flex justify-between'>
+                        {fieldItem?.label && (
+                          <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
+                            {fieldItem.label}
+                          </FormLabel>
                         )}
-                        {fieldItem.type === EFieldType.Select && (
-                          <Select
-                            onValueChange={(value) => {
-                              field.onChange(value)
-                            }}
-                            {...(fieldItem.props as any)}
-                            {...field}
-                          >
-                            <SelectTrigger className={cn('w-full', fieldItem?.classNameTrigger)}>
-                              <SelectValue placeholder={fieldItem.placeHolder} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Select {fieldItem.label}</SelectLabel>
-                                {fieldItem?.dataSelector?.map((item: IDynamicType) => (
-                                  <SelectItem key={item.value} value={item.value}>
-                                    {item.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                        {fieldItem.type === EFieldType.Textarea && (
-                          <Textarea
-                            {...field}
-                            placeholder={fieldItem.placeHolder}
-                            {...(fieldItem.props as TextareaProps)}
-                            onChange={(value) => {
-                              field.onChange(value)
-                            }}
-                          />
-                        )}
-
-                        {fieldItem.type === EFieldType.Combobox && (
-                          <Combobox
-                            {...field}
-                            {...(fieldItem.props as IComboboxProps)}
-                            onValueSelect={(value) => {
-                              field.onChange(value)
-                            }}
-                          />
-                        )}
-                        {fieldItem.type === EFieldType.DatePicker && (
-                          <DateTimePicker
-                            {...field}
-                            {...(fieldItem.props as DateTimePickerProps)}
-                            onChange={(value) => {
-                              field.onChange(value)
-                            }}
-                          />
-                        )}
-                        {fieldItem.type === EFieldType.DateRangePicker && (
-                          <DateRangePicker
-                            {...field}
-                            {...(fieldItem.props as DateRangePickerProps)}
-                            value={field.value as DateRange | undefined}
-                            onChange={(value) => {
-                              field.onChange(value)
-                            }}
-                          />
-                        )}
-                      </>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )
-              }}
-            />
-          ))}
-          <Button {...buttonConfig} type='submit'>
-            {buttonConfig?.label ?? 'Submit'}
-          </Button>
+                        <FormMessage />
+                      </div>
+                      <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
+                        <FormFieldComponent
+                          fieldItem={fieldItem}
+                          field={field}
+                          disabled={disabled || (fieldItem.props as any)?.disabled}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              ) : null
+            )}
+          </div>
+          {!submitRef && (
+            <Button {...buttonConfig} type='submit' disabled={disabled || buttonConfig?.disabled}>
+              {buttonConfig?.label ?? 'Submit'}
+            </Button>
+          )}
         </form>
       </Form>
     </div>

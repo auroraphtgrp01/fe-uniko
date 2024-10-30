@@ -1,5 +1,5 @@
 import { apiService } from '@/api'
-import { USER_MODEL_KEY, USER_RETRY } from '@/core/users/constants'
+import { USER_QUERY_ME, USER_RETRY } from '@/core/users/constants'
 import { useModelQuery } from '@/hooks/useQueryModel'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { setUserInfoToLocalStorage } from '@/libraries/helpers'
@@ -11,7 +11,7 @@ const userApi = apiService.user
 export const useGetMeUser = (execute: boolean) => {
   const { setUser } = useStoreLocal()
   const { isPending: isGetMeUserPending, data: userGetMeData } = useModelQuery<IUserGetMeResponse>(
-    USER_MODEL_KEY,
+    USER_QUERY_ME,
     userApi.getMe,
     {
       enable: !!execute,

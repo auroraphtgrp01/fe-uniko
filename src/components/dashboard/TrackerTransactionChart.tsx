@@ -46,8 +46,6 @@ export default function TrackerTransactionChart({ tabConfig, statisticDateRange 
             <DateRangePicker
               value={{ from: statisticDateRange.dates.startDay, to: statisticDateRange.dates.endDay }}
               onChange={(range) => {
-                console.log('range', range)
-
                 if (range) statisticDateRange.setDates({ startDay: range.from, endDay: range.to })
               }}
             />

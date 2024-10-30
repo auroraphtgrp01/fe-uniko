@@ -20,7 +20,7 @@ import {
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
-import { getConvertedKeysToTitleCase, mergeQueryParams } from '@/libraries/utils'
+import { getConvertedKeysToTitleCase } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
   IAccountSource,

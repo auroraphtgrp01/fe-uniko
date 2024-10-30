@@ -1,3 +1,4 @@
+import { signInSchema } from '@/core/auth/constants/sign-in.constant'
 import { signUpSchema } from '@/core/auth/constants/sign-up.constant'
 import { IBaseResponseData } from '@/types/common.i'
 import { IErrorResponseBase } from '@/types/core.i'
@@ -47,4 +48,7 @@ export type ISignInResponse = IBaseResponseData<{
   user: IUser
 }>
 
-export type SignUpBodyForm = z.TypeOf<typeof signUpSchema>
+export interface ISignInGoogleBody {
+  access_token?: string
+  credential?: string
+}

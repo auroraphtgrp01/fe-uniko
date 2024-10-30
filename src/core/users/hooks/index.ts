@@ -3,9 +3,9 @@ import { IUseQueryHookOptions } from '@/types/query.interface'
 import { useUpdateUser } from './useUpdateUser'
 import { useUpdatePassword } from './useUpdatePassword'
 
-export const useUser = (opts?: IUseQueryHookOptions) => {
-  const { mutate: updateUser, isPending: isUpdating } = useUpdateUser(opts)
-  const { mutate: updatePassword, isPending: isPasswordUpdating } = useUpdatePassword(opts)
+export const useUser = () => {
+  const { mutate: updateUser, isPending: isUpdating } = useUpdateUser()
+  const { mutate: updatePassword, isPending: isPasswordUpdating } = useUpdatePassword()
   return {
     getMe: useGetMeUser,
     updateUser,

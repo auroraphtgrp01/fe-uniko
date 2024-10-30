@@ -35,6 +35,7 @@ export interface IUser {
   gender: string
   username: string
   email: string
+  isChangeNewPassword?: boolean
   licenseNumber: string
   experience: string
   workplace: string
@@ -45,7 +46,8 @@ export interface IUser {
   forgetPasswordToken: string
   refresh_token: string
   emailVerifyToken: string
-  avatar: string
+  avatarUrl: string
+  provider?: string
 }
 
 export type IUserGetMeResponse = IBaseResponseData<IUser>

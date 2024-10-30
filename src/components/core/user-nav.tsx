@@ -12,31 +12,23 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { motion } from 'framer-motion'
-import { getAccessTokenFromLocalStorage, getBaseClientUrl, getUserInfoFromLocalStorage } from '@/libraries/helpers'
+import { getAccessTokenFromLocalStorage, getUserInfoFromLocalStorage } from '@/libraries/helpers'
 import Link from 'next/link'
-import { useUser } from '@/core/users/hooks'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AvatarDefault from '@/images/avatar.jpg'
 import Image from 'next/image'
-import { useAuth } from '@/core/auth/hooks'
 
 export function UserNav() {
-  const baseUrl = getBaseClientUrl()
   const router = useRouter()
-  const [isLogout, setIsLogout] = useState(false)
   const user = getUserInfoFromLocalStorage()
-  console.log('user', user)
 
-  useEffect(() => {
-    if (isLogout === true) {
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('userInfo')
-      setIsLogout(false)
-      router.push('/')
-    }
-  }, [isLogout])
+  const logOut = () => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('userInfo')
+    router.push('/')
+  }
   return (
     <div className='ms-1 select-none'>
       <DropdownMenu>
@@ -76,12 +68,7 @@ export function UserNav() {
             </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              const accessToken = getAccessTokenFromLocalStorage()
-              if (accessToken) setIsLogout(true)
-            }}
-          >
+          <DropdownMenuItem className='cursor-pointer' onClick={logOut}>
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
