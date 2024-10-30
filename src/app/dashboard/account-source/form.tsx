@@ -90,14 +90,8 @@ export default function AccountSourceForm() {
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
-        <CardInHeader
-          className='flex-grow sm:w-1/2 lg:w-1/2'
-          contents={{ detail: 'Choose between E-Wallets to manage your digital funds.' }}
-        />
-        <CardInHeader
-          className='flex-grow sm:w-1/2 lg:w-1/2'
-          contents={{ detail: 'Use Bank Accounts to manage your physical funds.' }}
-        />
+        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
+        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
       </div>
       <Card className='mt-5'>
         <CardContent>
