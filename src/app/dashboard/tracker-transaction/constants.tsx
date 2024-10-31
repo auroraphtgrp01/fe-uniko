@@ -11,22 +11,25 @@ import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
 import React from 'react'
+import i18next, { TFunction } from 'i18next'
 
 export const initButtonInDataTableHeader = ({
-  setIsDialogOpen
+  setIsDialogOpen,
+  t
 }: {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  t: TFunction<any>
 }): IButtonInDataTableHeader[] => {
   return [
     {
-      title: 'Classify',
+      title: t('common:button.classify'),
       variants: 'secondary',
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
       }
     },
     {
-      title: 'Create',
+      title: t('common:button.create'),
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))
       },
@@ -107,7 +110,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
   )
 }
 
-export const initTrackerTransactionTab = (data: IChartData | undefined): ITabConfig => {
+export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>): ITabConfig => {
   return {
     default: 'expenseChart',
     tabContents: [
@@ -119,8 +122,8 @@ export const initTrackerTransactionTab = (data: IChartData | undefined): ITabCon
             types='donut'
           />
         ),
-        labels: 'Expense Chart',
-        value: 'expenseChart'
+        labels: t('trackerTransaction:charts.expenseChart.label'),
+        value: t('trackerTransaction:charts.expenseChart.value')
       },
       {
         content: (
@@ -130,8 +133,8 @@ export const initTrackerTransactionTab = (data: IChartData | undefined): ITabCon
             types='donut'
           />
         ),
-        labels: 'Incoming Chart',
-        value: 'incomingChart'
+        labels: t('trackerTransaction:charts.incomingChart.label'),
+        value: t('trackerTransaction:charts.incomingChart.value')
       }
     ]
   }

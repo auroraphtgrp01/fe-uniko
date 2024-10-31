@@ -13,6 +13,7 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { useTranslation } from 'react-i18next'
 
 export interface ITransactionDialogProps {
   dataTable: {
@@ -44,6 +45,7 @@ export interface ITransactionDialogProps {
 }
 
 export default function TransactionDialog(params: ITransactionDialogProps) {
+  const { t } = useTranslation(['transaction', 'common'])
   const formClassifyRef = useRef<HTMLFormElement>(null)
   // useStates
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
@@ -107,8 +109,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
         </div>
       </div>
     ),
-    description: 'Detail information of the transaction',
-    title: 'Transaction detail',
+    description: t('transaction:TransactionType.detailsDialog.description'),
+    title: t('transaction:TransactionType.detailsDialog.title'),
     isOpen: dialogState.isDialogOpen.isDialogDetailOpen,
     onClose: () => {
       dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
@@ -130,8 +132,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       </div>
     ),
     className: 'sm:max-w-[425px] md:max-w-[1080px]',
-    description: 'Overview of today`s transactions',
-    title: 'Transaction Today',
+    description: t('transaction:TransactionType.transactionsTodayDialog.description'),
+    title: t('transaction:TransactionType.transactionsTodayDialog.title'),
     isOpen: dialogState.isDialogOpen.isDialogTransactionTodayOpen,
     onClose: () => {
       dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogTransactionTodayOpen: false }))
@@ -153,8 +155,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       </div>
     ),
     className: 'sm:max-w-[425px] md:max-w-[1080px]',
-    description: 'Overview of unclassified`s transactions',
-    title: 'Unclassified Transaction',
+    description: t('transaction:TransactionType.unclassifiedTransactionsDialog.description'),
+    title: t('transaction:TransactionType.unclassifiedTransactionsDialog.title'),
     isOpen: dialogState.isDialogOpen.isDialogUnclassifiedTransactionOpen,
     onClose: () => {
       dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedTransactionOpen: false }))
@@ -175,11 +177,11 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
     }),
     footer: (
       <Button onClick={() => formClassifyRef.current?.requestSubmit()} type='button'>
-        Save changes
+        {t('common:button.save_changes')}
       </Button>
     ),
-    description: 'Please fill in the information below to classify transaction.',
-    title: 'Classify Transaction',
+    description: t('transaction:TransactionType.classifyingTransactionDialog.description'),
+    title: t('transaction:TransactionType.classifyingTransactionDialog.title'),
     isOpen: dialogState.isDialogOpen.isDialogClassifyTransactionOpen,
     onClose: () => {
       dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: false }))

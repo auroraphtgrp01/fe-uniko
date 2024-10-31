@@ -36,8 +36,11 @@ import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import { useAuth } from '@/core/auth/hooks'
+import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
+import { useTranslation } from 'react-i18next'
 
 export default function AccountSourceForm() {
+  const { t } = useTranslation(['common'])
   // States
   const [fetchedData, setFetchedData] = useState<IAccountSource[]>([])
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
@@ -55,7 +58,7 @@ export default function AccountSourceForm() {
 
   // Hooks
   const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken()
+  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(
@@ -88,7 +91,7 @@ export default function AccountSourceForm() {
   }, [dataTableConfig])
 
   // Other components
-  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen, t })
 
   return (
     <div className='w-full'>

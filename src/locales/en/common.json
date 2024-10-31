@@ -1,6 +1,7 @@
 {
     "button": {
         "save": "Save",
+        "save_changes": "Save Changes",
         "cancel": "Cancel",
         "update": "Update",
         "delete": "Delete",

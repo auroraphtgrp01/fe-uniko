@@ -8,6 +8,7 @@ import { useRef, useState } from 'react'
 import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import CreateTrackerTransactionForm from '@/components/dashboard/tracker-transaction/CreateForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { useTranslation } from 'react-i18next'
 
 export default function TrackerTransactionDialog({
   unclassifiedTxDialog,
@@ -17,6 +18,7 @@ export default function TrackerTransactionDialog({
 }: ITrackerTransactionDialogProps) {
   const formClassifyRef = useRef<HTMLFormElement>(null)
   const formCreateRef = useRef<HTMLFormElement>(null)
+  const { t } = useTranslation(['trackerTransaction', 'common'])
   // states
   const [transactionIdClassifying, setTransactionIdClassifying] = useState<string>()
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
@@ -39,11 +41,11 @@ export default function TrackerTransactionDialog({
     }),
     footer: (
       <Button onClick={() => formClassifyRef.current?.requestSubmit()} type='button'>
-        Save changes
+        {t('common:button.save')}
       </Button>
     ),
-    description: 'Please fill in the information below to classify transaction.',
-    title: 'Classify Transaction',
+    description: t('trackerTransaction:trackerTransactionType.classifyDialog.description'),
+    title: t('trackerTransaction:trackerTransactionType.classifyDialog.title'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogClassifyTransactionOpen,
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: false }))
@@ -65,11 +67,11 @@ export default function TrackerTransactionDialog({
     }),
     footer: (
       <Button type='button' onClick={() => formCreateRef.current?.requestSubmit()}>
-        Save changes
+        {t('common:button.save')}
       </Button>
     ),
-    description: 'Please fill in the information below to create a new tracker transaction.',
-    title: 'Create Tracker Transaction',
+    description: t('trackerTransaction:trackerTransactionType.createDialog.description'),
+    title: t('trackerTransaction:trackerTransactionType.createDialog.title'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogCreateOpen,
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
@@ -93,8 +95,8 @@ export default function TrackerTransactionDialog({
       </div>
     ),
     className: 'sm:max-w-[425px] md:max-w-[1080px]',
-    description: 'Overview of unclassified`s transactions',
-    title: 'Unclassified transactions',
+    description: t('trackerTransaction:trackerTransactionType.unclassifiedDialog.description'),
+    title: t('trackerTransaction:trackerTransactionType.unclassifiedDialog.title'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogUnclassifiedOpen,
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: false }))

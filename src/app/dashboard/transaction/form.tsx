@@ -53,7 +53,11 @@ import { useSocket } from '@/libraries/useSocketIo'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useUser } from '@/core/users/hooks'
-import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
+import {
+  getRefreshTokenFromLocalStorage,
+  getTimeCountRefetchLimit,
+  setTimeCountRefetchLimit
+} from '@/libraries/helpers'
 import { GET_ADVANCED_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
 import {
   GET_ADVANCED_TRACKER_TRANSACTION_KEY,
@@ -85,7 +89,7 @@ export default function TransactionForm() {
   // hooks
   const { t } = useTranslation(['transaction'])
   const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken()
+  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { classifyTransaction } = useTrackerTransaction()
   const { getMe } = useUser()
   const { user } = useStoreLocal()

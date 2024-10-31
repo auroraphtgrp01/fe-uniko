@@ -18,26 +18,16 @@ export default function ButtonLanguage() {
   const changeLanguage = (languageCode: 'en' | 'vi') => i18n.changeLanguage(languageCode)
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' className='relative rounded-full'>
-          {currentLanguage}
+    <>
+      {currentLanguage === 'en' ? (
+        <Button onClick={() => changeLanguage('vi')} variant='ghost' size='icon' className='relative rounded-full'>
+          <span>{currentLanguage}</span>
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-20 md:w-40'>
-        <DropdownMenuItem
-          className='flex cursor-pointer items-start space-x-3 p-3'
-          onClick={() => changeLanguage('vi')}
-        >
-          Vietnamese
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className='flex cursor-pointer items-start space-x-3 p-3'
-          onClick={() => changeLanguage('en')}
-        >
-          English
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      ) : (
+        <Button onClick={() => changeLanguage('en')} variant='ghost' size='icon' className='relative rounded-full'>
+          <span>{currentLanguage}</span>
+        </Button>
+      )}
+    </>
   )
 }

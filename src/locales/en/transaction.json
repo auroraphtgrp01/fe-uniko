@@ -6,5 +6,23 @@
     "totalAmount": "Total Amount",
     "unclassifiedTransaction": "Unclassified Transaction",
     "classify": "Classify",
-    "unclassifiedTransactionDescription": "Transactions without a tracker"
+    "unclassifiedTransactionDescription": "Transactions without a tracker",
+    "TransactionType": {
+        "detailsDialog": {
+            "title": "Transaction Detail",
+            "description": "Detailed information of the transaction."
+        },
+        "transactionsTodayDialog": {
+            "title": "Transaction Today",
+            "description": "Overview of today’s transactions."
+        },
+        "unclassifiedTransactionsDialog": {
+            "title": "Unclassified Transaction",
+            "description": "Overview of unclassified transactions."
+        },
+        "classifyingTransactionDialog": {
+            "title": "Classify Transaction",
+            "description": "Please fill in the information below to classify the transaction."
+        }
+    }
 }

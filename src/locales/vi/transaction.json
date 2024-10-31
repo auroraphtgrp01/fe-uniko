@@ -6,5 +6,23 @@
     "totalAmount": "Tổng số tiền",
     "unclassifiedTransaction": "Giao Dịch Chưa Phân Loại",
     "classify": "Phân loại",
-    "unclassifiedTransactionDescription": "Các giao dịch không có trình theo dõi"
+    "unclassifiedTransactionDescription": "Các giao dịch không có trình theo dõi",
+    "TransactionType": {
+        "detailsDialog": {
+            "title": "Chi Tiết Giao Dịch",
+            "description": "Thông tin chi tiết về giao dịch."
+        },
+        "transactionsTodayDialog": {
+            "title": "Giao Dịch Hôm Nay",
+            "description": "Tổng quan về các giao dịch trong ngày hôm nay."
+        },
+        "unclassifiedTransactionsDialog": {
+            "title": "Giao Dịch Chưa Phân Loại",
+            "description": "Tổng quan về các giao dịch chưa phân loại."
+        },
+        "classifyingTransactionDialog": {
+            "title": "Phân Loại Giao Dịch",
+            "description": "Vui lòng điền thông tin dưới đây để phân loại giao dịch."
+        }
+    }
 }

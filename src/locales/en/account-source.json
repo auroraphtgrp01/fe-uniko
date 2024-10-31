@@ -1,0 +1,12 @@
+{
+    "AccountSourceDialog": {
+        "createDialog": {
+            "title": "Create Account Source",
+            "description": "Please fill in the information below to create a new account source."
+        },
+        "updateDialog": {
+            "title": "Update Account Source",
+            "description": "Please fill in the information below to update an account source."
+        }
+    }
+}

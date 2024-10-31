@@ -14,6 +14,19 @@
             "label": "Biểu đồ Thu nhập",
             "value": "incomingChart"
         }
+    },
+    "trackerTransactionType": {
+        "classifyDialog": {
+            "title": "Phân Loại Giao Dịch",
+            "description": "Vui lòng điền thông tin dưới đây để phân loại giao dịch."
+        },
+        "createDialog": {
+            "title": "Tạo Giao Dịch Theo Dõi",
+            "description": "Vui lòng điền thông tin dưới đây để tạo giao dịch theo dõi mới."
+        },
+        "unclassifiedDialog": {
+            "title": "Giao Dịch Chưa Phân Loại",
+            "description": "Tổng quan về các giao dịch chưa phân loại."
+        }
     }
-  }
-  
+}
