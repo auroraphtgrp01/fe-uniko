@@ -35,6 +35,7 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import { useAuth } from '@/core/auth/hooks'
 
 export default function AccountSourceForm() {
   // States
@@ -53,6 +54,8 @@ export default function AccountSourceForm() {
   }, [tableData])
 
   // Hooks
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken()
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(

@@ -61,6 +61,7 @@ import {
 } from '@/core/tracker-transaction/constants'
 import { IAdvancedTrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/core/auth/hooks'
 
 export default function TransactionForm() {
   // states
@@ -83,6 +84,8 @@ export default function TransactionForm() {
 
   // hooks
   const { t } = useTranslation(['transaction'])
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken()
   const { classifyTransaction } = useTrackerTransaction()
   const { getMe } = useUser()
   const { user } = useStoreLocal()

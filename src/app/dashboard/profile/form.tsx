@@ -19,6 +19,7 @@ import {
   updatePassWordSchemaWithoutCurrentPassword
 } from '@/core/users/constants/update-password-schema.constant'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/core/auth/hooks'
 
 export default function ProfileForm() {
   const [defaultUser, setIsDefaultUser] = useState({})
@@ -52,6 +53,8 @@ export default function ProfileForm() {
       }
     )
   }
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken()
   const { t } = useTranslation(['profile'])
   const { userGetMeData, isGetMeUserPending } = getMe(true)
   const { setData } = useUpdateModel<IUserGetMeResponse>([USER_QUERY_ME], (oldData, newData) => {

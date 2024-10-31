@@ -69,6 +69,7 @@ import {
 import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/core/auth/hooks'
 
 export default function TrackerTransactionForm() {
   // states
@@ -105,6 +106,8 @@ export default function TrackerTransactionForm() {
 
   // hooks
   const { t } = useTranslation(['trackerTransaction'])
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken()
   const { getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
