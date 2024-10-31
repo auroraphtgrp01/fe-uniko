@@ -68,6 +68,7 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { useTranslation } from 'react-i18next'
 
 export default function TrackerTransactionForm() {
   // states
@@ -103,6 +104,7 @@ export default function TrackerTransactionForm() {
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData), [chartData])
 
   // hooks
+  const { t } = useTranslation(['trackerTransaction'])
   const { getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
@@ -192,7 +194,7 @@ export default function TrackerTransactionForm() {
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
           <Card className='bg-gradient-to-br from-purple-500 to-indigo-600'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-lg font-medium text-white'>Total Balance</CardTitle>
+              <CardTitle className='text-lg font-medium text-white'>{t('totalBalance')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className='flex items-center justify-between'>
@@ -201,14 +203,14 @@ export default function TrackerTransactionForm() {
                   <p className='text-2xl font-bold text-white'>
                     {formatCurrency(statisticData?.data.totalBalance ?? 0, 'VND', 'vi-vn')}
                   </p>
-                  <p className='text-sm text-purple-200'>+2.5% from last month</p>
+                  <p className='text-sm text-purple-200'>{t('increaseFromLastMonth', { percentage: 2.5 })}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card className='bg-gradient-to-br from-green-400 to-emerald-600'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-lg font-medium text-white'>Incoming Transaction</CardTitle>
+              <CardTitle className='text-lg font-medium text-white'>{t('incomingTransaction')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className='flex items-center justify-between'>
@@ -217,14 +219,14 @@ export default function TrackerTransactionForm() {
                   <p className='text-2xl font-bold text-white'>
                     {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
                   </p>
-                  <p className='text-sm text-green-200'>No change from yesterday</p>
+                  <p className='text-sm text-green-200'>{t('noChangeFromYesterday')}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card className='bg-gradient-to-br from-red-400 to-rose-600'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-lg font-medium text-white'>Expense Transaction</CardTitle>
+              <CardTitle className='text-lg font-medium text-white'>{t('expenseTransaction')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className='flex items-center justify-between'>
@@ -233,7 +235,7 @@ export default function TrackerTransactionForm() {
                   <p className='text-2xl font-bold text-white'>
                     {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
                   </p>
-                  <p className='text-sm text-red-200'>+15% from yesterday</p>
+                  <p className='text-sm text-red-200'>{t('increaseFromLastMonth', { percentage: 15 })}</p>
                 </div>
               </div>
             </CardContent>

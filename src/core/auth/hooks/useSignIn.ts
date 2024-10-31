@@ -32,8 +32,8 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
         }
       },
       onError: (error) => {
-        toast.error('Login failed, please try again !')
-
+        const errorMessage = (error as any)?.payload?.message || 'Login failed, please try again!'
+        toast.error(errorMessage)
         opts?.callBackOnError?.()
       }
     }

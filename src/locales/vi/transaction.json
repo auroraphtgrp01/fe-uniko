@@ -1,0 +1,10 @@
+{
+    "transactionToday": "Giao Dịch Hôm Nay",
+    "viewAll": "Xem tất cả",
+    "transactionTodayDescription": "Tổng quan các giao dịch hôm nay",
+    "totalTransactions": "Tổng số giao dịch",
+    "totalAmount": "Tổng số tiền",
+    "unclassifiedTransaction": "Giao Dịch Chưa Phân Loại",
+    "classify": "Phân loại",
+    "unclassifiedTransactionDescription": "Các giao dịch không có trình theo dõi"
+}

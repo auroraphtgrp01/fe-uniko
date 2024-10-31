@@ -17,7 +17,9 @@ export const useForgotPassword = (props: { email: string; execute: boolean }) =>
 
   useEffect(() => {
     if (forgotPasswordError) {
-      toast.error('An error occurred. Please try again later.')
+      const errorMessage =
+        (forgotPasswordError as any)?.payload?.message || 'An error occurred. Please try again later.!'
+      toast.error(errorMessage)
     } else if (forgotPasswordData) {
       toast.success('Please check your email for password reset instructions.')
     }

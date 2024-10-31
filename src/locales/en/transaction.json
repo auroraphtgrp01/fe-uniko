@@ -1,0 +1,10 @@
+{
+    "transactionToday": "Transaction Today",
+    "viewAll": "View all",
+    "transactionTodayDescription": "Overview of today`s transactions",
+    "totalTransactions": "Total Transactions",
+    "totalAmount": "Total Amount",
+    "unclassifiedTransaction": "Unclassified Transaction",
+    "classify": "Classify",
+    "unclassifiedTransactionDescription": "Transactions without a tracker"
+}

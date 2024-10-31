@@ -1,0 +1,18 @@
+{
+    "totalBalance": "Total Balance",
+    "incomingTransaction": "Incoming Transaction",
+    "expenseTransaction": "Expense Transaction",
+    "noChangeFromYesterday": "No change from yesterday",
+    "increaseFromLastMonth": "+{{percentage}}% from last month",
+    "increaseFromYesterday": "+{{percentage}}% from yesterday",
+    "charts": {
+        "expenseChart": {
+            "label": "Expense Chart",
+            "value": "expenseChart"
+          },
+          "incomingChart": {
+            "label": "Incoming Chart",
+            "value": "incomingChart"
+          }
+    }
+}

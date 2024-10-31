@@ -1,0 +1,29 @@
+{
+    "button": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "update": "Update",
+        "delete": "Delete",
+        "create": "Create",
+        "classify": "Classify",
+        "refetch_in_bank": "Refetch in bank",
+        "reload_data": "Reload data"
+    },
+    "card_header": {
+        "create_project": "Create project",
+        "deploy_project": "Deploy your new project in one-click."
+    },
+    "table": {
+        "filterPlaceholder": "Filter",
+        "typesLabel": "Types",
+        "columnsLabel": "Columns",
+        "rowsPerPageLabel": "Rows per page",
+        "pageOf": "Page {{currentPage}} of {{totalPage}}",
+        "loadingText": "Loading...",
+        "noDataText": "No data available",
+        "selectedRowsText": "{{selected}} of {{total}} row(s) selected."
+    },
+    "dropdown": {
+        "noTypesAvailable": "No types available"
+    }
+}

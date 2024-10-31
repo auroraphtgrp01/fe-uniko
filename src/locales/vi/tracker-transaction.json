@@ -1,0 +1,19 @@
+{
+    "totalBalance": "Tổng Số Dư",
+    "incomingTransaction": "Giao Dịch Đến",
+    "expenseTransaction": "Giao Dịch Chi",
+    "noChangeFromYesterday": "Không thay đổi từ hôm qua",
+    "increaseFromLastMonth": "+{{percentage}}% từ tháng trước",
+    "increaseFromYesterday": "+{{percentage}}% từ hôm qua",
+    "charts": {
+        "expenseChart": {
+            "label": "Biểu đồ Chi phí",
+            "value": "expenseChart"
+        },
+        "incomingChart": {
+            "label": "Biểu đồ Thu nhập",
+            "value": "incomingChart"
+        }
+    }
+  }
+  

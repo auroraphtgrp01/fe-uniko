@@ -1,0 +1,33 @@
+{
+    "title": "Profile",
+    "tabs": {
+        "account": "Common Information",
+        "password": "Credential Information"
+    },
+    "userProfileTitle": "User Profile",
+    "form": {
+        "common": {
+            "nameLabel": "Name",
+            "namePlaceholder": "John Doe",
+            "dateOfBirthLabel": "Date of Birth",
+            "genderLabel": "Gender",
+            "genderPlaceholder": "Select a gender",
+            "workplaceLabel": "Workplace",
+            "workplacePlaceholder": "e.g., London",
+            "phoneNumberLabel": "Phone Number",
+            "phoneNumberPlaceholder": "+84*********",
+            "addressLabel": "Address",
+            "addressPlaceholder": "789 Baker Street",
+            "updateButton": "Update",
+            "updateDescription": "Make changes to your account. Click update when you are done."
+        },
+        "credential": {
+            "currentPasswordTitle": "Current Password",
+            "newPasswordTitle": "New Password",
+            "passwordTitle": "Password",
+            "passwordDescription": "Change your password here. After saving, you will be logged out.",
+            "savePasswordButton": "Save password",
+            "saveChangesButton": "Save Changes"
+        }
+    }
+}
