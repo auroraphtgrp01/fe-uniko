@@ -23,6 +23,7 @@ import {
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -98,7 +99,16 @@ export const initDataTableTransaction = (
     ...prev,
     transactionToday: {
       count: transactionToday.length,
-      amount: transactionToday.reduce((acc, item) => acc + item.amount, 0),
+      incomeAmount: dataTransaction
+        .filter((e) => e.direction === ETypeOfTrackerTransactionType.INCOMING)
+        .reduce((acc, cur) => {
+          return acc + cur.amount
+        }, 0),
+      expenseAmount: dataTransaction
+        .filter((e) => e.direction === ETypeOfTrackerTransactionType.EXPENSE)
+        .reduce((acc, cur) => {
+          return acc + cur.amount
+        }, 0),
       data: modifyTransactionHandler(transactionToday)
     }
   }))

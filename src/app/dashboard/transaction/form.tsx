@@ -60,6 +60,7 @@ import {
   GET_ALL_TRACKER_TRANSACTION_TYPE_KEY
 } from '@/core/tracker-transaction/constants'
 import { IAdvancedTrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 export default function TransactionForm() {
   // states
@@ -146,9 +147,16 @@ export default function TransactionForm() {
         unclassifiedTransaction: {
           data: modifyTransactionHandler(dataUnclassifiedTxs.data),
           count: dataUnclassifiedTxs.data.length,
-          amount: dataUnclassifiedTxs.data.reduce((acc, cur) => {
-            return acc + cur.amount
-          }, 0)
+          incomeAmount: dataUnclassifiedTxs.data
+            .filter((e) => e.direction === ETypeOfTrackerTransactionType.INCOMING)
+            .reduce((acc, cur) => {
+              return acc + cur.amount
+            }, 0),
+          expenseAmount: dataUnclassifiedTxs.data
+            .filter((e) => e.direction === ETypeOfTrackerTransactionType.EXPENSE)
+            .reduce((acc, cur) => {
+              return acc + cur.amount
+            }, 0)
         }
       }))
   }, [dataUnclassifiedTxs])
@@ -243,9 +251,15 @@ export default function TransactionForm() {
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.transactionToday.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Amount</div>
+              <div>Total Income Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(transactionSummary.transactionToday.amount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.transactionToday.incomeAmount, 'VND', 'vi-vn')}
+              </div>
+            </div>
+            <div className='flex items-center justify-between'>
+              <div>Total Expense Amount</div>
+              <div className='text-xl font-bold'>
+                {formatCurrency(transactionSummary.transactionToday.expenseAmount, 'VND', 'vi-vn')}
               </div>
             </div>
           </CardContent>
@@ -269,9 +283,15 @@ export default function TransactionForm() {
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.unclassifiedTransaction.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Amount</div>
+              <div>Total Income Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(transactionSummary.unclassifiedTransaction.amount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.unclassifiedTransaction.incomeAmount, 'VND', 'vi-vn')}
+              </div>
+            </div>
+            <div className='flex items-center justify-between'>
+              <div>Total Expense Amount</div>
+              <div className='text-xl font-bold'>
+                {formatCurrency(transactionSummary.unclassifiedTransaction.expenseAmount, 'VND', 'vi-vn')}
               </div>
             </div>
           </CardContent>

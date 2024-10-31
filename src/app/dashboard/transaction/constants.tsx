@@ -74,8 +74,9 @@ export const initEmptyDetailTransaction = {
 export const initEmptyTransactionSummaryData = {
   transactionToday: {
     count: 0,
-    amount: 0,
+    incomeAmount: 0,
+    expenseAmount: 0,
     data: []
   },
-  unclassifiedTransaction: { count: 0, amount: 0, data: [] }
+  unclassifiedTransaction: { count: 0, incomeAmount: 0, expenseAmount: 0, data: [] }
 }

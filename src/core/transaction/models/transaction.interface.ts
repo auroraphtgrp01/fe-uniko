@@ -63,7 +63,8 @@ export interface ICreateTrackerTransactionFormData {
 
 interface ITransactionSummaryData {
   count: number
-  amount: number
+  incomeAmount: number
+  expenseAmount: number
   data: IDataTransactionTable[]
 }
 
