@@ -59,7 +59,8 @@ import {
   updateCacheDataClassifyFeat,
   handleClassifyTransaction,
   handleCreateTrackerTxType,
-  handleCreateTrackerTransaction
+  handleCreateTrackerTransaction,
+  handleUpdateTrackerTxType
 } from './handlers'
 import { GET_ADVANCED_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
 import {
@@ -105,7 +106,7 @@ export default function TrackerTransactionForm() {
   // hooks
   const { getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
-  const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
+  const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { statisticData } = getStatisticData(dates || {})
@@ -122,10 +123,19 @@ export default function TrackerTransactionForm() {
     [GET_UNCLASSIFIED_TRANSACTION_KEY],
     updateCacheDataClassifyFeat
   )
-  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
+  const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
     (oldData, newData) => {
       return { ...oldData, data: [...oldData.data, newData] }
+    }
+  )
+  const { setData: setCacheTrackerTxTypeUpdate } = useUpdateModel<any>(
+    [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
+    (oldData: any, newData: any) => {
+      const updatedData = oldData.data.map((item: any) => {
+        return item.id === newData.id ? { ...item, ...newData } : item
+      })
+      return { ...oldData, data: updatedData }
     }
   )
 
@@ -302,11 +312,17 @@ export default function TrackerTransactionForm() {
             handleCreateTrackerTxType({
               payload: data,
               hookCreate: createTrackerTxType,
-              hookUpdateCache: setCacheTrackerTxType,
+              hookUpdateCache: setCacheTrackerTxTypeCreate,
               setIsCreating
             })
           },
-          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
+          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {
+            handleUpdateTrackerTxType({
+              payload: data,
+              hookUpdate: updateTrackerTxType,
+              hookUpdateCache: setCacheTrackerTxTypeUpdate
+            })
+          }
         }}
         unclassifiedTxDialog={{
           columns: columnUnclassifiedTxTables,
@@ -318,7 +334,7 @@ export default function TrackerTransactionForm() {
           formData: formDataCreateTrackerTxType,
           setFormData: setFormDataCreateTrackerTxType,
           createTrackerTransactionType: createTrackerTxType,
-          hookUpdateCache: setCacheTrackerTxType
+          hookUpdateCache: setCacheTrackerTxTypeCreate
         }}
       />
     </div>

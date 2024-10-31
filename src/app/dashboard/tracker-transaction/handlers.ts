@@ -133,18 +133,6 @@ export const updateCacheDataCreate = (
   if (updatedData.length > (oldData.pagination as IBaseResponsePagination).limit) updatedData.pop()
   return { ...oldData, data: updatedData }
 }
-// const handleAddNewItem = () => {
-//   if (newItemValue.trim() !== '') {
-//     const newItem = {
-//       value: newItemValue.toUpperCase().replace(/\s+/g, '_'),
-//       label: newItemValue.trim()
-//     }
-//     setItems([...items, newItem])
-//     setNewItemValue('')
-//     setIsAddingNew(false)
-//     onValueChange(newItem.value)
-//   }
-// }
 
 export const handleCreateTrackerTxType = ({
   payload,
@@ -163,6 +151,25 @@ export const handleCreateTrackerTxType = ({
         hookUpdateCache(res.data)
         toast.success('Create tracker transaction type successfully!')
         setIsCreating(false)
+      }
+    }
+  })
+}
+
+export const handleUpdateTrackerTxType = ({
+  payload,
+  hookUpdate,
+  hookUpdateCache
+}: {
+  payload: ITrackerTransactionTypeBody
+  hookUpdate: any
+  hookUpdateCache: any
+}) => {
+  hookUpdate(payload, {
+    onSuccess: (res: ITrackerTransactionResponse) => {
+      if (res.statusCode === 200 || res.statusCode === 201) {
+        hookUpdateCache(res.data)
+        toast.success('Update tracker transaction type successfully!')
       }
     }
   })

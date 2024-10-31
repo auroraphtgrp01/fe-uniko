@@ -1,20 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { EmojiPicker } from '@/components/common/EmojiPicker'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Delete, Edit, PlusIcon, Save, SaveIcon, Undo2, X } from 'lucide-react'
 import {
@@ -25,7 +15,6 @@ import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
 import { z } from 'zod'
 import FormZod from '../core/FormZod'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
-import { Card, CardContent } from '../ui/card'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 export interface IEditTrackerTypeDialogData extends ITrackerTransactionType {
@@ -62,10 +51,10 @@ export default function EditTrackerTypeDialog({
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
   const filteredDataArr = dataArr.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))
-
+  const [accordionValue, setAccordionValue] = useState<string | null>(null)
   const onHandleUpdate = () => {
     if (isUpdate) {
-      //update
+      formRefEdit.current?.requestSubmit()
     }
     setIsUpdate(!isUpdate)
   }
@@ -101,7 +90,6 @@ export default function EditTrackerTypeDialog({
       label: 'Description',
       placeHolder: 'Enter tracker transaction type description',
       props: {
-        autoComplete: 'description',
         disabled: !isUpdate
       }
     }
@@ -111,11 +99,12 @@ export default function EditTrackerTypeDialog({
     .object({
       name: z.string().trim().min(2).max(256),
       type: z.enum(['INCOMING', 'EXPENSE']),
-      description: z.string().min(10).max(256).optional()
+      description: z.string().min(10).max(256).nullable()
     })
     .strict()
 
-  const formRef = useRef<HTMLFormElement>(null)
+  const formRefCreate = useRef<HTMLFormElement>(null)
+  const formRefEdit = useRef<HTMLFormElement>(null)
   useEffect(() => {
     if (!openEditDialog) {
       setIsCreating(false)
@@ -154,7 +143,7 @@ export default function EditTrackerTypeDialog({
               </Select>
               {isCreating === true ? (
                 <>
-                  <Button variant='secondary' onClick={() => formRef.current?.requestSubmit()}>
+                  <Button variant='secondary' onClick={() => formRefCreate.current?.requestSubmit()}>
                     Save <SaveIcon className='ml-2 h-4 w-4' />
                   </Button>
                   <Button className='w-full whitespace-nowrap sm:w-auto' onClick={() => setIsCreating(false)}>
@@ -178,14 +167,21 @@ export default function EditTrackerTypeDialog({
             <div className='mb-2 rounded-lg border p-4'>
               <CreateTrackerTypeForm
                 typeOfTrackerType={type}
-                formRef={formRef}
+                formRef={formRefCreate}
                 handleCreateTrackerType={handleCreateTrackerType}
                 setIsCreating={setIsCreating}
               />
             </div>
           )}
           <ScrollArea className='h-96 overflow-y-auto rounded-md border p-4'>
-            <Accordion type='single' collapsible className='w-full'>
+            <Accordion
+              onValueChange={(value) => {
+                setAccordionValue(value)
+              }}
+              type='single'
+              collapsible
+              className='w-full'
+            >
               {filteredDataArr.length > 0
                 ? filteredDataArr.map((data) => (
                     <AccordionItem key={data.value} value={data.value}>
@@ -230,6 +226,7 @@ export default function EditTrackerTypeDialog({
                         </div>
                         <div className='grid gap-4 py-4'>
                           <FormZod
+                            submitRef={formRefEdit}
                             defaultValues={{
                               name: data.name,
                               type: data.type as ETypeOfTrackerTransactionType,
@@ -237,10 +234,8 @@ export default function EditTrackerTypeDialog({
                             }}
                             formFieldBody={editTrackerTypeBody}
                             formSchema={editTrackerTypeSchema}
-                            onSubmit={() => {}}
-                            buttonConfig={{
-                              label: 'Save',
-                              className: 'w-full mt-4'
+                            onSubmit={(data) => {
+                              handleUpdateTrackerType({ ...data, id: accordionValue } as ITrackerTransactionTypeBody)
                             }}
                           />
                         </div>

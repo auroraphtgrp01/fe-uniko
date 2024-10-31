@@ -28,7 +28,8 @@ export default function CreateTrackerTypeForm({
   const createTrackerTypeSchema = z
     .object({
       name: z.string().trim().min(2).max(256),
-      description: z.string().min(10).max(256).optional()
+      // description: z.string().min(10).max(256).optional()
+      description: z.any()
     })
     .strict()
 
