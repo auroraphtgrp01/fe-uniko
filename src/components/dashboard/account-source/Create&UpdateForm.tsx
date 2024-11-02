@@ -11,6 +11,7 @@ import {
   createAccountBankFormBody,
   createAccountBankSchema
 } from '@/core/account-source/constants/create-account-bank.constant'
+import { useTranslation } from 'react-i18next'
 
 export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValue }: any) {
   const [typeState, setTypeState] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
@@ -18,6 +19,7 @@ export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValu
   const formCreateAccountSourceRef = useRef<HTMLFormElement>(null)
   const formCreateAccountBankRef = useRef<HTMLFormElement>(null)
   let payload = {}
+  const { t } = useTranslation(['accountSource'])
   const handleSubmit = (v: any) => {
     payload = { ...v, initAmount: Number(v.initAmount), name: v.accountSourceName }
     if (typeState !== EAccountSourceType.BANKING) {
@@ -74,7 +76,7 @@ export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValu
       )}
 
       <Button onClick={onSubmitAll} className='mt-4 w-full'>
-        Save Changes Account Source
+        {t('form.button.save_changes_account_source')}
       </Button>
     </div>
   )

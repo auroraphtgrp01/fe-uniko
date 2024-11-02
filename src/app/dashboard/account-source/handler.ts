@@ -33,22 +33,22 @@ export const handleCreateAccountSource = ({
   payload,
   setIsDialogOpen,
   createAccountSource,
-  setFetchedData,
-  setDataCreate
+  setDataCreate,
+  hookResetCacheStatistic
 }: {
   payload: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   createAccountSource: any
-  setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setDataCreate: any
+  hookResetCacheStatistic: any
 }) => {
   createAccountSource(payload, {
     onSuccess: (res: IAccountSourceResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-        setFetchedData((prev) => [res.data, ...prev])
         setDataCreate(res.data)
+        hookResetCacheStatistic()
         toast.success('Create account source successfully!')
       }
     }
@@ -58,32 +58,28 @@ export const handleCreateAccountSource = ({
 export const handleUpdateAccountSource = ({
   payload,
   setIsDialogOpen,
-  fetchedData,
-  setFetchedData,
   setFormData,
   updateAccountSource,
   setDataUpdate,
-  setIdRowClicked
+  setIdRowClicked,
+  hookResetCacheStatistic
 }: {
   payload: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   updateAccountSource: any
-  setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
-  fetchedData: IAccountSource[]
   setDataUpdate: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
+  hookResetCacheStatistic: any
 }) => {
   updateAccountSource(payload, {
     onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        const clonedData = JSON.parse(JSON.stringify(res))
-        const updatedData = fetchedData.map((item) => (item.id === clonedData.data.id ? clonedData.data : item))
-        setFetchedData(updatedData)
         setDataUpdate(res.data)
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
         setFormData((prev) => ({ ...prev, name: '', type: EAccountSourceType.WALLET, initAmount: 0, currency: '' }))
         setIdRowClicked('')
+        hookResetCacheStatistic()
         toast.success('Update account source successfully!')
       }
     }
@@ -125,23 +121,13 @@ export const updateCacheDetailData = (
 }
 
 export const initDataTable = (
-  isGetAdvancedPending: boolean,
-  getAdvancedData: IAdvancedAccountSourceResponse | undefined,
-  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>,
-  setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>,
-  setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
+  setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>,
+  accountSourceData: IAccountSource[]
 ) => {
-  if (!isGetAdvancedPending && getAdvancedData) {
-    const dataFormat: IAccountSourceDataFormat[] = formatArrayData<IAccountSource, IAccountSourceDataFormat>(
-      getAdvancedData.data,
-      formatAccountSourceData
-    )
-    setDataTableConfig((prev) => ({
-      ...prev,
-      types: getTypes(getAdvancedData.data, 'type'),
-      totalPage: Number(getAdvancedData.pagination?.totalPage)
-    }))
-    setFetchedData(getAdvancedData.data)
-    setTableData(dataFormat)
-  }
+  const dataFormat: IAccountSourceDataFormat[] = formatArrayData<IAccountSource, IAccountSourceDataFormat>(
+    accountSourceData,
+    formatAccountSourceData
+  )
+
+  setTableData(dataFormat)
 }

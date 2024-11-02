@@ -10,38 +10,38 @@ import {
 } from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
 import React, { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function AccountSourceDialog({
   setIsDialogOpen,
   isDialogOpen,
   setFormData,
   formData,
-  setFetchedData,
-  fetchedData,
   createAccountSource,
   updateAccountSource,
   setDataCreate,
   setDataUpdate,
-  setIdRowClicked
+  setIdRowClicked,
+  hookResetCacheStatistic
 }: {
   formData: IAccountSourceBody
   isDialogOpen: IDialogAccountSource
-  fetchedData: IAccountSource[]
   tableData: IAccountSourceDataFormat[]
   createAccountSource: any
   updateAccountSource: any
-  setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   setDataCreate: any
   setDataUpdate: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
+  hookResetCacheStatistic: any
 }) {
+  const { t } = useTranslation(['accountSource', 'common'])
   const updateConfigDialog: IDialogConfig = {
     content: CreateAndUpdateAccountSourceForm({}),
-    description: 'Please fill in the information below to update a account source.',
-    title: 'Update Account Source',
+    description: t('AccountSourceDialog.updateDialog.description'),
+    title: t('AccountSourceDialog.updateDialog.title'),
     isOpen: isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
@@ -54,22 +54,21 @@ export default function AccountSourceDialog({
       handleUpdateAccountSource({
         payload,
         setIsDialogOpen,
-        setFetchedData,
         setFormData,
         updateAccountSource,
-        fetchedData,
         setDataUpdate,
-        setIdRowClicked
+        setIdRowClicked,
+        hookResetCacheStatistic
       })
     }
     if (isDialogOpen.isDialogCreateOpen) {
       handleCreateAccountSource({
         payload,
         setIsDialogOpen,
-        setFetchedData,
         setFormData,
         createAccountSource,
-        setDataCreate
+        setDataCreate,
+        hookResetCacheStatistic
       })
     }
   }
@@ -78,8 +77,8 @@ export default function AccountSourceDialog({
       setFormData,
       callBack: handleSubmitAccountSource
     }),
-    description: 'Please fill in the information below to create a new account source.',
-    title: 'Create Account Source',
+    description: t('AccountSourceDialog.createDialog.description'),
+    title: t('AccountSourceDialog.createDialog.title'),
     isOpen: isDialogOpen.isDialogCreateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))

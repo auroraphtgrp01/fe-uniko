@@ -1,3 +1,4 @@
+import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
 import { z } from 'zod'
 
@@ -8,12 +9,13 @@ export const createAccountSourceSchema = z.object({
 })
 
 export const createAccountSourceFormBody = (setTypeState: any) => {
+  const t = translate(['accountSource'])
   return [
     {
       name: 'accountSourceName',
       type: EFieldType.Input,
-      label: 'Source Name',
-      placeHolder: 'Enter your source name',
+      label: t('form.createAccountSourceFormBody.accountSourceName.label'),
+      placeHolder: t('form.createAccountSourceFormBody.accountSourceName.placeholder'),
       props: {
         autoComplete: 'name'
       }
@@ -21,7 +23,7 @@ export const createAccountSourceFormBody = (setTypeState: any) => {
     {
       name: 'accountSourceType',
       type: EFieldType.Select,
-      label: 'Type',
+      label: t('form.createAccountSourceFormBody.accountSourceType.label'),
       dataSelector: [
         {
           value: 'WALLET',
@@ -32,7 +34,7 @@ export const createAccountSourceFormBody = (setTypeState: any) => {
           label: 'BANKING'
         }
       ],
-      placeHolder: 'Enter your type',
+      placeHolder: t('form.createAccountSourceFormBody.accountSourceType.placeholder'),
       props: {
         onchange: (value: string) => {
           setTypeState(value)
@@ -42,8 +44,8 @@ export const createAccountSourceFormBody = (setTypeState: any) => {
     {
       name: 'initAmount',
       type: EFieldType.Input,
-      label: 'Initial Amount',
-      placeHolder: 'Enter your initial amount',
+      label: t('form.createAccountSourceFormBody.initAmount.label'),
+      placeHolder: t('form.createAccountSourceFormBody.initAmount.placeholder'),
       props: {
         type: 'number',
         autoComplete: 'initialAmount'

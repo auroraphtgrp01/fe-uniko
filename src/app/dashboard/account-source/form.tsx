@@ -20,7 +20,7 @@ import {
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
-import { getConvertedKeysToTitleCase } from '@/libraries/utils'
+import { getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
   IAccountSource,
@@ -35,10 +35,14 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import { useAuth } from '@/core/auth/hooks'
+import { arraysEqual, getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
+import { useTranslation } from 'react-i18next'
+import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
 
 export default function AccountSourceForm() {
+  const { t } = useTranslation(['common'])
   // States
-  const [fetchedData, setFetchedData] = useState<IAccountSource[]>([])
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
@@ -53,25 +57,38 @@ export default function AccountSourceForm() {
   }, [tableData])
 
   // Hooks
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY],
+    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataCreate
   )
   const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY],
+    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataUpdate
   )
-  const { setAccountSourceData } = useStoreLocal()
+  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
+  const { setAccountSourceData, accountSourceData } = useStoreLocal()
   // Effects
   useEffect(() => {
-    initDataTable(isGetAdvancedPending, getAdvancedData, setDataTableConfig, setFetchedData, setTableData)
+    if (getAdvancedData) {
+      const data = getAdvancedData.data.map((item) => item)
+      setAccountSourceData(data)
+      setDataTableConfig((prev) => ({
+        ...prev,
+        types: getTypes(accountSourceData, 'type'),
+        totalPage: Number(getAdvancedData.pagination?.totalPage)
+      }))
+    }
   }, [getAdvancedData])
 
   useEffect(() => {
-    setAccountSourceData(fetchedData)
-  }, [fetchedData])
+    console.log('accountSourceData', accountSourceData)
+
+    initDataTable(setTableData, accountSourceData)
+  }, [accountSourceData])
 
   useEffect(() => {
     if (tableData !== undefined && idRowClicked !== '') {
@@ -90,14 +107,8 @@ export default function AccountSourceForm() {
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
-        <CardInHeader
-          className='flex-grow sm:w-1/2 lg:w-1/2'
-          contents={{ detail: 'Choose between E-Wallets to manage your digital funds.' }}
-        />
-        <CardInHeader
-          className='flex-grow sm:w-1/2 lg:w-1/2'
-          contents={{ detail: 'Use Bank Accounts to manage your physical funds.' }}
-        />
+        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
+        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
       </div>
       <Card className='mt-5'>
         <CardContent>
@@ -116,15 +127,14 @@ export default function AccountSourceForm() {
         isDialogOpen={isDialogOpen}
         setFormData={setFormData}
         formData={formData}
-        setFetchedData={setFetchedData}
         setTableData={setTableData}
         tableData={tableData}
-        fetchedData={fetchedData}
         createAccountSource={createAccountSource}
         updateAccountSource={updateAccountSource}
         setDataCreate={setDataCreate}
         setDataUpdate={setDataUpdate}
         setIdRowClicked={setIdRowClicked}
+        hookResetCacheStatistic={resetCacheStatistic}
       />
     </div>
   )

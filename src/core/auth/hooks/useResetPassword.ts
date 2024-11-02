@@ -16,10 +16,8 @@ export const useResetPassword = () => {
         router.push('/sign-in')
       },
       onError: (error) => {
-        if (error.response?.status) {
-          return toast.error(`${(error.response?.data as { message: string }).message} !`)
-        }
-        toast.error('An error occurred. Please try again later.')
+        const errorMessage = (error as any)?.payload?.message || 'An error occurred. Please try again later.!'
+        toast.error(errorMessage)
       }
     }
   })

@@ -1,6 +1,9 @@
 import { IDateRange } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IDynamicType } from '@/types/common.i'
+import { IBodyFormField } from '@/types/formZod.interface'
+import { AppNamespace } from '@/types/i18n'
 import { type ClassValue, clsx } from 'clsx'
+import i18next, { TFunction, TOptions } from 'i18next'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -33,8 +36,7 @@ export const formatDateTimeVN = (date: string, hasTime: boolean) => {
     month: '2-digit',
     year: 'numeric',
     hour: hasTime ? '2-digit' : undefined,
-    minute: hasTime ? '2-digit' : undefined,
-    second: hasTime ? '2-digit' : undefined
+    minute: hasTime ? '2-digit' : undefined
   }).format(new Date(date))
 }
 const getPropertyByPath = (data: any, propertyPath: string): any => {
@@ -94,4 +96,30 @@ export const getCurrentMonthDateRange = (): IDateRange => {
     startDay,
     endDay
   }
+}
+
+export function translate(keyOrNamespace: AppNamespace | AppNamespace[]): TFunction
+export function translate(keyOrNamespace: string, options?: TOptions<any>): string
+export function translate(
+  keyOrNamespace: string | AppNamespace | AppNamespace[],
+  options?: TOptions<any>
+): string | TFunction {
+  if (typeof keyOrNamespace === 'string' || Array.isArray(keyOrNamespace)) {
+    const namespaces = keyOrNamespace as AppNamespace | AppNamespace[]
+    return ((key: string, options?: TOptions<any>) => i18next.t(key, { ns: namespaces, ...options })) as TFunction
+  }
+
+  return i18next.t(keyOrNamespace as string, options)
+}
+
+export function getTranslatedFormBody(formBody: IBodyFormField[], t: TFunction<any>): IBodyFormField[] {
+  return formBody.map((field) => ({
+    ...field,
+    label: typeof field.label === 'string' ? t(field.label) : field.label,
+    placeHolder: typeof field.placeHolder === 'string' ? t(field.placeHolder) : field.placeHolder,
+    dataSelector: field.dataSelector?.map((option) => ({
+      ...option,
+      label: typeof option.label === 'string' ? t(option.label) : option.label
+    }))
+  }))
 }

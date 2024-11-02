@@ -5,25 +5,26 @@ import {
   IDataTransactionTable,
   IDialogTransaction,
   IGetTransactionResponse,
-  ITransaction
+  ITransaction,
+  ITransactionSummary
 } from '@/core/transaction/models'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import React from 'react'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm } from './constants'
+import { IDataTableConfig } from '@/types/common.i'
 
 export const modifyTransactionHandler = (payload: ITransaction[]): IDataTransactionTable[] => {
   return payload.map((item: ITransaction) => {
     return {
       id: item.id,
-      transactionId: item.transactionId,
       amount: formatCurrency(item.amount, 'VND', 'vi-VN'),
       direction: item.direction,
-      accountBank: item.accountBankId,
+      accountSource: item.accountSource.name,
       currency: item.currency,
-      accountNo: item.ofAccount ? item.ofAccount.accountNo : null,
+      accountNo: item.ofAccount ? item.ofAccount.accountNo : 'N/A',
       description: item.description,
-      time: item.time,
+      date: formatDateTimeVN(item.transactionDateTime, true),
       TrackerTransaction: item.TrackerTransaction
     }
   })
@@ -109,4 +110,24 @@ export const handleClassifyTransaction = async ({
       }
     }
   })
+}
+
+export const paginateTodayTransactionDataTable = ({
+  todayDataTableConfig,
+  transactionSummary,
+  setTransactionSummary
+}: {
+  todayDataTableConfig: IDataTableConfig[]
+  transactionSummary: ITransactionSummary
+  setTransactionSummary: React.Dispatch<React.SetStateAction<ITransactionSummary>>
+}) => {
+  setTransactionSummary((prev) => ({
+    ...prev,
+    transactionToday: {
+      incomeAmount: 0,
+      expenseAmount: 0,
+      count: 0,
+      data: transactionSummary.transactionToday.data.slice()
+    }
+  }))
 }

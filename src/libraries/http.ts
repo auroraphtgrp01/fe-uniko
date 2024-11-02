@@ -9,7 +9,9 @@ import {
 import { normalizePath } from '@/libraries/utils'
 import { IMutateData } from '@/types/common.i'
 import toast from 'react-hot-toast'
-import Router from 'next/router'
+import { useTranslation } from 'react-i18next'
+import i18n from 'i18next'
+
 export class HttpError extends Error {
   status: number
   payload: Record<string, any>
@@ -40,10 +42,12 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use((config) => {
   if (isClient) {
+    const currentLanguage = i18n.language || 'vi'
     const accessToken = getAccessTokenFromLocalStorage()
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`
     }
+    config.headers['Accept-Language'] = currentLanguage
   }
   return config
 })
@@ -53,9 +57,9 @@ axiosInstance.interceptors.response.use(
   async (error: AxiosError) => {
     const { response } = error
     if (error.response?.status === 401 || error.response?.status === 403) {
-      toast.error('Unauthorized or Account inactive, please sign-in again !')
-      // window.location.href = '/sign-in'
-      // removeTokensFromLocalStorage()
+      if (window.location.pathname !== '/sign-in') {
+        removeTokensFromLocalStorage()
+      }
     }
     return Promise.reject(
       new HttpError({
