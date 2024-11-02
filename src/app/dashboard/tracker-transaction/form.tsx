@@ -59,9 +59,14 @@ import {
   updateCacheDataClassifyFeat,
   handleClassifyTransaction,
   handleCreateTrackerTxType,
-  handleCreateTrackerTransaction
+  handleCreateTrackerTransaction,
+  handleUpdateTrackerTxType
 } from './handlers'
-import { GET_ADVANCED_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
+import {
+  GET_ADVANCED_TRANSACTION_KEY,
+  GET_TODAY_TRANSACTION_KEY,
+  GET_UNCLASSIFIED_TRANSACTION_KEY
+} from '@/core/transaction/constants'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
@@ -76,6 +81,7 @@ export default function TrackerTransactionForm() {
   const { t } = useTranslation(['trackerTransaction', 'common'])
   // states
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
@@ -95,7 +101,8 @@ export default function TrackerTransactionForm() {
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
 
   // memos
-  const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
+  const titles = ['Reason Name', 'Type', 'Tracker Type', 'Amount', 'Transaction Date', 'Account Source']
+
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
     return getColumns<ICustomTrackerTransaction>(titles, true)
@@ -112,12 +119,12 @@ export default function TrackerTransactionForm() {
   const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
-  const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
+  const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { statisticData } = getStatisticData(dates || {})
   const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({ query: queryOptions })
-  const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
+  const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
   const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
   const { classifyTransaction } = useTrackerTransaction()
   const { resetData: resetCacheTrackerTx, setData } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
@@ -129,10 +136,20 @@ export default function TrackerTransactionForm() {
     [GET_UNCLASSIFIED_TRANSACTION_KEY],
     updateCacheDataClassifyFeat
   )
-  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
+  const { setData: setCacheTodayTxs } = useUpdateModel([GET_TODAY_TRANSACTION_KEY], updateCacheDataClassifyFeat)
+  const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
     (oldData, newData) => {
       return { ...oldData, data: [...oldData.data, newData] }
+    }
+  )
+  const { setData: setCacheTrackerTxTypeUpdate } = useUpdateModel<any>(
+    [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
+    (oldData: any, newData: any) => {
+      const updatedData = oldData.data.map((item: any) => {
+        return item.id === newData.id ? { ...item, ...newData } : item
+      })
+      return { ...oldData, data: updatedData }
     }
   )
 
@@ -141,6 +158,13 @@ export default function TrackerTransactionForm() {
     useStoreLocal()
 
   // effects
+  useEffect(() => {
+    setUncTableQueryOptions((prev) => ({
+      ...prev,
+      page: dataTableUnclassifiedConfig.currentPage,
+      limit: dataTableUnclassifiedConfig.limit
+    }))
+  }, [dataTableUnclassifiedConfig])
   useEffect(() => {
     setUnclassifiedTxTableData(modifyTransactionHandler(unclassifiedTransactionData))
   }, [unclassifiedTransactionData])
@@ -171,6 +195,10 @@ export default function TrackerTransactionForm() {
     if (dataUnclassifiedTxs) {
       setUnclassifiedTxTableData(modifyTransactionHandler(dataUnclassifiedTxs.data))
       setUnclassifiedTransactionData(dataUnclassifiedTxs.data)
+      setDataTableUnclassifiedConfig((prev) => ({
+        ...prev,
+        totalPage: Number(dataUnclassifiedTxs.pagination?.totalPage)
+      }))
     }
   }, [dataUnclassifiedTxs])
 
@@ -279,7 +307,8 @@ export default function TrackerTransactionForm() {
               hookUpdateCache: setCacheUnclassifiedTxs,
               setIsDialogOpen,
               hookResetCacheStatistic: resetCacheStatistic,
-              hookResetTrackerTx: resetCacheTrackerTx
+              hookResetTrackerTx: resetCacheTrackerTx,
+              hookSetTodayTxs: setCacheTodayTxs
             })
           }
         }}
@@ -293,7 +322,8 @@ export default function TrackerTransactionForm() {
               hookCreate: createTransaction,
               hookUpdateCache: setData,
               setIsDialogOpen: setIsDialogOpen,
-              hookResetCacheStatistic: resetCacheStatistic
+              hookResetCacheStatistic: resetCacheStatistic,
+              hookResetTodayTxs: setCacheTodayTxs
             })
         }}
         sharedDialogElements={{
@@ -309,11 +339,17 @@ export default function TrackerTransactionForm() {
             handleCreateTrackerTxType({
               payload: data,
               hookCreate: createTrackerTxType,
-              hookUpdateCache: setCacheTrackerTxType,
+              hookUpdateCache: setCacheTrackerTxTypeCreate,
               setIsCreating
             })
           },
-          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
+          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {
+            handleUpdateTrackerTxType({
+              payload: data,
+              hookUpdate: updateTrackerTxType,
+              hookUpdateCache: setCacheTrackerTxTypeUpdate
+            })
+          }
         }}
         unclassifiedTxDialog={{
           columns: columnUnclassifiedTxTables,
@@ -325,7 +361,7 @@ export default function TrackerTransactionForm() {
           formData: formDataCreateTrackerTxType,
           setFormData: setFormDataCreateTrackerTxType,
           createTrackerTransactionType: createTrackerTxType,
-          hookUpdateCache: setCacheTrackerTxType
+          hookUpdateCache: setCacheTrackerTxTypeCreate
         }}
       />
     </div>

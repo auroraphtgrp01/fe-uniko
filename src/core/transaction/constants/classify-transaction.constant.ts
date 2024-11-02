@@ -32,9 +32,6 @@ export const defineClassifyTransactionFormBody = ({
       placeHolder: 'Select tracker type',
       props: {
         autoComplete: 'trackerTypeId',
-        onValueSelect: (value) => {
-          console.log('🚀 ~ value:', value)
-        },
         setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
         dataArr: modifiedTrackerTypeForComboBox(
           typeOfTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
@@ -70,6 +67,6 @@ export const classifyTransactionSchema = z
   .object({
     reasonName: z.string().trim().min(2).max(256),
     trackerTypeId: z.string().uuid(),
-    description: z.string().min(10).max(256).optional()
+    description: z.any()
   })
   .strict()

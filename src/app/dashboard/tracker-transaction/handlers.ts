@@ -23,6 +23,7 @@ import {
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -35,19 +36,22 @@ export const handleCreateTrackerTransaction = async ({
   hookCreate,
   hookUpdateCache,
   setIsDialogOpen,
-  hookResetCacheStatistic
+  hookResetCacheStatistic,
+  hookResetTodayTxs
 }: {
   payload: ICreateTrackerTransactionFormData
   hookCreate: any
   hookUpdateCache: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
+  hookResetTodayTxs: any
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
         hookResetCacheStatistic()
+        hookResetTodayTxs()
         toast.success('Create tracker transaction successfully!')
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
       }
@@ -62,7 +66,8 @@ export const handleClassifyTransaction = async ({
   setIsDialogOpen,
   hookResetCacheStatistic,
   hookResetTrackerTx,
-  hookSetTrackerTx
+  hookSetTrackerTx,
+  hookSetTodayTxs
 }: {
   payload: IClassifyTransactionFormData
   hookCreate: any
@@ -71,11 +76,13 @@ export const handleClassifyTransaction = async ({
   hookSetTrackerTx?: any
   hookResetTrackerTx?: any
   hookResetCacheStatistic?: any
+  hookSetTodayTxs: any
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
+        hookSetTodayTxs(res.data)
         if (hookResetCacheStatistic) hookResetCacheStatistic(res.data)
         if (hookResetTrackerTx) hookResetTrackerTx(res.data)
         if (hookSetTrackerTx) hookSetTrackerTx(res.data)
@@ -84,24 +91,6 @@ export const handleClassifyTransaction = async ({
       }
     }
   })
-}
-
-export const initDataTableTransaction = (
-  dataTransaction: ITransaction[],
-  setDataTable: React.Dispatch<React.SetStateAction<IDataTransactionTable[]>>,
-  setDataTransactionSummary: React.Dispatch<React.SetStateAction<ITransactionSummary>>
-) => {
-  const transactionToday = dataTransaction.filter((item: ITransaction) => isIsoStringInToday(item.time))
-
-  setDataTable(modifyTransactionHandler(dataTransaction))
-  setDataTransactionSummary((prev) => ({
-    ...prev,
-    transactionToday: {
-      count: transactionToday.length,
-      amount: transactionToday.reduce((acc, item) => acc + item.amount, 0),
-      data: modifyTransactionHandler(transactionToday)
-    }
-  }))
 }
 
 function isIsoStringInToday(isoString: string): boolean {
@@ -133,18 +122,6 @@ export const updateCacheDataCreate = (
   if (updatedData.length > (oldData.pagination as IBaseResponsePagination).limit) updatedData.pop()
   return { ...oldData, data: updatedData }
 }
-// const handleAddNewItem = () => {
-//   if (newItemValue.trim() !== '') {
-//     const newItem = {
-//       value: newItemValue.toUpperCase().replace(/\s+/g, '_'),
-//       label: newItemValue.trim()
-//     }
-//     setItems([...items, newItem])
-//     setNewItemValue('')
-//     setIsAddingNew(false)
-//     onValueChange(newItem.value)
-//   }
-// }
 
 export const handleCreateTrackerTxType = ({
   payload,
@@ -163,6 +140,25 @@ export const handleCreateTrackerTxType = ({
         hookUpdateCache(res.data)
         toast.success('Create tracker transaction type successfully!')
         setIsCreating(false)
+      }
+    }
+  })
+}
+
+export const handleUpdateTrackerTxType = ({
+  payload,
+  hookUpdate,
+  hookUpdateCache
+}: {
+  payload: ITrackerTransactionTypeBody
+  hookUpdate: any
+  hookUpdateCache: any
+}) => {
+  hookUpdate(payload, {
+    onSuccess: (res: ITrackerTransactionResponse) => {
+      if (res.statusCode === 200 || res.statusCode === 201) {
+        hookUpdateCache(res.data)
+        toast.success('Update tracker transaction type successfully!')
       }
     }
   })
@@ -195,10 +191,10 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
     reasonName: data.reasonName || '',
     type: data.Transaction.direction || '',
     checkType: data.Transaction.direction || '',
-    trackerTypeName: data.TrackerType.name || '',
+    trackerType: data.TrackerType.name || '',
     amount: `${new Intl.NumberFormat('en-US').format(data.Transaction?.amount || 0)} ${data.Transaction?.currency}`,
     transactionDate: data.time ? formatDateTimeVN(data.time, false) : '',
-    accountSourceName: data.Transaction?.accountSource?.name || ''
+    accountSource: data.Transaction?.accountSource?.name || ''
   }
 }
 
