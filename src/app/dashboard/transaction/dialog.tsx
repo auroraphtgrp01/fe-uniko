@@ -59,7 +59,9 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       <div className='py-4'>
         <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
           <div className='mb-2 w-full sm:mb-0'>
-            <p className='text-sm text-muted-foreground'>Amount</p>
+            <p className='text-sm text-muted-foreground'>
+              {t('transaction:TransactionType.detailsConfigDialog.amount')}
+            </p>
             <div className='flex w-full items-center justify-between'>
               <p className='text-xl font-bold'>{dataTable.dataDetail.amount}</p>
               <Button
@@ -70,7 +72,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
                   dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
                 }}
               >
-                Tracker Transaction
+                {t('transaction:TransactionType.detailsConfigDialog.trackerTransaction')}
               </Button>
             </div>
           </div>
@@ -81,27 +83,27 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           <Table className=''>
             <TableBody>
               <TableRow>
-                <TableCell>Transaction Id</TableCell>
+                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.transactionId')}</TableCell>
                 <TableCell>{dataTable.dataDetail.transactionId}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Direction</TableCell>
+                <TableCell> {t('transaction:TransactionType.detailsConfigDialog.direction')}</TableCell>
                 <TableCell>{dataTable.dataDetail.direction}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Currency</TableCell>
+                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.currency')}</TableCell>
                 <TableCell>{dataTable.dataDetail.currency}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Account Bank</TableCell>
+                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.accountBank')}</TableCell>
                 <TableCell>{dataTable.dataDetail.accountBank}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Account No</TableCell>
+                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.accountBank')}</TableCell>
                 <TableCell>{dataTable.dataDetail.accountNo}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Description</TableCell>
+                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.description')}</TableCell>
                 <TableCell>{dataTable.dataDetail.description}</TableCell>
               </TableRow>
             </TableBody>

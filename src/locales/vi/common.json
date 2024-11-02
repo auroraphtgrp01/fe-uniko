@@ -7,7 +7,7 @@
         "delete": "Xóa",
         "create": "Tạo mới",
         "classify": "Phân loại",
-        "refetch_in_bank": "Tải lại dữ liệu ngân hàng",
+        "refetch_in_bank": "Tải dữ liệu ngân hàng",
         "reload_data": "Tải lại dữ liệu"
     },
     "card_header": {

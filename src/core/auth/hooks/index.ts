@@ -27,7 +27,7 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
     resetPassword,
     isResetPassword,
     useVerifyEmail,
-    logout: useLogout,
+    useLogout,
     signInGoogle,
     isSigningInGoogle,
     verifyToken: useVerifyToken

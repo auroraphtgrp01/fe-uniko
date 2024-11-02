@@ -23,6 +23,31 @@
         "classifyingTransactionDialog": {
             "title": "Classify Transaction",
             "description": "Please fill in the information below to classify the transaction."
+        },
+        "detailsConfigDialog": {
+            "trackerTransaction": "Tracker Transaction",
+            "amount": "Amount",
+            "transactionId": "Transaction Id",
+            "direction": "Direction",
+            "currency": "Currency",
+            "accountBank": "Account Bank",
+            "accountNo": "Account No",
+            "description": "Description"
+        },
+        "defineClassifyTransactionFormBody": {
+            "reasonName": {
+                "label": "Reason Name",
+                "placeholder": "Enter reason name"
+            },
+            "trackerTypeId": {
+                "label": "Tracker Type",
+                "placeholder": "Select tracker type",
+                "labelTrackerTransactionType": "Tracker Transaction Type"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Enter description"
+            }
         }
     }
 }

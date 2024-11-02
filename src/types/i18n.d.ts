@@ -7,3 +7,5 @@ declare module 'i18next' {
     resources: (typeof resources)['vi']
   }
 }
+
+export type AppNamespace = 'common' | 'trackerTransaction' | 'transaction' | 'profile' | 'accountSource'

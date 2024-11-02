@@ -1,9 +1,10 @@
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
-
 export const defineCreateAccountSourceFormBody = ({
   accountSourceData,
   incomeTrackerType,
@@ -17,12 +18,13 @@ export const defineCreateAccountSourceFormBody = ({
   handleCreateTrackerType,
   handleUpdateTrackerType
 }: any) => {
+  const t = translate(['accountSource'])
   return [
     {
       name: 'reasonName',
       type: EFieldType.Input,
-      label: 'Reason Name',
-      placeHolder: 'Enter reason name',
+      label: t('form.defineCreateAccountSourceFormBody.reasonName.label'),
+      placeHolder: t('form.defineCreateAccountSourceFormBody.reasonName.placeholder'),
       props: {
         autoComplete: 'reasonName'
       }
@@ -30,8 +32,8 @@ export const defineCreateAccountSourceFormBody = ({
     {
       name: 'amount',
       type: EFieldType.Input,
-      label: 'Amount',
-      placeHolder: 'Enter amount',
+      label: t('form.defineCreateAccountSourceFormBody.reasonName.label'),
+      placeHolder: t('form.defineCreateAccountSourceFormBody.reasonName.placeholder'),
       props: {
         type: 'number',
         autoComplete: 'amount'
@@ -40,8 +42,8 @@ export const defineCreateAccountSourceFormBody = ({
     {
       name: 'accountSourceId',
       type: EFieldType.Combobox,
-      label: 'Account Source',
-      placeHolder: 'Select account source',
+      label: t('form.defineCreateAccountSourceFormBody.accountSourceId.label'),
+      placeHolder: t('form.defineCreateAccountSourceFormBody.accountSourceId.placeholder'),
       props: {
         autoComplete: 'accountSourceId',
         dataArr: modifiedTrackerTypeForComboBox(accountSourceData)
@@ -50,8 +52,8 @@ export const defineCreateAccountSourceFormBody = ({
     {
       name: 'direction',
       type: EFieldType.Select,
-      label: 'Direction',
-      placeHolder: 'Select a direction',
+      label: t('form.defineCreateAccountSourceFormBody.direction.label'),
+      placeHolder: t('form.defineCreateAccountSourceFormBody.direction.placeholder'),
       props: {
         autoComplete: 'direction',
         onchange: (value: any) => {
@@ -74,8 +76,8 @@ export const defineCreateAccountSourceFormBody = ({
     {
       name: 'trackerTypeId',
       type: EFieldType.Combobox,
-      label: 'Tracker Type',
-      placeHolder: 'Select tracker type',
+      label: t('form.defineCreateAccountSourceFormBody.trackerTypeId.label'),
+      placeHolder: t('form.defineCreateAccountSourceFormBody.trackerTypeId.placeholder'),
       props: {
         autoComplete: 'trackerTypeId',
         onValueSelect: (value: any) => {
@@ -103,8 +105,8 @@ export const defineCreateAccountSourceFormBody = ({
     {
       name: 'description',
       type: EFieldType.Textarea,
-      label: 'Description',
-      placeHolder: 'Enter description',
+      label: t('form.defineCreateAccountSourceFormBody.description.label'),
+      placeHolder: t('form.defineCreateAccountSourceFormBody.description.placeholder'),
       props: {
         autoComplete: 'description'
       }

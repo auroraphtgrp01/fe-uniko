@@ -7,27 +7,45 @@
     "userProfileTitle": "User Profile",
     "form": {
         "common": {
-            "nameLabel": "Name",
-            "namePlaceholder": "John Doe",
-            "dateOfBirthLabel": "Date of Birth",
-            "genderLabel": "Gender",
-            "genderPlaceholder": "Select a gender",
-            "workplaceLabel": "Workplace",
-            "workplacePlaceholder": "e.g., London",
-            "phoneNumberLabel": "Phone Number",
-            "phoneNumberPlaceholder": "+84*********",
-            "addressLabel": "Address",
-            "addressPlaceholder": "789 Baker Street",
-            "updateButton": "Update",
-            "updateDescription": "Make changes to your account. Click update when you are done."
+            "fullName": {
+                "label": "Full Name",
+                "placeholder": "Enter your full name"
+            },
+            "dateOfBirth": {
+                "label": "Date of Birth",
+                "placeholder": "Enter your date of birth"
+            },
+            "gender": {
+                "label": "Gender",
+                "placeholder": "Enter your gender",
+                "male": "Male",
+                "female": "Female"
+            },
+            "workplace": {
+                "label": "Workplace",
+                "placeholder": "Enter your workplace"
+            },
+            "phone_number": {
+                "label": "Phone Number",
+                "placeholder": "Enter your phone number"
+            },
+            "address": {
+                "label": "Address",
+                "placeholder": "Enter your address"
+            }
         },
         "credential": {
-            "currentPasswordTitle": "Current Password",
-            "newPasswordTitle": "New Password",
-            "passwordTitle": "Password",
             "passwordDescription": "Change your password here. After saving, you will be logged out.",
             "savePasswordButton": "Save password",
-            "saveChangesButton": "Save Changes"
+            "saveChangesButton": "Save Changes",
+            "currentPassword": {
+                "label": "Current Password",
+                "placeholder": "Enter your current password"
+            },
+            "newPassword": {
+                "label": "New Password",
+                "placeholder": "Enter your new password"
+            }
         }
     }
 }

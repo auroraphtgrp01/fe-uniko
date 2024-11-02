@@ -91,7 +91,7 @@ export default function AccountSourceForm() {
   }, [dataTableConfig])
 
   // Other components
-  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen, t })
+  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
   return (
     <div className='w-full'>

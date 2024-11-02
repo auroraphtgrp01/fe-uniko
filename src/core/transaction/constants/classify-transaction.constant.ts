@@ -1,7 +1,9 @@
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
 export const defineClassifyTransactionFormBody = ({
@@ -15,12 +17,13 @@ export const defineClassifyTransactionFormBody = ({
   expenseTrackerType,
   incomeTrackerType
 }: any): IBodyFormField[] => {
+  const t = translate(['transaction', 'common'])
   return [
     {
       name: 'reasonName',
       type: EFieldType.Input,
-      label: 'Reason Name',
-      placeHolder: 'Enter reason name',
+      label: t('TransactionType.defineClassifyTransactionFormBody.reasonName.label'),
+      placeHolder: t('TransactionType.defineClassifyTransactionFormBody.reasonName.placeholder'),
       props: {
         autoComplete: 'reasonName'
       }
@@ -28,8 +31,8 @@ export const defineClassifyTransactionFormBody = ({
     {
       name: 'trackerTypeId',
       type: EFieldType.Combobox,
-      label: 'Tracker Type',
-      placeHolder: 'Select tracker type',
+      label: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.label'),
+      placeHolder: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.placeholder'),
       props: {
         autoComplete: 'trackerTypeId',
         onValueSelect: (value) => {
@@ -51,14 +54,14 @@ export const defineClassifyTransactionFormBody = ({
           handleCreateTrackerType,
           handleUpdateTrackerType
         }),
-        label: 'Tracker Transaction Type'
+        label: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.labelTrackerTransactionType')
       }
     },
     {
       name: 'description',
       type: EFieldType.Textarea,
-      label: 'Description',
-      placeHolder: 'Enter description',
+      label: t('TransactionType.defineClassifyTransactionFormBody.description.label'),
+      placeHolder: t('TransactionType.defineClassifyTransactionFormBody.description.placeholder'),
       props: {
         autoComplete: 'description'
       }

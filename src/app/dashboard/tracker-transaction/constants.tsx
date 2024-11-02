@@ -11,15 +11,15 @@ import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
 import React from 'react'
-import i18next, { TFunction } from 'i18next'
+import { translate } from '@/libraries/utils'
+import { TFunction } from 'i18next'
 
 export const initButtonInDataTableHeader = ({
-  setIsDialogOpen,
-  t
+  setIsDialogOpen
 }: {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
-  t: TFunction<any>
 }): IButtonInDataTableHeader[] => {
+  const t = translate(['trackerTransaction', 'common'])
   return [
     {
       title: t('common:button.classify'),

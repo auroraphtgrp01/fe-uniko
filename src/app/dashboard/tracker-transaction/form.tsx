@@ -73,7 +73,6 @@ import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 
 export default function TrackerTransactionForm() {
-  const { t } = useTranslation(['trackerTransaction', 'common'])
   // states
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
@@ -105,9 +104,8 @@ export default function TrackerTransactionForm() {
     return getColumns<IDataTransactionTable>(transactionHeaders, true)
   }, [unclassifiedTxTableData])
 
-  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
-
   // hooks
+  const { t } = useTranslation(['trackerTransaction', 'common'])
   const { verifyToken } = useAuth()
   const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { getAdvancedAccountSource } = useAccountSource()
@@ -190,7 +188,8 @@ export default function TrackerTransactionForm() {
     }
   }, [statisticData])
 
-  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen, t })
+  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
+  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
   return (
     <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>

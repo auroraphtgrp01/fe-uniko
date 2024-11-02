@@ -10,7 +10,7 @@
       "label": "Expense Chart",
       "value": "expenseChart"
     },
-    "incomingChart": {  
+    "incomingChart": {
       "label": "Incoming Chart",
       "value": "incomingChart"
     }

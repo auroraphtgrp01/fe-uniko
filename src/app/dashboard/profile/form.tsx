@@ -21,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
+import { getTranslatedFormBody } from '@/libraries/utils'
 
 export default function ProfileForm() {
   const [defaultUser, setIsDefaultUser] = useState({})
@@ -64,6 +65,15 @@ export default function ProfileForm() {
   const formUpdateRef = useRef<HTMLFormElement>(null)
   const formUpdatePasswordRef = useRef<HTMLFormElement>(null)
   const formUpdatePasswordRef1 = useRef<HTMLFormElement>(null)
+  const translatedUpdateUserFormBody = getTranslatedFormBody(updateUserFormBody, t)
+  const translatedupdatePasswordFormBodyWithoutCurrentPassword = getTranslatedFormBody(
+    updatePasswordFormBodyWithoutCurrentPassword,
+    t
+  )
+  const translatedupdatePasswordFormBodyWithCurrentPassword = getTranslatedFormBody(
+    updatePasswordFormBodyWithCurrentPassword,
+    t
+  )
 
   useEffect(() => {
     if (userGetMeData?.data && !isGetMeUserPending) {
@@ -104,7 +114,7 @@ export default function ProfileForm() {
                   defaultValues={defaultUser}
                   classNameForm='grid grid-cols-4 grid-rows-4 gap-3 space-y-0'
                   submitRef={formUpdateRef}
-                  formFieldBody={updateUserFormBody}
+                  formFieldBody={translatedUpdateUserFormBody}
                   formSchema={updateUserSchema}
                   onSubmit={handleUpdateUser}
                 />
@@ -119,21 +129,21 @@ export default function ProfileForm() {
           <TabsContent value='password' className='h-fit py-2 min-[1490px]:mt-2'>
             <Card>
               <CardHeader>
-                <CardTitle> {t('profile:form.credential.passwordTitle')}</CardTitle>
+                <CardTitle> {t('profile:form.credential.currentPassword.label')}</CardTitle>
                 <CardDescription>{t('profile:form.credential.passwordDescription')}</CardDescription>
               </CardHeader>
               <CardContent className='space-y-2'>
                 {userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword ? (
                   <FormZod
                     submitRef={formUpdatePasswordRef}
-                    formFieldBody={updatePasswordFormBodyWithoutCurrentPassword}
+                    formFieldBody={translatedupdatePasswordFormBodyWithoutCurrentPassword}
                     formSchema={updatePassWordSchemaWithoutCurrentPassword}
                     onSubmit={handleUpdatePassword}
                   />
                 ) : (
                   <FormZod
                     submitRef={formUpdatePasswordRef1}
-                    formFieldBody={updatePasswordFormBodyWithCurrentPassword}
+                    formFieldBody={translatedupdatePasswordFormBodyWithCurrentPassword}
                     formSchema={updatePassWordSchemaWithCurrentPassword}
                     onSubmit={handleUpdatePassword}
                   />

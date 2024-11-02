@@ -8,5 +8,58 @@
             "title": "Update Account Source",
             "description": "Please fill in the information below to update an account source."
         }
+    },
+    "form": {
+        "defineCreateAccountSourceFormBody": {
+            "reasonName": {
+                "label": "Reason Name",
+                "placeholder": "Enter reason name"
+            },
+            "amount": {
+                "label": "Amount",
+                "placeholder": "Enter amount"
+            },
+            "accountSourceId": {
+                "label": "Account Source",
+                "placeholder": "Select account source"
+            },
+            "direction": {
+                "label": "Direction",
+                "placeholder": "Select a direction",
+                "options": {
+                    "incoming": "INCOMING",
+                    "expense": "EXPENSE"
+                }
+            },
+            "trackerTypeId": {
+                "label": "Tracker Type",
+                "placeholder": "Select tracker type"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Enter description"
+            }
+        },
+        "createAccountSourceFormBody": {
+            "accountSourceName": {
+                "label": "Source Name",
+                "placeholder": "Enter your source name"
+            },
+            "accountSourceType": {
+                "label": "Type",
+                "placeholder": "Select type",
+                "options": {
+                    "wallet": "WALLET",
+                    "banking": "BANKING"
+                }
+            },
+            "initAmount": {
+                "label": "Initial Amount",
+                "placeholder": "Enter your initial amount"
+            }
+        },
+        "button": {
+            "save_changes_account_source": "Save Changes Accout Source"
+        }
     }
 }

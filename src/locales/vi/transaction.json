@@ -23,6 +23,31 @@
         "classifyingTransactionDialog": {
             "title": "Phân Loại Giao Dịch",
             "description": "Vui lòng điền thông tin dưới đây để phân loại giao dịch."
+        },
+        "detailsConfigDialog": {
+            "trackerTransaction": "Giao Dịch Theo Dõi",
+            "amount": "Số Tiền",
+            "transactionId": "Mã Giao Dịch",
+            "direction": "Hướng",
+            "currency": "Loại Tiền",
+            "accountBank": "Ngân Hàng",
+            "accountNo": "Số Tài Khoản",
+            "description": "Mô Tả"
+        },
+        "defineClassifyTransactionFormBody": {
+            "reasonName": {
+                "label": "Tên Lý Do",
+                "placeholder": "Nhập tên lý do"
+            },
+            "trackerTypeId": {
+                "label": "Loại Theo Dõi",
+                "placeholder": "Chọn loại theo dõi",
+                "labelTrackerTransactionType": "Loại giao dịch theo dõi"
+            },
+            "description": {
+                "label": "Mô Tả",
+                "placeholder": "Nhập mô tả"
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
+import { translate } from '@/libraries/utils'
 
 export const updatePassWordSchemaWithCurrentPassword = z
   .object({
@@ -18,8 +19,8 @@ export const updatePasswordFormBodyWithCurrentPassword: IBodyFormField[] = [
   {
     name: 'currentPassword',
     type: EFieldType.Input,
-    label: 'Current Password',
-    placeHolder: 'Enter your current password',
+    label: 'form.credential.currentPassword.label',
+    placeHolder: 'form.credential.currentPassword.placeholder',
     props: {
       type: 'password',
       autoComplete: 'password'
@@ -28,8 +29,8 @@ export const updatePasswordFormBodyWithCurrentPassword: IBodyFormField[] = [
   {
     name: 'newPassword',
     type: EFieldType.Input,
-    label: 'New Password',
-    placeHolder: 'Enter your new password',
+    label: 'form.credential.newPassword.label',
+    placeHolder: 'form.credential.newPassword.placeholder',
     props: {
       type: 'password',
       autoComplete: 'password'
@@ -41,8 +42,8 @@ export const updatePasswordFormBodyWithoutCurrentPassword: IBodyFormField[] = [
   {
     name: 'newPassword',
     type: EFieldType.Input,
-    label: 'New Password',
-    placeHolder: 'Enter your new password',
+    label: 'form.credential.newPassword.label',
+    placeHolder: 'form.credential.newPassword.placeholder',
     props: {
       type: 'password',
       autoComplete: 'password'
