@@ -35,8 +35,12 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import { useAuth } from '@/core/auth/hooks'
+import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
+import { useTranslation } from 'react-i18next'
 
 export default function AccountSourceForm() {
+  const { t } = useTranslation(['common'])
   // States
   const [fetchedData, setFetchedData] = useState<IAccountSource[]>([])
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
@@ -53,6 +57,8 @@ export default function AccountSourceForm() {
   }, [tableData])
 
   // Hooks
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(
@@ -85,19 +91,13 @@ export default function AccountSourceForm() {
   }, [dataTableConfig])
 
   // Other components
-  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen, t })
 
   return (
     <div className='w-full'>
       <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
-        <CardInHeader
-          className='flex-grow sm:w-1/2 lg:w-1/2'
-          contents={{ detail: 'Choose between E-Wallets to manage your digital funds.' }}
-        />
-        <CardInHeader
-          className='flex-grow sm:w-1/2 lg:w-1/2'
-          contents={{ detail: 'Use Bank Accounts to manage your physical funds.' }}
-        />
+        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
+        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
       </div>
       <Card className='mt-5'>
         <CardContent>

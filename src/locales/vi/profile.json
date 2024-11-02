@@ -1,0 +1,33 @@
+{
+    "title": "Hồ Sơ",
+    "tabs": {
+        "account": "Thông Tin Chung",
+        "password": "Thông Tin Đăng Nhập"
+    },
+    "userProfileTitle": "Hồ Sơ Người Dùng",
+    "form": {
+        "common": {
+            "nameLabel": "Họ và Tên",
+            "namePlaceholder": "Nguyễn Văn A",
+            "dateOfBirthLabel": "Ngày Sinh",
+            "genderLabel": "Giới Tính",
+            "genderPlaceholder": "Chọn giới tính",
+            "workplaceLabel": "Nơi Làm Việc",
+            "workplacePlaceholder": "VD: Hà Nội",
+            "phoneNumberLabel": "Số Điện Thoại",
+            "phoneNumberPlaceholder": "+84*********",
+            "addressLabel": "Địa Chỉ",
+            "addressPlaceholder": "789 Đường Nguyễn Trãi",
+            "updateButton": "Cập Nhật",
+            "updateDescription": "Thay đổi thông tin tài khoản của bạn. Nhấn cập nhật khi hoàn tất."
+        },
+        "credential": {
+            "currentPasswordTitle": "Mật Khẩu Hiện Tại",
+            "newPasswordTitle": "Mật Khẩu Mới",
+            "passwordTitle": "Mật Khẩu",
+            "passwordDescription": "Thay đổi mật khẩu của bạn ở đây. Sau khi lưu, bạn sẽ được đăng xuất.",
+            "savePasswordButton": "Lưu Mật Khẩu",
+            "saveChangesButton": "Lưu Thay Đổi"
+        }
+    }
+}

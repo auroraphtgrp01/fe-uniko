@@ -7,6 +7,7 @@ import {
 } from '@/core/account-source/models'
 import { formatCurrency } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
+import { TFunction } from 'i18next'
 import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
 
 export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDataFormat => {
@@ -50,13 +51,15 @@ export const initDialogFlag: IDialogAccountSource = {
 }
 
 export const initButtonInDataTableHeader = ({
-  setIsDialogOpen
+  setIsDialogOpen,
+  t
 }: {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+  t: TFunction<['common'], undefined>
 }): IButtonInDataTableHeader[] => {
   return [
     {
-      title: 'Create',
+      title: t('common:button.create'),
       variants: 'default',
       onClick: () => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true })),
       icon: <PlusIcon className='ml-2 h-4 w-4' />

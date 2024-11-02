@@ -10,6 +10,7 @@ import {
 } from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
 import React, { FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function AccountSourceDialog({
   setIsDialogOpen,
@@ -38,10 +39,11 @@ export default function AccountSourceDialog({
   setDataUpdate: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
 }) {
+  const { t } = useTranslation(['accountSource', 'common'])
   const updateConfigDialog: IDialogConfig = {
     content: CreateAndUpdateAccountSourceForm({}),
-    description: 'Please fill in the information below to update a account source.',
-    title: 'Update Account Source',
+    description: t('AccountSourceDialog.updateDialog.description'),
+    title: t('AccountSourceDialog.updateDialog.title'),
     isOpen: isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
@@ -78,8 +80,8 @@ export default function AccountSourceDialog({
       setFormData,
       callBack: handleSubmitAccountSource
     }),
-    description: 'Please fill in the information below to create a new account source.',
-    title: 'Create Account Source',
+    description: t('AccountSourceDialog.createDialog.description'),
+    title: t('AccountSourceDialog.createDialog.title'),
     isOpen: isDialogOpen.isDialogCreateOpen,
     onClose: () => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))

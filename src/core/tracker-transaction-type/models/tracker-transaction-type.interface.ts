@@ -14,5 +14,5 @@ export interface ITrackerTransactionType {
 export interface ITrackerTransactionTypeBody {
   name: string
   type: string
-  description?: string
+  description?: string | undefined
 }

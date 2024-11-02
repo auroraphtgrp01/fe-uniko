@@ -18,6 +18,9 @@ import {
   updatePassWordSchemaWithCurrentPassword,
   updatePassWordSchemaWithoutCurrentPassword
 } from '@/core/users/constants/update-password-schema.constant'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/core/auth/hooks'
+import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 
 export default function ProfileForm() {
   const [defaultUser, setIsDefaultUser] = useState({})
@@ -51,6 +54,9 @@ export default function ProfileForm() {
       }
     )
   }
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
+  const { t } = useTranslation(['profile'])
   const { userGetMeData, isGetMeUserPending } = getMe(true)
   const { setData } = useUpdateModel<IUserGetMeResponse>([USER_QUERY_ME], (oldData, newData) => {
     return { ...oldData, data: newData }
@@ -77,7 +83,7 @@ export default function ProfileForm() {
       <div className='flex flex-1 flex-col gap-8 min-[1350px]:flex-row'>
         <Card className='h-full flex-1'>
           <CardHeader>
-            <CardTitle>Profile</CardTitle>
+            <CardTitle>{t('userProfileTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ProfileCardContainer data={userGetMeData?.data as IUser} />
@@ -85,13 +91,13 @@ export default function ProfileForm() {
         </Card>
         <Tabs defaultValue='account' className='h-full flex-1 rounded-md'>
           <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='account'>Common Information</TabsTrigger>
-            <TabsTrigger value='password'>Credential Information</TabsTrigger>
+            <TabsTrigger value='account'>{t('tabs.account')}</TabsTrigger>
+            <TabsTrigger value='password'>{t('tabs.password')}</TabsTrigger>
           </TabsList>
           <TabsContent value='account' className='h-fit py-2'>
             <Card>
               <CardHeader>
-                <CardTitle>User Profile</CardTitle>
+                <CardTitle>{t('userProfileTitle')}</CardTitle>
               </CardHeader>
               <CardContent className='space-y-2'>
                 <FormZod
@@ -105,7 +111,7 @@ export default function ProfileForm() {
               </CardContent>
               <CardFooter className='flex'>
                 <Button type='button' onClick={() => formUpdateRef.current?.requestSubmit()} isLoading={isUpdating}>
-                  Save Changes
+                  {t('profile:form.credential.saveChangesButton')}
                 </Button>
               </CardFooter>
             </Card>
@@ -113,8 +119,8 @@ export default function ProfileForm() {
           <TabsContent value='password' className='h-fit py-2 min-[1490px]:mt-2'>
             <Card>
               <CardHeader>
-                <CardTitle>Password</CardTitle>
-                <CardDescription>Change your password here. After saving, you will be logged out.</CardDescription>
+                <CardTitle> {t('profile:form.credential.passwordTitle')}</CardTitle>
+                <CardDescription>{t('profile:form.credential.passwordDescription')}</CardDescription>
               </CardHeader>
               <CardContent className='space-y-2'>
                 {userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword ? (
@@ -139,7 +145,7 @@ export default function ProfileForm() {
                   onClick={() => formUpdatePasswordRef.current?.requestSubmit()}
                   isLoading={isPasswordUpdating}
                 >
-                  Save password
+                  {t('profile:form.credential.savePasswordButton')}
                 </Button>
               </CardFooter>
             </Card>

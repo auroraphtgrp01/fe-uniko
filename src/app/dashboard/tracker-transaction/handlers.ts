@@ -14,7 +14,7 @@ import {
   ITransactionSummary
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
-import { initCreateTrackerTransactionForm, initCreateTrackerTxTypeForm } from '../transaction/constants'
+import { initCreateTrackerTransactionForm, initTrackerTypeForm } from '../transaction/constants'
 import React from 'react'
 import { modifyTransactionHandler } from '../transaction/handler'
 import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
@@ -31,27 +31,24 @@ import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
 // }
 
 export const handleCreateTrackerTransaction = async ({
-  formData,
-  setFormData,
+  payload,
   hookCreate,
   hookUpdateCache,
   setIsDialogOpen,
   hookResetCacheStatistic
 }: {
-  formData: ICreateTrackerTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
+  payload: ICreateTrackerTransactionFormData
   hookCreate: any
   hookUpdateCache: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
 }) => {
-  hookCreate(formData, {
+  hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
         hookResetCacheStatistic()
         toast.success('Create tracker transaction successfully!')
-        setFormData(initCreateTrackerTransactionForm)
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
       }
     }
@@ -59,30 +56,30 @@ export const handleCreateTrackerTransaction = async ({
 }
 
 export const handleClassifyTransaction = async ({
-  formData,
-  setFormData,
+  payload,
   hookCreate,
   hookUpdateCache,
   setIsDialogOpen,
   hookResetCacheStatistic,
-  hookResetTrackerTx
+  hookResetTrackerTx,
+  hookSetTrackerTx
 }: {
-  formData: IClassifyTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+  payload: IClassifyTransactionFormData
   hookCreate: any
   hookUpdateCache: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
-  hookResetCacheStatistic: any
-  hookResetTrackerTx: any
+  hookSetTrackerTx?: any
+  hookResetTrackerTx?: any
+  hookResetCacheStatistic?: any
 }) => {
-  hookCreate(formData, {
+  hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
-        hookResetCacheStatistic(res.data)
-        hookResetTrackerTx(res.data)
+        if (hookResetCacheStatistic) hookResetCacheStatistic(res.data)
+        if (hookResetTrackerTx) hookResetTrackerTx(res.data)
+        if (hookSetTrackerTx) hookSetTrackerTx(res.data)
         toast.success('Classify transaction successfully!')
-        setFormData({ ...initCreateTrackerTransactionForm })
         setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
       }
     }
@@ -150,25 +147,22 @@ export const updateCacheDataCreate = (
 // }
 
 export const handleCreateTrackerTxType = ({
-  formData,
-  setFormData,
-  hookCreateTrackerTxType,
-  hookSetCacheTrackerTxType,
-  setIsDialogOpen
+  payload,
+  hookCreate,
+  hookUpdateCache,
+  setIsCreating
 }: {
-  formData: ITrackerTransactionTypeBody
-  setFormData: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
-  hookCreateTrackerTxType: any
-  hookSetCacheTrackerTxType: any
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  payload: ITrackerTransactionTypeBody
+  hookCreate: any
+  hookUpdateCache: any
+  setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  hookCreateTrackerTxType(formData, {
+  hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        hookSetCacheTrackerTxType(res.data)
+        hookUpdateCache(res.data)
         toast.success('Create tracker transaction type successfully!')
-        setFormData(initCreateTrackerTxTypeForm)
-        setIsDialogOpen((prev) => ({ ...prev, isDialogCreateTrackerTxTypeOpen: false }))
+        setIsCreating(false)
       }
     }
   })
@@ -221,18 +215,10 @@ export const filterTrackerTransactionWithType = (selectedTypes: string[], data: 
 export const onRowClick = (
   rowData: ICustomTrackerTransaction,
   advancedTrackerTxData: IAdvancedTrackerTransactionResponse | undefined,
-  setFormDataClassify: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>,
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
 ) => {
   if (advancedTrackerTxData) {
     const transactionData = advancedTrackerTxData.data.find((item) => item.id === rowData.id)
-    setFormDataClassify((prev) => ({
-      ...prev,
-      transactionId: transactionData?.transactionId || '',
-      trackerTypeId: transactionData?.trackerTypeId || '',
-      reasonName: transactionData?.reasonName || '',
-      description: transactionData?.description || ''
-    }))
     setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
   }
 }
@@ -252,4 +238,26 @@ export const initTrackerTypeData = (
 ) => {
   setIncomingTrackerType(data.filter((item) => item.type === 'INCOMING'))
   setExpenseTrackerType(data.filter((item) => item.type === 'EXPENSE'))
+}
+
+export const handleCreateTrackerType = ({
+  payload,
+  hookCreate,
+  hookUpdateCacheTrackerType,
+  setIsCreating
+}: {
+  hookCreate: any
+  hookUpdateCacheTrackerType: any
+  setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+  payload: ITrackerTransactionTypeBody
+}) => {
+  hookCreate(payload, {
+    onSuccess: (res: ITrackerTransactionResponse) => {
+      if (res.statusCode === 200 || res.statusCode === 201) {
+        hookUpdateCacheTrackerType(res.data)
+        setIsCreating(false)
+        toast.success('Create tracker transaction type successfully!')
+      }
+    }
+  })
 }

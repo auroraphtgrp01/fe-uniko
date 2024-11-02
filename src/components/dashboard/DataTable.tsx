@@ -20,6 +20,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Input } from '../ui/input'
 import { IDataTableConfig } from '@/types/common.i'
 import { IButtonInDataTableHeader } from '@/types/core.i'
+import { useTranslation } from 'react-i18next'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -46,6 +47,7 @@ export function DataTable<TData, TValue>({
   isLoading,
   buttons
 }: DataTableProps<TData, TValue>) {
+  const { t } = useTranslation(['common'])
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
     config
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -95,7 +97,7 @@ export function DataTable<TData, TValue>({
         <div className='flex items-center space-x-2'>
           <div className='min-w-0'>
             <Input
-              placeholder='Filter'
+              placeholder={t('table.filterPlaceholder')}
               defaultValue={''}
               onChange={(event) => {
                 table.setGlobalFilter(event.target.value)
@@ -107,7 +109,7 @@ export function DataTable<TData, TValue>({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='whitespace-nowrap'>
-                  Types
+                  {t('table.typesLabel')}
                   <ChevronDown className='ml-2 h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
@@ -124,7 +126,7 @@ export function DataTable<TData, TValue>({
                     </DropdownMenuCheckboxItem>
                   ))
                 ) : (
-                  <DropdownMenuCheckboxItem disabled>No Types Available</DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem disabled>{t('dropdown.noTypesAvailable')}</DropdownMenuCheckboxItem>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -134,7 +136,7 @@ export function DataTable<TData, TValue>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
-                Columns
+                {t('table.columnsLabel')}
                 <ChevronDown className='ml-2 h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
@@ -228,7 +230,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  {isLoading ? 'Loading...' : 'No data available'}
+                  {isLoading ? t('table.loadingText') : t('table.noDataText')}
                 </TableCell>
               </TableRow>
             )}
@@ -237,14 +239,16 @@ export function DataTable<TData, TValue>({
 
         <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 sm:flex-row sm:space-y-0'>
           <p className='text-xs text-gray-500 sm:text-sm'>
-            {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-            selected.
+            {t('table.selectedRowsText', {
+              selected: table.getFilteredSelectedRowModel().rows.length,
+              total: table.getFilteredRowModel().rows.length
+            })}
           </p>
           {isPaginate ? (
             <div className='flex flex-col items-center sm:flex-row sm:items-center sm:space-x-4'>
               <div className='flex flex-col items-center sm:flex-row sm:space-x-4'>
                 <div className='flex items-center space-x-2'>
-                  <p className='whitespace-nowrap text-sm'>Rows per page</p>
+                  <p className='whitespace-nowrap text-sm'>{t('table.rowsPerPageLabel')}</p>
                   <Input
                     defaultValue={limit}
                     onChange={(event) =>
@@ -263,7 +267,10 @@ export function DataTable<TData, TValue>({
                 </div>
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>
-                    Page {currentPage} of {totalPage}
+                    {t('table.pageOf', {
+                      currentPage,
+                      totalPage
+                    })}
                   </p>
                   <div className='flex space-x-1'>
                     <Button

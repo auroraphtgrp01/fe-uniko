@@ -1,0 +1,12 @@
+{
+    "AccountSourceDialog": {
+        "createDialog": {
+            "title": "Tạo Nguồn Tài Khoản",
+            "description": "Vui lòng điền thông tin dưới đây để tạo nguồn tài khoản mới."
+        },
+        "updateDialog": {
+            "title": "Cập Nhật Nguồn Tài Khoản",
+            "description": "Vui lòng điền thông tin dưới đây để cập nhật nguồn tài khoản."
+        }
+    }
+}

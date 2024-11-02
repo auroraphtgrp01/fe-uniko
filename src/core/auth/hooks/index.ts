@@ -1,6 +1,5 @@
 'use client'
 import { useSignInGoogle } from './useSignInGoogle'
-
 import { useState } from 'react'
 import { useSignIn } from '@/core/auth/hooks/useSignIn'
 import { useSignUp } from '@/core/auth/hooks/useSignUp'
@@ -9,6 +8,7 @@ import { useForgotPassword } from '@/core/auth/hooks/useForgotPassword'
 import { useResetPassword } from '@/core/auth/hooks/useResetPassword'
 import { useVerifyEmail } from '@/core/auth/hooks/useVerifyEmail'
 import { useLogout } from '@/core/auth/hooks/useLogout'
+import { useVerifyToken } from '@/core/auth/hooks/useVerifyToken'
 
 export const useAuth = (opts?: IUseQueryHookOptions) => {
   const [isRememberMe, setIsRememberMe] = useState(true)
@@ -27,8 +27,9 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
     resetPassword,
     isResetPassword,
     useVerifyEmail,
-    useLogout,
+    logout: useLogout,
     signInGoogle,
-    isSigningInGoogle
+    isSigningInGoogle,
+    verifyToken: useVerifyToken
   }
 }

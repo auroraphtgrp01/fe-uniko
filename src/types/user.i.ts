@@ -48,6 +48,7 @@ export interface IUser {
   emailVerifyToken: string
   avatarUrl: string
   provider?: string
+  accessToken?: string
 }
 
 export type IUserGetMeResponse = IBaseResponseData<IUser>

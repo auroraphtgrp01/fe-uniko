@@ -41,20 +41,31 @@ import {
   initDataTableTransaction,
   initTrackerTypeData,
   updateCacheDataClassifyFeat,
-  updateCacheDataCreate as updateCacheDataClassify
+  updateCacheDataCreate as updateCacheDataClassify,
+  handleClassifyTransaction,
+  handleCreateTrackerTxType
 } from '../tracker-transaction/handlers'
-import { ITrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useSocket } from '@/libraries/useSocketIo'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useUser } from '@/core/users/hooks'
-import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
+import {
+  getRefreshTokenFromLocalStorage,
+  getTimeCountRefetchLimit,
+  setTimeCountRefetchLimit
+} from '@/libraries/helpers'
 import { GET_ADVANCED_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
 import {
   GET_ADVANCED_TRACKER_TRANSACTION_KEY,
   GET_ALL_TRACKER_TRANSACTION_TYPE_KEY
 } from '@/core/tracker-transaction/constants'
 import { IAdvancedTrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/core/auth/hooks'
 
 export default function TransactionForm() {
   // states
@@ -64,7 +75,7 @@ export default function TransactionForm() {
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
-  const [dataDetail, setDataDetail] = useState<IDataTransactionTable>()
+  const [dataDetail, setDataDetail] = useState<IDataTransactionTable>(initEmptyDetailTransaction)
   const [dataTable, setDataTable] = useState<IDataTransactionTable[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTransaction>(initDialogFlag)
@@ -76,6 +87,9 @@ export default function TransactionForm() {
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
 
   // hooks
+  const { t } = useTranslation(['transaction'])
+  const { verifyToken } = useAuth()
+  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { classifyTransaction } = useTrackerTransaction()
   const { getMe } = useUser()
   const { user } = useStoreLocal()
@@ -220,25 +234,25 @@ export default function TransactionForm() {
         <Card>
           <CardHeader>
             <CardTitle className='flex items-center justify-between'>
-              <span>Transaction Today</span>
+              <span>{t('transactionToday')}</span>
               <Button
                 variant='outline'
                 onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogTransactionTodayOpen: true }))}
               >
-                View all
+                {t('viewAll')}
               </Button>
             </CardTitle>
             <CardDescription className='text-nowrap text-xs sm:text-sm'>
-              Overview of today`s transactions
+              {t('transactionTodayDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
-              <div className='truncate'>Total Transactions</div>
+              <div className='truncate'>{t('totalTransactions')}</div>
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.transactionToday.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Amount</div>
+              <div>{t('totalAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.transactionToday.amount, 'VND', 'vi-vn')}
               </div>
@@ -248,23 +262,23 @@ export default function TransactionForm() {
         <Card>
           <CardHeader>
             <CardTitle className='flex items-center justify-between'>
-              <span>Unclassified Transaction</span>
+              <span>{t('unclassifiedTransaction')}</span>
               <Button
                 variant='outline'
                 onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedTransactionOpen: true }))}
               >
-                Classify
+                {t('classify')}
               </Button>
             </CardTitle>
-            <CardDescription className='text-xs sm:text-sm'>Transactions without a tracker</CardDescription>
+            <CardDescription className='text-xs sm:text-sm'>{t('unclassifiedTransactionDescription')}</CardDescription>
           </CardHeader>
           <CardContent className='grid gap-2 p-4 text-sm sm:text-base'>
             <div className='flex items-center justify-between'>
-              <div className='truncate'>Total Transactions</div>
+              <div className='truncate'>{t('totalTransactions')}</div>
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.unclassifiedTransaction.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Amount</div>
+              <div>{t('totalAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.unclassifiedTransaction.amount, 'VND', 'vi-vn')}
               </div>
@@ -293,26 +307,41 @@ export default function TransactionForm() {
             data: dataTable,
             transactionTodayData: transactionSummary.transactionToday.data,
             unclassifiedTransactionData: transactionSummary.unclassifiedTransaction.data,
-            onRowClick: onRowClick,
             setConfig: setDataTableConfig,
             config: dataTableConfig,
-            dataDetail: dataDetail || initEmptyDetailTransaction
+            dataDetail: dataDetail,
+            setDataDetail
           }}
           dialogState={{
             isDialogOpen: isDialogOpen,
             setIsDialogOpen: setIsDialogOpen
           }}
           classifyDialog={{
-            formData,
-            setFormData,
-            classifyTransaction,
             incomeTrackerTransactionType: incomingTrackerType,
             expenseTrackerTransactionType: expenseTrackerType,
-            hookUpdateCache: setData,
-            hookUpdateCacheUnclassified: setCacheUnclassifiedTxs,
-            hookCreateTrackerTxType: createTrackerTxType,
-            hookSetCacheTrackerTxType: setCacheTrackerTxType,
-            hookSetDataTrackerTxs: setDataTrackerTxs
+            handleClassify: (data: IClassifyTransactionFormData) => {
+              handleClassifyTransaction({
+                payload: data,
+                hookCreate: classifyTransaction,
+                hookUpdateCache: setCacheUnclassifiedTxs,
+                setIsDialogOpen,
+                hookSetTrackerTx: setData
+              })
+            }
+          }}
+          dialogEditTrackerType={{
+            handleCreateTrackerType: (
+              data: ITrackerTransactionTypeBody,
+              setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+            ) => {
+              handleCreateTrackerTxType({
+                payload: data,
+                hookCreate: createTrackerTxType,
+                hookUpdateCache: setCacheTrackerTxType,
+                setIsCreating
+              })
+            },
+            handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
           }}
         />
       </Card>

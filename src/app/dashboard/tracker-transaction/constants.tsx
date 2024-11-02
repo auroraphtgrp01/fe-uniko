@@ -1,41 +1,35 @@
 'use client'
 import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
-import { PlusCircle, PlusIcon } from 'lucide-react'
+import { PlusIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  ITrackerTransactionType,
-  ITrackerTransactionTypeBody
-} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { IAccountSource } from '@/core/account-source/models'
-import { MoneyInput } from '@/components/core/MoneyInput'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
-import { Combobox } from '@/components/core/Combobox'
-import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
-import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import React from 'react'
+import i18next, { TFunction } from 'i18next'
 
 export const initButtonInDataTableHeader = ({
-  setIsDialogOpen
+  setIsDialogOpen,
+  t
 }: {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  t: TFunction<any>
 }): IButtonInDataTableHeader[] => {
   return [
     {
-      title: 'Classify',
+      title: t('common:button.classify'),
       variants: 'secondary',
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
       }
     },
     {
-      title: 'Create',
+      title: t('common:button.create'),
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))
       },
@@ -116,7 +110,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
   )
 }
 
-export const initTrackerTransactionTab = (data: IChartData | undefined): ITabConfig => {
+export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>): ITabConfig => {
   return {
     default: 'expenseChart',
     tabContents: [
@@ -128,8 +122,8 @@ export const initTrackerTransactionTab = (data: IChartData | undefined): ITabCon
             types='donut'
           />
         ),
-        labels: 'Expense Chart',
-        value: 'expenseChart'
+        labels: t('trackerTransaction:charts.expenseChart.label'),
+        value: t('trackerTransaction:charts.expenseChart.value')
       },
       {
         content: (
@@ -139,8 +133,8 @@ export const initTrackerTransactionTab = (data: IChartData | undefined): ITabCon
             types='donut'
           />
         ),
-        labels: 'Incoming Chart',
-        value: 'incomingChart'
+        labels: t('trackerTransaction:charts.incomingChart.label'),
+        value: t('trackerTransaction:charts.incomingChart.value')
       }
     ]
   }

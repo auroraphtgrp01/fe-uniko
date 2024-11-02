@@ -1,0 +1,32 @@
+{
+  "totalBalance": "Total Balance",
+  "incomingTransaction": "Incoming Transaction",
+  "expenseTransaction": "Expense Transaction",
+  "noChangeFromYesterday": "No change from yesterday",
+  "increaseFromLastMonth": "+{{percentage}}% from last month",
+  "increaseFromYesterday": "+{{percentage}}% from yesterday",
+  "charts": {
+    "expenseChart": {
+      "label": "Expense Chart",
+      "value": "expenseChart"
+    },
+    "incomingChart": {  
+      "label": "Incoming Chart",
+      "value": "incomingChart"
+    }
+  },
+  "trackerTransactionType": {
+    "classifyDialog": {
+      "title": "Classify Transaction",
+      "description": "Please fill in the information below to classify the transaction."
+    },
+    "createDialog": {
+      "title": "Create Tracker Transaction",
+      "description": "Please fill in the information below to create a new tracker transaction."
+    },
+    "unclassifiedDialog": {
+      "title": "Unclassified Transactions",
+      "description": "Overview of unclassified transactions."
+    }
+  }
+}
