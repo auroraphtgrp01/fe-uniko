@@ -15,6 +15,7 @@ import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { initTableConfig } from '@/constants/data-table'
 import { useTranslation } from 'react-i18next'
+import { Badge } from '@/components/ui/badge'
 
 export interface ITransactionDialogProps {
   dataTable: {
@@ -67,16 +68,27 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
             <p className='text-sm text-muted-foreground'>Amount</p>
             <div className='flex w-full items-center justify-between'>
               <p className='text-xl font-bold'>{dataTable.dataDetail.amount}</p>
-              {dataTable.dataDetail.accountNo && (
-                <Button
-                  variant={'greenPastel1'}
-                  type='button'
-                  onClick={() => {
-                    dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
-                  }}
-                >
-                  Classify Transaction
-                </Button>
+              {dataTable.dataDetail.accountNo ? (
+                dataTable.dataDetail.TrackerTransaction ? (
+                  <span
+                    className='border-collapse rounded-md bg-green-100 px-4 py-2 text-lg text-green-600'
+                    style={{ userSelect: 'none' }}
+                  >
+                    Classified
+                  </span>
+                ) : (
+                  <Button
+                    variant={'greenPastel1'}
+                    type='button'
+                    onClick={() => {
+                      dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
+                    }}
+                  >
+                    Classify Transaction
+                  </Button>
+                )
+              ) : (
+                ''
               )}
             </div>
           </div>

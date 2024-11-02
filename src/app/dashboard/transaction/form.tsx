@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, mergeQueryParams, replaceParams } from '@/libraries/utils'
 import { useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { initTableConfig } from '@/constants/data-table'
@@ -41,7 +41,8 @@ import {
   updateCacheDataClassifyFeat,
   updateCacheDataCreate as updateCacheDataClassify,
   handleClassifyTransaction,
-  handleCreateTrackerTxType
+  handleCreateTrackerTxType,
+  updateCacheDataTodayTxClassifyFeat
 } from '../tracker-transaction/handlers'
 import {
   ITrackerTransactionType,
@@ -63,11 +64,10 @@ import {
 } from '@/core/transaction/constants'
 import {
   GET_ADVANCED_TRACKER_TRANSACTION_KEY,
-  GET_ALL_TRACKER_TRANSACTION_TYPE_KEY
+  GET_ALL_TRACKER_TRANSACTION_TYPE_KEY,
+  STATISTIC_TRACKER_TRANSACTION_KEY
 } from '@/core/tracker-transaction/constants'
-import { IAdvancedTrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
-import { set } from 'nprogress'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 
@@ -123,14 +123,23 @@ export default function TransactionForm() {
       return { ...oldData, data: [...oldData.data, newData] }
     }
   )
-  const { setData: setCacheUnclassifiedTxs, resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
-    [GET_UNCLASSIFIED_TRANSACTION_KEY],
+  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
+    [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
     updateCacheDataClassifyFeat
   )
+  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
+  const { resetData: resetCacheAccountSource } = useUpdateModel(
+    [STATISTIC_TRACKER_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
+    () => {}
+  )
+  const { resetData: resetCacheDataTrackerTx } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
   const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions })
   const { isGetMeUserPending } = getMe(true)
-  const { setData: setDataTodayTxs } = useUpdateModel([GET_TODAY_TRANSACTION_KEY], updateCacheDataClassifyFeat)
+  const { setData: setDataTodayTxs, resetData: resetCacheTodayTx } = useUpdateModel(
+    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
+    updateCacheDataTodayTxClassifyFeat
+  )
 
   const refetchTransactionBySocket = () => {
     const lastCalled = getTimeCountRefetchLimit()
@@ -217,6 +226,12 @@ export default function TransactionForm() {
         } else if (data.status == 'NEW_TRANSACTION') {
           reloadDataFunction()
           resetCacheUnclassifiedTxs()
+          resetCacheStatistic()
+          resetCacheTodayTx()
+          resetCacheAccountSource()
+          setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
           toast.success('Refetch transaction successfully - Found new transaction!', {
             duration: 2000
           })
@@ -235,6 +250,7 @@ export default function TransactionForm() {
   }, [dataTrackerTransactionType])
   useEffect(() => {
     if (dataTransaction) {
+      console.log(dataTransaction)
       setDataTable(modifyTransactionHandler(dataTransaction.data))
       setDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataTransaction?.pagination?.totalPage) }))
     }
@@ -399,10 +415,13 @@ export default function TransactionForm() {
               handleClassifyTransaction({
                 payload: data,
                 hookCreate: classifyTransaction,
-                hookUpdateCache: setCacheUnclassifiedTxs,
-                setIsDialogOpen,
-                hookSetTrackerTx: setData,
-                hookSetTodayTxs: setDataTodayTxs
+                hookResetCacheUnclassified: resetCacheUnclassifiedTxs,
+                hookSetCacheToday: setDataTodayTxs,
+                hookResetTrackerTx: resetCacheDataTrackerTx,
+                setUncDataTableConfig: setUncDataTableConfig,
+                setTodayDataTableConfig: setTodayDataTableConfig,
+                setDataTableConfig: setDataTableConfig,
+                setIsDialogOpen: setIsDialogOpen
               })
             }
           }}

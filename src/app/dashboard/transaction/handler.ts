@@ -8,7 +8,7 @@ import {
   ITransaction,
   ITransactionSummary
 } from '@/core/transaction/models'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import React from 'react'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm } from './constants'
@@ -22,9 +22,9 @@ export const modifyTransactionHandler = (payload: ITransaction[]): IDataTransact
       direction: item.direction,
       accountSource: item.accountSource.name,
       currency: item.currency,
-      accountNo: item.ofAccount ? item.ofAccount.accountNo : '',
+      accountNo: item.ofAccount ? item.ofAccount.accountNo : 'N/A',
       description: item.description,
-      time: item.time,
+      date: formatDateTimeVN(item.time, true),
       TrackerTransaction: item.TrackerTransaction
     }
   })

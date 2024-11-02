@@ -60,7 +60,8 @@ import {
   handleClassifyTransaction,
   handleCreateTrackerTxType,
   handleCreateTrackerTransaction,
-  handleUpdateTrackerTxType
+  handleUpdateTrackerTxType,
+  updateCacheDataTodayTxClassifyFeat
 } from './handlers'
 import {
   GET_ADVANCED_TRANSACTION_KEY,
@@ -76,6 +77,7 @@ import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
+import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 
 export default function TrackerTransactionForm() {
   const { t } = useTranslation(['trackerTransaction', 'common'])
@@ -132,11 +134,14 @@ export default function TrackerTransactionForm() {
     updateCacheDataCreate
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { setData: setCacheUnclassifiedTxs } = useUpdateModel(
-    [GET_UNCLASSIFIED_TRANSACTION_KEY],
-    updateCacheDataClassifyFeat
+  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
+    [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
+    () => {}
   )
-  const { setData: setCacheTodayTxs } = useUpdateModel([GET_TODAY_TRANSACTION_KEY], updateCacheDataClassifyFeat)
+  const { setData: setCacheTodayTxs, resetData: resetCacheTodayTxs } = useUpdateModel(
+    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
+    updateCacheDataTodayTxClassifyFeat
+  )
   const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
     (oldData, newData) => {
@@ -152,12 +157,15 @@ export default function TrackerTransactionForm() {
       return { ...oldData, data: updatedData }
     }
   )
+  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
 
   // local store
-  const { accountSourceData, setAccountSourceData, unclassifiedTransactionData, setUnclassifiedTransactionData } =
-    useStoreLocal()
+  const { accountSourceData } = useStoreLocal()
 
   // effects
+  useEffect(() => {
+    console.log('🚀 ~ TrackerTransactionForm ~ accountSourceData:', accountSourceData)
+  }, [accountSourceData])
   useEffect(() => {
     setUncTableQueryOptions((prev) => ({
       ...prev,
@@ -166,17 +174,9 @@ export default function TrackerTransactionForm() {
     }))
   }, [dataTableUnclassifiedConfig])
   useEffect(() => {
-    setUnclassifiedTxTableData(modifyTransactionHandler(unclassifiedTransactionData))
-  }, [unclassifiedTransactionData])
-  useEffect(() => {
     if (dataTrackerTransactionType)
       initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
   }, [dataTrackerTransactionType])
-  useEffect(() => {
-    if (dataAdvancedAccountSource && accountSourceData.length === 0) {
-      setAccountSourceData(dataAdvancedAccountSource.data)
-    }
-  }, [dataAdvancedAccountSource])
   useEffect(() => {
     setTableData(
       filterTrackerTransactionWithType(dataTableConfig.selectedTypes || [], advancedTrackerTxData?.data || [])
@@ -194,7 +194,6 @@ export default function TrackerTransactionForm() {
   useEffect(() => {
     if (dataUnclassifiedTxs) {
       setUnclassifiedTxTableData(modifyTransactionHandler(dataUnclassifiedTxs.data))
-      setUnclassifiedTransactionData(dataUnclassifiedTxs.data)
       setDataTableUnclassifiedConfig((prev) => ({
         ...prev,
         totalPage: Number(dataUnclassifiedTxs.pagination?.totalPage)
@@ -304,11 +303,12 @@ export default function TrackerTransactionForm() {
             handleClassifyTransaction({
               payload: data,
               hookCreate: classifyTransaction,
-              hookUpdateCache: setCacheUnclassifiedTxs,
+              hookResetCacheUnclassified: resetCacheUnclassifiedTxs,
               setIsDialogOpen,
               hookResetCacheStatistic: resetCacheStatistic,
               hookResetTrackerTx: resetCacheTrackerTx,
-              hookSetTodayTxs: setCacheTodayTxs
+              hookSetCacheToday: setCacheTodayTxs,
+              setUncDataTableConfig: resetCacheUnclassifiedTxs
             })
           }
         }}
@@ -320,10 +320,13 @@ export default function TrackerTransactionForm() {
             handleCreateTrackerTransaction({
               payload: data,
               hookCreate: createTransaction,
-              hookUpdateCache: setData,
               setIsDialogOpen: setIsDialogOpen,
               hookResetCacheStatistic: resetCacheStatistic,
-              hookResetTodayTxs: setCacheTodayTxs
+              hookResetTodayTxs: resetCacheTodayTxs,
+              hookResetTransactions: resetCacheTrackerTx,
+              setUncDataTableConfig: setDataTableUnclassifiedConfig,
+              setDataTableConfig: setDataTableConfig,
+              resetAccountSource: resetAccountSource
             })
         }}
         sharedDialogElements={{

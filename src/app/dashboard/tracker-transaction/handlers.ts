@@ -24,6 +24,9 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { IQueryOptions } from '@/types/query.interface'
+import { initTableConfig } from '@/constants/data-table'
+import { IAccountSource } from '@/core/account-source/models'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -34,24 +37,33 @@ import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/m
 export const handleCreateTrackerTransaction = async ({
   payload,
   hookCreate,
-  hookUpdateCache,
   setIsDialogOpen,
   hookResetCacheStatistic,
-  hookResetTodayTxs
+  hookResetTodayTxs,
+  hookResetTransactions,
+  setDataTableConfig,
+  setUncDataTableConfig,
+  resetAccountSource
 }: {
   payload: ICreateTrackerTransactionFormData
   hookCreate: any
-  hookUpdateCache: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
   hookResetTodayTxs: any
+  hookResetTransactions: any
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  resetAccountSource: any
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        hookUpdateCache(res.data)
         hookResetCacheStatistic()
         hookResetTodayTxs()
+        hookResetTransactions()
+        resetAccountSource()
+        setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+        setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         toast.success('Create tracker transaction successfully!')
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
       }
@@ -61,31 +73,37 @@ export const handleCreateTrackerTransaction = async ({
 
 export const handleClassifyTransaction = async ({
   payload,
-  hookCreate,
-  hookUpdateCache,
   setIsDialogOpen,
+  hookCreate,
+  hookResetCacheUnclassified,
+  hookSetCacheToday,
   hookResetCacheStatistic,
   hookResetTrackerTx,
-  hookSetTrackerTx,
-  hookSetTodayTxs
+  setUncDataTableConfig,
+  setTodayDataTableConfig,
+  setDataTableConfig
 }: {
   payload: IClassifyTransactionFormData
-  hookCreate: any
-  hookUpdateCache: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
-  hookSetTrackerTx?: any
-  hookResetTrackerTx?: any
+  hookCreate: any
+  hookResetCacheUnclassified: any
+  hookResetTrackerTx: any
   hookResetCacheStatistic?: any
-  hookSetTodayTxs: any
+  hookSetCacheToday: any
+  setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        hookUpdateCache(res.data)
-        hookSetTodayTxs(res.data)
-        if (hookResetCacheStatistic) hookResetCacheStatistic(res.data)
-        if (hookResetTrackerTx) hookResetTrackerTx(res.data)
-        if (hookSetTrackerTx) hookSetTrackerTx(res.data)
+        hookResetCacheUnclassified()
+        hookSetCacheToday(res.data)
+        hookResetTrackerTx()
+        if (hookResetCacheStatistic) hookResetCacheStatistic()
+        if (setUncDataTableConfig) setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+        if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+        if (setDataTableConfig) setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         toast.success('Classify transaction successfully!')
         setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
       }
@@ -108,9 +126,23 @@ function isIsoStringInToday(isoString: string): boolean {
 
 export const updateCacheDataClassifyFeat = (
   oldData: IAdvancedTrackerTransactionResponse,
-  newData: ITrackerTransaction | ITransaction
+  newData: ITrackerTransaction
 ): IAdvancedTrackerTransactionResponse => {
   return { ...oldData, data: oldData.data.filter((item: ITrackerTransaction) => item.id !== newData.transactionId) }
+}
+
+function instanceOfInterface<T>(object: any): object is T {
+  return 'member' in object
+}
+
+export const updateCacheDataTodayTxClassifyFeat = (
+  oldData: IAdvancedTrackerTransactionResponse,
+  newData: ITrackerTransaction
+): IAdvancedTrackerTransactionResponse => {
+  const updatedData = oldData.data.map((item) => {
+    return item.id === newData.transactionId ? { ...item, ...newData.Transaction } : item
+  })
+  return { ...oldData, data: updatedData }
 }
 
 export const updateCacheDataCreate = (

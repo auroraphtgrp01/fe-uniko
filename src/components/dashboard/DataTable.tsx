@@ -177,7 +177,7 @@ export function DataTable<TData, TValue>({
         <Table classNameOfScroll={classNameOfScroll}>
           <TableHeader style={{ cursor: 'pointer' }}>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow style={{ userSelect: 'none' }} key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
@@ -201,7 +201,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => {
                 return (
                   <TableRow
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
                     className={getRowClassName ? getRowClassName(row.original) : ''}
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}

@@ -29,20 +29,45 @@ export interface ITrackerTransaction {
   Transaction: {
     id: string
     direction: string
+    transactionId: string
     amount: number
+    toAccountNo: string | null
+    toAccountName: string | null
+    toBankName: string | null
     currency: string
+    description: string
+    accountSourceId: string
+    accountBankId: string
+    ofAccountId: string
+    ofAccount: {
+      id: string
+      accountNo: string
+      accountBankId: string
+    }
+    accountBank: {
+      id: string
+      type: string
+      login_id: string
+      sessionId: string | null
+      deviceId: string | null
+      userId: string
+    }
     accountSource: {
       id: string
       name: string
       type: string
+      initAmount: number
+      accountBankId: string
+      currency: string
       currentAmount: number
+      userId: string
     }
   }
   TrackerType: {
     id: string
     name: string
     type: string
-    description: string
+    description: string | null
     ownerIds: string[]
   }
   time: string

@@ -43,7 +43,7 @@ export interface IDataTransactionTable {
   accountSource: string | null
   currency: string
   description: string
-  time: string
+  date: string
   TrackerTransaction: ITrackerTransaction | null
 }
 

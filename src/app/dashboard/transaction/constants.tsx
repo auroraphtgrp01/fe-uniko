@@ -1,7 +1,7 @@
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { ArrowDownToLineIcon, RotateCcwIcon } from 'lucide-react'
 
-export const transactionHeaders = ['Amount', 'Direction', 'Currency', 'Account Source']
+export const transactionHeaders = ['Amount', 'Direction', 'Currency', 'Account Source', 'Account No', 'Date']
 
 export const initButtonInDataTableHeader = ({
   reloadDataFunction,
@@ -59,14 +59,14 @@ export const initCreateTrackerTransactionForm = {
 }
 
 export const initEmptyDetailTransaction = {
-  id: '',
-  amount: '',
-  direction: '',
-  accountNo: '',
-  accountSource: '',
-  currency: '',
-  description: '',
-  time: '',
+  id: 'N/A',
+  amount: 'N/A',
+  direction: 'N/A',
+  accountNo: 'N/A',
+  accountSource: 'N/A',
+  currency: 'N/A',
+  description: 'N/A',
+  date: 'N/A',
   TrackerTransaction: null
 }
 

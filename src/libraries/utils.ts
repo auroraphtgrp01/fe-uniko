@@ -33,8 +33,7 @@ export const formatDateTimeVN = (date: string, hasTime: boolean) => {
     month: '2-digit',
     year: 'numeric',
     hour: hasTime ? '2-digit' : undefined,
-    minute: hasTime ? '2-digit' : undefined,
-    second: hasTime ? '2-digit' : undefined
+    minute: hasTime ? '2-digit' : undefined
   }).format(new Date(date))
 }
 const getPropertyByPath = (data: any, propertyPath: string): any => {
