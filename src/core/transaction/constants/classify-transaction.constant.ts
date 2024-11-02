@@ -40,7 +40,7 @@ export const defineClassifyTransactionFormBody = ({
           openEditDialog: openEditTrackerTxTypeDialog,
           setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
           dataArr: modifiedTrackerTypeForComboBox(
-            typeOfTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
+            typeOfEditTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
           ),
           typeDefault: typeOfTrackerType,
           type: typeOfEditTrackerType,

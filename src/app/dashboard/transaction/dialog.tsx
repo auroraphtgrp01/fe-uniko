@@ -14,6 +14,7 @@ import {
 import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { initTableConfig } from '@/constants/data-table'
+import { useTranslation } from 'react-i18next'
 
 export interface ITransactionDialogProps {
   dataTable: {
