@@ -165,6 +165,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           onRowClick={(rowData) => {
             dataTable.setDataDetail(rowData)
             dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+            setTypeOfTrackerType(rowData.direction)
           }}
           setConfig={dataTable.setUncConfig}
           config={dataTable.uncConfig}

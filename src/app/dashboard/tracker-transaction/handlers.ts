@@ -264,8 +264,8 @@ export const initTrackerTypeData = (
   setIncomingTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>,
   setExpenseTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>
 ) => {
-  setIncomingTrackerType(data.filter((item) => item.type === 'INCOMING'))
-  setExpenseTrackerType(data.filter((item) => item.type === 'EXPENSE'))
+  setIncomingTrackerType(data.filter((item) => item.type === ETypeOfTrackerTransactionType.INCOMING))
+  setExpenseTrackerType(data.filter((item) => item.type === ETypeOfTrackerTransactionType.EXPENSE))
 }
 
 export const handleCreateTrackerType = ({
