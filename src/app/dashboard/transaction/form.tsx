@@ -25,7 +25,6 @@ import {
 } from '@/core/transaction/models'
 import {
   initButtonInDataTableHeader,
-  initClassifyTransactionForm,
   initDialogFlag,
   initEmptyDetailTransaction,
   initEmptyTransactionSummaryData,
@@ -38,7 +37,6 @@ import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import toast from 'react-hot-toast'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import {
-  initDataTableTransaction,
   initTrackerTypeData,
   updateCacheDataClassifyFeat,
   updateCacheDataCreate as updateCacheDataClassify,
@@ -54,13 +52,18 @@ import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useUser } from '@/core/users/hooks'
 import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
-import { GET_ADVANCED_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
+import {
+  GET_ADVANCED_TRANSACTION_KEY,
+  GET_TODAY_TRANSACTION_KEY,
+  GET_UNCLASSIFIED_TRANSACTION_KEY
+} from '@/core/transaction/constants'
 import {
   GET_ADVANCED_TRACKER_TRANSACTION_KEY,
   GET_ALL_TRACKER_TRANSACTION_TYPE_KEY
 } from '@/core/tracker-transaction/constants'
 import { IAdvancedTrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { set } from 'nprogress'
 
 export default function TransactionForm() {
   // states
@@ -69,14 +72,25 @@ export default function TransactionForm() {
     isVisibleSortType: false,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
+  const [uncDataTableConfig, setUncDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    isVisibleSortType: false,
+    classNameOfScroll: 'h-[calc(100vh-35rem)]'
+  })
+  const [todayDataTableConfig, setTodayDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    isVisibleSortType: false,
+    classNameOfScroll: 'h-[calc(100vh-35rem)]'
+  })
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
   const [dataDetail, setDataDetail] = useState<IDataTransactionTable>(initEmptyDetailTransaction)
   const [dataTable, setDataTable] = useState<IDataTransactionTable[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const [todayTableQueryOptions, setTodayTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTransaction>(initDialogFlag)
   const [accountBankRefetching, setAccountBankRefetching] = useState<IAccountBank>()
   const [accountBankRefetchingQueue, setAccountBankRefetchingQueue] = useState<IAccountBank[]>([])
-  const [formData, setFormData] = useState<IClassifyTransactionFormData>(initClassifyTransactionForm)
   const [transactionSummary, setTransactionSummary] = useState<ITransactionSummary>(initEmptyTransactionSummaryData)
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
@@ -88,8 +102,8 @@ export default function TransactionForm() {
   const socket = useSocket()
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { getTransactions, refetchPayment, getPayments } = useTransaction()
-  const { dataTransaction, isGetTransaction } = getTransactions(queryOptions)
+  const { getTransactions, getUnclassifiedTransactions, getTodayTransactions } = useTransaction()
+  const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions })
   const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(
     GET_ADVANCED_TRANSACTION_KEY,
     updateCacheDataUpdate
@@ -104,13 +118,10 @@ export default function TransactionForm() {
     [GET_UNCLASSIFIED_TRANSACTION_KEY],
     updateCacheDataClassifyFeat
   )
-  const { getUnclassifiedTransactions } = useTransaction()
-  const { dataUnclassifiedTxs } = getUnclassifiedTransactions()
+  const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
+  const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions })
   const { isGetMeUserPending } = getMe(true)
-  const { setData: setDataTrackerTxs } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
-    [GET_ADVANCED_TRACKER_TRANSACTION_KEY],
-    updateCacheDataClassify
-  )
+  const { setData: setDataTodayTxs } = useUpdateModel([GET_TODAY_TRANSACTION_KEY], updateCacheDataClassifyFeat)
 
   const refetchTransactionBySocket = () => {
     const lastCalled = getTimeCountRefetchLimit()
@@ -141,7 +152,7 @@ export default function TransactionForm() {
 
   // effects
   useEffect(() => {
-    if (dataUnclassifiedTxs)
+    if (dataUnclassifiedTxs) {
       setTransactionSummary((prev) => ({
         ...prev,
         unclassifiedTransaction: {
@@ -159,7 +170,32 @@ export default function TransactionForm() {
             }, 0)
         }
       }))
+      setUncDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataUnclassifiedTxs.pagination?.totalPage) }))
+    }
   }, [dataUnclassifiedTxs])
+
+  useEffect(() => {
+    if (dataTodayTxs) {
+      setTransactionSummary((prev) => ({
+        ...prev,
+        transactionToday: {
+          data: modifyTransactionHandler(dataTodayTxs.data),
+          count: dataTodayTxs.data.length,
+          incomeAmount: dataTodayTxs.data
+            .filter((e) => e.direction === ETypeOfTrackerTransactionType.INCOMING)
+            .reduce((acc, cur) => {
+              return acc + cur.amount
+            }, 0),
+          expenseAmount: dataTodayTxs.data
+            .filter((e) => e.direction === ETypeOfTrackerTransactionType.EXPENSE)
+            .reduce((acc, cur) => {
+              return acc + cur.amount
+            }, 0)
+        }
+      }))
+      setTodayDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataTodayTxs.pagination?.totalPage) }))
+    }
+  }, [dataTodayTxs])
 
   useEffect(() => {
     if (socket) {
@@ -190,13 +226,30 @@ export default function TransactionForm() {
   }, [dataTrackerTransactionType])
   useEffect(() => {
     if (dataTransaction) {
-      initDataTableTransaction(dataTransaction.data, setDataTable, setTransactionSummary)
+      setDataTable(modifyTransactionHandler(dataTransaction.data))
       setDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataTransaction?.pagination?.totalPage) }))
     }
   }, [dataTransaction])
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
+  useEffect(() => {
+    setUncTableQueryOptions((prev) => ({
+      ...prev,
+      page: uncDataTableConfig.currentPage,
+      limit: uncDataTableConfig.limit
+    }))
+  }, [uncDataTableConfig])
+  useEffect(() => {
+    setTodayTableQueryOptions((prev) => ({
+      ...prev,
+      page: todayDataTableConfig.currentPage,
+      limit: todayDataTableConfig.limit
+    }))
+  }, [todayDataTableConfig])
+  useEffect(() => {
+    // set today data here
+  }, [todayDataTableConfig])
   useEffect(() => {
     handleAccountBankRefetching(accountBankRefetchingQueue, accountBankRefetching, setAccountBankRefetching)
   }, [accountBankRefetchingQueue])
@@ -224,7 +277,6 @@ export default function TransactionForm() {
   const onRowClick = (rowData: any) => {
     setDataDetail(rowData)
     setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-    setFormData((prev) => ({ ...prev, transactionId: rowData.id }))
   }
 
   return (
@@ -320,6 +372,10 @@ export default function TransactionForm() {
             unclassifiedTransactionData: transactionSummary.unclassifiedTransaction.data,
             setConfig: setDataTableConfig,
             config: dataTableConfig,
+            setUncConfig: setUncDataTableConfig,
+            uncConfig: uncDataTableConfig,
+            setTodayConfig: setTodayDataTableConfig,
+            todayConfig: todayDataTableConfig,
             dataDetail: dataDetail,
             setDataDetail
           }}
@@ -336,7 +392,8 @@ export default function TransactionForm() {
                 hookCreate: classifyTransaction,
                 hookUpdateCache: setCacheUnclassifiedTxs,
                 setIsDialogOpen,
-                hookSetTrackerTx: setData
+                hookSetTrackerTx: setData,
+                hookSetTodayTxs: setDataTodayTxs
               })
             }
           }}

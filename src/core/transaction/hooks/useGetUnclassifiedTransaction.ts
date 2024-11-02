@@ -2,10 +2,11 @@ import { transactionRoutes } from '@/api/transaction'
 import { GET_UNCLASSIFIED_TRANSACTION_KEY, TRANSACTION_RETRY } from '@/core/transaction/constants'
 import { IGetTransactionResponse } from '@/core/transaction/models'
 import { useModelQuery } from '@/hooks/useQueryModel'
+import { IUseGetAdvancedProps } from '@/types/query.interface'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 
-export const useGetUnclassifiedTransactions = () => {
+export const useGetUnclassifiedTransactions = (props: IUseGetAdvancedProps) => {
   const {
     isPending: isGetUnclassifiedTxs,
     data: dataUnclassifiedTxs,
@@ -14,6 +15,8 @@ export const useGetUnclassifiedTransactions = () => {
     GET_UNCLASSIFIED_TRANSACTION_KEY,
     transactionRoutes.getUnclassifiedTransactions,
     {
+      query: props.query,
+      enable: !!props,
       retry: TRANSACTION_RETRY
     }
   )

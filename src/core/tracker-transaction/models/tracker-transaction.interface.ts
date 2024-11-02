@@ -51,11 +51,11 @@ export interface ITrackerTransaction {
 export interface ICustomTrackerTransaction {
   id: string
   reasonName: string
-  trackerTypeName: string
+  trackerType: string
   type: string
   amount: string
   transactionDate: string
-  accountSourceName: string
+  accountSource: string
   checkType: string
 }
 

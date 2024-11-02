@@ -67,6 +67,6 @@ export const classifyTransactionSchema = z
   .object({
     reasonName: z.string().trim().min(2).max(256),
     trackerTypeId: z.string().uuid(),
-    description: z.string().min(10).max(256).nullable()
+    description: z.any()
   })
   .strict()

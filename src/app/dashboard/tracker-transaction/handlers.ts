@@ -36,19 +36,22 @@ export const handleCreateTrackerTransaction = async ({
   hookCreate,
   hookUpdateCache,
   setIsDialogOpen,
-  hookResetCacheStatistic
+  hookResetCacheStatistic,
+  hookResetTodayTxs
 }: {
   payload: ICreateTrackerTransactionFormData
   hookCreate: any
   hookUpdateCache: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
+  hookResetTodayTxs: any
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
         hookResetCacheStatistic()
+        hookResetTodayTxs()
         toast.success('Create tracker transaction successfully!')
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
       }
@@ -63,7 +66,8 @@ export const handleClassifyTransaction = async ({
   setIsDialogOpen,
   hookResetCacheStatistic,
   hookResetTrackerTx,
-  hookSetTrackerTx
+  hookSetTrackerTx,
+  hookSetTodayTxs
 }: {
   payload: IClassifyTransactionFormData
   hookCreate: any
@@ -72,11 +76,13 @@ export const handleClassifyTransaction = async ({
   hookSetTrackerTx?: any
   hookResetTrackerTx?: any
   hookResetCacheStatistic?: any
+  hookSetTodayTxs: any
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookUpdateCache(res.data)
+        hookSetTodayTxs(res.data)
         if (hookResetCacheStatistic) hookResetCacheStatistic(res.data)
         if (hookResetTrackerTx) hookResetTrackerTx(res.data)
         if (hookSetTrackerTx) hookSetTrackerTx(res.data)
@@ -85,33 +91,6 @@ export const handleClassifyTransaction = async ({
       }
     }
   })
-}
-
-export const initDataTableTransaction = (
-  dataTransaction: ITransaction[],
-  setDataTable: React.Dispatch<React.SetStateAction<IDataTransactionTable[]>>,
-  setDataTransactionSummary: React.Dispatch<React.SetStateAction<ITransactionSummary>>
-) => {
-  const transactionToday = dataTransaction.filter((item: ITransaction) => isIsoStringInToday(item.time))
-
-  setDataTable(modifyTransactionHandler(dataTransaction))
-  setDataTransactionSummary((prev) => ({
-    ...prev,
-    transactionToday: {
-      count: transactionToday.length,
-      incomeAmount: dataTransaction
-        .filter((e) => e.direction === ETypeOfTrackerTransactionType.INCOMING)
-        .reduce((acc, cur) => {
-          return acc + cur.amount
-        }, 0),
-      expenseAmount: dataTransaction
-        .filter((e) => e.direction === ETypeOfTrackerTransactionType.EXPENSE)
-        .reduce((acc, cur) => {
-          return acc + cur.amount
-        }, 0),
-      data: modifyTransactionHandler(transactionToday)
-    }
-  }))
 }
 
 function isIsoStringInToday(isoString: string): boolean {
@@ -212,10 +191,10 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
     reasonName: data.reasonName || '',
     type: data.Transaction.direction || '',
     checkType: data.Transaction.direction || '',
-    trackerTypeName: data.TrackerType.name || '',
+    trackerType: data.TrackerType.name || '',
     amount: `${new Intl.NumberFormat('en-US').format(data.Transaction?.amount || 0)} ${data.Transaction?.currency}`,
     transactionDate: data.time ? formatDateTimeVN(data.time, false) : '',
-    accountSourceName: data.Transaction?.accountSource?.name || ''
+    accountSource: data.Transaction?.accountSource?.name || ''
   }
 }
 
