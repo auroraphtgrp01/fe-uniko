@@ -24,7 +24,7 @@ export const modifyTransactionHandler = (payload: ITransaction[]): IDataTransact
       currency: item.currency,
       accountNo: item.ofAccount ? item.ofAccount.accountNo : 'N/A',
       description: item.description,
-      date: formatDateTimeVN(item.time, true),
+      date: formatDateTimeVN(item.transactionDateTime, true),
       TrackerTransaction: item.TrackerTransaction
     }
   })

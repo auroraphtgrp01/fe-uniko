@@ -5,6 +5,7 @@ import { IBaseResponseData } from '@/types/common.i'
 
 export type ITransaction = {
   id: string
+  transactionDateTime: string
   direction: string
   transactionId: string
   amount: number
