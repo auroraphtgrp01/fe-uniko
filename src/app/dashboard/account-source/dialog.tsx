@@ -17,27 +17,25 @@ export default function AccountSourceDialog({
   isDialogOpen,
   setFormData,
   formData,
-  setFetchedData,
-  fetchedData,
   createAccountSource,
   updateAccountSource,
   setDataCreate,
   setDataUpdate,
-  setIdRowClicked
+  setIdRowClicked,
+  hookResetCacheStatistic
 }: {
   formData: IAccountSourceBody
   isDialogOpen: IDialogAccountSource
-  fetchedData: IAccountSource[]
   tableData: IAccountSourceDataFormat[]
   createAccountSource: any
   updateAccountSource: any
-  setFetchedData: React.Dispatch<React.SetStateAction<IAccountSource[]>>
   setFormData: React.Dispatch<React.SetStateAction<IAccountSourceBody>>
   setTableData: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat[]>>
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   setDataCreate: any
   setDataUpdate: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
+  hookResetCacheStatistic: any
 }) {
   const { t } = useTranslation(['accountSource', 'common'])
   const updateConfigDialog: IDialogConfig = {
@@ -56,22 +54,21 @@ export default function AccountSourceDialog({
       handleUpdateAccountSource({
         payload,
         setIsDialogOpen,
-        setFetchedData,
         setFormData,
         updateAccountSource,
-        fetchedData,
         setDataUpdate,
-        setIdRowClicked
+        setIdRowClicked,
+        hookResetCacheStatistic
       })
     }
     if (isDialogOpen.isDialogCreateOpen) {
       handleCreateAccountSource({
         payload,
         setIsDialogOpen,
-        setFetchedData,
         setFormData,
         createAccountSource,
-        setDataCreate
+        setDataCreate,
+        hookResetCacheStatistic
       })
     }
   }

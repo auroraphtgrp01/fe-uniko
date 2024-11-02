@@ -48,7 +48,11 @@ const defaultOptions: QueryOptions = {
 export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, options: QueryOptions = {}) => {
   const mergedOptions: QueryOptions = { ...defaultOptions, ...options }
   const query = mergeQueryParams(mergedOptions.query ?? {})
-  const queryKey = [modelName]
+  const modelNameParts = modelName.split('/')
+  const queryKey =
+    modelNameParts.length > 0 && modelNameParts[modelNameParts.length - 1] === 'ADVANCED'
+      ? [modelName, query]
+      : [modelName]
   const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
   return useQuery<TResponse>({
     queryKey,
@@ -72,10 +76,14 @@ export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (old
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
 
   const setData = (newData: Updater<T> | any) => {
+    console.log('newData', newData)
+    console.log('truoc update', queryClient.getQueryData(key))
+
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)
     })
+    console.log('sau update', queryClient.getQueryData(key))
   }
 
   const resetData = () => {

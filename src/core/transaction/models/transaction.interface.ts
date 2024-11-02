@@ -1,8 +1,11 @@
+import { IAccountBank } from '@/core/account-bank/models'
+import { IAccountSource } from '@/core/account-source/models'
 import { ITrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IBaseResponseData } from '@/types/common.i'
 
 export type ITransaction = {
   id: string
+  transactionDateTime: string
   direction: string
   transactionId: string
   amount: number
@@ -20,6 +23,7 @@ export type ITransaction = {
   }
   time: string
   TrackerTransaction: ITrackerTransaction | null
+  accountSource: any
 }
 
 export type IGetTransactionResponse = IBaseResponseData<ITransaction[]>
@@ -34,14 +38,13 @@ export interface IDialogTransaction {
 
 export interface IDataTransactionTable {
   id: string
-  transactionId: string
   amount: string
   direction: string
-  accountBank: string | null
+  accountNo: string
+  accountSource: string | null
   currency: string
-  accountNo: string | null
   description: string
-  time: string
+  date: string
   TrackerTransaction: ITrackerTransaction | null
 }
 
@@ -63,7 +66,8 @@ export interface ICreateTrackerTransactionFormData {
 
 interface ITransactionSummaryData {
   count: number
-  amount: number
+  incomeAmount: number
+  expenseAmount: number
   data: IDataTransactionTable[]
 }
 

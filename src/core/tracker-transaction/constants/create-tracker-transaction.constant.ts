@@ -57,8 +57,6 @@ export const defineCreateAccountSourceFormBody = ({
       props: {
         autoComplete: 'direction',
         onchange: (value: any) => {
-          console.log('🚀 ~ value:', value)
-
           setCurrentDirection(value as ETypeOfTrackerTransactionType)
         }
       },
@@ -80,9 +78,6 @@ export const defineCreateAccountSourceFormBody = ({
       placeHolder: t('form.defineCreateAccountSourceFormBody.trackerTypeId.placeholder'),
       props: {
         autoComplete: 'trackerTypeId',
-        onValueSelect: (value: any) => {
-          console.log('🚀 ~ value:', value)
-        },
         setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
         dataArr: modifiedTrackerTypeForComboBox(
           currentDirection === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
