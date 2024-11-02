@@ -117,7 +117,7 @@ export default function TrackerTransactionForm() {
   const { t } = useTranslation(['trackerTransaction', 'common'])
   const { verifyToken } = useAuth()
   const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
-  const { getAdvancedAccountSource } = useAccountSource()
+  const { getAllAccountSource } = useAccountSource()
   const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
@@ -125,7 +125,7 @@ export default function TrackerTransactionForm() {
   const { statisticData } = getStatisticData(dates || {})
   const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({ query: queryOptions })
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
-  const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
+  const { getAllData: getAllAccountSourceData } = getAllAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
   const { resetData: resetCacheTrackerTx, setData } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     [GET_ADVANCED_TRACKER_TRANSACTION_KEY],
@@ -157,13 +157,7 @@ export default function TrackerTransactionForm() {
   )
   const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
 
-  // local store
-  const { accountSourceData } = useStoreLocal()
-
   // effects
-  useEffect(() => {
-    console.log('🚀 ~ TrackerTransactionForm ~ accountSourceData:', accountSourceData)
-  }, [accountSourceData])
   useEffect(() => {
     setUncTableQueryOptions((prev) => ({
       ...prev,
@@ -314,7 +308,7 @@ export default function TrackerTransactionForm() {
         createTrackerTransactionDialog={{
           formData: formDataCreate,
           setFormData: setFormDataCreate,
-          accountSourceData: accountSourceData,
+          accountSourceData: getAllAccountSourceData?.data || [],
           handleCreate: (data: ICreateTrackerTransactionFormData) =>
             handleCreateTrackerTransaction({
               payload: data,

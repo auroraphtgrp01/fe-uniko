@@ -34,7 +34,7 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
-import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import { GET_ADVANCED_ACCOUNT_SOURCE_KEY, GET_ALL_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import { useAuth } from '@/core/auth/hooks'
 import { arraysEqual, getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 import { useTranslation } from 'react-i18next'
@@ -70,6 +70,7 @@ export default function AccountSourceForm() {
     updateCacheDataUpdate
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
+  const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
   const { setAccountSourceData, accountSourceData } = useStoreLocal()
   // Effects
   useEffect(() => {
@@ -123,18 +124,18 @@ export default function AccountSourceForm() {
         </CardContent>
       </Card>
       <AccountSourceDialog
-        setIsDialogOpen={setIsDialogOpen}
-        isDialogOpen={isDialogOpen}
-        setFormData={setFormData}
-        formData={formData}
-        setTableData={setTableData}
-        tableData={tableData}
-        createAccountSource={createAccountSource}
-        updateAccountSource={updateAccountSource}
-        setDataCreate={setDataCreate}
-        setDataUpdate={setDataUpdate}
-        setIdRowClicked={setIdRowClicked}
-        hookResetCacheStatistic={resetCacheStatistic}
+        sharedDialogElements={{
+          isDialogOpen,
+          setIsDialogOpen,
+          hookResetCacheStatistic: resetCacheStatistic,
+          hookResetCacheGetAllAccount: resetCacheGetAllAccount
+        }}
+        createAccountSourceDialog={{ createAccountSource, setDataCreate }}
+        UpdateAccountSourceDialog={{
+          setDataUpdate,
+          updateAccountSource,
+          setIdRowClicked
+        }}
       />
     </div>
   )
