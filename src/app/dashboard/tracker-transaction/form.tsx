@@ -226,7 +226,7 @@ export default function TrackerTransactionForm() {
                 <HandCoins className='h-12 w-12 text-white opacity-75' />
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
-                    {formatCurrency(statisticData?.data.totalBalance ?? 0, 'VND', 'vi-vn')}
+                    {formatCurrency(statisticData?.data.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='text-sm text-purple-200'>{t('increaseFromLastMonth', { percentage: 2.5 })}</p>
                 </div>
@@ -242,7 +242,7 @@ export default function TrackerTransactionForm() {
                 <ArrowDownIcon className='h-12 w-12 text-white opacity-75' />
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
-                    {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
+                    {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='text-sm text-green-200'>{t('noChangeFromYesterday')}</p>
                 </div>
@@ -258,7 +258,7 @@ export default function TrackerTransactionForm() {
                 <ArrowUpIcon className='h-12 w-12 text-white opacity-75' />
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
-                    {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
+                    {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='text-sm text-red-200'>{t('increaseFromLastMonth', { percentage: 15 })}</p>
                 </div>
