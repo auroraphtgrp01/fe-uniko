@@ -78,6 +78,9 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import CardInHeader from '../../../components/dashboard/CardInHeader'
+import FlatList from '@/components/core/FlatList'
+import { Button } from '@/components/ui/button'
 
 export default function TrackerTransactionForm() {
   // states
@@ -117,7 +120,7 @@ export default function TrackerTransactionForm() {
   const { t } = useTranslation(['trackerTransaction', 'common'])
   const { verifyToken } = useAuth()
   const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
-  const { getAdvancedAccountSource } = useAccountSource()
+  const { getAllAccountSource } = useAccountSource()
   const { getAdvancedData, getStatisticData, createTransaction } = useTrackerTransaction()
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions } = useTransaction()
@@ -125,7 +128,7 @@ export default function TrackerTransactionForm() {
   const { statisticData } = getStatisticData(dates || {})
   const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({ query: queryOptions })
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
-  const { getAdvancedData: dataAdvancedAccountSource } = getAdvancedAccountSource({ query: { page: 1, limit: 10 } })
+  const { getAllData: getAllAccountSourceData } = getAllAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
   const { resetData: resetCacheTrackerTx, setData } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     [GET_ADVANCED_TRACKER_TRANSACTION_KEY],
@@ -157,13 +160,7 @@ export default function TrackerTransactionForm() {
   )
   const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
 
-  // local store
-  const { accountSourceData } = useStoreLocal()
-
   // effects
-  useEffect(() => {
-    console.log('🚀 ~ TrackerTransactionForm ~ accountSourceData:', accountSourceData)
-  }, [accountSourceData])
   useEffect(() => {
     setUncTableQueryOptions((prev) => ({
       ...prev,
@@ -232,7 +229,7 @@ export default function TrackerTransactionForm() {
                 <HandCoins className='h-12 w-12 text-white opacity-75' />
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
-                    {formatCurrency(statisticData?.data.totalBalance ?? 0, 'VND', 'vi-vn')}
+                    {formatCurrency(statisticData?.data.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='text-sm text-purple-200'>{t('increaseFromLastMonth', { percentage: 2.5 })}</p>
                 </div>
@@ -248,7 +245,7 @@ export default function TrackerTransactionForm() {
                 <ArrowDownIcon className='h-12 w-12 text-white opacity-75' />
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
-                    {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'VND', 'vi-vn')}
+                    {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='text-sm text-green-200'>{t('noChangeFromYesterday')}</p>
                 </div>
@@ -264,7 +261,7 @@ export default function TrackerTransactionForm() {
                 <ArrowUpIcon className='h-12 w-12 text-white opacity-75' />
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
-                    {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'VND', 'vi-vn')}
+                    {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='text-sm text-red-200'>{t('increaseFromLastMonth', { percentage: 15 })}</p>
                 </div>
@@ -284,6 +281,7 @@ export default function TrackerTransactionForm() {
                 setConfig={setDataTableConfig}
                 buttons={dataTableButtons}
                 onRowClick={(rowData) => onRowClick(rowData, advancedTrackerTxData, setIsDialogOpen)}
+                isLoading={isGetAdvancedPending}
               />
             </CardContent>
           </Card>
@@ -291,8 +289,28 @@ export default function TrackerTransactionForm() {
       </div>
 
       {/* Right Section */}
-      <div className='flex h-full w-full flex-col md:col-span-2 lg:col-span-1'>
-        <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
+      <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 lg:col-span-1'>
+        <div className='h-[60%]'>
+          <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
+        </div>
+        <div className='h-auto'>
+          <Card>
+            <CardHeader className='py-4'>
+              <div className='flex items-center justify-between'>
+                <CardTitle>Unclassified </CardTitle>
+                <div className='flex gap-2'>
+                  <Button variant={'secondary'}>Classify</Button>
+                  <Button variant={'default'}>Refetch</Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className='h-auto'>
+                <FlatList></FlatList>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <TrackerTransactionDialog
@@ -314,7 +332,7 @@ export default function TrackerTransactionForm() {
         createTrackerTransactionDialog={{
           formData: formDataCreate,
           setFormData: setFormDataCreate,
-          accountSourceData: accountSourceData,
+          accountSourceData: getAllAccountSourceData?.data || [],
           handleCreate: (data: ICreateTrackerTransactionFormData) =>
             handleCreateTrackerTransaction({
               payload: data,

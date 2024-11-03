@@ -13,6 +13,8 @@ import { EmojiPicker } from '../../../components/common/EmojiPicker'
 import React from 'react'
 import { translate } from '@/libraries/utils'
 import { TFunction } from 'i18next'
+import NoDataPlaceHolder from '@/images/2.png'
+import Image from 'next/image'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -116,22 +118,40 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
     tabContents: [
       {
         content: (
-          <DonutChart
-            data={data ? data.expenseTransactionTypeStats : []}
-            className={`h-[30rem] w-full`}
-            types='donut'
-          />
+          <div>
+            {data && data.expenseTransactionTypeStats?.length > 0 ? (
+              <DonutChart
+                data={data.expenseTransactionTypeStats}
+                className='mt-[-2rem] h-[20rem] w-full'
+                types='donut'
+              />
+            ) : (
+              <div className='mt-12 flex flex-col items-center justify-center'>
+                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
+          </div>
         ),
         labels: t('trackerTransaction:charts.expenseChart.label'),
         value: t('trackerTransaction:charts.expenseChart.value')
       },
       {
         content: (
-          <DonutChart
-            data={data ? data.incomingTransactionTypeStats : []}
-            className={`h-[30rem] w-full`}
-            types='donut'
-          />
+          <div>
+            {data && data.incomingTransactionTypeStats?.length > 0 ? (
+              <DonutChart
+                data={data.incomingTransactionTypeStats}
+                className='mt-[-2rem] h-[20rem] w-full'
+                types='donut'
+              />
+            ) : (
+              <div className='mt-12 flex flex-col items-center justify-center'>
+                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
+          </div>
         ),
         labels: t('trackerTransaction:charts.incomingChart.label'),
         value: t('trackerTransaction:charts.incomingChart.value')

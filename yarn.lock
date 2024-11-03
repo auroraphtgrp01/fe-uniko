@@ -8970,6 +8970,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-loading-indicators@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-loading-indicators@npm:1.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 6a65934fe1dab738d74d5ce5cdabbe115ba3a6e366d68e652ad68f99cbf6844da5847a422e291a6e183addf18ef2198bdc02b7b72eb03622a37ae3af7423a798
+  languageName: node
+  linkType: hard
+
 "react-property@npm:2.0.2":
   version: 2.0.2
   resolution: "react-property@npm:2.0.2"
@@ -10708,6 +10718,7 @@ __metadata:
     react-hook-form: ^7.53.1
     react-hot-toast: ^2.4.1
     react-i18next: ^15.1.0
+    react-loading-indicators: ^1.0.0
     recharts: ^2.12.7
     release-it: ^17.6.0
     sharp: ^0.33.5
