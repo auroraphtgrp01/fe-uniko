@@ -281,6 +281,7 @@ export default function TrackerTransactionForm() {
                 setConfig={setDataTableConfig}
                 buttons={dataTableButtons}
                 onRowClick={(rowData) => onRowClick(rowData, advancedTrackerTxData, setIsDialogOpen)}
+                isLoading={isGetAdvancedPending}
               />
             </CardContent>
           </Card>

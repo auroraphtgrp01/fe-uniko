@@ -15,12 +15,15 @@ import {
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React, { useEffect, useState } from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
 import { IDataTableConfig } from '@/types/common.i'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { useTranslation } from 'react-i18next'
+import EmptyBox from '@/images/empty-box.png'
+import { Atom } from 'react-loading-indicators'
+import Image from 'next/image'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -230,7 +233,17 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  {isLoading ? t('table.loadingText') : t('table.noDataText')}
+                  {isLoading ? (
+                    <div className='flex flex-col items-center justify-center gap-2'>
+                      <Atom color='#be123c' size='small' textColor='#be123c' />
+                      <span className='font-semibold'>Loading</span>
+                    </div>
+                  ) : (
+                    <div className='flex flex-col items-center justify-center gap-2'>
+                      <Image src={EmptyBox} alt='' height={50} width={50} />
+                      <span className='font-semibold text-foreground'>{t('table.noDataText')}</span>
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             )}

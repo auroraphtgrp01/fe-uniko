@@ -1,54 +1,48 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ChevronDown, ChevronUp, Star, Clock, ThumbsUp } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 const data = [
   {
     id: '1',
     amount: formatCurrency(500000, 'VND'),
     accountNo: 5877979779,
-    direction: 'Income',
+    direction: ETypeOfTrackerTransactionType.EXPENSE,
     transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
   },
   {
     id: '2',
     amount: formatCurrency(200000, 'VND'),
     accountNo: 5877979779,
-    direction: 'Expense',
+    direction: ETypeOfTrackerTransactionType.INCOMING,
     transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
   },
   {
     id: '2',
     amount: formatCurrency(200000, 'VND'),
     accountNo: 5877979779,
-    direction: 'Expense',
+    direction: ETypeOfTrackerTransactionType.INCOMING,
     transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
   },
   {
     id: '2',
     amount: formatCurrency(200000, 'VND'),
     accountNo: 5877979779,
-    direction: 'Expense',
-    transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
-  },
-  {
-    id: '2',
-    amount: formatCurrency(200000, 'VND'),
-    accountNo: 5877979779,
-    direction: 'Expense',
+    direction: ETypeOfTrackerTransactionType.INCOMING,
     transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
   }
 ]
 
 export default function FlatList() {
   return (
-    <Card className='mx-auto w-full max-w-3xl bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800'>
+    <Card className='mx-auto w-full max-w-3xl'>
       <ScrollArea className='h-[200px] w-full rounded-md border-none p-4'>
         <AnimatePresence>
           {data.map((item) => (
@@ -63,9 +57,15 @@ export default function FlatList() {
                 <CardHeader className='py-2'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-sm font-bold'>{item.amount}</CardTitle>
-                    <Badge variant='secondary' className='text-xs'>
-                      {item.direction}
-                    </Badge>
+                    {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? (
+                      <Badge variant='default' className='text-xs text-white'>
+                        {item.direction}
+                      </Badge>
+                    ) : (
+                      <Badge variant='secondary' className='text-xs'>
+                        {item.direction}
+                      </Badge>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent className='py-1'>

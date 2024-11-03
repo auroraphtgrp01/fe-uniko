@@ -21,7 +21,12 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
-import { getTranslatedFormBody } from '@/libraries/utils'
+import { formatDateToInput, getTranslatedFormBody } from '@/libraries/utils'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Briefcase, Calendar, Mail, MapPin, Phone, Save, SaveIcon, User2 } from 'lucide-react'
+import AvatarDefault from '@/images/avatar.jpg'
+import Image from 'next/image'
+import { Separator } from '@/components/ui/separator'
 
 export default function ProfileForm() {
   const [defaultUser, setIsDefaultUser] = useState({})
@@ -91,12 +96,35 @@ export default function ProfileForm() {
   return (
     <div className='relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
       <div className='flex flex-1 flex-col gap-8 min-[1350px]:flex-row'>
-        <Card className='h-full flex-1'>
-          <CardHeader>
-            <CardTitle>{t('userProfileTitle')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ProfileCardContainer data={userGetMeData?.data as IUser} />
+        <Card className='relative overflow-hidden'>
+          <div className='absolute inset-0 bg-gradient-to-b from-primary/10 to-background/50 opacity-50' />
+          <CardContent className='space-y-6 p-6'>
+            <div className='flex flex-col items-center space-y-4'>
+              <Avatar className='h-32 w-32 ring-2 ring-border'>
+                <Image src={AvatarDefault} alt='' width={128} height={128} />
+              </Avatar>
+              <div className='text-center'>
+                <h2 className='text-2xl font-bold'>{userGetMeData?.data?.fullName ?? 'Unknown'}</h2>
+                <p className='text-sm text-muted-foreground'>{userGetMeData?.data?.email ?? 'Unknown'}</p>
+              </div>
+            </div>
+            <Separator />
+            <div className='grid gap-4 sm:grid-cols-2'>
+              <div className='space-y-4'>
+                <InfoItem icon={Mail} label='Email' value={userGetMeData?.data?.email} />
+                <InfoItem icon={Phone} label='Phone' value={userGetMeData?.data?.phone_number} />
+                <InfoItem icon={MapPin} label='Location' value={userGetMeData?.data?.address} />
+              </div>
+              <div className='space-y-4'>
+                <InfoItem
+                  icon={Calendar}
+                  label='Date of Birth'
+                  value={formatDateToInput(userGetMeData?.data?.dateOfBirth)}
+                />
+                <InfoItem icon={User2} label='Gender' value={userGetMeData?.data?.gender} />
+                <InfoItem icon={Briefcase} label='Workplace' value={userGetMeData?.data?.workplace} />
+              </div>
+            </div>
           </CardContent>
         </Card>
         <Tabs defaultValue='account' className='h-full flex-1 rounded-md'>
@@ -120,7 +148,13 @@ export default function ProfileForm() {
                 />
               </CardContent>
               <CardFooter className='flex'>
-                <Button type='button' onClick={() => formUpdateRef.current?.requestSubmit()} isLoading={isUpdating}>
+                <Button
+                  className='gap-2'
+                  type='button'
+                  onClick={() => formUpdateRef.current?.requestSubmit()}
+                  isLoading={isUpdating}
+                >
+                  <SaveIcon height={15} width={15} />
                   {t('profile:form.credential.saveChangesButton')}
                 </Button>
               </CardFooter>
@@ -154,7 +188,9 @@ export default function ProfileForm() {
                   type='button'
                   onClick={() => formUpdatePasswordRef.current?.requestSubmit()}
                   isLoading={isPasswordUpdating}
+                  className='gap-2'
                 >
+                  <SaveIcon height={15} width={15} />
                   {t('profile:form.credential.savePasswordButton')}
                 </Button>
               </CardFooter>
@@ -165,3 +201,21 @@ export default function ProfileForm() {
     </div>
   )
 }
+
+const InfoItem = ({
+  icon: Icon,
+  label,
+  value
+}: {
+  icon: React.ElementType
+  label: string | undefined
+  value: string | undefined
+}) => (
+  <div className='flex items-center space-x-4 rounded-lg border p-3 transition-colors hover:bg-accent'>
+    <Icon className='h-5 w-5 text-muted-foreground' />
+    <div className='space-y-1'>
+      <p className='text-sm font-medium leading-none'>{label}</p>
+      <p className='text-xs text-muted-foreground'>{value || 'Unknown'}</p>
+    </div>
+  </div>
+)
