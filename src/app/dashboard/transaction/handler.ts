@@ -18,10 +18,9 @@ export const modifyTransactionHandler = (payload: ITransaction[]): IDataTransact
   return payload.map((item: ITransaction) => {
     return {
       id: item.id,
-      amount: formatCurrency(item.amount, 'VND', 'vi-VN'),
+      amount: formatCurrency(item.amount, 'đ', 'vi-VN'),
       direction: item.direction,
       accountSource: item.accountSource.name,
-      currency: item.currency,
       accountNo: item.ofAccount ? item.ofAccount.accountNo : 'N/A',
       description: item.description,
       date: formatDateTimeVN(item.transactionDateTime, true),

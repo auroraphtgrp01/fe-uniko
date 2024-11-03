@@ -10,7 +10,7 @@ import { IButtonInDataTableHeader } from '@/types/core.i'
 import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
 
 export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDataFormat => {
-  const { id, name, type, initAmount, currency, currentAmount, accountBank } = data
+  const { id, name, type, initAmount, currentAmount, accountBank } = data
   return {
     id,
     name,
@@ -29,10 +29,9 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
           <HandCoins className='mr-2' /> <span>Transfer</span>
         </div>
       ),
-    initAmount: formatCurrency(initAmount, currency),
-    accountBank: accountBank?.type,
-    currency,
-    currentAmount: formatCurrency(currentAmount, currency),
+    initAmount: formatCurrency(initAmount, 'đ'),
+    accountBank: accountBank?.type.split('_')[0] + ' Bank',
+    currentAmount: formatCurrency(currentAmount, 'đ'),
     checkType: type
   }
 }

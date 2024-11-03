@@ -22,7 +22,7 @@ import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { formatArrayData, formatDateTimeVN, getTypes } from '@/libraries/utils'
+import { formatArrayData, formatCurrency, formatDateTimeVN, getTypes } from '@/libraries/utils'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { IQueryOptions } from '@/types/query.interface'
 import { initTableConfig } from '@/constants/data-table'
@@ -224,8 +224,8 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
     type: data.Transaction.direction || '',
     checkType: data.Transaction.direction || '',
     trackerType: data.TrackerType.name || '',
-    amount: `${new Intl.NumberFormat('en-US').format(data.Transaction?.amount || 0)} ${data.Transaction?.currency}`,
-    transactionDate: data.time ? formatDateTimeVN(data.time, false) : '',
+    amount: `${formatCurrency(data.Transaction?.amount, 'đ')}`,
+    transactionDate: data.time ? formatDateTimeVN(data.time, true) : '',
     accountSource: data.Transaction?.accountSource?.name || ''
   }
 }

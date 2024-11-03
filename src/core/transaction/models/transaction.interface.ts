@@ -42,7 +42,6 @@ export interface IDataTransactionTable {
   direction: string
   accountNo: string
   accountSource: string | null
-  currency: string
   description: string
   date: string
   TrackerTransaction: ITrackerTransaction | null

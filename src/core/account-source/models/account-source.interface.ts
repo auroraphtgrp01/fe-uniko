@@ -19,7 +19,6 @@ export interface IAccountSourceDataFormat {
   type: any
   initAmount: string
   accountBank: string
-  currency: string
   currentAmount: string
   checkType?: string
 }
