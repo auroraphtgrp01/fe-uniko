@@ -5,6 +5,7 @@ import { useGetAccountSourceById } from '@/core/account-source/hooks/useGetAccou
 import { useGetAdvancedAccountSource } from '@/core/account-source/hooks/useGetAdvancedAccountSource'
 import { useUpdateAccountSource } from '@/core/account-source/hooks/useUpdateAccountSource'
 import { IUseQueryHookOptions } from '@/types/query.interface'
+import { useGetAllAccountSource } from './useGetAllAccountSource'
 
 export const useAccountSource = (opts?: IUseQueryHookOptions) => {
   const { mutate: createAccountSource, isPending: isCreating } = useCreateAccountSource(opts)
@@ -16,6 +17,7 @@ export const useAccountSource = (opts?: IUseQueryHookOptions) => {
     updateAccountSource,
     isUpdating,
     useGetAccountSourceById,
-    getAdvancedAccountSource: useGetAdvancedAccountSource
+    getAdvancedAccountSource: useGetAdvancedAccountSource,
+    getAllAccountSource: useGetAllAccountSource
   }
 }

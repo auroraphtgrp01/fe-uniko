@@ -78,7 +78,8 @@ export function mergeQueryParams(query: IDynamicType): string {
     .join('&')
 }
 
-export function formatDateToInput(dateString: string) {
+export function formatDateToInput(dateString: string | undefined) {
+  if (!dateString) return undefined
   const date = new Date(dateString)
   const year = date.getUTCFullYear()
   const month = String(date.getUTCMonth() + 1).padStart(2, '0')

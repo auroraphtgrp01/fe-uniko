@@ -330,13 +330,13 @@ export default function TransactionForm() {
             <div className='flex items-center justify-between'>
               <div>Total Income Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(transactionSummary.transactionToday.incomeAmount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.transactionToday.incomeAmount, 'đ', 'vi-vn')}
               </div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Expense Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(transactionSummary.transactionToday.expenseAmount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.transactionToday.expenseAmount, 'đ', 'vi-vn')}
               </div>
             </div>
           </CardContent>
@@ -362,13 +362,13 @@ export default function TransactionForm() {
             <div className='flex items-center justify-between'>
               <div>Total Income Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(transactionSummary.unclassifiedTransaction.incomeAmount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.unclassifiedTransaction.incomeAmount, 'đ', 'vi-vn')}
               </div>
             </div>
             <div className='flex items-center justify-between'>
               <div>Total Expense Amount</div>
               <div className='text-xl font-bold'>
-                {formatCurrency(transactionSummary.unclassifiedTransaction.expenseAmount, 'VND', 'vi-vn')}
+                {formatCurrency(transactionSummary.unclassifiedTransaction.expenseAmount, 'đ', 'vi-vn')}
               </div>
             </div>
           </CardContent>

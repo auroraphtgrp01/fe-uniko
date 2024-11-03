@@ -9,14 +9,14 @@ import ButtonLanguage from '@/components/core/ButtonLanguage'
 export default function Header() {
   return (
     <header className='sticky w-full'>
-      <nav className='flex items-center justify-between px-4 py-2'>
+      <nav className='flex items-center justify-between px-4'>
         <div className='md:hidden lg:hidden'>
           <MobileSidebar />
         </div>
         <div className='flex items-center gap-2'>
           <ButtonCollapseSlideBar />
         </div>
-        <div className='ml-auto flex items-center gap-2'>
+        <div className='ml-auto mt-[0.3rem] flex items-center gap-2'>
           <ButtonLanguage />
           <NotificationDropdown />
           <ModeToggle />

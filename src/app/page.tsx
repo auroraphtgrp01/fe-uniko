@@ -1,9 +1,9 @@
-import HeroSection from '@/components/homepage/HeroSection'
+import MainSection from '@/components/homepage/MainSection'
 
 export default function Home() {
   return (
-    <main className='relative bg-black'>
-      <HeroSection />
+    <main className=''>
+      <MainSection></MainSection>
     </main>
   )
 }

@@ -105,10 +105,6 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
                 <TableCell>{dataTable.dataDetail.direction}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.currency')}</TableCell>
-                <TableCell>{dataTable.dataDetail.currency}</TableCell>
-              </TableRow>
-              <TableRow>
                 <TableCell>{t('transaction:TransactionType.detailsConfigDialog.accountBank')}</TableCell>
                 <TableCell>{dataTable.dataDetail.accountNo}</TableCell>
               </TableRow>
@@ -165,6 +161,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           onRowClick={(rowData) => {
             dataTable.setDataDetail(rowData)
             dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+            setTypeOfTrackerType(rowData.direction)
           }}
           setConfig={dataTable.setUncConfig}
           config={dataTable.uncConfig}

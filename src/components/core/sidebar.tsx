@@ -21,12 +21,12 @@ export default function Sidebar({ className }: SidebarProps) {
     <aside
       className={cn(
         `relative z-50 hidden min-h-[100vh] flex-none border-r bg-background_nav transition-[width] duration-500 md:block`,
-        !isMinimized ? 'w-52' : 'w-[72px]',
+        !isMinimized ? 'w-52' : 'w-16',
         className
       )}
     >
       <Link href={'/'}>
-        <div className='mt-[-10px] hidden select-none p-5 md:block lg:block'>
+        <div className='mt-[-5px] hidden select-none p-4 md:block lg:block'>
           {!isMinimized ? (
             <motion.div
               className='justify-start'
@@ -66,8 +66,8 @@ export default function Sidebar({ className }: SidebarProps) {
           )}
         </div>
       </Link>
-      <div className='space-y-4'>
-        <div className='px-3 py-2'>
+      <div className='space-y-2'>
+        <div className='px-2 py-2'>
           <div className='select-none space-y-1'>
             <DashboardNav items={navItems} />
           </div>

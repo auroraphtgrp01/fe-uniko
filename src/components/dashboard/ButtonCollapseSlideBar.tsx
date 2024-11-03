@@ -11,7 +11,7 @@ export default function ButtonCollapseSlideBar() {
   }
   return (
     <div className='hidden md:block lg:block'>
-      <MenuIcon onClick={handleToggle} className='cursor-pointer' />
+      <MenuIcon onClick={handleToggle} className='cursor-pointer' width={20} height={20} />
     </div>
   )
 }
