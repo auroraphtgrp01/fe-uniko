@@ -50,20 +50,13 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
       legend: {
         bottom: '0%',
         left: 'center',
-        textStyle: { color: configTheme.textColor },
+        textStyle: { color: configTheme.textColor, fontFamily: 'latin' },
         orient: 'horizontal',
-        type: 'plain'
-      },
-      grid: {
-        top: 20,
-        bottom: 60,
-        left: 20,
-        right: 20,
-        containLabel: true
+        type: 'scroll',
+        color: configTheme.textColor
       },
       series: [
         {
-          name: 'Access From',
           type: 'pie',
           radius: ['30%', '65%'],
           avoidLabelOverlap: true,
@@ -76,7 +69,8 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             fontSize: '10',
             color: configTheme.textColor,
             position: 'outside',
-            alignTo: 'none'
+            alignTo: 'none',
+            fontFamily: 'latin'
           },
           data
         }

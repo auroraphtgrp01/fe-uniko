@@ -78,6 +78,9 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import CardInHeader from '../../../components/dashboard/CardInHeader'
+import FlatList from '@/components/core/FlatList'
+import { Button } from '@/components/ui/button'
 
 export default function TrackerTransactionForm() {
   // states
@@ -285,8 +288,28 @@ export default function TrackerTransactionForm() {
       </div>
 
       {/* Right Section */}
-      <div className='flex h-full w-full flex-col md:col-span-2 lg:col-span-1'>
-        <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
+      <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 lg:col-span-1'>
+        <div className='h-[60%]'>
+          <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
+        </div>
+        <div className='h-auto'>
+          <Card>
+            <CardHeader className='py-4'>
+              <div className='flex items-center justify-between'>
+                <CardTitle>Unclassified </CardTitle>
+                <div className='flex gap-2'>
+                  <Button variant={'secondary'}>Classify</Button>
+                  <Button variant={'default'}>Refetch</Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className='h-auto'>
+                <FlatList></FlatList>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <TrackerTransactionDialog

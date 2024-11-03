@@ -27,8 +27,8 @@ export default function ButtonLanguage() {
           src={'https://www.flaticon.com/media/dist/min/img/flags/en.svg'}
           className='object-cover'
           alt=''
-          width={'25'}
-          height={'25'}
+          width={'20'}
+          height={'20'}
         />
       </motion.div>
 
@@ -44,7 +44,7 @@ export default function ButtonLanguage() {
         className='absolute'
         onClick={() => changeLanguage('en')}
       >
-        <Image src={vietnamLanguage} className='object-cover' alt='' width={'25'} height={'25'} />
+        <Image src={vietnamLanguage} className='object-cover' alt='' width={'20'} height={'20'} />
       </motion.div>
       <span className='sr-only'>Toggle language</span>
     </Button>

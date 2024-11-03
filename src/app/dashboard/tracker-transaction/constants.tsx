@@ -118,7 +118,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <DonutChart
             data={data ? data.expenseTransactionTypeStats : []}
-            className={`h-[30rem] w-full`}
+            className={`mt-[-2rem] h-[20rem] w-full`}
             types='donut'
           />
         ),
@@ -129,7 +129,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <DonutChart
             data={data ? data.incomingTransactionTypeStats : []}
-            className={`h-[30rem] w-full`}
+            className={`mt-[-2rem] h-[20rem] w-full`}
             types='donut'
           />
         ),
