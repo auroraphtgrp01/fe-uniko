@@ -43,7 +43,8 @@ export const handleCreateTrackerTransaction = async ({
   hookResetTransactions,
   setDataTableConfig,
   setUncDataTableConfig,
-  resetAccountSource
+  resetAccountSource,
+  resetTransaction
 }: {
   payload: ICreateTrackerTransactionFormData
   hookCreate: any
@@ -54,6 +55,7 @@ export const handleCreateTrackerTransaction = async ({
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   resetAccountSource: any
+  resetTransaction: any
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
@@ -62,6 +64,7 @@ export const handleCreateTrackerTransaction = async ({
         hookResetTodayTxs()
         hookResetTransactions()
         resetAccountSource()
+        resetTransaction()
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         toast.success('Create tracker transaction successfully!')

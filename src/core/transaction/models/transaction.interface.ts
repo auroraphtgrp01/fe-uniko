@@ -23,7 +23,7 @@ export type ITransaction = {
   }
   time: string
   TrackerTransaction: ITrackerTransaction | null
-  accountSource: any
+  accountSource: IAccountSource
 }
 
 export type IGetTransactionResponse = IBaseResponseData<ITransaction[]>

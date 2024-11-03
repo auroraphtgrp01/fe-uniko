@@ -1,3 +1,4 @@
+import { IAccountBank } from '@/core/account-bank/models'
 import { IBaseResponseData } from '@/types/common.i'
 
 export type IAccountSourceResponse = IBaseResponseData<IAccountSource>
@@ -8,7 +9,7 @@ export interface IAccountSource {
   name: String
   type: EAccountSourceType
   initAmount: number
-  accountBank: any
+  accountBank: IAccountBank | null
   currency: string
   currentAmount: number
 }

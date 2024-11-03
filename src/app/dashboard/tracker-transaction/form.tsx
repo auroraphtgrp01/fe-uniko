@@ -130,7 +130,7 @@ export default function TrackerTransactionForm() {
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
   const { getAllData: getAllAccountSourceData } = getAllAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
-  const { resetData: resetCacheTrackerTx, setData } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
+  const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     [GET_ADVANCED_TRACKER_TRANSACTION_KEY],
     updateCacheDataCreate
   )
@@ -159,6 +159,7 @@ export default function TrackerTransactionForm() {
     }
   )
   const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
+  const { resetData: resetTransaction } = useUpdateModel([GET_ADVANCED_TRANSACTION_KEY], () => {})
 
   // effects
   useEffect(() => {
@@ -343,7 +344,8 @@ export default function TrackerTransactionForm() {
               hookResetTransactions: resetCacheTrackerTx,
               setUncDataTableConfig: setDataTableUnclassifiedConfig,
               setDataTableConfig: setDataTableConfig,
-              resetAccountSource: resetAccountSource
+              resetAccountSource: resetAccountSource,
+              resetTransaction: resetTransaction
             })
         }}
         sharedDialogElements={{

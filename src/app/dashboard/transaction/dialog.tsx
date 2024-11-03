@@ -2,7 +2,12 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { IClassifyTransactionFormData, IDataTransactionTable, IDialogTransaction } from '@/core/transaction/models'
+import {
+  IClassifyTransactionFormData,
+  IDataTransactionTable,
+  IDialogTransaction,
+  ITransaction
+} from '@/core/transaction/models'
 import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
 import { Separator } from '@radix-ui/react-select'
 import { ColumnDef } from '@tanstack/react-table'
@@ -15,7 +20,8 @@ import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { initTableConfig } from '@/constants/data-table'
 import { useTranslation } from 'react-i18next'
-import { Badge } from '@/components/ui/badge'
+import DetailUpdateTransactionDialog from '@/components/dashboard/transaction/DetailUpdate'
+import { IAccountSource } from '@/core/account-source/models'
 
 export interface ITransactionDialogProps {
   dataTable: {
@@ -29,8 +35,11 @@ export interface ITransactionDialogProps {
     uncConfig: IDataTableConfig
     setTodayConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
     todayConfig: IDataTableConfig
-    dataDetail: IDataTransactionTable
-    setDataDetail: React.Dispatch<React.SetStateAction<IDataTransactionTable>>
+  }
+  dialogDetailUpdate: {
+    dataDetail: ITransaction
+    setDataDetail: React.Dispatch<React.SetStateAction<ITransaction>>
+    accountSourceData: IAccountSource[]
   }
   dialogState: {
     isDialogOpen: IDialogTransaction
@@ -55,67 +64,73 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const formClassifyRef = useRef<HTMLFormElement>(null)
   // useStates
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
-  const { dataTable, dialogState, classifyDialog, dialogEditTrackerType } = params
+  const { dataTable, dialogState, classifyDialog, dialogEditTrackerType, dialogDetailUpdate } = params
   const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )
 
   const detailsConfigDialog: IDialogConfig = {
-    content: (
-      <div className='py-4'>
-        <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
-          <div className='mb-2 w-full sm:mb-0'>
-            <p className='text-sm text-muted-foreground'>
-              {t('transaction:TransactionType.detailsConfigDialog.amount')}
-            </p>
-            <div className='flex w-full items-center justify-between'>
-              <p className='text-xl font-bold'>{dataTable.dataDetail.amount}</p>
-              {dataTable.dataDetail.accountNo ? (
-                dataTable.dataDetail.TrackerTransaction ? (
-                  <span
-                    className='border-collapse rounded-md bg-green-100 px-4 py-2 text-lg text-green-600'
-                    style={{ userSelect: 'none' }}
-                  >
-                    Classified
-                  </span>
-                ) : (
-                  <Button
-                    variant={'greenPastel1'}
-                    type='button'
-                    onClick={() => {
-                      dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
-                    }}
-                  >
-                    {t('transaction:TransactionType.detailsConfigDialog.trackerTransaction')}
-                  </Button>
-                )
-              ) : (
-                ''
-              )}
-            </div>
-          </div>
-        </div>
+    // content: (
+    //   <div className='py-4'>
+    //     <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between'>
+    //       <div className='mb-2 w-full sm:mb-0'>
+    //         <p className='text-sm text-muted-foreground'>
+    //           {t('transaction:TransactionType.detailsConfigDialog.amount')}
+    //         </p>
+    //         <div className='flex w-full items-center justify-between'>
+    //           <p className='text-xl font-bold'>{dataTable.dataDetail.amount}</p>
+    //           {dataTable.dataDetail.accountNo ? (
+    //             dataTable.dataDetail.TrackerTransaction ? (
+    //               <span
+    //                 className='border-collapse rounded-md bg-green-100 px-4 py-2 text-lg text-green-600'
+    //                 style={{ userSelect: 'none' }}
+    //               >
+    //                 Classified
+    //               </span>
+    //             ) : (
+    //               <Button
+    //                 variant={'greenPastel1'}
+    //                 type='button'
+    //                 onClick={() => {
+    //                   dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
+    //                 }}
+    //               >
+    //                 {t('transaction:TransactionType.detailsConfigDialog.trackerTransaction')}
+    //               </Button>
+    //             )
+    //           ) : (
+    //             ''
+    //           )}
+    //         </div>
+    //       </div>
+    //     </div>
 
-        <Separator className='my-2' />
-        <div className='overflow-x-auto'>
-          <Table className=''>
-            <TableBody>
-              <TableRow>
-                <TableCell> {t('transaction:TransactionType.detailsConfigDialog.direction')}</TableCell>
-                <TableCell>{dataTable.dataDetail.direction}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.accountBank')}</TableCell>
-                <TableCell>{dataTable.dataDetail.accountNo}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('transaction:TransactionType.detailsConfigDialog.description')}</TableCell>
-                <TableCell>{dataTable.dataDetail.description}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+    //     <Separator className='my-2' />
+    //     <div className='overflow-x-auto'>
+    //       <Table className=''>
+    //         <TableBody>
+    //           <TableRow>
+    //             <TableCell> {t('transaction:TransactionType.detailsConfigDialog.direction')}</TableCell>
+    //             <TableCell>{dataTable.dataDetail.direction}</TableCell>
+    //           </TableRow>
+    //           <TableRow>
+    //             <TableCell>{t('transaction:TransactionType.detailsConfigDialog.accountBank')}</TableCell>
+    //             <TableCell>{dataTable.dataDetail.accountNo}</TableCell>
+    //           </TableRow>
+    //           <TableRow>
+    //             <TableCell>{t('transaction:TransactionType.detailsConfigDialog.description')}</TableCell>
+    //             <TableCell>{dataTable.dataDetail.description}</TableCell>
+    //           </TableRow>
+    //         </TableBody>
+    //       </Table>
+    //     </div>
+    //   </div>
+    // ),
+    content: (
+      <DetailUpdateTransactionDialog
+        accountSourceData={dialogDetailUpdate.accountSourceData}
+        transaction={dialogDetailUpdate.dataDetail}
+      />
     ),
     description: t('transaction:TransactionType.detailsDialog.description'),
     title: t('transaction:TransactionType.detailsDialog.title'),
@@ -131,7 +146,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           columns={dataTable.columns}
           data={dataTable.transactionTodayData}
           onRowClick={(rowData) => {
-            dataTable.setDataDetail(rowData)
+            dialogDetailUpdate.setDataDetail(rowData)
             dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
           }}
           setConfig={dataTable.setTodayConfig}
@@ -159,7 +174,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           columns={dataTable.columns}
           data={dataTable.unclassifiedTransactionData}
           onRowClick={(rowData) => {
-            dataTable.setDataDetail(rowData)
+            dialogDetailUpdate.setDataDetail(rowData)
             dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
             setTypeOfTrackerType(rowData.direction)
           }}
@@ -183,7 +198,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   }
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: ClassifyForm({
-      transactionId: dataTable.dataDetail.id,
+      transactionId: dialogDetailUpdate.dataDetail.id,
       incomeTrackerType: classifyDialog.incomeTrackerTransactionType,
       expenseTrackerType: classifyDialog.expenseTrackerTransactionType,
       openEditTrackerTxTypeDialog,

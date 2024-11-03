@@ -71,11 +71,11 @@ export default function ProfileForm() {
   const formUpdatePasswordRef = useRef<HTMLFormElement>(null)
   const formUpdatePasswordRef1 = useRef<HTMLFormElement>(null)
   const translatedUpdateUserFormBody = getTranslatedFormBody(updateUserFormBody, t)
-  const translatedupdatePasswordFormBodyWithoutCurrentPassword = getTranslatedFormBody(
+  const translatedUpdatePasswordFormBodyWithoutCurrentPassword = getTranslatedFormBody(
     updatePasswordFormBodyWithoutCurrentPassword,
     t
   )
-  const translatedupdatePasswordFormBodyWithCurrentPassword = getTranslatedFormBody(
+  const translatedUpdatePasswordFormBodyWithCurrentPassword = getTranslatedFormBody(
     updatePasswordFormBodyWithCurrentPassword,
     t
   )
@@ -170,14 +170,14 @@ export default function ProfileForm() {
                 {userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword ? (
                   <FormZod
                     submitRef={formUpdatePasswordRef}
-                    formFieldBody={translatedupdatePasswordFormBodyWithoutCurrentPassword}
+                    formFieldBody={translatedUpdatePasswordFormBodyWithoutCurrentPassword}
                     formSchema={updatePassWordSchemaWithoutCurrentPassword}
                     onSubmit={handleUpdatePassword}
                   />
                 ) : (
                   <FormZod
                     submitRef={formUpdatePasswordRef1}
-                    formFieldBody={translatedupdatePasswordFormBodyWithCurrentPassword}
+                    formFieldBody={translatedUpdatePasswordFormBodyWithCurrentPassword}
                     formSchema={updatePassWordSchemaWithCurrentPassword}
                     onSubmit={handleUpdatePassword}
                   />

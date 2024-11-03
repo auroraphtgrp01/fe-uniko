@@ -21,12 +21,14 @@ import {
   IDataTransactionTable,
   IDialogTransaction,
   IGetTransactionResponse,
+  ITransaction,
   ITransactionSummary
 } from '@/core/transaction/models'
 import {
   initButtonInDataTableHeader,
   initDialogFlag,
   initEmptyDetailTransaction,
+  initEmptyTransactionData,
   initEmptyTransactionSummaryData,
   transactionHeaders
 } from './constants'
@@ -39,7 +41,6 @@ import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks
 import {
   initTrackerTypeData,
   updateCacheDataClassifyFeat,
-  updateCacheDataCreate as updateCacheDataClassify,
   handleClassifyTransaction,
   handleCreateTrackerTxType,
   updateCacheDataTodayTxClassifyFeat
@@ -70,6 +71,7 @@ import {
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
+import { useAccountSource } from '@/core/account-source/hooks'
 
 export default function TransactionForm() {
   // states
@@ -89,7 +91,7 @@ export default function TransactionForm() {
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
-  const [dataDetail, setDataDetail] = useState<IDataTransactionTable>(initEmptyDetailTransaction)
+  const [dataDetail, setDataDetail] = useState<ITransaction>(initEmptyTransactionData)
   const [dataTable, setDataTable] = useState<IDataTransactionTable[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
@@ -100,16 +102,19 @@ export default function TransactionForm() {
   const [transactionSummary, setTransactionSummary] = useState<ITransactionSummary>(initEmptyTransactionSummaryData)
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
+  const [idRowClicked, setIdRowClicked] = useState<string>('')
 
   // hooks
   const { t } = useTranslation(['transaction'])
   const { verifyToken } = useAuth()
   const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
+  const { getAllAccountSource } = useAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
   const { getMe } = useUser()
   const { user } = useStoreLocal()
   const socket = useSocket()
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
+  const { getAllData: accountSourceData } = getAllAccountSource()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
   const { getTransactions, getUnclassifiedTransactions, getTodayTransactions } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions })
@@ -169,6 +174,12 @@ export default function TransactionForm() {
   }
 
   // effects
+  useEffect(() => {
+    if (idRowClicked !== '' && dataTransaction) {
+      setDataDetail(dataTransaction.data.find((e) => e.id === idRowClicked) || initEmptyTransactionData)
+      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+    }
+  }, [idRowClicked])
   useEffect(() => {
     if (dataUnclassifiedTxs) {
       setTransactionSummary((prev) => ({
@@ -382,7 +393,7 @@ export default function TransactionForm() {
               data={dataTable}
               config={dataTableConfig}
               setConfig={setDataTableConfig}
-              onRowClick={onRowClick}
+              onRowClick={(rowData) => setIdRowClicked(rowData.id)}
               isLoading={isGetTransaction}
               // isLoading={isGetTransaction}
               buttons={dataTableButtons}
@@ -400,9 +411,12 @@ export default function TransactionForm() {
             setUncConfig: setUncDataTableConfig,
             uncConfig: uncDataTableConfig,
             setTodayConfig: setTodayDataTableConfig,
-            todayConfig: todayDataTableConfig,
-            dataDetail: dataDetail,
-            setDataDetail
+            todayConfig: todayDataTableConfig
+          }}
+          dialogDetailUpdate={{
+            dataDetail,
+            setDataDetail,
+            accountSourceData: accountSourceData?.data ?? []
           }}
           dialogState={{
             isDialogOpen: isDialogOpen,
