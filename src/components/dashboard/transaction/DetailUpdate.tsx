@@ -24,7 +24,7 @@ import toast from 'react-hot-toast'
 interface IDetailUpdateTransactionDialogProps {
   updateTransactionProps: {
     transaction: ITransaction
-    statusUpdateTransaction?: 'error' | 'success' | 'pending' | 'idle'
+    statusUpdateTransaction: 'error' | 'success' | 'pending' | 'idle'
     handleUpdateTransaction: (
       data: IUpdateTransactionBody,
       setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
@@ -224,7 +224,16 @@ export default function DetailUpdateTransaction({
         <Button type='button' variant='outline' onClick={() => updateTransactionProps.setIsEditing(false)}>
           Hủy
         </Button>
-        <Button type='button' onClick={handleSubmit}>
+        <Button
+          type='button'
+          onClick={handleSubmit}
+          isLoading={
+            updateTrackerTransactionProps
+              ? updateTrackerTransactionProps.statusUpdateTrackerTransaction === 'pending' &&
+                updateTransactionProps.statusUpdateTransaction === 'pending'
+              : updateTransactionProps.statusUpdateTransaction === 'pending'
+          }
+        >
           Lưu thay đổi
         </Button>
       </div>

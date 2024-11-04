@@ -41,6 +41,7 @@ export interface ITransactionDialogProps {
     accountSourceData: IAccountSource[]
     handleUpdate: (data: IUpdateTransactionBody, setIsEditing: React.Dispatch<React.SetStateAction<boolean>>) => void
     setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
+    statusUpdateTransaction: 'error' | 'success' | 'pending' | 'idle'
   }
   dialogState: {
     isDialogOpen: IDialogTransaction
@@ -78,7 +79,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           transaction: dialogDetailUpdate.dataDetail,
           handleUpdateTransaction: dialogDetailUpdate.handleUpdate,
           isEditing,
-          setIsEditing
+          setIsEditing,
+          statusUpdateTransaction: dialogDetailUpdate.statusUpdateTransaction
         }}
         commonProps={{ accountSourceData: dialogDetailUpdate.accountSourceData }}
       />

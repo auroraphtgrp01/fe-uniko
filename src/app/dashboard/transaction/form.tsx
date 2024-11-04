@@ -442,7 +442,8 @@ export default function TransactionForm() {
                 setDataTableConfig: setDataTableConfig,
                 setDetailDialog: setDataDetail
               }),
-            setIdRowClicked
+            setIdRowClicked,
+            statusUpdateTransaction: statusUpdate
           }}
           dialogState={{
             isDialogOpen: isDialogOpen,
