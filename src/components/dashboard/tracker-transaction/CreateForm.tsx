@@ -1,4 +1,4 @@
-import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
+import { ICreateTrackerTransactionBody } from '@/core/transaction/models'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
@@ -18,7 +18,7 @@ interface ICreateTrackerTransactionFormProps {
   accountSourceData: IAccountSource[]
   openEditTrackerTxTypeDialog: boolean
   setOpenEditTrackerTxTypeDialog: React.Dispatch<React.SetStateAction<boolean>>
-  handleCreate: (data: ICreateTrackerTransactionFormData) => void
+  handleCreate: (data: ICreateTrackerTransactionBody) => void
   handleCreateTrackerType: (
     data: ITrackerTransactionTypeBody,
     setIsCreating: React.Dispatch<React.SetStateAction<boolean>>

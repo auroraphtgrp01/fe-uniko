@@ -6,7 +6,7 @@ export type IAdvancedAccountSourceResponse = IBaseResponseData<IAccountSource[]>
 
 export interface IAccountSource {
   id: string
-  name: String
+  name: string
   type: EAccountSourceType
   initAmount: number
   accountBank: IAccountBank | null
@@ -16,7 +16,7 @@ export interface IAccountSource {
 
 export interface IAccountSourceDataFormat {
   id: string
-  name: String
+  name: string
   type: any
   initAmount: string
   accountBank: string

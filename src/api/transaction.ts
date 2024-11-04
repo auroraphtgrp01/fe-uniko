@@ -3,5 +3,6 @@ export const transactionRoutes = {
   getAdvancedTransaction: 'transactions',
   refetchPayment: 'payment/refetch/:id',
   getUnclassifiedTransactions: 'transactions/unclassified',
-  getTodayTransactions: 'transactions/today'
+  getTodayTransactions: 'transactions/today',
+  updateTransaction: 'transactions/:id'
 }

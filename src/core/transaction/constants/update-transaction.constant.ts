@@ -23,15 +23,15 @@ export const defineUpdateTransactionFormBody = ({
         type: 'number'
       }
     },
-    {
-      name: 'accountSourceId',
-      type: EFieldType.Combobox,
-      label: 'Account Source',
-      placeHolder: 'Select account source',
-      props: {
-        dataArr: modifiedTrackerTypeForComboBox(accountSourceData)
-      }
-    },
+    // {
+    //   name: 'accountSourceId',
+    //   type: EFieldType.Combobox,
+    //   label: 'Account Source',
+    //   placeHolder: 'Select account source',
+    //   props: {
+    //     dataArr: modifiedTrackerTypeForComboBox(accountSourceData)
+    //   }
+    // },
     {
       name: 'direction',
       type: EFieldType.Select,
@@ -54,7 +54,7 @@ export const defineUpdateTransactionFormBody = ({
 export const updateTransactionSchema = z
   .object({
     amount: z.string(),
-    accountSourceId: z.string().uuid(),
+    // accountSourceId: z.string().uuid(),
     direction: z.enum(['INCOMING', 'EXPENSE'])
   })
   .strict()

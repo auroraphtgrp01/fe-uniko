@@ -5,8 +5,8 @@ import {
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import {
-  IClassifyTransactionFormData,
-  ICreateTrackerTransactionFormData,
+  IClassifyTransactionBody,
+  ICreateTrackerTransactionBody,
   IDataTransactionTable,
   ITransaction
 } from '@/core/transaction/models'
@@ -38,6 +38,13 @@ export interface ITrackerTransaction {
   time: string
 }
 
+export interface IUpdateTrackerTransactionBody {
+  id: string
+  reasonName: string
+  description: string
+  trackerTypeId: string
+}
+
 export interface ICustomTrackerTransaction {
   id: string
   reasonName: string
@@ -62,13 +69,6 @@ export interface ITrackerTransactionDataFormat {
   checkType?: string
 }
 
-export interface IClassifyTransactionBody {
-  id?: string
-  transactionId?: string
-  trackerType: string
-  description: string
-}
-
 export interface IStatisticData extends IChartData {
   statusCode: number
 }
@@ -88,13 +88,13 @@ export interface IUnclassifiedTxDialog {
 }
 export interface IClassifyTransactionDialog {
   classifyTransaction: any
-  handleClassify: (data: IClassifyTransactionFormData) => void
+  handleClassify: (data: IClassifyTransactionBody) => void
 }
 export interface ICreateTrackerTransactionDialog {
-  formData: ICreateTrackerTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
+  formData: ICreateTrackerTransactionBody
+  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionBody>>
   accountSourceData: IAccountSource[]
-  handleCreate: (data: ICreateTrackerTransactionFormData) => void
+  handleCreate: (data: ICreateTrackerTransactionBody) => void
 }
 
 export interface ICreateTrackerTransactionTypeDialog {

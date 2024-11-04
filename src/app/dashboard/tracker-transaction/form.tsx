@@ -27,8 +27,8 @@ import TrackerTransactionDialog from './dialog'
 import { initTableConfig } from '@/constants/data-table'
 import { initQueryOptions } from '@/constants/init-query-options'
 import {
-  IClassifyTransactionFormData,
-  ICreateTrackerTransactionFormData,
+  IClassifyTransactionBody,
+  ICreateTrackerTransactionBody,
   IDataTransactionTable,
   IGetTransactionResponse
 } from '@/core/transaction/models'
@@ -42,7 +42,7 @@ import {
 } from '../transaction/constants'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { useTransaction } from '@/core/transaction/hooks'
-import { modifyTransactionHandler } from '../transaction/handler'
+import { modifyTransactionHandler, updateCacheDataTransactionForClassify } from '../transaction/handler'
 import {
   GET_ADVANCED_TRACKER_TRANSACTION_KEY,
   GET_ALL_TRACKER_TRANSACTION_TYPE_KEY,
@@ -90,9 +90,7 @@ export default function TrackerTransactionForm() {
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
     useState<ITrackerTransactionTypeBody>(initTrackerTypeForm)
-  const [formDataCreate, setFormDataCreate] = useState<ICreateTrackerTransactionFormData>(
-    initCreateTrackerTransactionForm
-  )
+  const [formDataCreate, setFormDataCreate] = useState<ICreateTrackerTransactionBody>(initCreateTrackerTransactionForm)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
@@ -160,6 +158,10 @@ export default function TrackerTransactionForm() {
   )
   const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
   const { resetData: resetTransaction } = useUpdateModel([GET_ADVANCED_TRANSACTION_KEY], () => {})
+  const { resetData, setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY],
+    updateCacheDataTransactionForClassify
+  )
 
   // effects
   useEffect(() => {
@@ -317,7 +319,7 @@ export default function TrackerTransactionForm() {
       <TrackerTransactionDialog
         classifyTransactionDialog={{
           classifyTransaction,
-          handleClassify: (data: IClassifyTransactionFormData) => {
+          handleClassify: (data: IClassifyTransactionBody) => {
             handleClassifyTransaction({
               payload: data,
               hookCreate: classifyTransaction,
@@ -326,7 +328,8 @@ export default function TrackerTransactionForm() {
               hookResetCacheStatistic: resetCacheStatistic,
               hookResetTrackerTx: resetCacheTrackerTx,
               hookSetCacheToday: setCacheTodayTxs,
-              setUncDataTableConfig: resetCacheUnclassifiedTxs
+              setUncDataTableConfig: resetCacheUnclassifiedTxs,
+              hookSetCacheTransaction: setDataTransactionClassifyFeat
             })
           }
         }}
@@ -334,7 +337,7 @@ export default function TrackerTransactionForm() {
           formData: formDataCreate,
           setFormData: setFormDataCreate,
           accountSourceData: getAllAccountSourceData?.data || [],
-          handleCreate: (data: ICreateTrackerTransactionFormData) =>
+          handleCreate: (data: ICreateTrackerTransactionBody) =>
             handleCreateTrackerTransaction({
               payload: data,
               hookCreate: createTransaction,

@@ -2,7 +2,7 @@ import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { IClassifyTransactionFormData } from '@/core/transaction/models'
+import { IClassifyTransactionBody } from '@/core/transaction/models'
 import { useEffect, useState } from 'react'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import FormZod from '@/components/core/FormZod'
@@ -19,7 +19,7 @@ interface ClassiFyFormProps {
   setOpenEditTrackerTxTypeDialog: React.Dispatch<React.SetStateAction<boolean>>
   typeOfTrackerType: ETypeOfTrackerTransactionType
   formClassifyRef: React.RefObject<HTMLFormElement>
-  handleClassify: (data: IClassifyTransactionFormData) => void
+  handleClassify: (data: IClassifyTransactionBody) => void
   handleCreateTrackerType: (
     data: ITrackerTransactionTypeBody,
     setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
@@ -58,7 +58,7 @@ export default function ClassifyForm({
         expenseTrackerType,
         incomeTrackerType
       })}
-      onSubmit={(data) => handleClassify({ ...data, transactionId } as IClassifyTransactionFormData)}
+      onSubmit={(data) => handleClassify({ ...data, transactionId } as IClassifyTransactionBody)}
       submitRef={formClassifyRef}
     />
   )

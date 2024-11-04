@@ -6,8 +6,8 @@ import {
   ITrackerTransactionResponse
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import {
-  IClassifyTransactionFormData,
-  ICreateTrackerTransactionFormData,
+  IClassifyTransactionBody,
+  ICreateTrackerTransactionBody,
   IDataTransactionTable,
   IGetTransactionResponse,
   ITransaction,
@@ -46,7 +46,7 @@ export const handleCreateTrackerTransaction = async ({
   resetAccountSource,
   resetTransaction
 }: {
-  payload: ICreateTrackerTransactionFormData
+  payload: ICreateTrackerTransactionBody
   hookCreate: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
@@ -82,17 +82,19 @@ export const handleClassifyTransaction = async ({
   hookSetCacheToday,
   hookResetCacheStatistic,
   hookResetTrackerTx,
+  hookSetCacheTransaction,
   setUncDataTableConfig,
   setTodayDataTableConfig,
   setDataTableConfig
 }: {
-  payload: IClassifyTransactionFormData
+  payload: IClassifyTransactionBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
   hookCreate: any
   hookResetCacheUnclassified: any
   hookResetTrackerTx: any
   hookResetCacheStatistic?: any
   hookSetCacheToday: any
+  hookSetCacheTransaction: any
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -100,6 +102,7 @@ export const handleClassifyTransaction = async ({
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
+        hookSetCacheTransaction(res.data)
         hookResetCacheUnclassified()
         hookSetCacheToday(res.data)
         hookResetTrackerTx()

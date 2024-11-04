@@ -11,18 +11,21 @@ import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
   handleAccountBankRefetching,
+  handleUpdateTransaction,
   modifyTransactionHandler,
-  updateCacheDataUpdate
+  updateCacheDataTransactionForClassify,
+  updateCacheDataTransactionForUpdate
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
 import { useTransaction } from '@/core/transaction/hooks'
 import {
-  IClassifyTransactionFormData,
+  IClassifyTransactionBody,
   IDataTransactionTable,
   IDialogTransaction,
   IGetTransactionResponse,
   ITransaction,
-  ITransactionSummary
+  ITransactionSummary,
+  IUpdateTransactionBody
 } from '@/core/transaction/models'
 import {
   initButtonInDataTableHeader,
@@ -72,6 +75,7 @@ import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/m
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { useAccountSource } from '@/core/account-source/hooks'
+import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 
 export default function TransactionForm() {
   // states
@@ -116,12 +120,19 @@ export default function TransactionForm() {
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
   const { getAllData: accountSourceData } = getAllAccountSource()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { getTransactions, getUnclassifiedTransactions, getTodayTransactions } = useTransaction()
+  const { getTransactions, getUnclassifiedTransactions, getTodayTransactions, updateTransaction, statusUpdate } =
+    useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions })
-  const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(
-    GET_ADVANCED_TRANSACTION_KEY,
-    updateCacheDataUpdate
+  const { resetData, setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataTransactionForClassify
   )
+
+  const { setData: setDataTransactionUpdateFeat } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataTransactionForUpdate
+  )
+
   const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
     (oldData, newData) => {
@@ -133,10 +144,7 @@ export default function TransactionForm() {
     updateCacheDataClassifyFeat
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { resetData: resetCacheAccountSource } = useUpdateModel(
-    [STATISTIC_TRACKER_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    () => {}
-  )
+  const { resetData: resetCacheAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
   const { resetData: resetCacheDataTrackerTx } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
   const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions })
@@ -144,6 +152,10 @@ export default function TransactionForm() {
   const { setData: setDataTodayTxs, resetData: resetCacheTodayTx } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
     updateCacheDataTodayTxClassifyFeat
+  )
+  const { setData: setDataTodayTxUpdateFeat } = useUpdateModel(
+    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
+    updateCacheDataTransactionForUpdate
   )
 
   const refetchTransactionBySocket = () => {
@@ -416,7 +428,21 @@ export default function TransactionForm() {
           dialogDetailUpdate={{
             dataDetail,
             setDataDetail,
-            accountSourceData: accountSourceData?.data ?? []
+            accountSourceData: accountSourceData?.data ?? [],
+            handleUpdate: (data: IUpdateTransactionBody, setIsEditing: React.Dispatch<React.SetStateAction<boolean>>) =>
+              handleUpdateTransaction({
+                data,
+                setIsEditing,
+                hookResetStatistic: resetCacheStatistic,
+                hookResetCacheTrackerTransaction: resetCacheDataTrackerTx,
+                hookSetCacheTodayTransaction: setDataTodayTxUpdateFeat,
+                hookUpdate: updateTransaction,
+                hookSetCacheTransaction: setDataTransactionUpdateFeat,
+                hookResetCacheAccountSource: resetCacheAccountSource,
+                setDataTableConfig: setDataTableConfig,
+                setDetailDialog: setDataDetail
+              }),
+            setIdRowClicked
           }}
           dialogState={{
             isDialogOpen: isDialogOpen,
@@ -425,7 +451,7 @@ export default function TransactionForm() {
           classifyDialog={{
             incomeTrackerTransactionType: incomingTrackerType,
             expenseTrackerTransactionType: expenseTrackerType,
-            handleClassify: (data: IClassifyTransactionFormData) => {
+            handleClassify: (data: IClassifyTransactionBody) => {
               handleClassifyTransaction({
                 payload: data,
                 hookCreate: classifyTransaction,
@@ -435,7 +461,8 @@ export default function TransactionForm() {
                 setUncDataTableConfig: setUncDataTableConfig,
                 setTodayDataTableConfig: setTodayDataTableConfig,
                 setDataTableConfig: setDataTableConfig,
-                setIsDialogOpen: setIsDialogOpen
+                setIsDialogOpen: setIsDialogOpen,
+                hookSetCacheTransaction: setDataTransactionClassifyFeat
               })
             }
           }}

@@ -13,10 +13,11 @@ export default function DetailUpdateTrackerTransaction({
 }: IDetailUpdateTrackerTransactionProps) {
   const { Transaction, ...rest } = trackerTransaction
   return (
-    <DetailUpdateTransaction
-      accountSourceData={accountSourceData}
-      trackerTransaction={rest}
-      transaction={Transaction}
-    />
+    <div></div>
+    // <DetailUpdateTransaction
+    //   commonProps={{ accountSourceData }}
+    //   updateTrackerTransactionProps={{ trackerTransaction: rest }}
+    //   updateTransactionProps={{ transaction: Transaction }}
+    // />
   )
 }
