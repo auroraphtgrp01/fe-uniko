@@ -1,54 +1,29 @@
 'use client'
-import { Card, CardContent } from '@/components/ui/card'
+
+import React, { useState, useEffect, useMemo } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
-import CardInHeader from '@/components/dashboard/CardInHeader'
-import React, { useEffect, useMemo, useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import DonutChart from '@/components/core/charts/DonutChart'
+import { ArrowDownRight, ArrowUpRight, DollarSign, TrendingDown, TrendingUp } from 'lucide-react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
-import {
-  initAccountSourceFormData,
-  initButtonInDataTableHeader,
-  initDialogFlag
-} from '@/app/dashboard/account-source/constants'
-import {
-  filterDataAccountSource,
-  handleShowDetailAccountSource,
-  initDataTable,
-  updateCacheDataCreate,
-  updateCacheDataUpdate,
-  updateCacheDetailData
-} from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
-import { useAccountSource } from '@/core/account-source/hooks'
-import { getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
-import { getColumns } from '@/components/dashboard/ColumnsTable'
-import {
-  IAccountSource,
-  IAccountSourceBody,
-  IAccountSourceDataFormat,
-  IAccountSourceResponse,
-  IAdvancedAccountSourceResponse,
-  IDialogAccountSource
-} from '@/core/account-source/models'
 import { initQueryOptions } from '@/constants/init-query-options'
-import { useUpdateModel } from '@/hooks/useQueryModel'
-import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
-import { useStoreLocal } from '@/hooks/useStoreLocal'
-import { GET_ADVANCED_ACCOUNT_SOURCE_KEY, GET_ALL_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
-import { useAuth } from '@/core/auth/hooks'
-import { arraysEqual, getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
-import { useTranslation } from 'react-i18next'
-import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
+import { getConvertedKeysToTitleCase, getTypes } from '@/libraries/utils'
+import { getColumns } from '@/components/dashboard/ColumnsTable'
+import { IAccountSourceDataFormat } from '@/core/account-source/models'
+import TrackerTransactionChart from '@/components/dashboard/TrackerTransactionChart'
+import { Button } from '@/components/ui/button'
+import FlatList from '@/components/core/FlatList'
+import { Progress } from '@/components/ui/progress'
 
 export default function AccountSourceForm() {
-  const { t } = useTranslation(['common'])
   // States
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
-  const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
-  const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
-  const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
+
   // Memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const columns = useMemo(() => {
@@ -56,87 +31,120 @@ export default function AccountSourceForm() {
     return getColumns<IAccountSourceDataFormat>(titles, true)
   }, [tableData])
 
-  // Hooks
-  const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
-  const { createAccountSource, updateAccountSource, getAdvancedAccountSource } = useAccountSource()
-  const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
-  const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
-    updateCacheDataCreate
-  )
-  const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
-    updateCacheDataUpdate
-  )
-  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
-  const { setAccountSourceData, accountSourceData } = useStoreLocal()
   // Effects
-  useEffect(() => {
-    if (getAdvancedData) {
-      const data = getAdvancedData.data.map((item) => item)
-      setAccountSourceData(data)
-      setDataTableConfig((prev) => ({
-        ...prev,
-        types: getTypes(accountSourceData, 'type'),
-        totalPage: Number(getAdvancedData.pagination?.totalPage)
-      }))
-    }
-  }, [getAdvancedData])
-
-  useEffect(() => {
-    console.log('accountSourceData', accountSourceData)
-
-    initDataTable(setTableData, accountSourceData)
-  }, [accountSourceData])
-
-  useEffect(() => {
-    if (tableData !== undefined && idRowClicked !== '') {
-      const getDetailAccountSource = tableData.find((row) => row.id === idRowClicked)
-      handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
-    }
-  }, [tableData, idRowClicked])
-
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
 
-  // Other components
-  const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+  const [chartData] = useState({
+    expenseTransactionTypeStats: [
+      { name: 'item1', value: 10 },
+      { name: 'item2', value: 20 },
+      { name: 'item3', value: 30 },
+      { name: 'item4', value: 40 },
+      { name: 'item5', value: 50 }
+    ]
+  })
 
   return (
-    <div className='w-full'>
-      <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
-        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
-        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
+    <div className='w-full space-y-5'>
+      <div className='grid grid-cols-1 gap-5 md:grid-cols-4'>
+        <div className='space-y-5 md:col-span-1'>
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-base font-medium md:text-xl'>Total Income</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='mt-2'>
+                <p className='text-xl font-bold md:text-2xl'>120.000.000 VND</p>
+                <p className='flex items-center text-xs text-green-500 md:text-sm'>
+                  <TrendingUp className='mr-1 h-4 w-4 md:h-5 md:w-5' />
+                  +2.5% so với tháng trước
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-base font-medium md:text-xl'>Total Expenses</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='mt-2'>
+                <p className='text-xl font-bold md:text-2xl'>12.000.000 VND</p>
+                <p className='flex items-center text-xs text-red-500 md:text-sm'>
+                  <TrendingUp className='mr-1 h-4 w-4 md:h-5 md:w-5' />
+                  +2.5% so với tháng trước
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-base font-medium md:text-xl'>Net Balance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='mt-2'>
+                <p className='text-xl font-bold md:text-2xl'>12.000.000 VND</p>
+                <p className='flex items-center text-xs text-yellow-500 md:text-sm'>
+                  <TrendingDown className='mr-1 h-4 w-4 md:h-5 md:w-5' />
+                  +2.5% so với tháng trước
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <Card className='flex flex-col md:col-span-3'>
+          <CardContent>
+            <DataTable
+              data={tableData}
+              config={dataTableConfig}
+              setConfig={setDataTableConfig}
+              columns={columns}
+              onRowClick={(data) => {}}
+            />
+          </CardContent>
+        </Card>
       </div>
-      <Card className='mt-5'>
-        <CardContent>
-          <DataTable
-            data={tableData}
-            config={dataTableConfig}
-            setConfig={setDataTableConfig}
-            columns={columns}
-            onRowClick={(data: IAccountSourceDataFormat) => setIdRowClicked(data.id)}
-            buttons={dataTableButtons}
-          />
-        </CardContent>
-      </Card>
-      <AccountSourceDialog
-        sharedDialogElements={{
-          isDialogOpen,
-          setIsDialogOpen,
-          hookResetCacheStatistic: resetCacheStatistic,
-          hookResetCacheGetAllAccount: resetCacheGetAllAccount
-        }}
-        createAccountSourceDialog={{ createAccountSource, setDataCreate }}
-        UpdateAccountSourceDialog={{
-          setDataUpdate,
-          updateAccountSource,
-          setIdRowClicked
-        }}
-      />
+      <div className='grid grid-cols-1 gap-5 md:grid-cols-3'>
+        <Card className='col-span-1 h-full flex-1 rounded-md p-4 md:col-span-2 md:p-5'>
+          <Tabs defaultValue='account'>
+            <TabsList className='grid w-full grid-cols-2'>
+              <TabsTrigger value='account'>Account</TabsTrigger>
+              <TabsTrigger value='password'>Password</TabsTrigger>
+            </TabsList>
+            <TabsContent value='account'>
+              <div className='h-[250px] md:h-[400px]'>
+                <DonutChart data={chartData.expenseTransactionTypeStats} className='h-full w-full' types='multiple' />
+              </div>
+            </TabsContent>
+            <TabsContent value='password'>
+              <div className='h-[250px] md:h-[400px]'>
+                <DonutChart data={chartData.expenseTransactionTypeStats} className='h-full w-full' types='donut' />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </Card>
+        <Card className='col-span-1'>
+          <CardHeader className='py-4'>
+            <div className='flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0'>
+              <CardTitle className='text-lg'>Unclassified</CardTitle>
+              <div className='flex gap-2'>
+                <Button variant='secondary' className='flex-1 sm:flex-none'>
+                  Classify
+                </Button>
+                <Button variant='default' className='flex-1 sm:flex-none'>
+                  Refetch
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className='max-h-[300px] overflow-y-auto'>
+              <FlatList />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

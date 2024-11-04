@@ -33,6 +33,13 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
     accountBank: accountBank ? accountBank.type.split('_')[0] + ' Bank' : 'N/A',
     currentAmount: formatCurrency(currentAmount, 'đ'),
     checkType: type
+    // status: (
+    //   <div>
+    //     <p className='rounded-sm bg-yellow-100 p-1 text-yellow-800'>Unclassified</p>
+    //     <p className='rounded-sm bg-green-100 p-1 text-green-800'>Classified</p>
+    //     <p className='rounded-sm bg-blue-100 p-1 text-blue-800'>Created</p>
+    //   </div>
+    // )
   }
 }
 
