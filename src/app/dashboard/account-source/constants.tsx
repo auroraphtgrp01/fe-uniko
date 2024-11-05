@@ -30,7 +30,7 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
         </div>
       ),
     initAmount: formatCurrency(initAmount, 'đ'),
-    accountBank: accountBank?.type.split('_')[0] + ' Bank',
+    accountBank: accountBank ? accountBank.type.split('_')[0] + ' Bank' : 'N/A',
     currentAmount: formatCurrency(currentAmount, 'đ'),
     checkType: type
   }

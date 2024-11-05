@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,23 +12,39 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { motion } from 'framer-motion'
-import { getAccessTokenFromLocalStorage, getUserInfoFromLocalStorage } from '@/libraries/helpers'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import AvatarDefault from '@/images/avatar.jpg'
 import Image from 'next/image'
+import { useAuth } from '@/core/auth/hooks'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { useQueryClient } from '@tanstack/react-query'
+import { useUser } from '@/core/users/hooks'
+import { useEffect } from 'react'
 
 export function UserNav() {
   const router = useRouter()
-  const user = getUserInfoFromLocalStorage()
-
+  const queryClient = useQueryClient()
+  const { user, setUser } = useStoreLocal()
+  const { useLogout } = useAuth()
+  const { getMe } = useUser()
+  const { executeGetMe, userGetMeData } = getMe(false)
+  const { executeLogout } = useLogout()
   const logOut = () => {
+    queryClient.clear()
+    executeLogout()
+    setUser(null)
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('userInfo')
     router.push('/')
   }
+  useEffect(() => {
+    if (!user) {
+      executeGetMe()
+      setUser(userGetMeData?.data as any)
+    }
+  }, [])
   return (
     <div className='ms-1 mt-1 select-none pr-4'>
       <DropdownMenu>

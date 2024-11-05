@@ -10,15 +10,19 @@ const userApi = apiService.user
 
 export const useGetMeUser = (execute: boolean) => {
   const { setUser } = useStoreLocal()
-  const { isPending: isGetMeUserPending, data: userGetMeData } = useModelQuery<IUserGetMeResponse>(
-    USER_QUERY_ME,
-    userApi.getMe,
-    {
-      enable: !!execute,
-      condition: 'me',
-      retry: USER_RETRY
-    }
-  )
+  const {
+    isPending: isGetMeUserPending,
+    data: userGetMeData,
+    refetch
+  } = useModelQuery<IUserGetMeResponse>(USER_QUERY_ME, userApi.getMe, {
+    enable: !!execute,
+    condition: 'me',
+    retry: USER_RETRY
+  })
+
+  const executeGetMe = () => {
+    refetch()
+  }
 
   useEffect(() => {
     if (!isGetMeUserPending && userGetMeData) {
@@ -27,5 +31,5 @@ export const useGetMeUser = (execute: boolean) => {
     }
   }, [userGetMeData, isGetMeUserPending])
 
-  return { isGetMeUserPending, userGetMeData }
+  return { isGetMeUserPending, userGetMeData, executeGetMe }
 }

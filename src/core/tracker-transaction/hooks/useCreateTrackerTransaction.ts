@@ -4,10 +4,10 @@ import { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { ITrackerTransactionResponse } from '../models/tracker-transaction.interface'
 import { trackerTransactionRoutes } from '../configs'
-import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
+import { ICreateTrackerTransactionBody } from '@/core/transaction/models'
 
 export const useCreateTrackerTransaction = (opts?: IUseQueryHookOptions) => {
-  return useMutationCustom<ICreateTrackerTransactionFormData, ITrackerTransactionResponse>({
+  return useMutationCustom<ICreateTrackerTransactionBody, ITrackerTransactionResponse>({
     pathUrl: trackerTransactionRoutes.create,
     mutateOption: {
       onError: (error: AxiosError | any) => {

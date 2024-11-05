@@ -11,22 +11,26 @@ import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
   handleAccountBankRefetching,
+  handleUpdateTransaction,
   modifyTransactionHandler,
-  updateCacheDataUpdate
+  updateCacheDataTransactionForClassify,
+  updateCacheDataTransactionForUpdate
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
 import { useTransaction } from '@/core/transaction/hooks'
 import {
-  IClassifyTransactionFormData,
+  IClassifyTransactionBody,
   IDataTransactionTable,
   IDialogTransaction,
   IGetTransactionResponse,
-  ITransactionSummary
+  ITransaction,
+  ITransactionSummary,
+  IUpdateTransactionBody
 } from '@/core/transaction/models'
 import {
   initButtonInDataTableHeader,
+  initEmptyDetailTransactionData,
   initDialogFlag,
-  initEmptyDetailTransaction,
   initEmptyTransactionSummaryData,
   transactionHeaders
 } from './constants'
@@ -39,7 +43,6 @@ import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks
 import {
   initTrackerTypeData,
   updateCacheDataClassifyFeat,
-  updateCacheDataCreate as updateCacheDataClassify,
   handleClassifyTransaction,
   handleCreateTrackerTxType,
   updateCacheDataTodayTxClassifyFeat
@@ -70,9 +73,14 @@ import {
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
+import { useAccountSource } from '@/core/account-source/hooks'
+import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 
 export default function TransactionForm() {
   // states
+  const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
+    ETypeOfTrackerTransactionType.INCOMING
+  )
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
     isVisibleSortType: false,
@@ -89,7 +97,7 @@ export default function TransactionForm() {
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
-  const [dataDetail, setDataDetail] = useState<IDataTransactionTable>(initEmptyDetailTransaction)
+  const [dataDetail, setDataDetail] = useState<ITransaction>(initEmptyDetailTransactionData)
   const [dataTable, setDataTable] = useState<IDataTransactionTable[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
@@ -105,18 +113,27 @@ export default function TransactionForm() {
   const { t } = useTranslation(['transaction'])
   const { verifyToken } = useAuth()
   const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
+  const { getAllAccountSource } = useAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
   const { getMe } = useUser()
   const { user } = useStoreLocal()
   const socket = useSocket()
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
+  const { getAllData: accountSourceData } = getAllAccountSource()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { getTransactions, getUnclassifiedTransactions, getTodayTransactions } = useTransaction()
+  const { getTransactions, getUnclassifiedTransactions, getTodayTransactions, updateTransaction, statusUpdate } =
+    useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions })
-  const { resetData, setData } = useUpdateModel<IGetTransactionResponse>(
-    GET_ADVANCED_TRANSACTION_KEY,
-    updateCacheDataUpdate
+  const { resetData, setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataTransactionForClassify
   )
+
+  const { setData: setDataTransactionUpdateFeat } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataTransactionForUpdate
+  )
+
   const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
     (oldData, newData) => {
@@ -128,10 +145,7 @@ export default function TransactionForm() {
     updateCacheDataClassifyFeat
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { resetData: resetCacheAccountSource } = useUpdateModel(
-    [STATISTIC_TRACKER_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    () => {}
-  )
+  const { resetData: resetCacheAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
   const { resetData: resetCacheDataTrackerTx } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
   const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
   const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions })
@@ -139,6 +153,10 @@ export default function TransactionForm() {
   const { setData: setDataTodayTxs, resetData: resetCacheTodayTx } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
     updateCacheDataTodayTxClassifyFeat
+  )
+  const { setData: setDataTodayTxUpdateFeat } = useUpdateModel(
+    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
+    updateCacheDataTransactionForUpdate
   )
 
   const refetchTransactionBySocket = () => {
@@ -250,7 +268,6 @@ export default function TransactionForm() {
   }, [dataTrackerTransactionType])
   useEffect(() => {
     if (dataTransaction) {
-      console.log(dataTransaction)
       setDataTable(modifyTransactionHandler(dataTransaction.data))
       setDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataTransaction?.pagination?.totalPage) }))
     }
@@ -298,11 +315,6 @@ export default function TransactionForm() {
     isPendingRefetch,
     reloadDataFunction
   })
-
-  const onRowClick = (rowData: any) => {
-    setDataDetail(rowData)
-    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-  }
 
   return (
     <div className='space-y-4'>
@@ -382,15 +394,19 @@ export default function TransactionForm() {
               data={dataTable}
               config={dataTableConfig}
               setConfig={setDataTableConfig}
-              onRowClick={onRowClick}
+              onRowClick={(rowData) => {
+                setTypeOfTrackerType(rowData.direction as ETypeOfTrackerTransactionType)
+                setDataDetail(dataTransaction?.data.find((e) => e.id === rowData.id) || initEmptyDetailTransactionData)
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+              }}
               isLoading={isGetTransaction}
-              // isLoading={isGetTransaction}
               buttons={dataTableButtons}
             />
           </div>
         </CardContent>
         <TransactionDialog
           dataTable={{
+            advancedData: dataTransaction?.data || [],
             columns: columns,
             data: dataTable,
             transactionTodayData: transactionSummary.transactionToday.data,
@@ -400,9 +416,26 @@ export default function TransactionForm() {
             setUncConfig: setUncDataTableConfig,
             uncConfig: uncDataTableConfig,
             setTodayConfig: setTodayDataTableConfig,
-            todayConfig: todayDataTableConfig,
-            dataDetail: dataDetail,
-            setDataDetail
+            todayConfig: todayDataTableConfig
+          }}
+          dialogDetailUpdate={{
+            dataDetail,
+            setDataDetail,
+            accountSourceData: accountSourceData?.data ?? [],
+            handleUpdate: (data: IUpdateTransactionBody, setIsEditing: React.Dispatch<React.SetStateAction<boolean>>) =>
+              handleUpdateTransaction({
+                data,
+                setIsEditing,
+                hookResetStatistic: resetCacheStatistic,
+                hookResetCacheTrackerTransaction: resetCacheDataTrackerTx,
+                hookSetCacheTodayTransaction: setDataTodayTxUpdateFeat,
+                hookUpdate: updateTransaction,
+                hookSetCacheTransaction: setDataTransactionUpdateFeat,
+                hookResetCacheAccountSource: resetCacheAccountSource,
+                setDataTableConfig: setDataTableConfig,
+                setDetailDialog: setDataDetail
+              }),
+            statusUpdateTransaction: statusUpdate
           }}
           dialogState={{
             isDialogOpen: isDialogOpen,
@@ -411,7 +444,7 @@ export default function TransactionForm() {
           classifyDialog={{
             incomeTrackerTransactionType: incomingTrackerType,
             expenseTrackerTransactionType: expenseTrackerType,
-            handleClassify: (data: IClassifyTransactionFormData) => {
+            handleClassify: (data: IClassifyTransactionBody) => {
               handleClassifyTransaction({
                 payload: data,
                 hookCreate: classifyTransaction,
@@ -421,9 +454,12 @@ export default function TransactionForm() {
                 setUncDataTableConfig: setUncDataTableConfig,
                 setTodayDataTableConfig: setTodayDataTableConfig,
                 setDataTableConfig: setDataTableConfig,
-                setIsDialogOpen: setIsDialogOpen
+                setIsDialogOpen: setIsDialogOpen,
+                hookSetCacheTransaction: setDataTransactionClassifyFeat
               })
-            }
+            },
+            typeOfTrackerType,
+            setTypeOfTrackerType
           }}
           dialogEditTrackerType={{
             handleCreateTrackerType: (

@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useEffect, useRef, useState } from 'react'
 import { useUser } from '@/core/users/hooks'
-import ProfileCardContainer from './profileCardContainer'
 import { IUser, IUserGetMeResponse } from '@/types/user.i'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { Button } from '@/components/ui/button'
@@ -71,11 +70,11 @@ export default function ProfileForm() {
   const formUpdatePasswordRef = useRef<HTMLFormElement>(null)
   const formUpdatePasswordRef1 = useRef<HTMLFormElement>(null)
   const translatedUpdateUserFormBody = getTranslatedFormBody(updateUserFormBody, t)
-  const translatedupdatePasswordFormBodyWithoutCurrentPassword = getTranslatedFormBody(
+  const translatedUpdatePasswordFormBodyWithoutCurrentPassword = getTranslatedFormBody(
     updatePasswordFormBodyWithoutCurrentPassword,
     t
   )
-  const translatedupdatePasswordFormBodyWithCurrentPassword = getTranslatedFormBody(
+  const translatedUpdatePasswordFormBodyWithCurrentPassword = getTranslatedFormBody(
     updatePasswordFormBodyWithCurrentPassword,
     t
   )
@@ -170,14 +169,14 @@ export default function ProfileForm() {
                 {userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword ? (
                   <FormZod
                     submitRef={formUpdatePasswordRef}
-                    formFieldBody={translatedupdatePasswordFormBodyWithoutCurrentPassword}
+                    formFieldBody={translatedUpdatePasswordFormBodyWithoutCurrentPassword}
                     formSchema={updatePassWordSchemaWithoutCurrentPassword}
                     onSubmit={handleUpdatePassword}
                   />
                 ) : (
                   <FormZod
                     submitRef={formUpdatePasswordRef1}
-                    formFieldBody={translatedupdatePasswordFormBodyWithCurrentPassword}
+                    formFieldBody={translatedUpdatePasswordFormBodyWithCurrentPassword}
                     formSchema={updatePassWordSchemaWithCurrentPassword}
                     onSubmit={handleUpdatePassword}
                   />

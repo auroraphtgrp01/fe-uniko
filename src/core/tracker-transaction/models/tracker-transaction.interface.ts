@@ -1,13 +1,19 @@
 import { IChartData } from '@/components/core/charts/DonutChart'
 import { IAccountSource } from '@/core/account-source/models'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import {
+  IEditTrackerTypeDialogProps,
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import {
-  IClassifyTransactionFormData,
-  ICreateTrackerTransactionFormData,
-  IDataTransactionTable
+  IClassifyTransactionBody,
+  IClassifyTransactionFormProps,
+  ICreateTrackerTransactionBody,
+  IDataTransactionTable,
+  IDialogTransaction,
+  ITransaction,
+  IUpdateTransactionBody
 } from '@/core/transaction/models'
 import { IBaseResponseData, IDataTableConfig } from '@/types/common.i'
 
@@ -17,6 +23,7 @@ export interface IDialogTrackerTransaction {
   isDialogClassifyTransactionOpen: boolean
   isDialogUnclassifiedOpen: boolean
   isDialogCreateTrackerTxTypeOpen: boolean
+  isDialogDetailOpen: boolean
 }
 
 export interface ITrackerTransaction {
@@ -26,43 +33,7 @@ export interface ITrackerTransaction {
   description: string | null
   userId: string
   transactionId: string | null
-  Transaction: {
-    id: string
-    direction: string
-    transactionId: string
-    amount: number
-    toAccountNo: string | null
-    toAccountName: string | null
-    toBankName: string | null
-    currency: string
-    description: string
-    accountSourceId: string
-    accountBankId: string
-    ofAccountId: string
-    ofAccount: {
-      id: string
-      accountNo: string
-      accountBankId: string
-    }
-    accountBank: {
-      id: string
-      type: string
-      login_id: string
-      sessionId: string | null
-      deviceId: string | null
-      userId: string
-    }
-    accountSource: {
-      id: string
-      name: string
-      type: string
-      initAmount: number
-      accountBankId: string
-      currency: string
-      currentAmount: number
-      userId: string
-    }
-  }
+  Transaction: ITransaction
   TrackerType: {
     id: string
     name: string
@@ -71,6 +42,13 @@ export interface ITrackerTransaction {
     ownerIds: string[]
   }
   time: string
+}
+
+export interface IUpdateTrackerTransactionBody {
+  id: string
+  reasonName: string
+  description: string
+  trackerTypeId: string
 }
 
 export interface ICustomTrackerTransaction {
@@ -97,13 +75,6 @@ export interface ITrackerTransactionDataFormat {
   checkType?: string
 }
 
-export interface IClassifyTransactionBody {
-  id?: string
-  transactionId?: string
-  trackerType: string
-  description: string
-}
-
 export interface IStatisticData extends IChartData {
   statusCode: number
 }
@@ -123,13 +94,13 @@ export interface IUnclassifiedTxDialog {
 }
 export interface IClassifyTransactionDialog {
   classifyTransaction: any
-  handleClassify: (data: IClassifyTransactionFormData) => void
+  handleClassify: (data: IClassifyTransactionBody) => void
 }
 export interface ICreateTrackerTransactionDialog {
-  formData: ICreateTrackerTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionFormData>>
-  accountSourceData: IAccountSource[]
-  handleCreate: (data: ICreateTrackerTransactionFormData) => void
+  formData: ICreateTrackerTransactionBody
+  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionBody>>
+
+  handleCreate: (data: ICreateTrackerTransactionBody) => void
 }
 
 export interface ICreateTrackerTransactionTypeDialog {
@@ -150,6 +121,22 @@ export interface ISharedDialogElements {
     setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
   ) => void
   handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+  accountSourceData: IAccountSource[]
+}
+
+export interface IDetailUpdateTrackerTransactionDialog {
+  dataDetail: ITrackerTransaction
+  setDataDetail: React.Dispatch<React.SetStateAction<ITrackerTransaction>>
+  statusUpdateTrackerTransaction: 'error' | 'success' | 'pending' | 'idle'
+  handleUpdateTrackerTransaction: (
+    data: IUpdateTrackerTransactionBody,
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  ) => void
+  statusUpdateTransaction: 'error' | 'success' | 'pending' | 'idle'
+  handleUpdateTransaction: (
+    data: IUpdateTransactionBody,
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  ) => void
 }
 
 export interface ITrackerTransactionDialogProps {
@@ -158,4 +145,41 @@ export interface ITrackerTransactionDialogProps {
   createTrackerTransactionDialog: ICreateTrackerTransactionDialog
   sharedDialogElements: ISharedDialogElements
   createTrackerTransactionTypeDialog: ICreateTrackerTransactionTypeDialog
+  detailUpdateTrackerTransactionDialog: IDetailUpdateTrackerTransactionDialog
+}
+
+export interface IDetailUpdateTransactionDialogProps {
+  updateTransactionProps: {
+    transaction: ITransaction
+    statusUpdateTransaction: 'error' | 'success' | 'pending' | 'idle'
+    handleUpdateTransaction: (
+      data: IUpdateTransactionBody,
+      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    ) => void
+    isEditing: boolean
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  updateTrackerTransactionProps?: {
+    trackerTransaction: Omit<ITrackerTransaction, 'Transaction'>
+    statusUpdateTrackerTransaction: 'error' | 'success' | 'pending' | 'idle'
+    handleUpdateTrackerTransaction: (
+      data: IUpdateTrackerTransactionBody,
+      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    ) => void
+    isEditing: boolean
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  commonProps: {
+    accountSourceData: IAccountSource[]
+  }
+  editTrackerTransactionTypeProps?: IEditTrackerTypeDialogProps
+  classifyDialogProps?: {
+    ClassifyForm: any
+    formClassifyRef: React.RefObject<HTMLFormElement>
+  }
+}
+
+export interface IUpdateTrackerTransactionFormProps extends IClassifyTransactionFormProps {
+  currentDirection: ETypeOfTrackerTransactionType
+  accountSourceData: IAccountSource[]
 }

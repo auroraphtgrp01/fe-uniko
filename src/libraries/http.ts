@@ -37,7 +37,8 @@ const axiosInstance = axios.create({
   baseURL: configProject.NEXT_PUBLIC_API_ENDPOINT,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true
 })
 
 axiosInstance.interceptors.request.use((config) => {

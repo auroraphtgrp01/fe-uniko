@@ -1,3 +1,4 @@
+import { EAccountSourceType } from '@/core/account-source/models'
 import { translate } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { ArrowDownToLineIcon, RotateCcwIcon } from 'lucide-react'
@@ -61,16 +62,35 @@ export const initCreateTrackerTransactionForm = {
   currency: ''
 }
 
-export const initEmptyDetailTransaction = {
+export const initEmptyDetailTransactionData = {
   id: 'N/A',
-  amount: 'N/A',
+  transactionDateTime: 'N/A',
   direction: 'N/A',
-  accountNo: 'N/A',
-  accountSource: 'N/A',
+  transactionId: 'N/A',
+  amount: 0,
+  toAccountNo: 'N/A',
+  toAccountName: 'N/A',
+  toBankName: 'N/A',
   currency: 'N/A',
   description: 'N/A',
-  date: 'N/A',
-  TrackerTransaction: null
+  accountBankId: 'N/A',
+  ofAccountId: 'N/A',
+  ofAccount: {
+    id: 'N/A',
+    accountNo: 'N/A',
+    accountBankId: 'N/A'
+  },
+  time: new Date().toISOString(),
+  TrackerTransaction: null,
+  accountSource: {
+    id: 'N/A',
+    name: 'N/A',
+    type: EAccountSourceType.WALLET,
+    initAmount: 0,
+    accountBank: null,
+    currency: 'N/A',
+    currentAmount: 0
+  }
 }
 
 export const initEmptyTransactionSummaryData = {
