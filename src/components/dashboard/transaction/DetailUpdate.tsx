@@ -5,67 +5,36 @@ import { CalendarIcon, CreditCard, Pencil, BookUserIcon, FileTextIcon, WalletCar
 
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ITransaction, IUpdateTransactionBody } from '@/core/transaction/models'
+import { IUpdateTransactionBody } from '@/core/transaction/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { Button } from '@/components/ui/button'
 import { formatDateTimeVN } from '@/libraries/utils'
-import {
-  ITrackerTransaction,
-  IUpdateTrackerTransactionBody
-} from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { IDetailUpdateTransactionDialogProps } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import FormZod from '@/components/core/FormZod'
 import {
   defineUpdateTransactionFormBody,
   updateTransactionSchema
 } from '@/core/transaction/constants/update-transaction.constant'
-import { IAccountSource } from '@/core/account-source/models'
 import toast from 'react-hot-toast'
+import { defineUpdateTrackerTransactionFormBody } from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
 
-interface IDetailUpdateTransactionDialogProps {
-  updateTransactionProps: {
-    transaction: ITransaction
-    statusUpdateTransaction: 'error' | 'success' | 'pending' | 'idle'
-    handleUpdateTransaction: (
-      data: IUpdateTransactionBody,
-      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
-    ) => void
-    isEditing: boolean
-    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
-  }
-  updateTrackerTransactionProps?: {
-    trackerTransaction: Omit<ITrackerTransaction, 'Transaction'>
-    statusUpdateTrackerTransaction: 'error' | 'success' | 'pending' | 'idle'
-    handleUpdateTrackerTransaction: (
-      data: IUpdateTrackerTransactionBody,
-      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
-    ) => void
-    isEditing: boolean
-    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
-  }
-  commonProps: {
-    accountSourceData: IAccountSource[]
-  }
-}
 export default function DetailUpdateTransaction({
   updateTransactionProps,
   updateTrackerTransactionProps,
-  commonProps
+  commonProps,
+  editTrackerTransactionTypeProps,
+  classifyDialogProps
 }: IDetailUpdateTransactionDialogProps) {
   const updateTransactionRef = useRef<HTMLFormElement>(null)
   const updateTrackerTransactionRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = () => {
-    if (updateTransactionProps.isEditing) updateTransactionRef.current?.requestSubmit()
+    if (updateTransactionProps.isEditing) {
+      if (classifyDialogProps?.formClassifyRef) classifyDialogProps.formClassifyRef.current?.requestSubmit()
+      else updateTransactionRef.current?.requestSubmit()
+    }
     if (updateTrackerTransactionProps?.isEditing) updateTrackerTransactionRef.current?.requestSubmit()
   }
-  useEffect(() => {
-    console.log(
-      '🚀 ~ statusUpdateTrackerTransaction',
-      updateTrackerTransactionProps?.statusUpdateTrackerTransaction,
-      'statusUpdateTransaction:',
-      updateTransactionProps.statusUpdateTransaction
-    )
-  }, [updateTrackerTransactionProps?.statusUpdateTrackerTransaction, updateTransactionProps.statusUpdateTransaction])
 
   const TransactionDetails = () => (
     <div className='space-y-6'>
@@ -187,15 +156,18 @@ export default function DetailUpdateTransaction({
       <div className='flex justify-end'>
         <Button
           onClick={() => {
-            if (updateTransactionProps.transaction.ofAccount) {
-              if (!updateTrackerTransactionProps?.trackerTransaction)
-                toast.error('Không thể chỉnh sửa giao dịch lấy từ tài khoản ngân hàng!')
+            if (
+              updateTransactionProps.transaction.ofAccount &&
+              !updateTrackerTransactionProps &&
+              !classifyDialogProps
+            ) {
+              // là giao dịch ngân hàng đã phân loại
+              toast.error('Không thể chỉnh sửa giao dịch lấy từ tài khoản ngân hàng!')
             } else updateTransactionProps.setIsEditing(true)
-            if (updateTrackerTransactionProps?.trackerTransaction) updateTrackerTransactionProps.setIsEditing(true)
           }}
         >
           <Pencil className='mr-2 h-4 w-4' />
-          Cập nhật
+          {!updateTransactionProps.transaction.TrackerTransaction ? 'Phân loại' : 'Cập nhật'}
         </Button>
       </div>
     </div>
@@ -203,23 +175,55 @@ export default function DetailUpdateTransaction({
 
   const UpdateForm = () => (
     <div className='space-y-7'>
-      <FormZod
-        submitRef={updateTransactionRef}
-        formFieldBody={defineUpdateTransactionFormBody({ accountSourceData: commonProps.accountSourceData })}
-        formSchema={updateTransactionSchema}
-        onSubmit={(data) => {
-          const payload: IUpdateTransactionBody = {
-            direction: data.direction as ETypeOfTrackerTransactionType,
-            amount: Number(data.amount),
-            id: updateTransactionProps.transaction.id
-          }
-          updateTransactionProps.handleUpdateTransaction(payload, updateTransactionProps.setIsEditing)
-        }}
-        defaultValues={{
-          amount: String(updateTransactionProps.transaction.amount),
-          direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType
-        }}
-      />
+      {!updateTransactionProps.transaction.TrackerTransaction && classifyDialogProps ? (
+        <classifyDialogProps.ClassifyForm />
+      ) : (
+        <>
+          <FormZod
+            submitRef={updateTransactionRef}
+            formFieldBody={defineUpdateTransactionFormBody({ accountSourceData: commonProps.accountSourceData })}
+            formSchema={updateTransactionSchema}
+            onSubmit={(data) => {
+              const payload: IUpdateTransactionBody = {
+                accountSourceId: data.accountSourceId,
+                direction: data.direction as ETypeOfTrackerTransactionType,
+                amount: Number(data.amount),
+                id: updateTransactionProps.transaction.id
+              }
+              updateTransactionProps.handleUpdateTransaction(payload, updateTransactionProps.setIsEditing)
+            }}
+            defaultValues={{
+              amount: String(updateTransactionProps.transaction.amount),
+              accountSourceId: updateTransactionProps.transaction.accountSource.id,
+              direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType
+            }}
+          />
+          {updateTrackerTransactionProps && (
+            <FormZod
+              submitRef={updateTransactionRef}
+              formFieldBody={defineUpdateTrackerTransactionFormBody({
+                accountSourceData: commonProps.accountSourceData,
+                trackerTransaction: updateTrackerTransactionProps.trackerTransaction
+              })}
+              formSchema={updateTransactionSchema}
+              onSubmit={(data) => {
+                const payload: IUpdateTransactionBody = {
+                  accountSourceId: data.accountSourceId,
+                  direction: data.direction as ETypeOfTrackerTransactionType,
+                  amount: Number(data.amount),
+                  id: updateTransactionProps.transaction.id
+                }
+                updateTransactionProps.handleUpdateTransaction(payload, updateTransactionProps.setIsEditing)
+              }}
+              defaultValues={{
+                amount: String(updateTransactionProps.transaction.amount),
+                accountSourceId: updateTransactionProps.transaction.accountSource.id,
+                direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType
+              }}
+            />
+          )}
+        </>
+      )}
       <div className='flex justify-between'>
         <Button type='button' variant='outline' onClick={() => updateTransactionProps.setIsEditing(false)}>
           Hủy

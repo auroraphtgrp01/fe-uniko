@@ -3,20 +3,18 @@ import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
-import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
+import { IClassifyTransactionFormProps } from '../models'
 
 export const defineClassifyTransactionFormBody = ({
-  setOpenEditTrackerTxTypeDialog,
-  typeOfTrackerType,
-  handleUpdateTrackerType,
-  handleCreateTrackerType,
-  setTypeOfEditTrackerType,
-  typeOfEditTrackerType,
-  openEditTrackerTxTypeDialog,
+  editTrackerTypeDialogProps,
   expenseTrackerType,
-  incomeTrackerType
-}: any): IBodyFormField[] => {
+  incomeTrackerType,
+  typeOfEditTrackerType,
+  setTypeOfEditTrackerType,
+  setOpenEditDialog,
+  openEditDialog
+}: IClassifyTransactionFormProps): IBodyFormField[] => {
   const t = translate(['transaction', 'common'])
   return [
     {
@@ -35,21 +33,21 @@ export const defineClassifyTransactionFormBody = ({
       placeHolder: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.placeholder'),
       props: {
         autoComplete: 'trackerTypeId',
-        setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
+        setOpenEditDialog,
         dataArr: modifiedTrackerTypeForComboBox(
-          typeOfTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
+          editTrackerTypeDialogProps.typeDefault === ETypeOfTrackerTransactionType.INCOMING
+            ? incomeTrackerType
+            : expenseTrackerType
         ),
         dialogEdit: EditTrackerTypeDialog({
-          openEditDialog: openEditTrackerTxTypeDialog,
-          setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
+          ...editTrackerTypeDialogProps,
           dataArr: modifiedTrackerTypeForComboBox(
             typeOfEditTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
           ),
-          typeDefault: typeOfTrackerType,
           type: typeOfEditTrackerType,
           setType: setTypeOfEditTrackerType,
-          handleCreateTrackerType,
-          handleUpdateTrackerType
+          setOpenEditDialog,
+          openEditDialog
         }),
         label: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.labelTrackerTransactionType')
       }

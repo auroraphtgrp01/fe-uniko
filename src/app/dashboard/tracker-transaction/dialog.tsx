@@ -9,12 +9,15 @@ import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import CreateTrackerTransactionForm from '@/components/dashboard/tracker-transaction/CreateForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { useTranslation } from 'react-i18next'
+import DetailUpdateTrackerTransaction from '@/components/dashboard/tracker-transaction/DetailUpdate'
+import { initEmptyDetailTrackerTransaction } from './constants'
 
 export default function TrackerTransactionDialog({
   unclassifiedTxDialog,
   classifyTransactionDialog,
   createTrackerTransactionDialog,
-  sharedDialogElements
+  sharedDialogElements,
+  detailUpdateTrackerTransactionDialog
 }: ITrackerTransactionDialogProps) {
   const formClassifyRef = useRef<HTMLFormElement>(null)
   const formCreateRef = useRef<HTMLFormElement>(null)
@@ -25,19 +28,20 @@ export default function TrackerTransactionDialog({
   const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )
+  const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: ClassifyForm({
       transactionId: transactionIdClassifying as string,
       incomeTrackerType: sharedDialogElements.incomeTrackerType,
       expenseTrackerType: sharedDialogElements.expenseTrackerType,
-      openEditTrackerTxTypeDialog,
-      setOpenEditTrackerTxTypeDialog,
-      typeOfTrackerType,
+      editTrackerTypeDialogProps: {
+        typeDefault: typeOfTrackerType,
+        handleCreateTrackerType: sharedDialogElements.handleCreateTrackerType,
+        handleUpdateTrackerType: sharedDialogElements.handleUpdateTrackerType
+      },
       formClassifyRef,
-      handleClassify: classifyTransactionDialog.handleClassify,
-      handleCreateTrackerType: sharedDialogElements.handleCreateTrackerType,
-      handleUpdateTrackerType: sharedDialogElements.handleUpdateTrackerType
+      handleClassify: classifyTransactionDialog.handleClassify
     }),
     footer: (
       <Button onClick={() => formClassifyRef.current?.requestSubmit()} type='button'>
@@ -57,7 +61,7 @@ export default function TrackerTransactionDialog({
     content: CreateTrackerTransactionForm({
       incomeTrackerType: sharedDialogElements.incomeTrackerType,
       expenseTrackerType: sharedDialogElements.expenseTrackerType,
-      accountSourceData: createTrackerTransactionDialog.accountSourceData,
+      accountSourceData: sharedDialogElements.accountSourceData,
       openEditTrackerTxTypeDialog,
       setOpenEditTrackerTxTypeDialog,
       formCreateRef,
@@ -100,6 +104,33 @@ export default function TrackerTransactionDialog({
     isOpen: sharedDialogElements.isDialogOpen.isDialogUnclassifiedOpen,
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: false }))
+    }
+  }
+
+  const detailsConfigDialog: IDialogConfig = {
+    content: (
+      <DetailUpdateTrackerTransaction
+        updateTrackerTransactionProps={{
+          isEditing,
+          setIsEditing,
+          trackerTransaction: detailUpdateTrackerTransactionDialog.dataDetail,
+          statusUpdateTrackerTransaction: detailUpdateTrackerTransactionDialog.statusUpdateTrackerTransaction,
+          handleUpdateTrackerTransaction: detailUpdateTrackerTransactionDialog.handleUpdateTrackerTransaction
+        }}
+        updateTransactionProps={{
+          statusUpdateTransaction: detailUpdateTrackerTransactionDialog.statusUpdateTransaction,
+          handleUpdateTransaction: detailUpdateTrackerTransactionDialog.handleUpdateTransaction
+        }}
+        commonProps={{ accountSourceData: sharedDialogElements.accountSourceData }}
+      />
+    ),
+    description: 'Thông tin chi tiết về giao dịch đã phân loại này',
+    title: 'Chi tiết giao dịch đã phân loại',
+    isOpen: sharedDialogElements.isDialogOpen.isDialogDetailOpen,
+    onClose: () => {
+      detailUpdateTrackerTransactionDialog.setDataDetail(initEmptyDetailTrackerTransaction)
+      setIsEditing(false)
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
     }
   }
 

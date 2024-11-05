@@ -3,7 +3,8 @@ import {
   ICustomTrackerTransaction,
   IDialogTrackerTransaction,
   ITrackerTransaction,
-  ITrackerTransactionResponse
+  ITrackerTransactionResponse,
+  IUpdateTrackerTransactionBody
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import {
   IClassifyTransactionBody,
@@ -11,7 +12,8 @@ import {
   IDataTransactionTable,
   IGetTransactionResponse,
   ITransaction,
-  ITransactionSummary
+  ITransactionSummary,
+  IUpdateTransactionBody
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm, initTrackerTypeForm } from '../transaction/constants'
@@ -40,7 +42,7 @@ export const handleCreateTrackerTransaction = async ({
   setIsDialogOpen,
   hookResetCacheStatistic,
   hookResetTodayTxs,
-  hookResetTransactions,
+  hookSetTransactions,
   setDataTableConfig,
   setUncDataTableConfig,
   resetAccountSource,
@@ -51,7 +53,7 @@ export const handleCreateTrackerTransaction = async ({
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   hookResetCacheStatistic: any
   hookResetTodayTxs: any
-  hookResetTransactions: any
+  hookSetTransactions: any
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   resetAccountSource: any
@@ -62,7 +64,7 @@ export const handleCreateTrackerTransaction = async ({
       if (res.statusCode === 200 || res.statusCode === 201) {
         hookResetCacheStatistic()
         hookResetTodayTxs()
-        hookResetTransactions()
+        hookSetTransactions(res.data)
         resetAccountSource()
         resetTransaction()
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
@@ -81,17 +83,19 @@ export const handleClassifyTransaction = async ({
   hookResetCacheUnclassified,
   hookSetCacheToday,
   hookResetCacheStatistic,
-  hookResetTrackerTx,
+  hookSetTrackerTx,
   hookSetCacheTransaction,
   setUncDataTableConfig,
   setTodayDataTableConfig,
-  setDataTableConfig
+  setDataTableConfig,
+  hookResetTrackerTx
 }: {
   payload: IClassifyTransactionBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
   hookCreate: any
   hookResetCacheUnclassified: any
-  hookResetTrackerTx: any
+  hookSetTrackerTx?: any
+  hookResetTrackerTx?: any
   hookResetCacheStatistic?: any
   hookSetCacheToday: any
   hookSetCacheTransaction: any
@@ -105,7 +109,8 @@ export const handleClassifyTransaction = async ({
         hookSetCacheTransaction(res.data)
         hookResetCacheUnclassified()
         hookSetCacheToday(res.data)
-        hookResetTrackerTx()
+        if (hookSetTrackerTx) hookSetTrackerTx(res.data)
+        else if (hookResetTrackerTx) hookResetTrackerTx()
         if (hookResetCacheStatistic) hookResetCacheStatistic()
         if (setUncDataTableConfig) setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
@@ -151,7 +156,7 @@ export const updateCacheDataTodayTxClassifyFeat = (
   return { ...oldData, data: updatedData }
 }
 
-export const updateCacheDataCreate = (
+export const updateCacheDataCreateClassify = (
   oldData: IAdvancedTrackerTransactionResponse,
   newData: ITrackerTransaction
 ): IAdvancedTrackerTransactionResponse => {
@@ -159,6 +164,13 @@ export const updateCacheDataCreate = (
 
   if (updatedData.length > (oldData.pagination as IBaseResponsePagination).limit) updatedData.pop()
   return { ...oldData, data: updatedData }
+}
+
+export const updateCacheDataUpdateFeat = (
+  oldData: IAdvancedTrackerTransactionResponse,
+  newData: ITrackerTransaction
+): IAdvancedTrackerTransactionResponse => {
+  return { ...oldData, data: oldData.data.map((item) => (item.id === newData.id ? newData : item)) }
 }
 
 export const handleCreateTrackerTxType = ({
@@ -294,4 +306,54 @@ export const handleCreateTrackerType = ({
       }
     }
   })
+}
+
+export const handleUpdateTrackerTransaction = async ({
+  data,
+  hookUpdate,
+  hookSetCacheTrackerTransaction,
+  hookResetCacheStatistic,
+  hookResetTodayTxs,
+  hookResetTransactions,
+  hookResetAccountSource,
+  setDataTableConfig,
+  setIsEditing,
+  setDataDetail
+}: {
+  data: IUpdateTrackerTransactionBody
+  hookUpdate: any
+  hookSetCacheTrackerTransaction: any
+  hookResetCacheStatistic: any
+  hookResetTodayTxs: any
+  hookResetTransactions: any
+  hookResetAccountSource: any
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  setDataDetail: React.Dispatch<React.SetStateAction<ITrackerTransaction>>
+}) => {
+  hookUpdate(data, {
+    onSuccess: (res: any) => {
+      if (res.statusCode === 200) {
+        hookSetCacheTrackerTransaction(res.data)
+        hookResetCacheStatistic()
+        hookResetTodayTxs()
+        hookResetTransactions()
+        hookResetAccountSource()
+        toast.success('Update transaction successfully!')
+        setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
+        setDataDetail(res.data)
+        setIsEditing(false)
+      }
+    }
+  })
+}
+
+export const handleUpdateTransactionWithTrackerTransaction = ({
+  data,
+  hookUpdate
+}: {
+  data: IUpdateTransactionBody
+  hookUpdate: any
+}) => {
+  hookUpdate(data)
 }

@@ -1,10 +1,16 @@
 import { IAccountBank } from '@/core/account-bank/models'
 import { IAccountSource } from '@/core/account-source/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import {
+  IEditTrackerTypeDialogProps,
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { ITrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IBaseResponseData } from '@/types/common.i'
+import React from 'react'
 
-export type ITransaction = {
+export interface ITransaction {
   id: string
   transactionDateTime: string
   direction: string
@@ -21,7 +27,7 @@ export type ITransaction = {
     id: string
     accountNo: string
     accountBankId: string
-  }
+  } | null
   time: string
   TrackerTransaction: ITrackerTransaction | null
   accountSource: IAccountSource
@@ -79,5 +85,32 @@ export interface ITransactionSummary {
 export interface IUpdateTransactionBody {
   id: string
   amount: number
+  accountSourceId: string
   direction: ETypeOfTrackerTransactionType
+}
+
+export interface IClassiFyFormProps {
+  transactionId: string
+  incomeTrackerType: ITrackerTransactionType[]
+  expenseTrackerType: ITrackerTransactionType[]
+  editTrackerTypeDialogProps: Omit<
+    IEditTrackerTypeDialogProps,
+    'dataArr' | 'type' | 'setType' | 'setOpenEditDialog' | 'openEditDialog'
+  >
+  formClassifyRef: React.RefObject<HTMLFormElement>
+  handleClassify: (data: IClassifyTransactionBody) => void
+}
+
+// export interface IClassifyTransactionFormProps
+//   extends Omit<IClassiFyFormProps, 'formClassifyRef' | 'handleClassify' | 'transactionId'> {
+//   setTypeOfEditTrackerType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
+//   typeOfEditTrackerType: ETypeOfTrackerTransactionType
+// }
+
+export interface IClassifyTransactionFormProps
+  extends Omit<IClassiFyFormProps, 'handleClassify' | 'formClassifyRef' | 'transactionId'> {
+  typeOfEditTrackerType: ETypeOfTrackerTransactionType
+  setTypeOfEditTrackerType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
+  setOpenEditDialog: React.Dispatch<React.SetStateAction<boolean>>
+  openEditDialog: boolean
 }

@@ -15,6 +15,7 @@ import { translate } from '@/libraries/utils'
 import { TFunction } from 'i18next'
 import NoDataPlaceHolder from '@/images/2.png'
 import Image from 'next/image'
+import { initEmptyDetailTransactionData } from '../transaction/constants'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -46,7 +47,8 @@ export const initDialogFlag: IDialogTrackerTransaction = {
   isDialogUpdateOpen: false,
   isDialogClassifyTransactionOpen: false,
   isDialogUnclassifiedOpen: false,
-  isDialogCreateTrackerTxTypeOpen: false
+  isDialogCreateTrackerTxTypeOpen: false,
+  isDialogDetailOpen: false
 }
 
 export const defineContentCreateTrackerTxTypeDialog = ({
@@ -158,4 +160,22 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
       }
     ]
   }
+}
+
+export const initEmptyDetailTrackerTransaction = {
+  id: 'N/A',
+  trackerTypeId: 'N/A',
+  reasonName: 'N/A',
+  description: 'N/A',
+  userId: 'N/A',
+  transactionId: 'N/A',
+  Transaction: initEmptyDetailTransactionData,
+  TrackerType: {
+    id: 'N/A',
+    name: 'N/A',
+    type: 'N/A',
+    description: 'N/A',
+    ownerIds: []
+  },
+  time: new Date().toISOString()
 }

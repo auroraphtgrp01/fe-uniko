@@ -62,19 +62,7 @@ export const initCreateTrackerTransactionForm = {
   currency: ''
 }
 
-export const initEmptyDetailTransaction = {
-  id: 'N/A',
-  amount: 'N/A',
-  direction: 'N/A',
-  accountNo: 'N/A',
-  accountSource: 'N/A',
-  currency: 'N/A',
-  description: 'N/A',
-  date: 'N/A',
-  TrackerTransaction: null
-}
-
-export const initEmptyTransactionData = {
+export const initEmptyDetailTransactionData = {
   id: 'N/A',
   transactionDateTime: 'N/A',
   direction: 'N/A',
@@ -92,7 +80,7 @@ export const initEmptyTransactionData = {
     accountNo: 'N/A',
     accountBankId: 'N/A'
   },
-  time: 'N/A',
+  time: new Date().toISOString(),
   TrackerTransaction: null,
   accountSource: {
     id: 'N/A',

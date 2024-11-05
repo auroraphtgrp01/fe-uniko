@@ -29,9 +29,8 @@ import {
 } from '@/core/transaction/models'
 import {
   initButtonInDataTableHeader,
+  initEmptyDetailTransactionData,
   initDialogFlag,
-  initEmptyDetailTransaction,
-  initEmptyTransactionData,
   initEmptyTransactionSummaryData,
   transactionHeaders
 } from './constants'
@@ -79,6 +78,9 @@ import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants
 
 export default function TransactionForm() {
   // states
+  const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
+    ETypeOfTrackerTransactionType.INCOMING
+  )
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
     isVisibleSortType: false,
@@ -95,7 +97,7 @@ export default function TransactionForm() {
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
-  const [dataDetail, setDataDetail] = useState<ITransaction>(initEmptyTransactionData)
+  const [dataDetail, setDataDetail] = useState<ITransaction>(initEmptyDetailTransactionData)
   const [dataTable, setDataTable] = useState<IDataTransactionTable[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
@@ -106,7 +108,6 @@ export default function TransactionForm() {
   const [transactionSummary, setTransactionSummary] = useState<ITransactionSummary>(initEmptyTransactionSummaryData)
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
-  const [idRowClicked, setIdRowClicked] = useState<string>('')
 
   // hooks
   const { t } = useTranslation(['transaction'])
@@ -186,12 +187,6 @@ export default function TransactionForm() {
   }
 
   // effects
-  useEffect(() => {
-    if (idRowClicked !== '' && dataTransaction) {
-      setDataDetail(dataTransaction.data.find((e) => e.id === idRowClicked) || initEmptyTransactionData)
-      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-    }
-  }, [idRowClicked])
   useEffect(() => {
     if (dataUnclassifiedTxs) {
       setTransactionSummary((prev) => ({
@@ -273,7 +268,6 @@ export default function TransactionForm() {
   }, [dataTrackerTransactionType])
   useEffect(() => {
     if (dataTransaction) {
-      console.log(dataTransaction)
       setDataTable(modifyTransactionHandler(dataTransaction.data))
       setDataTableConfig((prev) => ({ ...prev, totalPage: Number(dataTransaction?.pagination?.totalPage) }))
     }
@@ -321,11 +315,6 @@ export default function TransactionForm() {
     isPendingRefetch,
     reloadDataFunction
   })
-
-  const onRowClick = (rowData: any) => {
-    setDataDetail(rowData)
-    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-  }
 
   return (
     <div className='space-y-4'>
@@ -405,15 +394,19 @@ export default function TransactionForm() {
               data={dataTable}
               config={dataTableConfig}
               setConfig={setDataTableConfig}
-              onRowClick={(rowData) => setIdRowClicked(rowData.id)}
+              onRowClick={(rowData) => {
+                setTypeOfTrackerType(rowData.direction as ETypeOfTrackerTransactionType)
+                setDataDetail(dataTransaction?.data.find((e) => e.id === rowData.id) || initEmptyDetailTransactionData)
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+              }}
               isLoading={isGetTransaction}
-              // isLoading={isGetTransaction}
               buttons={dataTableButtons}
             />
           </div>
         </CardContent>
         <TransactionDialog
           dataTable={{
+            advancedData: dataTransaction?.data || [],
             columns: columns,
             data: dataTable,
             transactionTodayData: transactionSummary.transactionToday.data,
@@ -442,7 +435,6 @@ export default function TransactionForm() {
                 setDataTableConfig: setDataTableConfig,
                 setDetailDialog: setDataDetail
               }),
-            setIdRowClicked,
             statusUpdateTransaction: statusUpdate
           }}
           dialogState={{
@@ -465,7 +457,9 @@ export default function TransactionForm() {
                 setIsDialogOpen: setIsDialogOpen,
                 hookSetCacheTransaction: setDataTransactionClassifyFeat
               })
-            }
+            },
+            typeOfTrackerType,
+            setTypeOfTrackerType
           }}
           dialogEditTrackerType={{
             handleCreateTrackerType: (

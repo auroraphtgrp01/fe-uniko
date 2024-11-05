@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button'
 import { Delete, Edit, PlusIcon, Save, SaveIcon, Undo2, X } from 'lucide-react'
 import {
+  IEditTrackerTypeDialogProps,
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
@@ -16,26 +17,6 @@ import { z } from 'zod'
 import FormZod from '../core/FormZod'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
-
-export interface IEditTrackerTypeDialogData extends ITrackerTransactionType {
-  value: string
-  label: string
-}
-
-export interface IEditTrackerTypeDialogProps {
-  openEditDialog: boolean
-  setOpenEditDialog: React.Dispatch<React.SetStateAction<boolean>>
-  dataArr: IEditTrackerTypeDialogData[]
-  typeDefault: ETypeOfTrackerTransactionType
-  type: ETypeOfTrackerTransactionType
-  setType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
-  onClose?: () => void
-  handleCreateTrackerType: (
-    data: ITrackerTransactionTypeBody,
-    setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
-  ) => void
-  handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
-}
 
 export default function EditTrackerTypeDialog({
   openEditDialog,
@@ -48,6 +29,9 @@ export default function EditTrackerTypeDialog({
   handleUpdateTrackerType
 }: IEditTrackerTypeDialogProps) {
   const [isCreating, setIsCreating] = useState<boolean>(false)
+  useEffect(() => {
+    console.log('isCreating', isCreating)
+  }, [isCreating])
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
   const filteredDataArr = dataArr.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))

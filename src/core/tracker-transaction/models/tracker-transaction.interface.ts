@@ -1,14 +1,19 @@
 import { IChartData } from '@/components/core/charts/DonutChart'
 import { IAccountSource } from '@/core/account-source/models'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import {
+  IEditTrackerTypeDialogProps,
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import {
   IClassifyTransactionBody,
+  IClassifyTransactionFormProps,
   ICreateTrackerTransactionBody,
   IDataTransactionTable,
-  ITransaction
+  IDialogTransaction,
+  ITransaction,
+  IUpdateTransactionBody
 } from '@/core/transaction/models'
 import { IBaseResponseData, IDataTableConfig } from '@/types/common.i'
 
@@ -18,6 +23,7 @@ export interface IDialogTrackerTransaction {
   isDialogClassifyTransactionOpen: boolean
   isDialogUnclassifiedOpen: boolean
   isDialogCreateTrackerTxTypeOpen: boolean
+  isDialogDetailOpen: boolean
 }
 
 export interface ITrackerTransaction {
@@ -93,7 +99,7 @@ export interface IClassifyTransactionDialog {
 export interface ICreateTrackerTransactionDialog {
   formData: ICreateTrackerTransactionBody
   setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionBody>>
-  accountSourceData: IAccountSource[]
+
   handleCreate: (data: ICreateTrackerTransactionBody) => void
 }
 
@@ -115,6 +121,22 @@ export interface ISharedDialogElements {
     setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
   ) => void
   handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+  accountSourceData: IAccountSource[]
+}
+
+export interface IDetailUpdateTrackerTransactionDialog {
+  dataDetail: ITrackerTransaction
+  setDataDetail: React.Dispatch<React.SetStateAction<ITrackerTransaction>>
+  statusUpdateTrackerTransaction: 'error' | 'success' | 'pending' | 'idle'
+  handleUpdateTrackerTransaction: (
+    data: IUpdateTrackerTransactionBody,
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  ) => void
+  statusUpdateTransaction: 'error' | 'success' | 'pending' | 'idle'
+  handleUpdateTransaction: (
+    data: IUpdateTransactionBody,
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  ) => void
 }
 
 export interface ITrackerTransactionDialogProps {
@@ -123,4 +145,41 @@ export interface ITrackerTransactionDialogProps {
   createTrackerTransactionDialog: ICreateTrackerTransactionDialog
   sharedDialogElements: ISharedDialogElements
   createTrackerTransactionTypeDialog: ICreateTrackerTransactionTypeDialog
+  detailUpdateTrackerTransactionDialog: IDetailUpdateTrackerTransactionDialog
+}
+
+export interface IDetailUpdateTransactionDialogProps {
+  updateTransactionProps: {
+    transaction: ITransaction
+    statusUpdateTransaction: 'error' | 'success' | 'pending' | 'idle'
+    handleUpdateTransaction: (
+      data: IUpdateTransactionBody,
+      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    ) => void
+    isEditing: boolean
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  updateTrackerTransactionProps?: {
+    trackerTransaction: Omit<ITrackerTransaction, 'Transaction'>
+    statusUpdateTrackerTransaction: 'error' | 'success' | 'pending' | 'idle'
+    handleUpdateTrackerTransaction: (
+      data: IUpdateTrackerTransactionBody,
+      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    ) => void
+    isEditing: boolean
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  commonProps: {
+    accountSourceData: IAccountSource[]
+  }
+  editTrackerTransactionTypeProps?: IEditTrackerTypeDialogProps
+  classifyDialogProps?: {
+    ClassifyForm: any
+    formClassifyRef: React.RefObject<HTMLFormElement>
+  }
+}
+
+export interface IUpdateTrackerTransactionFormProps extends IClassifyTransactionFormProps {
+  currentDirection: ETypeOfTrackerTransactionType
+  accountSourceData: IAccountSource[]
 }

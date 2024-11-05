@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import FormZod from '@/components/core/FormZod'
 import {
   createTrackerTransactionSchema,
-  defineCreateAccountSourceFormBody
+  defineCreateTrackerTransactionFormBody
 } from '@/core/tracker-transaction/constants/create-tracker-transaction.constant'
 
 interface ICreateTrackerTransactionFormProps {
@@ -52,7 +52,7 @@ export default function CreateTrackerTransactionForm({
   return (
     <FormZod
       formSchema={createTrackerTransactionSchema}
-      formFieldBody={defineCreateAccountSourceFormBody({
+      formFieldBody={defineCreateTrackerTransactionFormBody({
         accountSourceData,
         incomeTrackerType,
         expenseTrackerType,
