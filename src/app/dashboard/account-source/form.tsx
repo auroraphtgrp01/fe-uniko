@@ -86,8 +86,6 @@ export default function AccountSourceForm() {
   }, [getAdvancedData])
 
   useEffect(() => {
-    console.log('accountSourceData', accountSourceData)
-
     initDataTable(setTableData, accountSourceData)
   }, [accountSourceData])
 

@@ -24,10 +24,6 @@ export default function ClassifyForm({
     setTypeOfEditTrackerType(editTrackerTypeDialogProps.typeDefault)
   }, [editTrackerTypeDialogProps.typeDefault])
 
-  useEffect(() => {
-    console.log('🚀 ~ typeOfEditTrackerType:', typeOfEditTrackerType)
-  }, [typeOfEditTrackerType])
-
   return (
     <FormZod
       formSchema={classifyTransactionSchema}

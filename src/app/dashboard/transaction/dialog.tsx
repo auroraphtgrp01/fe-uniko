@@ -74,7 +74,6 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const detailsConfigDialog: IDialogConfig = {
     content: (
       <DetailUpdateTransactionDialog
-        // editTrackerTransactionTypeProps={}
         updateTransactionProps={{
           transaction: dialogDetailUpdate.dataDetail,
           handleUpdateTransaction: dialogDetailUpdate.handleUpdate,
@@ -125,7 +124,6 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
               dataTable.advancedData.find((e) => e.id === rowData.id) || initEmptyDetailTransactionData
             )
             dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-            console.log(rowData)
           }}
           setConfig={dataTable.setTodayConfig}
           config={dataTable.todayConfig}
@@ -176,40 +174,11 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
       })
     }
   }
-  // const classifyingTransactionConfigDialog: IDialogConfig = {
-  //   content: ClassifyForm({
-  //     transactionId: dialogDetailUpdate.dataDetail.id,
-  //     incomeTrackerType: classifyDialog.incomeTrackerTransactionType,
-  //     expenseTrackerType: classifyDialog.expenseTrackerTransactionType,
-  //     editTrackerTypeDialogProps: {
-  //       openEditDialog: openEditTrackerTxTypeDialog,
-  //       setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
-  //       typeDefault: typeOfTrackerType,
-  //       handleCreateTrackerType: dialogEditTrackerType.handleCreateTrackerType,
-  //       handleUpdateTrackerType: dialogEditTrackerType.handleUpdateTrackerType
-  //     },
-  //     formClassifyRef,
-  //     handleClassify: classifyDialog.handleClassify
-  //   }),
-  //   footer: (
-  //     <Button onClick={() => formClassifyRef.current?.requestSubmit()} type='button'>
-  //       {t('common:button.save_changes')}
-  //     </Button>
-  //   ),
-  //   description: t('transaction:TransactionType.classifyingTransactionDialog.description'),
-  //   title: t('transaction:TransactionType.classifyingTransactionDialog.title'),
-  //   isOpen: dialogState.isDialogOpen.isDialogClassifyTransactionOpen,
-  //   onClose: () => {
-  //     dialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: false }))
-  //     setTypeOfTrackerType(ETypeOfTrackerTransactionType.INCOMING)
-  //   }
-  // }
   return (
     <div>
       <CustomDialog config={detailsConfigDialog} />
       <CustomDialog config={transactionsTodayConfigDialog} />
       <CustomDialog config={unclassifiedTransactionsConfigDialog} />
-      {/* <CustomDialog config={classifyingTransactionConfigDialog} /> */}
     </div>
   )
 }

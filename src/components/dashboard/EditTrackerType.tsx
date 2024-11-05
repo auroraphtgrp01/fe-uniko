@@ -29,9 +29,6 @@ export default function EditTrackerTypeDialog({
   handleUpdateTrackerType
 }: IEditTrackerTypeDialogProps) {
   const [isCreating, setIsCreating] = useState<boolean>(false)
-  useEffect(() => {
-    console.log('isCreating', isCreating)
-  }, [isCreating])
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
   const filteredDataArr = dataArr.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))

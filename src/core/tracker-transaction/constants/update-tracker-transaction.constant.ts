@@ -1,22 +1,23 @@
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { IClassifyTransactionFormProps } from '@/core/transaction/models'
 import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
-import { IUpdateTrackerTransactionFormProps } from '../models/tracker-transaction.interface'
+
+interface IUpdateTrackerTransactionFormBody extends IClassifyTransactionFormProps {}
 
 export const defineUpdateTrackerTransactionFormBody = ({
-  incomeTrackerType,
+  editTrackerTypeDialogProps,
   expenseTrackerType,
-  currentDirection,
-  setOpenEditTrackerTxTypeDialog,
-  openEditTrackerTxTypeDialog,
+  incomeTrackerType,
   typeOfEditTrackerType,
   setTypeOfEditTrackerType,
-  handleCreateTrackerType,
-  handleUpdateTrackerType
-}: any) => {
+  setOpenEditDialog,
+  openEditDialog
+}: IUpdateTrackerTransactionFormBody) => {
   const t = translate(['accountSource'])
   return [
     {
@@ -35,21 +36,21 @@ export const defineUpdateTrackerTransactionFormBody = ({
       placeHolder: t('form.defineCreateAccountSourceFormBody.trackerTypeId.placeholder'),
       props: {
         autoComplete: 'trackerTypeId',
-        setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
+        setOpenEditDialog,
         dataArr: modifiedTrackerTypeForComboBox(
-          currentDirection === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
+          editTrackerTypeDialogProps.typeDefault === ETypeOfTrackerTransactionType.INCOMING
+            ? incomeTrackerType
+            : expenseTrackerType
         ),
         dialogEdit: EditTrackerTypeDialog({
-          openEditDialog: openEditTrackerTxTypeDialog,
-          setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
+          ...editTrackerTypeDialogProps,
           dataArr: modifiedTrackerTypeForComboBox(
             typeOfEditTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
           ),
-          typeDefault: currentDirection || ETypeOfTrackerTransactionType.INCOMING,
           type: typeOfEditTrackerType,
           setType: setTypeOfEditTrackerType,
-          handleCreateTrackerType,
-          handleUpdateTrackerType
+          setOpenEditDialog,
+          openEditDialog
         }),
         label: 'Tracker Transaction Type'
       }
@@ -70,6 +71,6 @@ export const updateTrackerTransactionSchema = z
   .object({
     reasonName: z.string().trim().min(2).max(256),
     trackerTypeId: z.string().uuid(),
-    description: z.string().min(10).max(256).optional()
+    description: z.any()
   })
   .strict()

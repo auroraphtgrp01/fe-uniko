@@ -32,8 +32,8 @@ export const defineCreateTrackerTransactionFormBody = ({
     {
       name: 'amount',
       type: EFieldType.Input,
-      label: t('form.defineCreateAccountSourceFormBody.reasonName.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.reasonName.placeholder'),
+      label: t('form.defineCreateAccountSourceFormBody.amount.label'),
+      placeHolder: t('form.defineCreateAccountSourceFormBody.amount.placeholder'),
       props: {
         type: 'number',
         autoComplete: 'amount'
@@ -112,8 +112,10 @@ export const defineCreateTrackerTransactionFormBody = ({
 export const createTrackerTransactionSchema = z
   .object({
     reasonName: z.string().trim().min(2).max(256),
+    amount: z.string(),
+    accountSourceId: z.string().uuid(),
     direction: z.enum(['INCOMING', 'EXPENSE']),
     trackerTypeId: z.string().uuid(),
-    description: z.string().min(10).max(256).optional()
+    description: z.any()
   })
   .strict()
