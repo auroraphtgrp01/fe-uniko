@@ -1,4 +1,4 @@
-import { ICreateTrackerTransactionFormData } from '@/core/transaction/models'
+import { ICreateTrackerTransactionBody } from '@/core/transaction/models'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import FormZod from '@/components/core/FormZod'
 import {
   createTrackerTransactionSchema,
-  defineCreateAccountSourceFormBody
+  defineCreateTrackerTransactionFormBody
 } from '@/core/tracker-transaction/constants/create-tracker-transaction.constant'
 
 interface ICreateTrackerTransactionFormProps {
@@ -18,7 +18,7 @@ interface ICreateTrackerTransactionFormProps {
   accountSourceData: IAccountSource[]
   openEditTrackerTxTypeDialog: boolean
   setOpenEditTrackerTxTypeDialog: React.Dispatch<React.SetStateAction<boolean>>
-  handleCreate: (data: ICreateTrackerTransactionFormData) => void
+  handleCreate: (data: ICreateTrackerTransactionBody) => void
   handleCreateTrackerType: (
     data: ITrackerTransactionTypeBody,
     setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
@@ -52,7 +52,7 @@ export default function CreateTrackerTransactionForm({
   return (
     <FormZod
       formSchema={createTrackerTransactionSchema}
-      formFieldBody={defineCreateAccountSourceFormBody({
+      formFieldBody={defineCreateTrackerTransactionFormBody({
         accountSourceData,
         incomeTrackerType,
         expenseTrackerType,

@@ -4,13 +4,12 @@ import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/m
 import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
 import { z } from 'zod'
+import { IUpdateTrackerTransactionFormProps } from '../models/tracker-transaction.interface'
 
-export const defineCreateTrackerTransactionFormBody = ({
-  accountSourceData,
+export const defineUpdateTrackerTransactionFormBody = ({
   incomeTrackerType,
   expenseTrackerType,
   currentDirection,
-  setCurrentDirection,
   setOpenEditTrackerTxTypeDialog,
   openEditTrackerTxTypeDialog,
   typeOfEditTrackerType,
@@ -28,48 +27,6 @@ export const defineCreateTrackerTransactionFormBody = ({
       props: {
         autoComplete: 'reasonName'
       }
-    },
-    {
-      name: 'amount',
-      type: EFieldType.Input,
-      label: t('form.defineCreateAccountSourceFormBody.reasonName.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.reasonName.placeholder'),
-      props: {
-        type: 'number',
-        autoComplete: 'amount'
-      }
-    },
-    {
-      name: 'accountSourceId',
-      type: EFieldType.Combobox,
-      label: t('form.defineCreateAccountSourceFormBody.accountSourceId.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.accountSourceId.placeholder'),
-      props: {
-        autoComplete: 'accountSourceId',
-        dataArr: modifiedTrackerTypeForComboBox(accountSourceData)
-      }
-    },
-    {
-      name: 'direction',
-      type: EFieldType.Select,
-      label: t('form.defineCreateAccountSourceFormBody.direction.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.direction.placeholder'),
-      props: {
-        autoComplete: 'direction',
-        onchange: (value: any) => {
-          setCurrentDirection(value as ETypeOfTrackerTransactionType)
-        }
-      },
-      dataSelector: [
-        {
-          value: 'INCOMING',
-          label: 'INCOMING'
-        },
-        {
-          value: 'EXPENSE',
-          label: 'EXPENSE'
-        }
-      ]
     },
     {
       name: 'trackerTypeId',
@@ -109,10 +66,9 @@ export const defineCreateTrackerTransactionFormBody = ({
   ]
 }
 
-export const createTrackerTransactionSchema = z
+export const updateTrackerTransactionSchema = z
   .object({
     reasonName: z.string().trim().min(2).max(256),
-    direction: z.enum(['INCOMING', 'EXPENSE']),
     trackerTypeId: z.string().uuid(),
     description: z.string().min(10).max(256).optional()
   })
