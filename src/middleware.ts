@@ -9,7 +9,10 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/sign-in', req.url))
   }
   if (token && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+    return NextResponse.redirect(new URL('/sign-in', req.url), {
+      status: 307,
+      headers: { 'cache-control': 'no-store' }
+    })
   }
   return NextResponse.next()
 }
