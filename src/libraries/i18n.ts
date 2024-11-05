@@ -15,9 +15,9 @@ export const resources = {
 export const defaultNS = 'overview'
 
 i18next.use(initReactI18next).init({
-  lng: 'vi',
+  lng: 'en',
   resources,
-  fallbackLng: 'vi',
+  fallbackLng: 'en',
   defaultNS,
   interpolation: {
     escapeValue: false

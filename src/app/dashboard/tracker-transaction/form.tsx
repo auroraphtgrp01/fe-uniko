@@ -79,12 +79,10 @@ import {
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
-import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
-import CardInHeader from '../../../components/dashboard/CardInHeader'
 import FlatList from '@/components/core/FlatList'
 import { Button } from '@/components/ui/button'
 

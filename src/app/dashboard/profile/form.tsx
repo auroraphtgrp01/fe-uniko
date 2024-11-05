@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useEffect, useRef, useState } from 'react'
 import { useUser } from '@/core/users/hooks'
-import ProfileCardContainer from './profileCardContainer'
 import { IUser, IUserGetMeResponse } from '@/types/user.i'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { Button } from '@/components/ui/button'
