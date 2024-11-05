@@ -5,6 +5,7 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const token = req.cookies.get('token')
   const referer = req.headers.get('referer')
+  console.warn('MIDDLEWARE', { pathname, token, referer })
   if (!token && pathname.startsWith('/dashboard') && !referer?.includes('/sign-in')) {
     return NextResponse.redirect(new URL('/sign-in', req.url))
   }
