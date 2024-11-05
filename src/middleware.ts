@@ -4,20 +4,18 @@ import type { NextRequest } from 'next/server'
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const token = req.cookies.get('token')
-  const referer = req.headers.get('referer')
-  console.warn('MIDDLEWARE', { pathname, token, referer })
-  if (!token && pathname.startsWith('/dashboard') && !referer?.includes('/sign-in')) {
+
+  if (token && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
+  }
+
+  if (!token && pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/sign-in', req.url))
   }
-  if (token && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
-    return NextResponse.redirect(new URL('/sign-in', req.url), {
-      status: 307,
-      headers: { 'cache-control': 'no-store' }
-    })
-  }
+
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/sign-in']
+  matcher: ['/dashboard/:path*', '/sign-in', '/sign-up']
 }
