@@ -2,6 +2,7 @@ import { apiService } from '@/api'
 import { AUTH_LOGOUT } from '@/core/auth/constants'
 import { useModelQuery } from '@/hooks/useQueryModel'
 import { IUserGetMeResponse } from '@/types/user.i'
+import Cookies from 'js-cookie'
 
 const authApi = apiService.authentication
 
@@ -11,6 +12,7 @@ export const useLogout = () => {
   })
 
   const executeLogout = () => {
+    Cookies.remove('token')
     refetch()
   }
 

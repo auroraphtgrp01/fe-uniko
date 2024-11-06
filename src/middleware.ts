@@ -3,13 +3,19 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
-  const token = req.cookies.get('token')
 
-  if (token && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
+  if (pathname.startsWith('/_next') || pathname.includes('/api/') || pathname.includes('favicon.ico')) {
+    return NextResponse.next()
+  }
+
+  const token = req.cookies.get('token')
+  const hasValidToken = Boolean(token?.value && token.value !== 'undefined' && token.value.length > 0)
+
+  if (hasValidToken && (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up'))) {
     return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
-  if (!token && pathname.startsWith('/dashboard')) {
+  if (!hasValidToken && pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/sign-in', req.url))
   }
 
@@ -17,5 +23,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/sign-in', '/sign-up']
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)', '/dashboard/:path*', '/sign-in', '/sign-up']
 }

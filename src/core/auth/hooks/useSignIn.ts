@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { useMutationCustom } from '@/hooks/useMutationCustom'
 import { useUser } from '@/core/users/hooks'
 import { ISignInBody, ISignInResponse } from '@/core/auth/models'
+import Cookies from 'js-cookie'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {
   const router = useRouter()
@@ -25,6 +26,12 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
           setRefreshTokenToLocalStorage(data.data.refreshToken)
           setExecuteGetMe(true)
           toast.success('Login successfully 🚀 ')
+          Cookies.set('token', data.data.accessToken, {
+            path: '/',
+            secure: true,
+            sameSite: 'lax',
+            expires: 1
+          })
           router.push('/dashboard')
         }
         if (data.data.user.status === 'UNVERIFY' && countLogin < 0) {
