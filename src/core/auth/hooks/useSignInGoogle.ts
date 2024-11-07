@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { useMutationCustom } from '@/hooks/useMutationCustom'
 import { useUser } from '@/core/users/hooks'
 import { ISignInGoogleBody, ISignInResponse } from '@/core/auth/models'
+import Cookies from 'js-cookie'
 
 export const useSignInGoogle = () => {
   const router = useRouter()
@@ -23,6 +24,12 @@ export const useSignInGoogle = () => {
         setRefreshTokenToLocalStorage(data.data.refreshToken)
         setExecuteGetMe(true)
         toast.success('Login successfully 🚀 ')
+        Cookies.set('token', data.data.accessToken, {
+          path: '/',
+          secure: true,
+          sameSite: 'lax',
+          expires: 1
+        })
         router.push('/dashboard')
       },
       onError: (error) => {

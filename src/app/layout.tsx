@@ -23,8 +23,6 @@ export const metadata: Metadata = {
   icons: 'favicon.ico'
 }
 
-console.info('Config Project ', configProject)
-
 const TopProgressBar = dynamic(
   () => {
     return import('@/components/core/top-progress-bar')
