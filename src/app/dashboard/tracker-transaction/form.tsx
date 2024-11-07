@@ -104,11 +104,11 @@ export default function TrackerTransactionForm() {
 
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
-    return getColumns<ICustomTrackerTransaction>(titles, true)
+    return getColumns<ICustomTrackerTransaction>({ headers: titles, isSort: true })
   }, [tableData])
   const columnUnclassifiedTxTables = useMemo(() => {
     if (unclassifiedTxTableData.length === 0) return []
-    return getColumns<IDataTransactionTable>(transactionHeaders, true)
+    return getColumns<IDataTransactionTable>({ headers: transactionHeaders, isSort: true })
   }, [unclassifiedTxTableData])
 
   // hooks

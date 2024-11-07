@@ -308,7 +308,7 @@ export default function TransactionForm() {
   // memos
   const columns = useMemo(() => {
     if (dataTable.length === 0) return []
-    return getColumns<IDataTransactionTable>(transactionHeaders, true)
+    return getColumns<IDataTransactionTable>({ headers: transactionHeaders, isSort: true })
   }, [dataTable])
   const dataTableButtons = initButtonInDataTableHeader({
     refetchTransactionBySocket,

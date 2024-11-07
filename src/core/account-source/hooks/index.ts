@@ -6,10 +6,14 @@ import { useGetAdvancedAccountSource } from '@/core/account-source/hooks/useGetA
 import { useUpdateAccountSource } from '@/core/account-source/hooks/useUpdateAccountSource'
 import { IUseQueryHookOptions } from '@/types/query.interface'
 import { useGetAllAccountSource } from './useGetAllAccountSource'
+import { useDeleteAnAccountSource } from './useDeleteAnAccountSource'
+import { useDeleteMultipleAccountSource } from './useDeleteMultipleAccountSource'
 
 export const useAccountSource = (opts?: IUseQueryHookOptions) => {
   const { mutate: createAccountSource, isPending: isCreating } = useCreateAccountSource(opts)
   const { mutate: updateAccountSource, isPending: isUpdating } = useUpdateAccountSource(opts)
+  const { mutate: deleteAnAccountSource, isPending: isDeletingOne } = useDeleteAnAccountSource(opts)
+  const { mutate: deleteMultipleAccountSource, isPending: isDeletingMultiple } = useDeleteMultipleAccountSource(opts)
 
   return {
     createAccountSource,
@@ -18,6 +22,10 @@ export const useAccountSource = (opts?: IUseQueryHookOptions) => {
     isUpdating,
     useGetAccountSourceById,
     getAdvancedAccountSource: useGetAdvancedAccountSource,
-    getAllAccountSource: useGetAllAccountSource
+    getAllAccountSource: useGetAllAccountSource,
+    deleteAnAccountSource,
+    isDeletingOne,
+    deleteMultipleAccountSource,
+    isDeletingMultiple
   }
 }

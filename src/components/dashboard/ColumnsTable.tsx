@@ -1,13 +1,26 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
 import { convertToCamelCase } from '@/libraries/utils'
 import { ArrowUpDown } from 'lucide-react'
 import { renderToString } from 'react-dom/server'
 import parse from 'html-react-parser'
+import { Button } from '../ui/button'
+import { IDeleteProps } from './DataTable'
 
-export function getColumns<T>(headers: string[], isSort: boolean): ColumnDef<T>[] {
+export function getColumns<T>({
+  headers,
+  isSort,
+  deleteAllProps
+}: {
+  headers: string[]
+  isSort: boolean
+  deleteAllProps?: {
+    onOpen: (rowData?: any) => void
+  }
+}): ColumnDef<T>[] {
+  console.log('>>>>>>', headers)
+
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
     header: ({ column }: { column: any }) =>
@@ -37,23 +50,21 @@ export function getColumns<T>(headers: string[], isSort: boolean): ColumnDef<T>[
 
   const defaultColumn = [
     {
-      id: 'inProgress',
+      accessorKey: 'inProgress',
       header: ({ table }: { table: any }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-          className='translate-y-[2px]'
-        />
+        <Button
+          className='w-13 text-center text-red-600'
+          variant='ghost'
+          size='icon'
+          onClick={(e) => {
+            e.preventDefault()
+            deleteAllProps?.onOpen()
+          }}
+        >
+          Delete all
+        </Button>
       ),
-      cell: ({ row }: { row: any }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-          className='translate-y-[2px]'
-        />
-      ),
+      cell: ({ row }: { row: any }) => <span className='text-center'>{row.index + 1}</span>,
       enableSorting: false,
       enableHiding: false
     }
