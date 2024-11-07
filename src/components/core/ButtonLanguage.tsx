@@ -2,8 +2,6 @@ import { Button } from '@/components/ui/button'
 import { useTranslation } from 'react-i18next'
 import { locales } from '@/libraries/i18n'
 import { motion } from 'framer-motion'
-import vietnamLanguage from '@/images/vietnam.png'
-import Image from 'next/image'
 
 export default function ButtonLanguage() {
   const { i18n } = useTranslation()
@@ -23,13 +21,7 @@ export default function ButtonLanguage() {
         transition={{ duration: 0.3 }}
         onClick={() => changeLanguage('vi')}
       >
-        <Image
-          src={'https://www.flaticon.com/media/dist/min/img/flags/en.svg'}
-          className='object-cover'
-          alt=''
-          width={'20'}
-          height={'20'}
-        />
+        <span>en</span>
       </motion.div>
 
       <motion.div
@@ -44,7 +36,7 @@ export default function ButtonLanguage() {
         className='absolute'
         onClick={() => changeLanguage('en')}
       >
-        <Image src={vietnamLanguage} className='object-cover' alt='' width={'20'} height={'20'} />
+        <span>vi</span>
       </motion.div>
       <span className='sr-only'>Toggle language</span>
     </Button>
