@@ -21,8 +21,10 @@ import {
 import toast from 'react-hot-toast'
 import {
   defineUpdateTrackerTransactionFormBody,
+  TUpdateTrackerTransactionSchema,
   updateTrackerTransactionSchema
 } from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
+import { UseFormSetValue } from 'react-hook-form'
 
 export default function DetailUpdateTransaction({
   updateTransactionProps,
@@ -30,23 +32,19 @@ export default function DetailUpdateTransaction({
   commonProps,
   classifyDialogProps
 }: IDetailUpdateTransactionDialogProps) {
-  const updateTransactionRef = useRef<HTMLFormElement>(null)
-  const updateTrackerTransactionRef = useRef<HTMLFormElement>(null)
-  const [formUpdateTrackerTxDefaultValues, setFormUpdateTrackerTxDefaultValues] = React.useState<any>({
-    reasonName: updateTrackerTransactionProps?.trackerTransaction.reasonName || '',
-    trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || '',
-    description: updateTrackerTransactionProps?.trackerTransaction.description
-  })
+  const submitUpdateTransactionRef = useRef<HTMLFormElement>(null)
+  const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
+  const formUpdateTrackerTransactionRef = useRef<any>()
 
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
       if (classifyDialogProps?.formClassifyRef) {
         classifyDialogProps.formClassifyRef.current?.requestSubmit()
       } else {
-        updateTransactionRef.current?.requestSubmit()
+        submitUpdateTransactionRef.current?.requestSubmit()
       }
     }
-    if (updateTrackerTransactionProps?.isEditing) updateTrackerTransactionRef.current?.requestSubmit()
+    if (updateTrackerTransactionProps?.isEditing) submitUpdateTrackerTransactionRef.current?.requestSubmit()
   }
 
   const TransactionDetails = () => (
@@ -196,10 +194,20 @@ export default function DetailUpdateTransaction({
           {/* Form update transaction */}
           {!updateTransactionProps.transaction.ofAccount && (
             <FormZod
-              submitRef={updateTransactionRef}
+              submitRef={submitUpdateTransactionRef}
               formFieldBody={defineUpdateTransactionFormBody({
                 accountSourceData: commonProps.accountSourceData,
-                setFormUpdateTrackerTxDefaultValues
+                handleSetTrackerTypeDefault: (value: string) => {
+                  if (value !== updateTransactionProps.transaction.direction) {
+                    console.log('value', value)
+
+                    formUpdateTrackerTransactionRef.current?.setValue('trackerTypeId', undefined)
+                    console.log(
+                      'formUpdateTrackerTransactionRef',
+                      formUpdateTrackerTransactionRef.current?.getValues('trackerTypeId')
+                    )
+                  }
+                }
               })}
               formSchema={updateTransactionSchema}
               onSubmit={(data) => {
@@ -222,7 +230,8 @@ export default function DetailUpdateTransaction({
           {/* Form update tracker transaction */}
           {updateTrackerTransactionProps && (
             <FormZod
-              submitRef={updateTrackerTransactionRef}
+              formRef={formUpdateTrackerTransactionRef}
+              submitRef={submitUpdateTrackerTransactionRef}
               formFieldBody={defineUpdateTrackerTransactionFormBody({
                 editTrackerTypeDialogProps:
                   updateTrackerTransactionProps.editTrackerTransactionTypeProps.editTrackerTypeDialogProps,
@@ -245,7 +254,11 @@ export default function DetailUpdateTransaction({
                   updateTransactionProps.setIsEditing
                 )
               }}
-              defaultValues={formUpdateTrackerTxDefaultValues}
+              defaultValues={{
+                reasonName: updateTrackerTransactionProps?.trackerTransaction.reasonName || '',
+                trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || '',
+                description: updateTrackerTransactionProps?.trackerTransaction.description
+              }}
             />
           )}
         </>

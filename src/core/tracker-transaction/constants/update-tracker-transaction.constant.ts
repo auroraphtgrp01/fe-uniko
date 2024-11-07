@@ -67,6 +67,8 @@ export const defineUpdateTrackerTransactionFormBody = ({
   ]
 }
 
+export type TUpdateTrackerTransactionSchema = z.infer<typeof updateTrackerTransactionSchema>
+
 export const updateTrackerTransactionSchema = z
   .object({
     reasonName: z.string().trim().min(2).max(256),

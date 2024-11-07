@@ -8,12 +8,12 @@ import { z } from 'zod'
 
 interface IUpdateTransactionFormBody {
   accountSourceData: IAccountSource[]
-  setFormUpdateTrackerTxDefaultValues: React.Dispatch<React.SetStateAction<any>>
+  handleSetTrackerTypeDefault: (value: string) => void
 }
 
 export const defineUpdateTransactionFormBody = ({
   accountSourceData,
-  setFormUpdateTrackerTxDefaultValues
+  handleSetTrackerTypeDefault
 }: IUpdateTransactionFormBody): any[] => {
   return [
     {
@@ -42,10 +42,7 @@ export const defineUpdateTransactionFormBody = ({
       placeHolder: 'Select direction',
       props: {
         onchange: (value: string) => {
-          setFormUpdateTrackerTxDefaultValues((prev: any) => ({
-            ...prev,
-            trackerTypeId: ''
-          }))
+          handleSetTrackerTypeDefault(value)
         }
       },
       dataSelector: [
