@@ -19,18 +19,18 @@ export const useSignInGoogle = () => {
     mutateOption: {
       retry: AUTH_RETRY,
       onSuccess: (data) => {
-        setCountLogin(countLogin + 1)
-        setAccessTokenToLocalStorage(data.data.accessToken)
-        setRefreshTokenToLocalStorage(data.data.refreshToken)
-        setExecuteGetMe(true)
-        toast.success('Login successfully 🚀 ')
         Cookies.set('token', data.data.accessToken, {
           path: '/',
           secure: true,
           sameSite: 'lax',
           expires: 1
         })
-        router.push('/dashboard')
+        setCountLogin(countLogin + 1)
+        setAccessTokenToLocalStorage(data.data.accessToken)
+        setRefreshTokenToLocalStorage(data.data.refreshToken)
+        setExecuteGetMe(true)
+        toast.success('Login successfully 🚀 ')
+        router.push('/dashboard?loggedIn=true')
       },
       onError: (error) => {
         if (error.response?.status) return toast.error(`${(error.response?.data as { message: string }).message} !`)
