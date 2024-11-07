@@ -22,17 +22,17 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
       onSuccess: (data) => {
         setCountLogin(countLogin + 1)
         if (data.data.user.status === 'ACTIVE') {
-          setAccessTokenToLocalStorage(data.data.accessToken)
-          setRefreshTokenToLocalStorage(data.data.refreshToken)
-          setExecuteGetMe(true)
-          toast.success('Login successfully 🚀 ')
           Cookies.set('token', data.data.accessToken, {
             path: '/',
             secure: true,
             sameSite: 'lax',
             expires: 1
           })
-          router.push('/dashboard')
+          setAccessTokenToLocalStorage(data.data.accessToken)
+          setRefreshTokenToLocalStorage(data.data.refreshToken)
+          setExecuteGetMe(true)
+          toast.success('Login successfully 🚀 ')
+          router.push('/dashboard?loggedIn=true')
         }
         if (data.data.user.status === 'UNVERIFY' && countLogin < 0) {
           toast.error('Account is inactive, please contact the administrator !')
