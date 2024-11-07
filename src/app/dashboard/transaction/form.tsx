@@ -78,6 +78,7 @@ import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants
 
 export default function TransactionForm() {
   // states
+  const [idDeletes, setIdDeletes] = useState<string[]>([])
   const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )
@@ -121,8 +122,14 @@ export default function TransactionForm() {
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
   const { getAllData: accountSourceData } = getAllAccountSource()
   const { dataTrackerTransactionType } = getAllTrackerTransactionType()
-  const { getTransactions, getUnclassifiedTransactions, getTodayTransactions, updateTransaction, statusUpdate } =
-    useTransaction()
+  const {
+    getTransactions,
+    getUnclassifiedTransactions,
+    getTodayTransactions,
+    updateTransaction,
+    statusUpdate,
+    deleteAnTransaction
+  } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions })
   const { resetData, setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
@@ -401,6 +408,34 @@ export default function TransactionForm() {
               }}
               isLoading={isGetTransaction}
               buttons={dataTableButtons}
+              deleteProps={{
+                isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+                onDelete: () => {
+                  if (idDeletes.length > 0)
+                    deleteAnTransaction(
+                      { id: idDeletes[0] },
+                      {
+                        onSuccess: (res: any) => {
+                          if (res.statusCode === 200 || res.statusCode === 201) {
+                            resetCacheStatistic()
+                            setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                            setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                            setIdDeletes([])
+                            toast.success('Delete account source successfully')
+                          }
+                        }
+                      }
+                    )
+                },
+                onOpen: (rowData: any) => {
+                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                  setIdDeletes((prev) => [...prev, rowData.id])
+                },
+                onClose: () => {
+                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                  setIdDeletes([])
+                }
+              }}
             />
           </div>
         </CardContent>

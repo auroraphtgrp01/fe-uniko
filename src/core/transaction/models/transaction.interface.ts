@@ -41,6 +41,8 @@ export interface IDialogTransaction {
   isDialogUnclassifiedTransactionOpen: boolean
   isDialogClassifyTransactionOpen: boolean
   isDialogCreateTrackerTxTypeOpen: boolean
+  isDialogDeleteOpen: boolean
+  isDialogDeleteAllOpen: boolean
 }
 
 export interface IDataTransactionTable {
