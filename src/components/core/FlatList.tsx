@@ -25,14 +25,14 @@ const data = [
     transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
   },
   {
-    id: '2',
+    id: '3',
     amount: formatCurrency(200000, 'VND'),
     accountNo: 5877979779,
     direction: ETypeOfTrackerTransactionType.INCOMING,
     transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
   },
   {
-    id: '2',
+    id: '4',
     amount: formatCurrency(200000, 'VND'),
     accountNo: 5877979779,
     direction: ETypeOfTrackerTransactionType.INCOMING,

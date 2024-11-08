@@ -56,11 +56,7 @@ import { useSocket } from '@/libraries/useSocketIo'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useUser } from '@/core/users/hooks'
-import {
-  getRefreshTokenFromLocalStorage,
-  getTimeCountRefetchLimit,
-  setTimeCountRefetchLimit
-} from '@/libraries/helpers'
+import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
 import {
   GET_ADVANCED_TRANSACTION_KEY,
   GET_TODAY_TRANSACTION_KEY,
@@ -73,7 +69,6 @@ import {
 } from '@/core/tracker-transaction/constants'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from '@/core/auth/hooks'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { IChartData } from '@/components/core/charts/DonutChart'
-import { ArrowDownIcon, ArrowUpIcon, HandCoins } from 'lucide-react'
+import { ArrowDownIcon, ArrowUpIcon, CloudDownload, HandCoins, HardDriveDownload, PcCase } from 'lucide-react'
 import { formatArrayData, formatCurrency, getCurrentMonthDateRange, mergeQueryParams } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
@@ -34,7 +34,7 @@ import {
 } from '@/core/transaction/models'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
-import { initCreateTrackerTransactionForm, initTrackerTypeForm, transactionHeaders } from '../transaction/constants'
+import { initTrackerTypeForm, transactionHeaders } from '../transaction/constants'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { useTransaction } from '@/core/transaction/hooks'
 import { modifyTransactionHandler, updateCacheDataTransactionForClassify } from '../transaction/handler'
@@ -74,6 +74,11 @@ import { Button } from '@/components/ui/button'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import toast from 'react-hot-toast'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
+import { useSocket } from '@/libraries/useSocketIo'
+import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/helpers'
+import { useUser } from '@/core/users/hooks'
+import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
 
 export default function TrackerTransactionForm() {
   // states
@@ -88,6 +93,7 @@ export default function TrackerTransactionForm() {
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
+  const [isPendingRefetch, setIsPendingRefetch] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
   const [chartData, setChartData] = useState<IChartData>()
   const [dates, setDates] = useState<IDateRange>(getCurrentMonthDateRange())
@@ -100,6 +106,10 @@ export default function TrackerTransactionForm() {
   const [idDeletes, setIdDeletes] = useState<string[]>([])
 
   // hooks
+  const socket = useSocket()
+  const { getMe } = useUser()
+  const { isGetMeUserPending } = getMe(true)
+  const { user } = useStoreLocal()
   const { t } = useTranslation(['trackerTransaction', 'common'])
   const { getAllAccountSource } = useAccountSource()
   const {
@@ -138,10 +148,6 @@ export default function TrackerTransactionForm() {
   const { resetData: resetCacheTodayTxs } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
     () => {}
-  )
-  const { setData: setCacheTodayTxsDeleteFeat } = useUpdateModel(
-    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    updateCacheDataDeleteFeat
   )
   const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
@@ -233,6 +239,67 @@ export default function TrackerTransactionForm() {
 
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+
+  const refetchTransactionBySocket = () => {
+    const lastCalled = getTimeCountRefetchLimit()
+    const now = Date.now()
+    const timeLimit = 10000
+    if (now - lastCalled >= timeLimit) {
+      if (!isGetMeUserPending) {
+        const userPayload: IUserPayloadForSocket = {
+          userId: user?.id ?? '',
+          roleId: user?.roleId ?? '',
+          email: user?.email ?? '',
+          fullName: user?.fullName ?? '',
+          status: (user?.status as EUserStatus) ?? EUserStatus.ACTIVE
+        }
+        if (socket) {
+          setTimeCountRefetchLimit()
+          setIsPendingRefetch(true)
+          toast.loading('Sending request... Please wait until it is completed!')
+          socket.emit('refetchTransaction', {
+            user: userPayload
+          })
+        }
+      }
+    } else {
+      toast.error('Please wait for a while before refetching the transaction!')
+      return
+    }
+  }
+
+  useEffect(() => {
+    if (socket) {
+      socket.off('refetchComplete')
+      socket.on('refetchComplete', (data: { message: string; status: string }) => {
+        if (data.status === 'NO_NEW_TRANSACTION') {
+          toast.success('No new transaction to fetch!', {
+            duration: 2000,
+            id: 'no-new-transaction'
+          })
+        } else if (data.status === 'NEW_TRANSACTION') {
+          resetCacheUnclassifiedTxs()
+          resetCacheStatistic()
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          toast.success('Refetch transaction successfully - Found new transaction!', {
+            duration: 2000,
+            id: 'new-transaction-success'
+          })
+        } else {
+          toast.error('Refetch transaction failed!', {
+            duration: 2000,
+            id: 'refetch-failed'
+          })
+        }
+
+        setIsPendingRefetch(false)
+      })
+
+      return () => {
+        socket?.off('refetchComplete')
+      }
+    }
+  }, [socket])
 
   return (
     <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
@@ -365,8 +432,18 @@ export default function TrackerTransactionForm() {
               <div className='flex items-center justify-between'>
                 <CardTitle>Unclassified </CardTitle>
                 <div className='flex gap-2'>
-                  <Button variant={'secondary'}>Classify</Button>
-                  <Button variant={'default'}>Refetch</Button>
+                  <Button variant={'secondary'} className='flex items-center gap-1'>
+                    Classify <PcCase height={15} width={15} />
+                  </Button>
+                  <Button
+                    variant={'default'}
+                    className='flex items-center gap-1'
+                    isLoading={isPendingRefetch}
+                    onClick={refetchTransactionBySocket}
+                  >
+                    Refetch in bank
+                    {!isPendingRefetch && <HardDriveDownload height={15} width={15} />}
+                  </Button>
                 </div>
               </div>
             </CardHeader>

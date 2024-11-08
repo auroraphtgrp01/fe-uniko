@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DateRangePicker } from '../core/DateRangePicker'
 import { IDateRange } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 interface ITabContent {
   labels: string
   value: string
@@ -33,9 +34,12 @@ export default function TrackerTransactionChart({ tabConfig, statisticDateRange 
         <CardContent className='items-center justify-center'>
           <TabsList className='col-span-2 mt-5 grid w-full grid-cols-2'>
             {tabConfig.tabContents.length > 0
-              ? tabConfig.tabContents.map((tabContent: ITabContent) => (
+              ? tabConfig.tabContents.map((tabContent: ITabContent, index: number) => (
                   <>
-                    <TabsTrigger value={tabContent.value}>{tabContent.labels}</TabsTrigger>
+                    <TabsTrigger value={tabContent.value} className='flex items-center gap-2'>
+                      {index === 0 && <TrendingDown width={15} height={15} />}
+                      {tabContent.labels} {index === 1 && <TrendingUp width={15} height={15} />}
+                    </TabsTrigger>
                   </>
                 ))
               : ''}

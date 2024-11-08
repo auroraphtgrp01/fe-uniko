@@ -204,38 +204,42 @@ export function DataTable<TData, TValue>({
       </div>
       <div className='rounded-md border'>
         <Table classNameOfScroll={classNameOfScroll}>
-          <TableHeader style={{ cursor: 'pointer' }}>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
+          {data?.length > 0 ? (
+            <TableHeader style={{ cursor: 'pointer' }}>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        className='text-nowrap'
+                        key={header.id}
+                        onMouseDown={(event) => {
+                          if (event.detail > 1) {
+                            event.preventDefault()
+                          }
+                        }}
+                      >
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    )
+                  })}
+                  {onOpenDelete && (
                     <TableHead
                       className='text-nowrap'
-                      key={header.id}
+                      key={'deleteIcon'}
                       onMouseDown={(event) => {
                         if (event.detail > 1) {
                           event.preventDefault()
                         }
                       }}
-                    >
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  )
-                })}
-                {onOpenDelete && (
-                  <TableHead
-                    className='text-nowrap'
-                    key={'deleteIcon'}
-                    onMouseDown={(event) => {
-                      if (event.detail > 1) {
-                        event.preventDefault()
-                      }
-                    }}
-                  />
-                )}
-              </TableRow>
-            ))}
-          </TableHeader>
+                    />
+                  )}
+                </TableRow>
+              ))}
+            </TableHeader>
+          ) : (
+            <div className='mt-20'></div>
+          )}
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => {
@@ -283,21 +287,21 @@ export function DataTable<TData, TValue>({
                 )
               })
             ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center'>
+              <div className='h-24'>
+                <div className='h-24 text-center'>
                   {isLoading ? (
                     <div className='flex flex-col items-center justify-center gap-2'>
                       <Atom color='#be123c' size='small' textColor='#be123c' />
                       <span className='font-semibold'>Loading</span>
                     </div>
                   ) : (
-                    <div className='flex flex-col items-center justify-center gap-2'>
+                    <div className='flex select-none flex-col items-center justify-center gap-2'>
                       <Image src={EmptyBox} alt='' height={50} width={50} />
                       <span className='font-semibold text-foreground'>{t('table.noDataText')}</span>
                     </div>
                   )}
-                </TableCell>
-              </TableRow>
+                </div>
+              </div>
             )}
           </TableBody>
         </Table>
