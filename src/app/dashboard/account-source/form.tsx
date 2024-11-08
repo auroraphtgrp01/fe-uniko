@@ -87,13 +87,7 @@ export default function AccountSourceForm() {
     if (tableData.length === 0) return []
     return getColumns<IAccountSourceDataFormat>({
       headers: titles,
-      isSort: true,
-      deleteAllProps: {
-        onOpen: () => {
-          setIdDeletes(tableData.map((item) => item.id))
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
-        }
-      }
+      isSort: true
     })
   }, [tableData])
 
@@ -143,6 +137,14 @@ export default function AccountSourceForm() {
             columns={columns}
             onRowClick={(data: IAccountSourceDataFormat) => setIdRowClicked(data.id)}
             buttons={dataTableButtons}
+            onOpenDeleteAll={(ids: string[]) => {
+              setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+              setIdDeletes(ids)
+            }}
+            onOpenDelete={(id: string) => {
+              setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+              setIdDeletes([id])
+            }}
             deleteProps={{
               isDialogOpen: isDialogOpen.isDialogDeleteOpen,
               onDelete: () => {
@@ -203,6 +205,7 @@ export default function AccountSourceForm() {
                     setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
                     setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
                     setIdDeletes([])
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
                     toast.success('Delete all account source successfully')
                   }
                 }

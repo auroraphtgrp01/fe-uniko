@@ -177,13 +177,7 @@ export default function TrackerTransactionForm() {
     if (tableData.length === 0) return []
     return getColumns<ICustomTrackerTransaction>({
       headers: titles,
-      isSort: true,
-      deleteAllProps: {
-        onOpen: () => {
-          setIdDeletes(advancedTrackerTxData?.data.map((item) => item.id) || [])
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
-        }
-      }
+      isSort: true
     })
   }, [tableData])
   const columnUnclassifiedTxTables = useMemo(() => {

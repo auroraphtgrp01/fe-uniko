@@ -327,43 +327,12 @@ export default function TransactionForm() {
   }
 
   // memos
-  const tableUncTxsColumns = useMemo(() => {
-    if (transactionSummary.unclassifiedTransaction.data.length === 0) return []
-    return getColumns<IDataTransactionTable>({
-      headers: transactionHeaders,
-      isSort: true,
-      deleteAllProps: {
-        onOpen: () => {
-          setIdDeletes(transactionSummary.unclassifiedTransaction.data.map((item) => item.id) || [])
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
-        }
-      }
-    })
-  }, [transactionSummary.unclassifiedTransaction.data])
-  const tableTodayTxsColumns = useMemo(() => {
-    if (transactionSummary.transactionToday.data.length === 0) return []
-    return getColumns<IDataTransactionTable>({
-      headers: transactionHeaders,
-      isSort: true,
-      deleteAllProps: {
-        onOpen: () => {
-          setIdDeletes(transactionSummary.transactionToday.data.map((item) => item.id) || [])
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
-        }
-      }
-    })
-  }, [transactionSummary.transactionToday.data])
+
   const columns = useMemo(() => {
     if (dataTable.length === 0) return []
     return getColumns<IDataTransactionTable>({
       headers: transactionHeaders,
-      isSort: true,
-      deleteAllProps: {
-        onOpen: () => {
-          setIdDeletes(dataTransaction?.data.map((item) => item.id) || [])
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
-        }
-      }
+      isSort: true
     })
   }, [dataTable])
   const dataTableButtons = initButtonInDataTableHeader({
@@ -528,8 +497,7 @@ export default function TransactionForm() {
         </CardContent>
         <TransactionDialog
           dataTable={{
-            tableTodayTxsColumns,
-            tableUncTxsColumns,
+            columns,
             advancedData: dataTransaction?.data || [],
             transactionTodayData: transactionSummary.transactionToday.data,
             unclassifiedTransactionData: transactionSummary.unclassifiedTransaction.data,

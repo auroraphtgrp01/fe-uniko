@@ -15,12 +15,15 @@ import {
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React, { useEffect, useState } from 'react'
-import { AlertTriangle, ChevronDown, ChevronLeft, ChevronRight, Trash2Icon } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, Trash2Icon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
-import { IDataTableConfig, IDialogConfig } from '@/types/common.i'
+import { IDataTableConfig } from '@/types/common.i'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { useTranslation } from 'react-i18next'
+import EmptyBox from '@/images/empty-box.png'
+import { Atom } from 'react-loading-indicators'
+import Image from 'next/image'
 import DeleteDialog, { IDeleteDialogProps } from './DeleteDialog'
 
 export interface IDeleteProps extends IDeleteDialogProps {
@@ -38,6 +41,8 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean
   buttons?: IButtonInDataTableHeader[]
   buttonInContextMenu?: IButtonInDataTableHeader[]
+  onOpenDeleteAll?: (ids: string[]) => void
+  onOpenDelete?: (id: string) => void
   deleteProps?: IDeleteProps
 }
 
@@ -52,6 +57,8 @@ export function DataTable<TData, TValue>({
   buttonInContextMenu,
   isLoading,
   buttons,
+  onOpenDeleteAll,
+  onOpenDelete,
   deleteProps
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation(['common'])
@@ -62,7 +69,6 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [hoveredRow, setHoveredRow] = React.useState<number | null>(null)
-  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
   const table = useReactTable({
     data,
@@ -82,7 +88,6 @@ export function DataTable<TData, TValue>({
       rowSelection
     }
   })
-  const rows = table.getRowModel().rows
 
   useEffect(() => {
     table.setPagination({ pageIndex: currentPage - 1, pageSize: limit })
@@ -103,7 +108,7 @@ export function DataTable<TData, TValue>({
     <div className='h-full w-full p-1'>
       <div className='flex items-center justify-between py-4'>
         <div className='flex items-center space-x-2'>
-          <div className='grid-row min-w-0'>
+          <div className='min-w-0'>
             <Input
               placeholder={t('table.filterPlaceholder')}
               defaultValue={''}
@@ -141,6 +146,21 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className='flex items-center space-x-2'>
+          {onOpenDeleteAll && Object.values(table.getSelectedRowModel().rowsById).length > 0 && (
+            <Button
+              variant='default'
+              size='icon'
+              onClick={(e) => {
+                e.preventDefault()
+                onOpenDeleteAll(
+                  Object.values(table.getSelectedRowModel().rowsById).map((item) => (item.original as any).id)
+                )
+                // deleteAllProps?.onOpen()
+              }}
+            >
+              <Trash2Icon className='h-5 w-5' />
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
@@ -182,78 +202,94 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       <div className='rounded-md border'>
-        <Table>
-          <TableHeader>
+        <Table classNameOfScroll={classNameOfScroll}>
+          <TableHeader style={{ cursor: 'pointer' }}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    className='text-nowrap'
-                    key={header.id}
-                    onMouseDown={(event) => {
-                      if (event.detail > 1) {
-                        event.preventDefault()
-                      }
-                    }}
-                  >
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-                <TableHead className='w-[50px]' /> {/* Additional header cell for delete button column */}
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      className='text-nowrap'
+                      key={header.id}
+                      onMouseDown={(event) => {
+                        if (event.detail > 1) {
+                          event.preventDefault()
+                        }
+                      }}
+                    >
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  )
+                })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {rows?.length ? (
-              rows.map((row, index) => (
-                <TableRow
-                  key={row.id}
-                  onMouseEnter={() => setHoveredRow(index)}
-                  onMouseLeave={() => setHoveredRow(null)}
-                  style={{ cursor: 'pointer', userSelect: 'none' }}
-                  className={getRowClassName ? getRowClassName(row.original) : ''}
-                  data-state={row.getIsSelected() && 'selected'}
-                  onClick={(event: any) => {
-                    if (
-                      (event.target.getAttribute('role') === null ||
-                        event.target.getAttribute('role') !== 'checkbox') &&
-                      onRowClick
-                    ) {
-                      onRowClick(row.original)
-                    }
-                  }}
-                  onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                  ))}
-                  <TableCell className='w-[50px] p-2'>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        deleteProps?.onOpen(row.original)
-                      }}
-                      className={`h-8 w-8 transition-opacity duration-200 ${
-                        hoveredRow === index ? 'opacity-100' : 'opacity-0'
-                      }`}
-                    >
-                      <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
-                      <span className='sr-only'>Delete row</span>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row, index) => {
+                return (
+                  <TableRow
+                    onMouseEnter={() => setHoveredRow(index)}
+                    onMouseLeave={() => setHoveredRow(null)}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                    className={getRowClassName ? getRowClassName(row.original) : ''}
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={(event: any) => {
+                      if (
+                        (event.target.getAttribute('role') === null ||
+                          event.target.getAttribute('role') !== 'checkbox') &&
+                        onRowClick
+                      ) {
+                        onRowClick(row.original)
+                      }
+                    }}
+                    onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                    {onOpenDelete && (
+                      <TableCell className='w-[50px] p-2'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenDelete((row.original as any).id)
+                          }}
+                          className={`h-8 w-8 transition-opacity duration-200 ${
+                            hoveredRow === index ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        >
+                          <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
+                          <span className='sr-only'>Delete row</span>
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )
+              })
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length + 1} className='h-24 text-center'>
-                  No data available
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  {isLoading ? (
+                    <div className='flex flex-col items-center justify-center gap-2'>
+                      <Atom color='#be123c' size='small' textColor='#be123c' />
+                      <span className='font-semibold'>Loading</span>
+                    </div>
+                  ) : (
+                    <div className='flex flex-col items-center justify-center gap-2'>
+                      <Image src={EmptyBox} alt='' height={50} width={50} />
+                      <span className='font-semibold text-foreground'>{t('table.noDataText')}</span>
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+
         <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 sm:flex-row sm:space-y-0'>
           <p className='text-xs text-gray-500 sm:text-sm'>
             {t('table.selectedRowsText', {
@@ -314,7 +350,7 @@ export function DataTable<TData, TValue>({
                           currentPage: currentPage + 1
                         }))
                       }}
-                      disabled={currentPage === totalPage || totalPage === 0}
+                      disabled={currentPage === totalPage}
                     >
                       <ChevronRight size={15} />
                     </Button>

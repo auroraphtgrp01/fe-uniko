@@ -25,8 +25,7 @@ import { initEmptyDetailTransactionData } from './constants'
 
 export interface ITransactionDialogProps {
   dataTable: {
-    tableUncTxsColumns: ColumnDef<any>[]
-    tableTodayTxsColumns: ColumnDef<any>[]
+    columns: ColumnDef<any>[]
     transactionTodayData: IDataTransactionTable[]
     unclassifiedTransactionData: IDataTransactionTable[]
     setConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -124,7 +123,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
     content: (
       <div className='overflow-x-auto'>
         <DataTable
-          columns={dataTable.tableTodayTxsColumns}
+          columns={dataTable.columns}
           data={dataTable.transactionTodayData}
           onRowClick={(rowData) => {
             classifyDialog.setTypeOfTrackerType(rowData.direction)
@@ -156,7 +155,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
     content: (
       <div className='overflow-x-auto'>
         <DataTable
-          columns={dataTable.tableUncTxsColumns}
+          columns={dataTable.columns}
           data={dataTable.unclassifiedTransactionData}
           onRowClick={(rowData) => {
             dialogDetailUpdate.setDataDetail(
