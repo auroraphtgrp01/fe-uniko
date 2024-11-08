@@ -26,6 +26,7 @@ export interface IDialogTrackerTransaction {
   isDialogDetailOpen: boolean
   isDialogDeleteOpen: boolean
   isDialogDeleteAllOpen: boolean
+  isDialogDetailTransactionOpen: boolean
 }
 
 export interface ITrackerTransaction {

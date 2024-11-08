@@ -17,9 +17,10 @@ export interface IFlatListData {
 }
 interface IFlatListProps {
   data: IFlatListData[]
+  onClick?: (item: IFlatListData) => void
 }
 
-export default function FlatList({ data }: IFlatListProps) {
+export default function FlatList({ data, onClick }: IFlatListProps) {
   return (
     <Card className='mx-auto w-full max-w-3xl'>
       <ScrollArea className='h-[200px] w-full rounded-md border-none p-4'>
@@ -32,7 +33,13 @@ export default function FlatList({ data }: IFlatListProps) {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className='mb-3 overflow-hidden bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-800'>
+              <Card
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (onClick) onClick(item)
+                }}
+                className='mb-3 overflow-hidden bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-800'
+              >
                 <CardHeader className='py-2'>
                   <div className='flex items-center justify-between'>
                     <CardTitle className='text-sm font-bold'>

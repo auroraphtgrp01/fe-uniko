@@ -39,11 +39,12 @@ import {
   ICreateTrackerTransactionBody,
   IDataTransactionTable,
   IGetTransactionResponse,
+  ITransaction,
   IUpdateTransactionBody
 } from '@/core/transaction/models'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
-import { initTrackerTypeForm, transactionHeaders } from '../transaction/constants'
+import { initEmptyDetailTransactionData, initTrackerTypeForm, transactionHeaders } from '../transaction/constants'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { useTransaction } from '@/core/transaction/hooks'
 import { modifyTransactionHandler, updateCacheDataTransactionForClassify } from '../transaction/handler'
@@ -79,7 +80,7 @@ import {
 import TrackerTransactionChart, { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import { useTranslation } from 'react-i18next'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
-import FlatList from '@/components/core/FlatList'
+import FlatList, { IFlatListData } from '@/components/core/FlatList'
 import { Button } from '@/components/ui/button'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import toast from 'react-hot-toast'
@@ -89,6 +90,7 @@ import { getTimeCountRefetchLimit, setTimeCountRefetchLimit } from '@/libraries/
 import { useUser } from '@/core/users/hooks'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { DetailTransactionDialog } from '@/components/dashboard/transaction/Detail'
 
 export default function TrackerTransactionForm() {
   // states
@@ -110,6 +112,7 @@ export default function TrackerTransactionForm() {
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
   const [dataDetail, setDataDetail] = useState<ITrackerTransaction>(initEmptyDetailTrackerTransaction)
+  const [dataDetailTransaction, setDataDetailTransaction] = useState<ITransaction>(initEmptyDetailTransactionData)
   const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )
@@ -463,7 +466,15 @@ export default function TrackerTransactionForm() {
             </CardHeader>
             <CardContent>
               <div className='h-auto'>
-                <FlatList data={modifyFlatListData(dataUnclassifiedTxs?.data || [])} />
+                <FlatList
+                  data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
+                  onClick={(data: IFlatListData) => {
+                    setDataDetailTransaction(
+                      dataUnclassifiedTxs?.data.find((item) => item.id === data.id) || initEmptyDetailTransactionData
+                    )
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: true }))
+                  }}
+                />
               </div>
             </CardContent>
           </Card>
@@ -599,6 +610,11 @@ export default function TrackerTransactionForm() {
           setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
         }}
         isDialogOpen={isDialogOpen.isDialogDeleteAllOpen}
+      />
+      <DetailTransactionDialog
+        detailData={dataDetailTransaction || initEmptyDetailTransactionData}
+        isDialogOpen={isDialogOpen}
+        setIsDialogOpen={setIsDialogOpen}
       />
     </div>
   )
