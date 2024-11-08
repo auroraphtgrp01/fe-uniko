@@ -298,8 +298,13 @@ export default function TrackerTransactionForm() {
             duration: 2000,
             id: 'new-transaction-success'
           })
+        } else if (data.status === 'UNAUTHORIZE') {
+          // toast.error('You are not authorized to perform this action!', {
+          //   duration: 2000,
+          //   id: 'unauthorize'
+          // })
         } else {
-          toast.error('Refetch transaction failed!', {
+          toast.error('Refetch transaction failed - Please try again!', {
             duration: 2000,
             id: 'refetch-failed'
           })

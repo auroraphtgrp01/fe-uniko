@@ -66,7 +66,7 @@ export default function HeroSection() {
         className='mt-8 flex flex-wrap items-center justify-center gap-4'
       >
         {isLoginUser !== null ? (
-          <Link className='relative z-10 no-underline' href='/dashboard'>
+          <Link className='relative z-10 no-underline' href='/dashboard/tracker-transaction'>
             <Button size='lg' className='group relative overflow-hidden bg-red-500 text-white hover:bg-red-600'>
               <span>Go to Dashboard</span>
               <motion.div

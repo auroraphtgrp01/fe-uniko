@@ -19,7 +19,7 @@ export const useSignInGoogle = () => {
     mutateOption: {
       retry: AUTH_RETRY,
       onSuccess: (data) => {
-        Cookies.set('token', data.data.accessToken, {
+        Cookies.set('authTokenVerify', data.data.accessToken, {
           path: '/',
           secure: true,
           sameSite: 'lax',

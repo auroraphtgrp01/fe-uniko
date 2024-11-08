@@ -2,8 +2,9 @@ import ProfileForm from './form'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Profile',
-  description: ''
+  title: 'UNIKO - Profile',
+  description: '',
+  icons: 'favicon.ico'
 }
 
 export default function page() {

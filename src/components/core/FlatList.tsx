@@ -7,7 +7,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Clock } from 'lucide-react'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
-
+import Image from 'next/image'
+import NoDataPlaceHolder from '@/images/2.png'
+import { cn } from '@/libraries/utils'
 export interface IFlatListData {
   id: string
   amount: string
@@ -22,60 +24,76 @@ interface IFlatListProps {
 
 export default function FlatList({ data, onClick }: IFlatListProps) {
   return (
-    <Card className='mx-auto w-full max-w-3xl'>
-      <ScrollArea className='h-[200px] w-full rounded-md border-none p-4'>
-        <AnimatePresence>
+    <Card className='mx-auto w-full to-muted/20'>
+      {data?.length > 0 ? (
+        <ScrollArea className='h-[200px] w-full rounded-md p-4'>
           {data.map((item) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
             >
               <Card
                 onClick={(e) => {
                   e.stopPropagation()
                   if (onClick) onClick(item)
                 }}
-                className='mb-3 overflow-hidden bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-800'
+                className={cn(
+                  'mb-4 cursor-pointer border-l-4 bg-card/50 bg-gradient-to-b from-background transition-all duration-300 hover:scale-[1.01]',
+                  `${item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'border-l-rose-600 dark:border-l-rose-800' : 'border-l-[#047858] dark:border-l-secondary'}`
+                )}
               >
-                <CardHeader className='py-2'>
+                <CardHeader className='py-3'>
                   <div className='flex items-center justify-between'>
-                    <CardTitle className='text-sm font-bold'>
-                      <div className='flex items-center justify-between space-x-4'>
-                        <div className='flex items-baseline gap-2'>
-                          <span className='text-xl font-bold tracking-tight'>{item.amount}</span>
-                        </div>
+                    <div className='flex items-center gap-3'>
+                      <div
+                        className={`${
+                          item.direction === ETypeOfTrackerTransactionType.EXPENSE
+                            ? 'text-destructive'
+                            : 'text-secondary'
+                        }`}
+                      >
+                        {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '↓' : '↑'}
                       </div>
-                    </CardTitle>
-                    {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? (
-                      <Badge variant='default' className='text-xs text-white'>
+                      <div className='flex flex-col'>
+                        <CardTitle className='text-xl font-bold tracking-tight'>
+                          {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '- ' : '+ '}
+                          {item.amount}
+                        </CardTitle>
+                        <span className='text-xs text-muted-foreground'>
+                          {item.direction === ETypeOfTrackerTransactionType.INCOMING ? 'To' : 'From'}:{' '}
+                          {item.accountNo ? item.accountNo : 'N/A'}{' '}
+                        </span>
+                      </div>
+                    </div>
+                    <div className='flex flex-col items-end gap-1.5'>
+                      <Badge
+                        variant={item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'default' : 'secondary'}
+                        className='font-sm'
+                      >
                         {item.direction}
                       </Badge>
-                    ) : (
-                      <Badge variant='secondary' className='text-xs'>
-                        {item.direction}
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className='px-4 pb-4 pt-0'>
-                  <div className='flex flex-col space-y-1 text-sm text-muted-foreground'>
-                    <div className='flex items-center justify-between'>
-                      <span>From: {item.accountNo}</span>
-                      <div className='flex items-center gap-1.5'>
+                      <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
+                        <Clock className='h-3 w-3' />
                         <span>{item.transactionDateTime}</span>
-                        <Clock className='h-4 w-4' />
                       </div>
                     </div>
                   </div>
-                </CardContent>
+                </CardHeader>
               </Card>
             </motion.div>
           ))}
-        </AnimatePresence>
-      </ScrollArea>
+        </ScrollArea>
+      ) : (
+        <div className='flex h-[200px] flex-col items-center justify-center space-y-4'>
+          <div className='relative'>
+            <Image src={NoDataPlaceHolder} alt='No data available' width={120} height={120} className='opacity-80' />
+          </div>
+          <p className='text-sm text-muted-foreground'>No transactions available at the moment</p>
+        </div>
+      )}
     </Card>
   )
 }

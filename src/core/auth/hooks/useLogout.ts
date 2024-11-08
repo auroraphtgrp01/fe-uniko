@@ -12,7 +12,7 @@ export const useLogout = () => {
   })
 
   const executeLogout = () => {
-    Cookies.remove('token')
+    Cookies.remove('authTokenVerify')
     refetch()
   }
 

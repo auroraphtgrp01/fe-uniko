@@ -22,7 +22,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
       onSuccess: (data) => {
         setCountLogin(countLogin + 1)
         if (data.data.user.status === 'ACTIVE') {
-          Cookies.set('token', data.data.accessToken, {
+          Cookies.set('authTokenVerify', data.data.accessToken, {
             path: '/',
             secure: true,
             sameSite: 'lax',

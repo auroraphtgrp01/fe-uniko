@@ -6,7 +6,7 @@ export function middleware(req: NextRequest) {
   if (pathname.startsWith('/_next') || pathname.includes('/api/') || pathname.includes('favicon.ico')) {
     return NextResponse.next()
   }
-  const token = req.cookies.get('token')
+  const token = req.cookies.get('authTokenVerify')
   const hasValidToken = Boolean(token?.value && token.value !== 'undefined' && token.value.length > 0)
   if (pathname.startsWith('/login') && hasValidToken) {
     return NextResponse.redirect(new URL('/dashboard', req.url))
