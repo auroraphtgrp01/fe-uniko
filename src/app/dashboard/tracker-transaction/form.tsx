@@ -152,9 +152,9 @@ export default function TrackerTransactionForm() {
     [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
     () => {}
   )
-  const { setData: setCacheTodayTxs, resetData: resetCacheTodayTxs } = useUpdateModel(
+  const { resetData: resetCacheTodayTxs } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    updateCacheDataTodayTxClassifyFeat
+    () => {}
   )
   const { setData: setCacheTodayTxsDeleteFeat } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
@@ -407,12 +407,12 @@ export default function TrackerTransactionForm() {
               payload: data,
               hookCreate: classifyTransaction,
               hookResetCacheUnclassified: resetCacheUnclassifiedTxs,
-              setIsDialogOpen,
               hookResetCacheStatistic: resetCacheStatistic,
               hookSetTrackerTx: setCacheTrackerTxCreateClassify,
-              hookSetCacheToday: setCacheTodayTxs,
-              setUncDataTableConfig: resetCacheUnclassifiedTxs,
-              hookSetCacheTransaction: setDataTransactionClassifyFeat
+              hookSetCacheToday: resetCacheTodayTxs,
+              hookResetCacheTransaction: resetTransaction,
+              setIsDialogOpen,
+              setUncDataTableConfig: setDataTableUnclassifiedConfig
             })
           }
         }}

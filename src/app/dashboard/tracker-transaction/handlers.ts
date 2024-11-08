@@ -85,6 +85,7 @@ export const handleClassifyTransaction = async ({
   hookResetCacheStatistic,
   hookSetTrackerTx,
   hookSetCacheTransaction,
+  hookResetCacheTransaction,
   setUncDataTableConfig,
   setTodayDataTableConfig,
   setDataTableConfig,
@@ -98,7 +99,8 @@ export const handleClassifyTransaction = async ({
   hookResetTrackerTx?: any
   hookResetCacheStatistic?: any
   hookSetCacheToday: any
-  hookSetCacheTransaction: any
+  hookSetCacheTransaction?: any
+  hookResetCacheTransaction?: any
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -106,7 +108,8 @@ export const handleClassifyTransaction = async ({
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        hookSetCacheTransaction(res.data)
+        if (hookSetCacheTransaction) hookSetCacheTransaction(res.data)
+        else hookResetCacheTransaction()
         hookResetCacheUnclassified()
         hookSetCacheToday(res.data)
         if (hookSetTrackerTx) hookSetTrackerTx(res.data)
