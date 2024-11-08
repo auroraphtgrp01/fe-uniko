@@ -314,7 +314,7 @@ export function DataTable<TData, TValue>({
                           currentPage: currentPage + 1
                         }))
                       }}
-                      disabled={currentPage === totalPage}
+                      disabled={currentPage === totalPage || totalPage === 0}
                     >
                       <ChevronRight size={15} />
                     </Button>
