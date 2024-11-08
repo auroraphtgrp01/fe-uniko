@@ -5,8 +5,6 @@ import { useAuth } from '@/core/auth/hooks'
 import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 
 export default function DashboardMainForm() {
-  const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
       <div className='flex w-full flex-col md:col-span-1'>

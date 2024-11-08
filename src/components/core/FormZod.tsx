@@ -24,6 +24,7 @@ import { DateRangePicker, DateRangePickerProps } from '@/components/core/DateRan
 import { DateRange } from 'react-day-picker'
 import { EEmojiPickerProps, EmojiPicker } from '@/components/common/EmojiPicker'
 import MultiInput from '@/components/core/MultiInput'
+import { MoneyInput } from '@/components/core/MoneyInput'
 
 const FormFieldComponent = React.memo(
   ({ fieldItem, field, disabled }: { fieldItem: any; field: any; disabled?: boolean }) => {
@@ -35,6 +36,18 @@ const FormFieldComponent = React.memo(
           {...field}
           disabled={disabled}
           value={String(field.value ?? '')}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.MoneyInput) {
+      return (
+        <MoneyInput
+          placeholder={fieldItem.placeHolder}
+          {...(fieldItem.props as InputProps)}
+          disabled={disabled}
+          value={String(field.value ?? '')}
+          onChange={(e) => field.onChange(e.target.value)}
         />
       )
     }
