@@ -6,7 +6,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Clock } from 'lucide-react'
-import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 export interface IFlatListData {
@@ -36,7 +35,13 @@ export default function FlatList({ data }: IFlatListProps) {
               <Card className='mb-3 overflow-hidden bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-800'>
                 <CardHeader className='py-2'>
                   <div className='flex items-center justify-between'>
-                    <CardTitle className='text-sm font-bold'>{item.amount}</CardTitle>
+                    <CardTitle className='text-sm font-bold'>
+                      <div className='flex items-center justify-between space-x-4'>
+                        <div className='flex items-baseline gap-2'>
+                          <span className='text-xl font-bold tracking-tight'>{item.amount}</span>
+                        </div>
+                      </div>
+                    </CardTitle>
                     {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? (
                       <Badge variant='default' className='text-xs text-white'>
                         {item.direction}
@@ -48,16 +53,16 @@ export default function FlatList({ data }: IFlatListProps) {
                     )}
                   </div>
                 </CardHeader>
-                <CardContent className='py-1'>
-                  <CardDescription className='mb-2 text-sm'>
-                    <div className='flex justify-between gap-2'>
-                      From: {item.accountNo}
-                      <div className='flex gap-1'>
+                <CardContent className='px-4 pb-4 pt-0'>
+                  <div className='flex flex-col space-y-1 text-sm text-muted-foreground'>
+                    <div className='flex items-center justify-between'>
+                      <span>From: {item.accountNo}</span>
+                      <div className='flex items-center gap-1.5'>
                         <span>{item.transactionDateTime}</span>
-                        <Clock className='mt-[0.2px] h-4 w-4' />
+                        <Clock className='h-4 w-4' />
                       </div>
                     </div>
-                  </CardDescription>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>

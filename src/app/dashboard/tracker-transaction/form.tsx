@@ -456,7 +456,7 @@ export default function TrackerTransactionForm() {
                     isLoading={isPendingRefetch}
                     onClick={refetchTransactionBySocket}
                   >
-                    Refetch in bank {!isPendingRefetch && <HardDriveDownload height={15} width={15} />}
+                    Refetch in bank {!isPendingRefetch && <HardDriveDownload className='ml-1 h-4 w-4' />}
                   </Button>
                 </div>
               </div>

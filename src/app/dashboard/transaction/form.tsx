@@ -521,7 +521,8 @@ export default function TransactionForm() {
                 setDataTableConfig: setDataTableConfig,
                 setIsDialogOpen: setIsDialogOpen,
                 hookSetCacheTransaction: setDataTransactionClassifyFeat,
-                setIsEditing
+                setIsEditing,
+                hookResetCacheStatistic: resetCacheStatistic
               })
             },
             typeOfTrackerType,

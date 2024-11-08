@@ -99,7 +99,7 @@ export const handleClassifyTransaction = async ({
   hookResetCacheUnclassified: any
   hookSetTrackerTx?: any
   hookResetTrackerTx?: any
-  hookResetCacheStatistic?: any
+  hookResetCacheStatistic: any
   hookSetCacheToday: any
   hookSetCacheTransaction?: any
   hookResetCacheTransaction?: any
@@ -117,7 +117,7 @@ export const handleClassifyTransaction = async ({
         hookSetCacheToday(res.data)
         if (hookSetTrackerTx) hookSetTrackerTx(res.data)
         else if (hookResetTrackerTx) hookResetTrackerTx()
-        if (hookResetCacheStatistic) hookResetCacheStatistic()
+        hookResetCacheStatistic()
         if (setUncDataTableConfig) setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setDataTableConfig) setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
