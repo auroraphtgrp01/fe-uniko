@@ -38,7 +38,11 @@ export default function DetailUpdateTransaction({
 
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
-      if (classifyDialogProps?.formClassifyRef) {
+      if (
+        classifyDialogProps?.formClassifyRef &&
+        !updateTransactionProps.transaction.TrackerTransaction &&
+        !updateTrackerTransactionProps
+      ) {
         classifyDialogProps.formClassifyRef.current?.requestSubmit()
       } else {
         submitUpdateTransactionRef.current?.requestSubmit()
