@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React, { useEffect, useState } from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, Trash2Icon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
 import { IDataTableConfig } from '@/types/common.i'
@@ -24,6 +24,11 @@ import { useTranslation } from 'react-i18next'
 import EmptyBox from '@/images/empty-box.png'
 import { Atom } from 'react-loading-indicators'
 import Image from 'next/image'
+import DeleteDialog, { IDeleteDialogProps } from './DeleteDialog'
+
+export interface IDeleteProps extends IDeleteDialogProps {
+  onOpen: (rowData?: any) => void
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -36,6 +41,9 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean
   buttons?: IButtonInDataTableHeader[]
   buttonInContextMenu?: IButtonInDataTableHeader[]
+  onOpenDeleteAll?: (ids: string[]) => void
+  onOpenDelete?: (id: string) => void
+  deleteProps?: IDeleteProps
 }
 
 export function DataTable<TData, TValue>({
@@ -48,7 +56,10 @@ export function DataTable<TData, TValue>({
   onRowDoubleClick,
   buttonInContextMenu,
   isLoading,
-  buttons
+  buttons,
+  onOpenDeleteAll,
+  onOpenDelete,
+  deleteProps
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation(['common'])
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
@@ -57,8 +68,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
-  const [selectedRowData, setSelectedRowData] = useState<TData | null>(null)
+  const [hoveredRow, setHoveredRow] = React.useState<number | null>(null)
 
   const table = useReactTable({
     data,
@@ -80,6 +90,7 @@ export function DataTable<TData, TValue>({
   })
 
   useEffect(() => {
+    table.toggleAllPageRowsSelected(false)
     table.setPagination({ pageIndex: currentPage - 1, pageSize: limit })
   }, [data, config])
 
@@ -136,6 +147,21 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className='flex items-center space-x-2'>
+          {onOpenDeleteAll && Object.values(table.getSelectedRowModel().rowsById).length > 0 && (
+            <Button
+              variant='default'
+              size='icon'
+              onClick={(e) => {
+                e.preventDefault()
+                onOpenDeleteAll(
+                  Object.values(table.getSelectedRowModel().rowsById).map((item) => (item.original as any).id)
+                )
+                // deleteAllProps?.onOpen()
+              }}
+            >
+              <Trash2Icon className='h-5 w-5' />
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
@@ -196,14 +222,27 @@ export function DataTable<TData, TValue>({
                     </TableHead>
                   )
                 })}
+                {onOpenDelete && (
+                  <TableHead
+                    className='text-nowrap'
+                    key={'deleteIcon'}
+                    onMouseDown={(event) => {
+                      if (event.detail > 1) {
+                        event.preventDefault()
+                      }
+                    }}
+                  />
+                )}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => {
+              table.getRowModel().rows.map((row, index) => {
                 return (
                   <TableRow
+                    onMouseEnter={() => setHoveredRow(index)}
+                    onMouseLeave={() => setHoveredRow(null)}
                     style={{ cursor: 'pointer', userSelect: 'none' }}
                     className={getRowClassName ? getRowClassName(row.original) : ''}
                     key={row.id}
@@ -218,15 +257,28 @@ export function DataTable<TData, TValue>({
                       }
                     }}
                     onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
-                    onContextMenu={(event: React.MouseEvent) => {
-                      event.preventDefault()
-                      setContextMenuPosition({ x: event.clientX, y: event.clientY })
-                      setSelectedRowData(row.original)
-                    }}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                     ))}
+                    {onOpenDelete && (
+                      <TableCell className='w-[50px] p-2'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenDelete((row.original as any).id)
+                          }}
+                          className={`h-8 w-8 transition-opacity duration-200 ${
+                            hoveredRow === index ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        >
+                          <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
+                          <span className='sr-only'>Delete row</span>
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 )
               })
@@ -320,6 +372,7 @@ export function DataTable<TData, TValue>({
             </div>
           ) : null}
         </div>
+        {deleteProps && <DeleteDialog {...deleteProps} />}
       </div>
     </div>
   )

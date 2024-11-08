@@ -48,7 +48,9 @@ export const initDialogFlag: IDialogTrackerTransaction = {
   isDialogClassifyTransactionOpen: false,
   isDialogUnclassifiedOpen: false,
   isDialogCreateTrackerTxTypeOpen: false,
-  isDialogDetailOpen: false
+  isDialogDetailOpen: false,
+  isDialogDeleteOpen: false,
+  isDialogDeleteAllOpen: false
 }
 
 export const defineContentCreateTrackerTxTypeDialog = ({

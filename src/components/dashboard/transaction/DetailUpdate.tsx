@@ -9,31 +9,42 @@ import { IUpdateTransactionBody } from '@/core/transaction/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { Button } from '@/components/ui/button'
 import { formatDateTimeVN } from '@/libraries/utils'
-import { IDetailUpdateTransactionDialogProps } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import {
+  IDetailUpdateTransactionDialogProps,
+  IUpdateTrackerTransactionBody
+} from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import FormZod from '@/components/core/FormZod'
 import {
   defineUpdateTransactionFormBody,
   updateTransactionSchema
 } from '@/core/transaction/constants/update-transaction.constant'
 import toast from 'react-hot-toast'
-import { defineUpdateTrackerTransactionFormBody } from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
+import {
+  defineUpdateTrackerTransactionFormBody,
+  TUpdateTrackerTransactionSchema,
+  updateTrackerTransactionSchema
+} from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
+import { UseFormSetValue } from 'react-hook-form'
 
 export default function DetailUpdateTransaction({
   updateTransactionProps,
   updateTrackerTransactionProps,
   commonProps,
-  editTrackerTransactionTypeProps,
   classifyDialogProps
 }: IDetailUpdateTransactionDialogProps) {
-  const updateTransactionRef = useRef<HTMLFormElement>(null)
-  const updateTrackerTransactionRef = useRef<HTMLFormElement>(null)
+  const submitUpdateTransactionRef = useRef<HTMLFormElement>(null)
+  const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
+  const formUpdateTrackerTransactionRef = useRef<any>()
 
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
-      if (classifyDialogProps?.formClassifyRef) classifyDialogProps.formClassifyRef.current?.requestSubmit()
-      else updateTransactionRef.current?.requestSubmit()
+      if (classifyDialogProps?.formClassifyRef) {
+        classifyDialogProps.formClassifyRef.current?.requestSubmit()
+      } else {
+        submitUpdateTransactionRef.current?.requestSubmit()
+      }
     }
-    if (updateTrackerTransactionProps?.isEditing) updateTrackerTransactionRef.current?.requestSubmit()
+    if (updateTrackerTransactionProps?.isEditing) submitUpdateTrackerTransactionRef.current?.requestSubmit()
   }
 
   const TransactionDetails = () => (
@@ -158,16 +169,17 @@ export default function DetailUpdateTransaction({
           onClick={() => {
             if (
               updateTransactionProps.transaction.ofAccount &&
-              !updateTrackerTransactionProps &&
-              !classifyDialogProps
-            ) {
-              // là giao dịch ngân hàng đã phân loại
+              updateTransactionProps.transaction.TrackerTransaction &&
+              !updateTrackerTransactionProps
+            )
               toast.error('Không thể chỉnh sửa giao dịch lấy từ tài khoản ngân hàng!')
-            } else updateTransactionProps.setIsEditing(true)
+            else updateTransactionProps.setIsEditing(true)
           }}
         >
           <Pencil className='mr-2 h-4 w-4' />
-          {!updateTransactionProps.transaction.TrackerTransaction ? 'Phân loại' : 'Cập nhật'}
+          {!updateTransactionProps.transaction.TrackerTransaction && !updateTrackerTransactionProps
+            ? 'Phân loại'
+            : 'Cập nhật'}
         </Button>
       </div>
     </div>
@@ -179,31 +191,17 @@ export default function DetailUpdateTransaction({
         <classifyDialogProps.ClassifyForm />
       ) : (
         <>
-          <FormZod
-            submitRef={updateTransactionRef}
-            formFieldBody={defineUpdateTransactionFormBody({ accountSourceData: commonProps.accountSourceData })}
-            formSchema={updateTransactionSchema}
-            onSubmit={(data) => {
-              const payload: IUpdateTransactionBody = {
-                accountSourceId: data.accountSourceId,
-                direction: data.direction as ETypeOfTrackerTransactionType,
-                amount: Number(data.amount),
-                id: updateTransactionProps.transaction.id
-              }
-              updateTransactionProps.handleUpdateTransaction(payload, updateTransactionProps.setIsEditing)
-            }}
-            defaultValues={{
-              amount: String(updateTransactionProps.transaction.amount),
-              accountSourceId: updateTransactionProps.transaction.accountSource.id,
-              direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType
-            }}
-          />
-          {updateTrackerTransactionProps && (
+          {/* Form update transaction */}
+          {!updateTransactionProps.transaction.ofAccount && (
             <FormZod
-              submitRef={updateTransactionRef}
-              formFieldBody={defineUpdateTrackerTransactionFormBody({
+              submitRef={submitUpdateTransactionRef}
+              formFieldBody={defineUpdateTransactionFormBody({
                 accountSourceData: commonProps.accountSourceData,
-                trackerTransaction: updateTrackerTransactionProps.trackerTransaction
+                handleSetTrackerTypeDefault: (value: string) => {
+                  if (value !== updateTransactionProps.transaction.direction) {
+                    formUpdateTrackerTransactionRef.current?.setValue('trackerTypeId', '')
+                  }
+                }
               })}
               formSchema={updateTransactionSchema}
               onSubmit={(data) => {
@@ -219,6 +217,41 @@ export default function DetailUpdateTransaction({
                 amount: String(updateTransactionProps.transaction.amount),
                 accountSourceId: updateTransactionProps.transaction.accountSource.id,
                 direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType
+              }}
+            />
+          )}
+
+          {/* Form update tracker transaction */}
+          {updateTrackerTransactionProps && (
+            <FormZod
+              formRef={formUpdateTrackerTransactionRef}
+              submitRef={submitUpdateTrackerTransactionRef}
+              formFieldBody={defineUpdateTrackerTransactionFormBody({
+                editTrackerTypeDialogProps:
+                  updateTrackerTransactionProps.editTrackerTransactionTypeProps.editTrackerTypeDialogProps,
+                expenseTrackerType: updateTrackerTransactionProps.editTrackerTransactionTypeProps.expenseTrackerType,
+                incomeTrackerType: updateTrackerTransactionProps.editTrackerTransactionTypeProps.incomeTrackerType,
+                typeOfEditTrackerType: updateTrackerTransactionProps.typeOfEditTrackerType,
+                setTypeOfEditTrackerType: updateTrackerTransactionProps.setTypeOfEditTrackerType,
+                setOpenEditDialog: updateTrackerTransactionProps.setOpenEditDialog,
+                openEditDialog: updateTrackerTransactionProps.openEditDialog
+              })}
+              formSchema={updateTrackerTransactionSchema}
+              onSubmit={(data: any) => {
+                const payload: IUpdateTrackerTransactionBody = {
+                  ...data,
+                  id: updateTrackerTransactionProps.trackerTransaction.id
+                }
+
+                updateTrackerTransactionProps.handleUpdateTrackerTransaction(
+                  payload,
+                  updateTransactionProps.setIsEditing
+                )
+              }}
+              defaultValues={{
+                reasonName: updateTrackerTransactionProps?.trackerTransaction.reasonName || '',
+                trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || '',
+                description: updateTrackerTransactionProps?.trackerTransaction.description
               }}
             />
           )}

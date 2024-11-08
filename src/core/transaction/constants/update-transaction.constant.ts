@@ -3,24 +3,26 @@ import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { IAccountSource } from '@/core/account-source/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
+import React from 'react'
 import { z } from 'zod'
 
 interface IUpdateTransactionFormBody {
   accountSourceData: IAccountSource[]
+  handleSetTrackerTypeDefault: (value: string) => void
 }
 
 export const defineUpdateTransactionFormBody = ({
-  accountSourceData
-}: IUpdateTransactionFormBody): IBodyFormField[] => {
+  accountSourceData,
+  handleSetTrackerTypeDefault
+}: IUpdateTransactionFormBody): any[] => {
   return [
     {
       name: 'amount',
-      type: EFieldType.Input,
+      type: EFieldType.MoneyInput,
       label: 'Amount',
       placeHolder: 'Enter amount',
       props: {
-        autoComplete: 'amount',
-        type: 'number'
+        autoComplete: 'amount'
       }
     },
     {
@@ -37,6 +39,11 @@ export const defineUpdateTransactionFormBody = ({
       type: EFieldType.Select,
       label: 'Direction',
       placeHolder: 'Select direction',
+      props: {
+        onchange: (value: string) => {
+          handleSetTrackerTypeDefault(value)
+        }
+      },
       dataSelector: [
         {
           value: 'INCOMING',

@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, Path, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
-import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from '@/components/ui/form'
+import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl, useFormField } from '@/components/ui/form'
 import { EFieldType, IFormZodProps, InputProps, TextareaProps } from '@/types/formZod.interface'
 import { Input } from '@/components/ui/input'
 import {
@@ -174,7 +174,8 @@ export default function FormZod<T extends z.ZodRawShape>({
   buttonConfig,
   classNameForm,
   disabled,
-  submitRef
+  submitRef,
+  formRef
 }: IFormZodProps<T> & { disabled?: boolean }) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(formSchema),
@@ -190,6 +191,14 @@ export default function FormZod<T extends z.ZodRawShape>({
   const memoizedFormFieldBody = useMemo(() => formFieldBody, [formFieldBody])
 
   useEffect(() => {
+    if (formRef) {
+      formRef.current = {
+        ...form
+      }
+    }
+  }, [formRef, form])
+
+  useEffect(() => {
     form.reset(defaultValues)
   }, [defaultValues, form])
 
@@ -198,8 +207,8 @@ export default function FormZod<T extends z.ZodRawShape>({
       <Form {...form}>
         <form ref={submitRef} onSubmit={handleFormSubmit}>
           <div className={cn('space-y-5', classNameForm)}>
-            {memoizedFormFieldBody.map((fieldItem, index) =>
-              !fieldItem.hidden ? (
+            {memoizedFormFieldBody.map((fieldItem, index) => {
+              return !fieldItem.hidden ? (
                 <FormField
                   control={form.control}
                   name={fieldItem.name as any}
@@ -225,7 +234,7 @@ export default function FormZod<T extends z.ZodRawShape>({
                   )}
                 />
               ) : null
-            )}
+            })}
           </div>
           {!submitRef && (
             <Button {...buttonConfig} type='submit' disabled={disabled || buttonConfig?.disabled}>

@@ -47,4 +47,6 @@ export interface IDialogAccountSource {
   isDialogCreateOpen: boolean
   isDialogUpdateOpen: boolean
   isDialogRefetchMoneyOpen: boolean
+  isDialogDeleteOpen: boolean
+  isDialogDeleteAllOpen: boolean
 }

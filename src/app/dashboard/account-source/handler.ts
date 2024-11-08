@@ -115,6 +115,14 @@ export const updateCacheDataUpdate = (
   return { ...oldData, data: updatedData }
 }
 
+export const updateCacheDataForDeleteFeat = (
+  oldData: IAdvancedAccountSourceResponse,
+  newData: IAccountSource
+): IAdvancedAccountSourceResponse => {
+  const updatedData = oldData.data.filter((item) => item.id !== newData.id)
+  return { ...oldData, data: updatedData }
+}
+
 export const updateCacheDetailData = (
   oldData: IAccountSourceResponse,
   newData: IAccountSource

@@ -45,7 +45,9 @@ export const initAccountSourceFormData: IAccountSourceBody = {
 export const initDialogFlag: IDialogAccountSource = {
   isDialogCreateOpen: false,
   isDialogUpdateOpen: false,
-  isDialogRefetchMoneyOpen: false
+  isDialogRefetchMoneyOpen: false,
+  isDialogDeleteOpen: false,
+  isDialogDeleteAllOpen: false
 }
 
 export const initButtonInDataTableHeader = ({

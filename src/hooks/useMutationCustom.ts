@@ -15,7 +15,7 @@ export interface IUseMutationCustomProps<TData, TError, TVariables> {
   pathUrl: string
   options?: QueryOptions
   mutateOption?: UseMutationOptions<TData, TError, TVariables>
-  method?: 'post' | 'put' | 'patch'
+  method?: 'post' | 'put' | 'patch' | 'delete'
 }
 
 const baseUrl = getBaseUrl()

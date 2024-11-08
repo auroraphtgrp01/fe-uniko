@@ -139,6 +139,11 @@ export const fetchData = async <TResponse>(
 
 export const mutateData = async <TBody, TResponse>(props: IMutateData<TBody>): Promise<TResponse> => {
   const { url, body, params = {}, headers = {}, method = 'post' } = props
+
+  if (method === 'delete') {
+    const { payload } = await httpService.delete<TResponse>(url, { params }, headers)
+    return payload
+  }
   const { payload } = await httpService[method]<TBody, TResponse>(url, body, { params }, headers)
   return payload
 }

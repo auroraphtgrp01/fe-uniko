@@ -11,22 +11,19 @@ import {
   initDialogFlag
 } from '@/app/dashboard/account-source/constants'
 import {
-  filterDataAccountSource,
   handleShowDetailAccountSource,
   initDataTable,
   updateCacheDataCreate,
-  updateCacheDataUpdate,
-  updateCacheDetailData
+  updateCacheDataForDeleteFeat,
+  updateCacheDataUpdate
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
-  IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
-  IAccountSourceResponse,
   IAdvancedAccountSourceResponse,
   IDialogAccountSource
 } from '@/core/account-source/models'
@@ -39,27 +36,34 @@ import { useAuth } from '@/core/auth/hooks'
 import { arraysEqual, getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 import { useTranslation } from 'react-i18next'
 import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
+import toast from 'react-hot-toast'
+import DeleteDialog from '@/components/dashboard/DeleteDialog'
 
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
   // States
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [idDeletes, setIdDeletes] = useState<string[]>([])
   const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
-  // Memos
-  const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
-  const columns = useMemo(() => {
-    if (tableData.length === 0) return []
-    return getColumns<IAccountSourceDataFormat>(titles, true)
-  }, [tableData])
 
   // Hooks
-  const { createAccountSource, updateAccountSource, getAdvancedAccountSource } = useAccountSource()
+  const {
+    createAccountSource,
+    updateAccountSource,
+    getAdvancedAccountSource,
+    deleteAnAccountSource,
+    deleteMultipleAccountSource,
+    isDeletingMultiple,
+    isDeletingOne,
+    isCreating,
+    isUpdating
+  } = useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
-  const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(
+  const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
     [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataCreate
   )
@@ -67,9 +71,24 @@ export default function AccountSourceForm() {
     [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataUpdate
   )
+  const { setData: setDataForDeleteFeat } = useUpdateModel<IAdvancedAccountSourceResponse>(
+    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataForDeleteFeat
+  )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
   const { setAccountSourceData, accountSourceData } = useStoreLocal()
+
+  // Memos
+  const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
+  const columns = useMemo(() => {
+    if (tableData.length === 0) return []
+    return getColumns<IAccountSourceDataFormat>({
+      headers: titles,
+      isSort: true
+    })
+  }, [tableData])
+
   // Effects
   useEffect(() => {
     if (getAdvancedData) {
@@ -84,8 +103,6 @@ export default function AccountSourceForm() {
   }, [getAdvancedData])
 
   useEffect(() => {
-    console.log('accountSourceData', accountSourceData)
-
     initDataTable(setTableData, accountSourceData)
   }, [accountSourceData])
 
@@ -118,6 +135,43 @@ export default function AccountSourceForm() {
             columns={columns}
             onRowClick={(data: IAccountSourceDataFormat) => setIdRowClicked(data.id)}
             buttons={dataTableButtons}
+            onOpenDeleteAll={(ids: string[]) => {
+              setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+              setIdDeletes(ids)
+            }}
+            onOpenDelete={(id: string) => {
+              setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+              setIdDeletes([id])
+            }}
+            deleteProps={{
+              isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+              onDelete: () => {
+                if (idDeletes.length > 0)
+                  deleteAnAccountSource(
+                    { id: idDeletes[0] },
+                    {
+                      onSuccess: (res: any) => {
+                        if (res.statusCode === 200 || res.statusCode === 201) {
+                          setDataForDeleteFeat(res.data)
+                          resetCacheStatistic()
+                          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                          setIdDeletes([])
+                          toast.success('Delete account source successfully')
+                        }
+                      }
+                    }
+                  )
+              },
+              onOpen: (rowData: any) => {
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                setIdDeletes((prev) => [...prev, rowData.id])
+              },
+              onClose: () => {
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                setIdDeletes([])
+              }
+            }}
           />
         </CardContent>
       </Card>
@@ -134,6 +188,33 @@ export default function AccountSourceForm() {
           updateAccountSource,
           setIdRowClicked
         }}
+      />
+      <DeleteDialog
+        customDescription='Bạn chắc chắn muốn xóa tất cả dữ liệu này?'
+        onDelete={() => {
+          if (idDeletes.length > 0)
+            deleteMultipleAccountSource(
+              { ids: idDeletes },
+              {
+                onSuccess: (res: any) => {
+                  if (res.statusCode === 200 || res.statusCode === 201) {
+                    resetAccountSource()
+                    resetCacheStatistic()
+                    setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                    setIdDeletes([])
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+                    toast.success('Delete all account source successfully')
+                  }
+                }
+              }
+            )
+        }}
+        onClose={() => {
+          setIdDeletes([])
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+        }}
+        isDialogOpen={isDialogOpen.isDialogDeleteAllOpen}
       />
     </div>
   )

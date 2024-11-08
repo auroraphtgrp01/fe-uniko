@@ -24,6 +24,8 @@ export interface IDialogTrackerTransaction {
   isDialogUnclassifiedOpen: boolean
   isDialogCreateTrackerTxTypeOpen: boolean
   isDialogDetailOpen: boolean
+  isDialogDeleteOpen: boolean
+  isDialogDeleteAllOpen: boolean
 }
 
 export interface ITrackerTransaction {
@@ -33,7 +35,7 @@ export interface ITrackerTransaction {
   description: string | null
   userId: string
   transactionId: string | null
-  Transaction: ITransaction
+  Transaction: ITransaction | null
   TrackerType: {
     id: string
     name: string
@@ -97,9 +99,6 @@ export interface IClassifyTransactionDialog {
   handleClassify: (data: IClassifyTransactionBody) => void
 }
 export interface ICreateTrackerTransactionDialog {
-  formData: ICreateTrackerTransactionBody
-  setFormData: React.Dispatch<React.SetStateAction<ICreateTrackerTransactionBody>>
-
   handleCreate: (data: ICreateTrackerTransactionBody) => void
 }
 
@@ -122,6 +121,8 @@ export interface ISharedDialogElements {
   ) => void
   handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
   accountSourceData: IAccountSource[]
+  typeOfTrackerType: ETypeOfTrackerTransactionType
+  setTypeOfTrackerType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
 }
 
 export interface IDetailUpdateTrackerTransactionDialog {
@@ -168,11 +169,22 @@ export interface IDetailUpdateTransactionDialogProps {
     ) => void
     isEditing: boolean
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    editTrackerTransactionTypeProps: {
+      incomeTrackerType: ITrackerTransactionType[]
+      expenseTrackerType: ITrackerTransactionType[]
+      editTrackerTypeDialogProps: Omit<
+        IEditTrackerTypeDialogProps,
+        'dataArr' | 'type' | 'setType' | 'setOpenEditDialog' | 'openEditDialog'
+      >
+    }
+    typeOfEditTrackerType: ETypeOfTrackerTransactionType
+    setTypeOfEditTrackerType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
+    setOpenEditDialog: React.Dispatch<React.SetStateAction<boolean>>
+    openEditDialog: boolean
   }
   commonProps: {
     accountSourceData: IAccountSource[]
   }
-  editTrackerTransactionTypeProps?: IEditTrackerTypeDialogProps
   classifyDialogProps?: {
     ClassifyForm: any
     formClassifyRef: React.RefObject<HTMLFormElement>

@@ -30,6 +30,7 @@ export interface IFormZodProps<T extends z.ZodRawShape> {
   buttonConfig?: ButtonProps & { label?: string }
   classNameForm?: string
   submitRef?: RefObject<HTMLFormElement>
+  formRef?: React.MutableRefObject<any>
 }
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}

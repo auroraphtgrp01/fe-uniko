@@ -38,7 +38,9 @@ export const initDialogFlag = {
   isDialogTransactionTodayOpen: false,
   isDialogUnclassifiedTransactionOpen: false,
   isDialogClassifyTransactionOpen: false,
-  isDialogCreateTrackerTxTypeOpen: false
+  isDialogCreateTrackerTxTypeOpen: false,
+  isDialogDeleteAllOpen: false,
+  isDialogDeleteOpen: false
 }
 
 export const initClassifyTransactionForm = {

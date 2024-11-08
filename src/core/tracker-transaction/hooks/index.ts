@@ -4,11 +4,17 @@ import { useGetAdvancedTrackerTransaction } from './useGetAdvancedTrackerTransac
 import { useClassifyTransaction } from './useClassifyTransaction'
 import { useCreateTrackerTransaction } from './useCreateTrackerTransaction'
 import { useUpdateTrackerTransaction } from './useUpdateTrackerTransaction'
+import { useDeleteAnTrackerTransaction } from './useDeleteAnTrackerTransaction'
+import { useDeleteMultipleTrackerTransaction } from './useDeleteMultipleTrackerTransaction'
 
 export const useTrackerTransaction = (opts?: IUseQueryHookOptions) => {
   const { mutate: classifyTransaction, isPending: isClassing } = useClassifyTransaction(opts)
   const { mutate: createTrackerTransaction, isPending: isCreating } = useCreateTrackerTransaction(opts)
   const { mutate: updateTrackerTransaction, status: statusUpdating } = useUpdateTrackerTransaction(opts)
+  const { mutate: deleteAnTrackerTransaction, isPending: isDeletingTrackerTransaction } =
+    useDeleteAnTrackerTransaction(opts)
+  const { mutate: deleteMultipleTrackerTransaction, isPending: isDeletingMultipleTrackerTransaction } =
+    useDeleteMultipleTrackerTransaction(opts)
   return {
     classifyTransaction,
     isClassing,
@@ -17,6 +23,10 @@ export const useTrackerTransaction = (opts?: IUseQueryHookOptions) => {
     createTrackerTransaction,
     isCreating,
     updateTrackerTransaction,
-    statusUpdating
+    statusUpdating,
+    deleteAnTrackerTransaction,
+    deleteMultipleTrackerTransaction,
+    isDeletingTrackerTransaction,
+    isDeletingMultipleTrackerTransaction
   }
 }
