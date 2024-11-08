@@ -5,7 +5,7 @@ import { useClassifyTransaction } from './useClassifyTransaction'
 import { useCreateTrackerTransaction } from './useCreateTrackerTransaction'
 import { useUpdateTrackerTransaction } from './useUpdateTrackerTransaction'
 import { useDeleteAnTrackerTransaction } from './useDeleteAnTrackerTransaction'
-import { useDeleteMultipleAccountSource } from '@/core/account-source/hooks/useDeleteMultipleAccountSource'
+import { useDeleteMultipleTrackerTransaction } from './useDeleteMultipleTrackerTransaction'
 
 export const useTrackerTransaction = (opts?: IUseQueryHookOptions) => {
   const { mutate: classifyTransaction, isPending: isClassing } = useClassifyTransaction(opts)
@@ -14,7 +14,7 @@ export const useTrackerTransaction = (opts?: IUseQueryHookOptions) => {
   const { mutate: deleteAnTrackerTransaction, isPending: isDeletingTrackerTransaction } =
     useDeleteAnTrackerTransaction(opts)
   const { mutate: deleteMultipleTrackerTransaction, isPending: isDeletingMultipleTrackerTransaction } =
-    useDeleteMultipleAccountSource(opts)
+    useDeleteMultipleTrackerTransaction(opts)
   return {
     classifyTransaction,
     isClassing,
