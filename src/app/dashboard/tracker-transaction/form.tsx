@@ -4,7 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { IChartData } from '@/components/core/charts/DonutChart'
-import { ArrowDownIcon, ArrowUpIcon, CloudDownload, HandCoins, HardDriveDownload, PcCase } from 'lucide-react'
+import {
+  ArrowDownIcon,
+  ArrowDownToLineIcon,
+  ArrowUpIcon,
+  CloudDownload,
+  HandCoins,
+  HardDriveDownload,
+  PcCase,
+  Layers2Icon
+} from 'lucide-react'
 import { formatArrayData, formatCurrency, getCurrentMonthDateRange, mergeQueryParams } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
@@ -55,7 +64,8 @@ import {
   handleCreateTrackerTransaction,
   handleUpdateTrackerTxType,
   handleUpdateTrackerTransaction,
-  updateCacheDataDeleteFeat
+  updateCacheDataDeleteFeat,
+  modifyFlatListData
 } from './handlers'
 import {
   GET_ADVANCED_TRANSACTION_KEY,
@@ -430,10 +440,15 @@ export default function TrackerTransactionForm() {
           <Card>
             <CardHeader className='py-4'>
               <div className='flex items-center justify-between'>
-                <CardTitle>Unclassified </CardTitle>
+                <CardTitle>Unclassified</CardTitle>
                 <div className='flex gap-2'>
-                  <Button variant={'secondary'} className='flex items-center gap-1'>
-                    Classify <PcCase height={15} width={15} />
+                  <Button
+                    variant={'secondary'}
+                    onClick={() => {
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
+                    }}
+                  >
+                    {t('common:button.classify')} <Layers2Icon className='ml-2 h-4 w-4' />
                   </Button>
                   <Button
                     variant={'default'}
@@ -441,15 +456,14 @@ export default function TrackerTransactionForm() {
                     isLoading={isPendingRefetch}
                     onClick={refetchTransactionBySocket}
                   >
-                    Refetch in bank
-                    {!isPendingRefetch && <HardDriveDownload height={15} width={15} />}
+                    Refetch in bank {!isPendingRefetch && <HardDriveDownload height={15} width={15} />}
                   </Button>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className='h-auto'>
-                <FlatList></FlatList>
+                <FlatList data={modifyFlatListData(dataUnclassifiedTxs?.data || [])} />
               </div>
             </CardContent>
           </Card>

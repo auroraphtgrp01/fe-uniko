@@ -25,13 +25,6 @@ export const initButtonInDataTableHeader = ({
   const t = translate(['trackerTransaction', 'common'])
   return [
     {
-      title: t('common:button.classify'),
-      variants: 'secondary',
-      onClick: () => {
-        setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
-      }
-    },
-    {
       title: t('common:button.create'),
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))

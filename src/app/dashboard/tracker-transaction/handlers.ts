@@ -29,6 +29,7 @@ import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/m
 import { IQueryOptions } from '@/types/query.interface'
 import { initTableConfig } from '@/constants/data-table'
 import { IAccountSource } from '@/core/account-source/models'
+import { IFlatListData } from '@/components/core/FlatList'
 
 // const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 //   if (event.key === 'Enter') {
@@ -375,4 +376,14 @@ export const handleUpdateTrackerTransaction = async ({
       }
     }
   })
+}
+
+export const modifyFlatListData = (data: ITransaction[]): IFlatListData[] => {
+  return data.map((item) => ({
+    id: item.id,
+    amount: formatCurrency(item.amount, 'đ'),
+    accountNo: item.ofAccount?.accountNo || '',
+    direction: item.direction as ETypeOfTrackerTransactionType,
+    transactionDateTime: formatDateTimeVN(item.transactionDateTime, true)
+  }))
 }

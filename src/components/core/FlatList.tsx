@@ -9,38 +9,18 @@ import { Clock } from 'lucide-react'
 import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
-const data = [
-  {
-    id: '1',
-    amount: formatCurrency(500000, 'VND'),
-    accountNo: 5877979779,
-    direction: ETypeOfTrackerTransactionType.EXPENSE,
-    transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
-  },
-  {
-    id: '2',
-    amount: formatCurrency(200000, 'VND'),
-    accountNo: 5877979779,
-    direction: ETypeOfTrackerTransactionType.INCOMING,
-    transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
-  },
-  {
-    id: '3',
-    amount: formatCurrency(200000, 'VND'),
-    accountNo: 5877979779,
-    direction: ETypeOfTrackerTransactionType.INCOMING,
-    transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
-  },
-  {
-    id: '4',
-    amount: formatCurrency(200000, 'VND'),
-    accountNo: 5877979779,
-    direction: ETypeOfTrackerTransactionType.INCOMING,
-    transactionDateTime: formatDateTimeVN('2024-09-11T16:23:26.000Z', true)
-  }
-]
+export interface IFlatListData {
+  id: string
+  amount: string
+  accountNo: string
+  direction: ETypeOfTrackerTransactionType
+  transactionDateTime: string
+}
+interface IFlatListProps {
+  data: IFlatListData[]
+}
 
-export default function FlatList() {
+export default function FlatList({ data }: IFlatListProps) {
   return (
     <Card className='mx-auto w-full max-w-3xl'>
       <ScrollArea className='h-[200px] w-full rounded-md border-none p-4'>

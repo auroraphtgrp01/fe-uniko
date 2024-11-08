@@ -162,31 +162,33 @@ export function DataTable<TData, TValue>({
               <Trash2Icon className='h-5 w-5' />
             </Button>
           )}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='outline' className='whitespace-nowrap'>
-                {t('table.columnsLabel')}
-                <ChevronDown className='ml-2 h-4 w-4' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end' className='w-[200px]'>
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType')
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className='capitalize'
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {table.getRowModel().rows?.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='outline' className='whitespace-nowrap'>
+                  {t('table.columnsLabel')}
+                  <ChevronDown className='ml-2 h-4 w-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end' className='w-[200px]'>
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType')
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className='capitalize'
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           {buttons && buttons.length > 0
             ? buttons.map((button: IButtonInDataTableHeader) => (
                 <Button
@@ -366,7 +368,7 @@ export function DataTable<TData, TValue>({
                           currentPage: currentPage + 1
                         }))
                       }}
-                      disabled={currentPage === totalPage}
+                      disabled={currentPage === totalPage || totalPage === 0}
                     >
                       <ChevronRight size={15} />
                     </Button>
