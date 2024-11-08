@@ -153,7 +153,7 @@ export const updateCacheDataTodayTxClassifyFeat = (
   const updatedData = oldData.data.map((item) => {
     return item.id === newData.transactionId ? { ...item, ...newData.Transaction } : item
   })
-  return { ...oldData, data: updatedData }
+  return { ...oldData, data: updatedData.flat() }
 }
 
 export const updateCacheDataCreateClassify = (
@@ -163,6 +163,15 @@ export const updateCacheDataCreateClassify = (
   const updatedData = [newData, ...oldData.data]
 
   if (updatedData.length > (oldData.pagination as IBaseResponsePagination).limit) updatedData.pop()
+  return { ...oldData, data: updatedData }
+}
+
+export const updateCacheDataDeleteFeat = (
+  oldData: IAdvancedTrackerTransactionResponse,
+  newData: ITrackerTransaction
+): IAdvancedTrackerTransactionResponse => {
+  const updatedData = oldData.data.filter((item) => item.id !== newData.id)
+
   return { ...oldData, data: updatedData }
 }
 

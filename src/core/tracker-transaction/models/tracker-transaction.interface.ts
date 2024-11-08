@@ -24,6 +24,8 @@ export interface IDialogTrackerTransaction {
   isDialogUnclassifiedOpen: boolean
   isDialogCreateTrackerTxTypeOpen: boolean
   isDialogDetailOpen: boolean
+  isDialogDeleteOpen: boolean
+  isDialogDeleteAllOpen: boolean
 }
 
 export interface ITrackerTransaction {

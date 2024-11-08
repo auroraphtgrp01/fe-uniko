@@ -1,4 +1,4 @@
-import { DataTable } from '@/components/dashboard/DataTable'
+import { DataTable, IDeleteProps } from '@/components/dashboard/DataTable'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,8 +25,8 @@ import { initEmptyDetailTransactionData } from './constants'
 
 export interface ITransactionDialogProps {
   dataTable: {
-    columns: ColumnDef<any>[]
-    data: IDataTransactionTable[]
+    tableUncTxsColumns: ColumnDef<any>[]
+    tableTodayTxsColumns: ColumnDef<any>[]
     transactionTodayData: IDataTransactionTable[]
     unclassifiedTransactionData: IDataTransactionTable[]
     setConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -62,6 +62,9 @@ export interface ITransactionDialogProps {
     ) => void
     handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
   }
+  deleteProps: {
+    deleteAnTransactionProps: IDeleteProps
+  }
 }
 
 export default function TransactionDialog(params: ITransactionDialogProps) {
@@ -69,7 +72,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
   const { t } = useTranslation(['transaction', 'common'])
   const formClassifyRef = useRef<HTMLFormElement>(null)
   // useStates
-  const { dataTable, dialogState, classifyDialog, dialogEditTrackerType, dialogDetailUpdate } = params
+  const { dataTable, dialogState, classifyDialog, dialogEditTrackerType, dialogDetailUpdate, deleteProps } = params
 
   const detailsConfigDialog: IDialogConfig = {
     content: (
@@ -116,7 +119,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
     content: (
       <div className='overflow-x-auto'>
         <DataTable
-          columns={dataTable.columns}
+          columns={dataTable.tableTodayTxsColumns}
           data={dataTable.transactionTodayData}
           onRowClick={(rowData) => {
             classifyDialog.setTypeOfTrackerType(rowData.direction)
@@ -127,6 +130,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           }}
           setConfig={dataTable.setTodayConfig}
           config={dataTable.todayConfig}
+          deleteProps={deleteProps.deleteAnTransactionProps}
         />
       </div>
     ),
@@ -147,7 +151,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
     content: (
       <div className='overflow-x-auto'>
         <DataTable
-          columns={dataTable.columns}
+          columns={dataTable.tableUncTxsColumns}
           data={dataTable.unclassifiedTransactionData}
           onRowClick={(rowData) => {
             dialogDetailUpdate.setDataDetail(
@@ -158,6 +162,7 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
           }}
           setConfig={dataTable.setUncConfig}
           config={dataTable.uncConfig}
+          deleteProps={deleteProps.deleteAnTransactionProps}
         />
       </div>
     ),

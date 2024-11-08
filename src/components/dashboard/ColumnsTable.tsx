@@ -19,8 +19,6 @@ export function getColumns<T>({
     onOpen: (rowData?: any) => void
   }
 }): ColumnDef<T>[] {
-  console.log('>>>>>>', headers)
-
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
     header: ({ column }: { column: any }) =>
@@ -51,19 +49,21 @@ export function getColumns<T>({
   const defaultColumn = [
     {
       accessorKey: 'inProgress',
-      header: ({ table }: { table: any }) => (
-        <Button
-          className='w-13 text-center text-red-600'
-          variant='ghost'
-          size='icon'
-          onClick={(e) => {
-            e.preventDefault()
-            deleteAllProps?.onOpen()
-          }}
-        >
-          Delete all
-        </Button>
-      ),
+      header: ({ table }: { table: any }) => {
+        return (
+          <Button
+            className='w-13 text-center text-red-600'
+            variant='ghost'
+            size='icon'
+            onClick={(e) => {
+              e.preventDefault()
+              deleteAllProps?.onOpen()
+            }}
+          >
+            Delete all
+          </Button>
+        )
+      },
       cell: ({ row }: { row: any }) => <span className='text-center'>{row.index + 1}</span>,
       enableSorting: false,
       enableHiding: false

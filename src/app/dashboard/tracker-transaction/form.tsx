@@ -55,7 +55,8 @@ import {
   handleCreateTrackerTransaction,
   handleUpdateTrackerTxType,
   updateCacheDataTodayTxClassifyFeat,
-  handleUpdateTrackerTransaction
+  handleUpdateTrackerTransaction,
+  updateCacheDataDeleteFeat
 } from './handlers'
 import {
   GET_ADVANCED_TRANSACTION_KEY,
@@ -74,6 +75,7 @@ import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants
 import FlatList from '@/components/core/FlatList'
 import { Button } from '@/components/ui/button'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import toast from 'react-hot-toast'
 
 export default function TrackerTransactionForm() {
   // states
@@ -98,6 +100,7 @@ export default function TrackerTransactionForm() {
   const [typeOfTrackerType, setTypeOfTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )
+  const [idDeletes, setIdDeletes] = useState<string[]>([])
 
   // memos
   const titles = ['Reason Name', 'Type', 'Tracker Type', 'Amount', 'Transaction Date', 'Account Source']
@@ -122,7 +125,9 @@ export default function TrackerTransactionForm() {
     createTrackerTransaction,
     classifyTransaction,
     statusUpdating: statusUpdateTrackerTransaction,
-    updateTrackerTransaction
+    updateTrackerTransaction,
+    deleteAnTrackerTransaction,
+    deleteMultipleTrackerTransaction
   } = useTrackerTransaction()
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions, updateTransaction, statusUpdate: statusUpdateTransaction } = useTransaction()
@@ -136,6 +141,12 @@ export default function TrackerTransactionForm() {
       [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
       updateCacheDataCreateClassify
     )
+
+  const { setData: setCacheTrackerTxDelete } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
+    [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataDeleteFeat
+  )
+
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
     [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
@@ -144,6 +155,10 @@ export default function TrackerTransactionForm() {
   const { setData: setCacheTodayTxs, resetData: resetCacheTodayTxs } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
     updateCacheDataTodayTxClassifyFeat
+  )
+  const { setData: setCacheTodayTxsDeleteFeat } = useUpdateModel(
+    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
+    updateCacheDataDeleteFeat
   )
   const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
@@ -161,11 +176,8 @@ export default function TrackerTransactionForm() {
     }
   )
   const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
-  const { resetData: resetTransaction } = useUpdateModel([GET_ADVANCED_TRANSACTION_KEY], () => {})
-  const { setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
-    [GET_ADVANCED_TRANSACTION_KEY],
-    updateCacheDataTransactionForClassify
-  )
+  const { setData: setDataTransactionClassifyFeat, resetData: resetTransaction } =
+    useUpdateModel<IGetTransactionResponse>([GET_ADVANCED_TRANSACTION_KEY], updateCacheDataTransactionForClassify)
 
   // effects
   useEffect(() => {
@@ -296,6 +308,38 @@ export default function TrackerTransactionForm() {
                   setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
                 }}
                 isLoading={isGetAdvancedPending}
+                deleteProps={{
+                  isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+                  onDelete: () => {
+                    if (idDeletes.length > 0)
+                      deleteAnTrackerTransaction(
+                        { id: idDeletes[0] },
+                        {
+                          onSuccess: (res: any) => {
+                            if (res.statusCode === 200 || res.statusCode === 201) {
+                              resetTransaction()
+                              resetCacheTodayTxs()
+                              setCacheTrackerTxDelete(res.data)
+                              resetCacheUnclassifiedTxs()
+                              resetCacheStatistic()
+                              setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                              setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                              setIdDeletes([])
+                              toast.success('Delete transaction successfully')
+                            }
+                          }
+                        }
+                      )
+                  },
+                  onOpen: (rowData: any) => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                    setIdDeletes((prev) => [...prev, rowData.id])
+                  },
+                  onClose: () => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                    setIdDeletes([])
+                  }
+                }}
               />
             </CardContent>
           </Card>

@@ -6,10 +6,12 @@ import { useGetUnclassifiedTransactions } from './useGetUnclassifiedTransaction'
 import { useGetTodayTransactions } from './useGetTodayTransactions'
 import { useUpdateTransaction } from './useUpdateTransaction'
 import { useDeleteAnTransaction } from './useDeleteAnTransaction'
+import { useDeleteMultipleTransaction } from './useDeleteMultipleTransaction'
 
 export const useTransaction = (opts?: IUseQueryHookOptions) => {
   const { status: statusUpdate, mutate: updateTransaction } = useUpdateTransaction(opts)
   const { status: isDeleteOne, mutate: deleteAnTransaction } = useDeleteAnTransaction(opts)
+  const { status: isDeleteMultiple, mutate: deleteMultipleTransaction } = useDeleteMultipleTransaction(opts)
   return {
     getTransactions: useQueryAdvancedTransaction,
     getPayments: useGetAllPayment,
@@ -19,6 +21,8 @@ export const useTransaction = (opts?: IUseQueryHookOptions) => {
     updateTransaction,
     statusUpdate,
     deleteAnTransaction,
-    isDeleteOne
+    isDeleteOne,
+    isDeleteMultiple,
+    deleteMultipleTransaction
   }
 }

@@ -14,6 +14,7 @@ import {
   handleUpdateTransaction,
   modifyTransactionHandler,
   updateCacheDataTransactionForClassify,
+  updateCacheDataTransactionForDelete,
   updateCacheDataTransactionForUpdate
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
@@ -75,6 +76,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth/hooks'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import DeleteDialog from '@/components/dashboard/DeleteDialog'
 
 export default function TransactionForm() {
   // states
@@ -128,7 +130,10 @@ export default function TransactionForm() {
     getTodayTransactions,
     updateTransaction,
     statusUpdate,
-    deleteAnTransaction
+    deleteAnTransaction,
+    deleteMultipleTransaction,
+    isDeleteMultiple,
+    isDeleteOne
   } = useTransaction()
   const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions })
   const { resetData, setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
@@ -139,6 +144,11 @@ export default function TransactionForm() {
   const { setData: setDataTransactionUpdateFeat } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataTransactionForUpdate
+  )
+
+  const { setData: setDataTransactionDeleteFeat } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataTransactionForDelete
   )
 
   const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
@@ -164,6 +174,10 @@ export default function TransactionForm() {
   const { setData: setDataTodayTxUpdateFeat } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
     updateCacheDataTransactionForUpdate
+  )
+  const { setData: setDataTodayTxDeleteFeat } = useUpdateModel(
+    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
+    updateCacheDataTransactionForDelete
   )
 
   const refetchTransactionBySocket = () => {
@@ -313,15 +327,114 @@ export default function TransactionForm() {
   }
 
   // memos
+  const tableUncTxsColumns = useMemo(() => {
+    if (transactionSummary.unclassifiedTransaction.data.length === 0) return []
+    return getColumns<IDataTransactionTable>({
+      headers: transactionHeaders,
+      isSort: true,
+      deleteAllProps: {
+        onOpen: () => {
+          setIdDeletes(transactionSummary.unclassifiedTransaction.data.map((item) => item.id) || [])
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+        }
+      }
+    })
+  }, [transactionSummary.unclassifiedTransaction.data])
+  const tableTodayTxsColumns = useMemo(() => {
+    if (transactionSummary.transactionToday.data.length === 0) return []
+    return getColumns<IDataTransactionTable>({
+      headers: transactionHeaders,
+      isSort: true,
+      deleteAllProps: {
+        onOpen: () => {
+          setIdDeletes(transactionSummary.transactionToday.data.map((item) => item.id) || [])
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+        }
+      }
+    })
+  }, [transactionSummary.transactionToday.data])
   const columns = useMemo(() => {
     if (dataTable.length === 0) return []
-    return getColumns<IDataTransactionTable>({ headers: transactionHeaders, isSort: true })
+    return getColumns<IDataTransactionTable>({
+      headers: transactionHeaders,
+      isSort: true,
+      deleteAllProps: {
+        onOpen: () => {
+          setIdDeletes(dataTransaction?.data.map((item) => item.id) || [])
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+        }
+      }
+    })
   }, [dataTable])
   const dataTableButtons = initButtonInDataTableHeader({
     refetchTransactionBySocket,
     isPendingRefetch,
     reloadDataFunction
   })
+
+  const deleteAnTransactionProps = {
+    isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+    onDelete: () => {
+      if (idDeletes.length > 0)
+        deleteAnTransaction(
+          { id: idDeletes[0] },
+          {
+            onSuccess: (res: any) => {
+              if (res.statusCode === 200 || res.statusCode === 201) {
+                setDataTransactionDeleteFeat(res.data)
+                resetCacheUnclassifiedTxs()
+                setDataTodayTxDeleteFeat(res.data)
+                resetCacheStatistic()
+                resetCacheAccountSource()
+                setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+                setIdDeletes([])
+                toast.success('Delete account source successfully')
+              }
+            }
+          }
+        )
+    },
+    onOpen: (rowData: any) => {
+      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+      setIdDeletes((prev) => [...prev, rowData.id])
+    },
+    onClose: () => {
+      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+      setIdDeletes([])
+    }
+  }
+  const deleteMultipleTransactionProps = {
+    customDescription: 'Bạn chắc chắn muốn xóa tất cả dữ liệu này?',
+    onDelete: () => {
+      if (idDeletes.length > 0)
+        deleteMultipleTransaction(
+          { ids: idDeletes },
+          {
+            onSuccess: (res: any) => {
+              if (res.statusCode === 200 || res.statusCode === 201) {
+                resetData()
+                resetCacheUnclassifiedTxs()
+                resetCacheTodayTx()
+                resetCacheAccountSource()
+                resetCacheStatistic()
+                setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+                setIdDeletes([])
+                toast.success('Delete all transaction successfully')
+              }
+            }
+          }
+        )
+    },
+    onClose: () => {
+      setIdDeletes([])
+      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+    },
+    isDialogOpen: isDialogOpen.isDialogDeleteAllOpen
+  }
 
   return (
     <div className='space-y-4'>
@@ -397,6 +510,7 @@ export default function TransactionForm() {
         <CardContent>
           <div>
             <DataTable
+              key={'transactionTable'}
               columns={columns}
               data={dataTable}
               config={dataTableConfig}
@@ -408,42 +522,15 @@ export default function TransactionForm() {
               }}
               isLoading={isGetTransaction}
               buttons={dataTableButtons}
-              deleteProps={{
-                isDialogOpen: isDialogOpen.isDialogDeleteOpen,
-                onDelete: () => {
-                  if (idDeletes.length > 0)
-                    deleteAnTransaction(
-                      { id: idDeletes[0] },
-                      {
-                        onSuccess: (res: any) => {
-                          if (res.statusCode === 200 || res.statusCode === 201) {
-                            resetCacheStatistic()
-                            setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                            setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                            setIdDeletes([])
-                            toast.success('Delete account source successfully')
-                          }
-                        }
-                      }
-                    )
-                },
-                onOpen: (rowData: any) => {
-                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
-                  setIdDeletes((prev) => [...prev, rowData.id])
-                },
-                onClose: () => {
-                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                  setIdDeletes([])
-                }
-              }}
+              deleteProps={deleteAnTransactionProps}
             />
           </div>
         </CardContent>
         <TransactionDialog
           dataTable={{
+            tableTodayTxsColumns,
+            tableUncTxsColumns,
             advancedData: dataTransaction?.data || [],
-            columns: columns,
-            data: dataTable,
             transactionTodayData: transactionSummary.transactionToday.data,
             unclassifiedTransactionData: transactionSummary.unclassifiedTransaction.data,
             setConfig: setDataTableConfig,
@@ -510,8 +597,40 @@ export default function TransactionForm() {
             },
             handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
           }}
+          deleteProps={{
+            deleteAnTransactionProps
+          }}
         />
       </Card>
+      <DeleteDialog
+        customDescription='Bạn chắc chắn muốn xóa tất cả dữ liệu này?'
+        onDelete={() => {
+          if (idDeletes.length > 0)
+            deleteMultipleTransaction(
+              { ids: idDeletes },
+              {
+                onSuccess: (res: any) => {
+                  if (res.statusCode === 200 || res.statusCode === 201) {
+                    resetData()
+                    resetCacheUnclassifiedTxs()
+                    resetCacheTodayTx()
+                    resetCacheAccountSource()
+                    resetCacheStatistic()
+                    setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+                    setIdDeletes([])
+                    toast.success('Delete all transaction successfully')
+                  }
+                }
+              }
+            )
+        }}
+        onClose={() => {
+          setIdDeletes([])
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+        }}
+        isDialogOpen={isDialogOpen.isDialogDeleteAllOpen}
+      />
     </div>
   )
 }

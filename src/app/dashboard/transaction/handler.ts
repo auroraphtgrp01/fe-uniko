@@ -93,6 +93,14 @@ export const updateCacheDataTransactionForUpdate = (oldData: IGetTransactionResp
   }
 }
 
+export const updateCacheDataTransactionForDelete = (oldData: IGetTransactionResponse, newData: ITransaction) => {
+  const updatedData = oldData.data.filter((item: ITransaction) => item.id !== newData.id)
+  return {
+    ...oldData,
+    data: updatedData
+  }
+}
+
 export const handleClassifyTransaction = async ({
   formData,
   setFormData,
