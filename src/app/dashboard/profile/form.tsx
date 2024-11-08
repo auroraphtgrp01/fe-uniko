@@ -95,7 +95,7 @@ export default function ProfileForm() {
   return (
     <div className='relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
       <div className='flex flex-1 flex-col gap-8 min-[1350px]:flex-row'>
-        <Card className='relative overflow-hidden'>
+        <Card className='relative overflow-hidden flex-1'>
           <div className='absolute inset-0 bg-gradient-to-b from-primary/10 to-background/50 opacity-50' />
           <CardContent className='space-y-6 p-6'>
             <div className='flex flex-col items-center space-y-4'>
@@ -126,76 +126,76 @@ export default function ProfileForm() {
             </div>
           </CardContent>
         </Card>
-        <Tabs defaultValue='account' className='h-full flex-1 rounded-md'>
-          <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='account'>{t('tabs.account')}</TabsTrigger>
-            <TabsTrigger value='password'>{t('tabs.password')}</TabsTrigger>
-          </TabsList>
-          <TabsContent value='account' className='h-fit py-2'>
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('userProfileTitle')}</CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-2'>
-                <FormZod
-                  defaultValues={defaultUser}
-                  classNameForm='grid grid-cols-4 grid-rows-4 gap-3 space-y-0'
-                  submitRef={formUpdateRef}
-                  formFieldBody={translatedUpdateUserFormBody}
-                  formSchema={updateUserSchema}
-                  onSubmit={handleUpdateUser}
-                />
-              </CardContent>
-              <CardFooter className='flex'>
-                <Button
-                  className='gap-2'
-                  type='button'
-                  onClick={() => formUpdateRef.current?.requestSubmit()}
-                  isLoading={isUpdating}
-                >
-                  <SaveIcon height={15} width={15} />
-                  {t('profile:form.credential.saveChangesButton')}
-                </Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-          <TabsContent value='password' className='h-fit py-2 min-[1490px]:mt-2'>
-            <Card>
-              <CardHeader>
-                <CardTitle> {t('profile:form.credential.currentPassword.label')}</CardTitle>
-                <CardDescription>{t('profile:form.credential.passwordDescription')}</CardDescription>
-              </CardHeader>
-              <CardContent className='space-y-2'>
-                {userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword ? (
+        <Card className='h-full flex-1 rounded-md pt-4'>
+          <CardContent>
+            <Tabs defaultValue='account' className='h-full flex-1 rounded-md'>
+              <TabsList className='grid w-full grid-cols-2'>
+                <TabsTrigger value='account'>{t('tabs.account')}</TabsTrigger>
+                <TabsTrigger value='password'>{t('tabs.password')}</TabsTrigger>
+              </TabsList>
+              <TabsContent value='account' className='h-fit'>
+                <CardHeader className='px-0'>
+                  <CardTitle>{t('userProfileTitle')}</CardTitle>
+                </CardHeader>
+                <CardContent className='px-0'>
                   <FormZod
-                    submitRef={formUpdatePasswordRef}
-                    formFieldBody={translatedUpdatePasswordFormBodyWithoutCurrentPassword}
-                    formSchema={updatePassWordSchemaWithoutCurrentPassword}
-                    onSubmit={handleUpdatePassword}
+                    defaultValues={defaultUser}
+                    classNameForm='grid grid-cols-4 grid-rows-4 gap-4 space-y-0'
+                    submitRef={formUpdateRef}
+                    formFieldBody={translatedUpdateUserFormBody}
+                    formSchema={updateUserSchema}
+                    onSubmit={handleUpdateUser}
                   />
-                ) : (
-                  <FormZod
-                    submitRef={formUpdatePasswordRef1}
-                    formFieldBody={translatedUpdatePasswordFormBodyWithCurrentPassword}
-                    formSchema={updatePassWordSchemaWithCurrentPassword}
-                    onSubmit={handleUpdatePassword}
-                  />
-                )}
-              </CardContent>
-              <CardFooter className='flex'>
-                <Button
-                  type='button'
-                  onClick={() => formUpdatePasswordRef.current?.requestSubmit()}
-                  isLoading={isPasswordUpdating}
-                  className='gap-2'
-                >
-                  <SaveIcon height={15} width={15} />
-                  {t('profile:form.credential.savePasswordButton')}
-                </Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                </CardContent>
+                <CardFooter className='flex px-0'>
+                  <Button
+                    className='gap-2'
+                    type='button'
+                    onClick={() => formUpdateRef.current?.requestSubmit()}
+                    isLoading={isUpdating}
+                  >
+                    <SaveIcon height={15} width={15} />
+                    {t('profile:form.credential.saveChangesButton')}
+                  </Button>
+                </CardFooter>
+              </TabsContent>
+              <TabsContent value='password' className='h-fit py-2 min-[1490px]:mt-2'>
+                <CardHeader className='px-0'>
+                  <CardTitle> {t('profile:form.credential.currentPassword.label')}</CardTitle>
+                  <CardDescription>{t('profile:form.credential.passwordDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent className='px-0'>
+                  {userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword ? (
+                    <FormZod
+                      submitRef={formUpdatePasswordRef}
+                      formFieldBody={translatedUpdatePasswordFormBodyWithoutCurrentPassword}
+                      formSchema={updatePassWordSchemaWithoutCurrentPassword}
+                      onSubmit={handleUpdatePassword}
+                    />
+                  ) : (
+                    <FormZod
+                      submitRef={formUpdatePasswordRef1}
+                      formFieldBody={translatedUpdatePasswordFormBodyWithCurrentPassword}
+                      formSchema={updatePassWordSchemaWithCurrentPassword}
+                      onSubmit={handleUpdatePassword}
+                    />
+                  )}
+                </CardContent>
+                <CardFooter className='flex px-0'>
+                  <Button
+                    type='button'
+                    onClick={() => formUpdatePasswordRef.current?.requestSubmit()}
+                    isLoading={isPasswordUpdating}
+                    className='gap-2'
+                  >
+                    <SaveIcon height={15} width={15} />
+                    {t('profile:form.credential.savePasswordButton')}
+                  </Button>
+                </CardFooter>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
