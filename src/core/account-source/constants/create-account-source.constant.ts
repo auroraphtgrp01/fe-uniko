@@ -43,11 +43,10 @@ export const createAccountSourceFormBody = (setTypeState: any) => {
     },
     {
       name: 'initAmount',
-      type: EFieldType.Input,
+      type: EFieldType.MoneyInput,
       label: t('form.createAccountSourceFormBody.initAmount.label'),
       placeHolder: t('form.createAccountSourceFormBody.initAmount.placeholder'),
       props: {
-        type: 'number',
         autoComplete: 'initialAmount'
       }
     }
