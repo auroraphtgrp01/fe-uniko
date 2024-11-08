@@ -14,7 +14,8 @@ export interface IComboboxProps {
   dialogEdit?: React.ReactNode
   setOpenEditDialog?: React.Dispatch<React.SetStateAction<boolean>>
   onValueSelect?: (value: string) => void
-  defaultValue?: string | undefined
+  value?: string
+  onChange?: (value: string) => void
 }
 
 export function Combobox({
@@ -24,18 +25,20 @@ export function Combobox({
   dialogEdit,
   setOpenEditDialog,
   onValueSelect,
-  defaultValue
+  value: controlledValue,
+  onChange
 }: IComboboxProps) {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState(defaultValue ?? '')
   const [searchValue, setSearchValue] = useState('')
 
   const filteredDataArr = dataArr.filter((data) => data.label.toLowerCase().includes(searchValue.trim().toLowerCase()))
 
   const handleSelect = (currentValue: string) => {
-    const newValue = currentValue === value ? '' : currentValue
-    setValue(newValue)
+    const newValue = currentValue === controlledValue ? '' : currentValue
 
+    if (onChange) {
+      onChange(newValue)
+    }
     if (onValueSelect) {
       onValueSelect(newValue)
     }
@@ -48,7 +51,9 @@ export function Combobox({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant='outline' role='combobox' aria-expanded={open} className='w-full justify-between'>
-            {value ? dataArr.find((data) => data.value === value)?.label : `Select ${label ?? 'item'}`}
+            {controlledValue
+              ? dataArr.find((data) => data.value === controlledValue)?.label
+              : `Select ${label ?? 'item'}`}
             <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
@@ -66,7 +71,9 @@ export function Combobox({
                     <CommandItem key={data.value} value={data.value} onSelect={() => handleSelect(data.value)}>
                       <div className='flex w-full justify-between'>
                         {data.label}
-                        <Check className={cn('h-4 w-4', value === data.value ? 'opacity-100' : 'opacity-0')} />
+                        <Check
+                          className={cn('h-4 w-4', controlledValue === data.value ? 'opacity-100' : 'opacity-0')}
+                        />
                       </div>
                     </CommandItem>
                   ))}
