@@ -21,13 +21,13 @@ export default function DeleteDialog({
 }: IDeleteDialogProps) {
   const deleteConfigDialog: IDialogConfig = {
     content: (
-      <div className='my-4 border-l-4 border-yellow-400 bg-yellow-50 p-4'>
+      <div className='my-4 border-l-4 border-yellow-500 bg-yellow-100 p-4 dark:border-yellow-700 dark:bg-yellow-800'>
         <div className='flex'>
           <div className='flex-shrink-0'>
-            <AlertTriangle className='h-5 w-5 text-yellow-400' />
+            <AlertTriangle className='h-5 w-5 text-yellow-500 dark:text-yellow-300' />
           </div>
           <div className='ml-3'>
-            <p className='text-sm text-yellow-700'>
+            <p className='text-sm text-yellow-800 dark:text-yellow-100'>
               <span className='font-medium'>Lưu ý:</span> Dữ liệu khi đã được xóa sẽ không thể khôi phục trở lại!
             </p>
           </div>
