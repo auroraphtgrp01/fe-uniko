@@ -566,7 +566,10 @@ export default function TransactionForm() {
           classifyDialog={{
             incomeTrackerTransactionType: incomingTrackerType,
             expenseTrackerTransactionType: expenseTrackerType,
-            handleClassify: (data: IClassifyTransactionBody) => {
+            handleClassify: (
+              data: IClassifyTransactionBody,
+              setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+            ) => {
               handleClassifyTransaction({
                 payload: data,
                 hookCreate: classifyTransaction,
@@ -577,7 +580,8 @@ export default function TransactionForm() {
                 setTodayDataTableConfig: setTodayDataTableConfig,
                 setDataTableConfig: setDataTableConfig,
                 setIsDialogOpen: setIsDialogOpen,
-                hookSetCacheTransaction: setDataTransactionClassifyFeat
+                hookSetCacheTransaction: setDataTransactionClassifyFeat,
+                setIsEditing
               })
             },
             typeOfTrackerType,

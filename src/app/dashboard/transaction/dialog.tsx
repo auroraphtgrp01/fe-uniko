@@ -51,7 +51,10 @@ export interface ITransactionDialogProps {
   classifyDialog: {
     incomeTrackerTransactionType: ITrackerTransactionType[]
     expenseTrackerTransactionType: ITrackerTransactionType[]
-    handleClassify: (data: IClassifyTransactionBody) => void
+    handleClassify: (
+      data: IClassifyTransactionBody,
+      setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    ) => void
     typeOfTrackerType: ETypeOfTrackerTransactionType
     setTypeOfTrackerType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
   }
@@ -99,7 +102,9 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
                 handleUpdateTrackerType: dialogEditTrackerType.handleUpdateTrackerType
               }}
               formClassifyRef={formClassifyRef}
-              handleClassify={classifyDialog.handleClassify}
+              handleClassify={(data: IClassifyTransactionBody) => {
+                classifyDialog.handleClassify(data, setIsEditing)
+              }}
             />
           ),
           formClassifyRef

@@ -89,7 +89,8 @@ export const handleClassifyTransaction = async ({
   setUncDataTableConfig,
   setTodayDataTableConfig,
   setDataTableConfig,
-  hookResetTrackerTx
+  hookResetTrackerTx,
+  setIsEditing
 }: {
   payload: IClassifyTransactionBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
@@ -104,6 +105,7 @@ export const handleClassifyTransaction = async ({
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
@@ -120,6 +122,7 @@ export const handleClassifyTransaction = async ({
         if (setDataTableConfig) setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         toast.success('Classify transaction successfully!')
         setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
+        if (setIsEditing) setIsEditing(false)
       }
     }
   })

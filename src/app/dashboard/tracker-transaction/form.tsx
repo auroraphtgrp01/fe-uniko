@@ -494,6 +494,7 @@ export default function TrackerTransactionForm() {
                 onSuccess: (res: any) => {
                   if (res.statusCode === 200 || res.statusCode === 201) {
                     resetCacheTrackerTx()
+                    resetTransaction()
                     resetCacheUnclassifiedTxs()
                     resetCacheTodayTxs()
                     resetCacheStatistic()
