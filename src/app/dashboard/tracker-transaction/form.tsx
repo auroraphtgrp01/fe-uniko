@@ -314,6 +314,14 @@ export default function TrackerTransactionForm() {
                   setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
                 }}
                 isLoading={isGetAdvancedPending}
+                onOpenDeleteAll={(ids: string[]) => {
+                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+                  setIdDeletes(ids)
+                }}
+                onOpenDelete={(id: string) => {
+                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                  setIdDeletes([id])
+                }}
                 deleteProps={{
                   isDialogOpen: isDialogOpen.isDialogDeleteOpen,
                   onDelete: () => {

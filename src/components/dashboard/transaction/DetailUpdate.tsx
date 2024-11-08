@@ -199,13 +199,7 @@ export default function DetailUpdateTransaction({
                 accountSourceData: commonProps.accountSourceData,
                 handleSetTrackerTypeDefault: (value: string) => {
                   if (value !== updateTransactionProps.transaction.direction) {
-                    console.log('value', value)
-
-                    formUpdateTrackerTransactionRef.current?.setValue('trackerTypeId', undefined)
-                    console.log(
-                      'formUpdateTrackerTransactionRef',
-                      formUpdateTrackerTransactionRef.current?.getValues('trackerTypeId')
-                    )
+                    formUpdateTrackerTransactionRef.current?.setValue('trackerTypeId', '')
                   }
                 }
               })}

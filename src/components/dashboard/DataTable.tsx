@@ -90,6 +90,7 @@ export function DataTable<TData, TValue>({
   })
 
   useEffect(() => {
+    table.toggleAllPageRowsSelected(false)
     table.setPagination({ pageIndex: currentPage - 1, pageSize: limit })
   }, [data, config])
 
@@ -221,6 +222,17 @@ export function DataTable<TData, TValue>({
                     </TableHead>
                   )
                 })}
+                {onOpenDelete && (
+                  <TableHead
+                    className='text-nowrap'
+                    key={'deleteIcon'}
+                    onMouseDown={(event) => {
+                      if (event.detail > 1) {
+                        event.preventDefault()
+                      }
+                    }}
+                  />
+                )}
               </TableRow>
             ))}
           </TableHeader>

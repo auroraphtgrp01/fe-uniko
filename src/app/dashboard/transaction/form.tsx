@@ -358,7 +358,7 @@ export default function TransactionForm() {
                 setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
                 setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
                 setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
                 setIdDeletes([])
                 toast.success('Delete account source successfully')
               }
@@ -374,35 +374,6 @@ export default function TransactionForm() {
       setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
       setIdDeletes([])
     }
-  }
-  const deleteMultipleTransactionProps = {
-    customDescription: 'Bạn chắc chắn muốn xóa tất cả dữ liệu này?',
-    onDelete: () => {
-      if (idDeletes.length > 0)
-        deleteMultipleTransaction(
-          { ids: idDeletes },
-          {
-            onSuccess: (res: any) => {
-              if (res.statusCode === 200 || res.statusCode === 201) {
-                resetData()
-                resetCacheUnclassifiedTxs()
-                resetCacheTodayTx()
-                resetCacheAccountSource()
-                resetCacheStatistic()
-                setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
-                setIdDeletes([])
-                toast.success('Delete all transaction successfully')
-              }
-            }
-          }
-        )
-    },
-    onClose: () => {
-      setIdDeletes([])
-      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
-    },
-    isDialogOpen: isDialogOpen.isDialogDeleteAllOpen
   }
 
   return (
@@ -491,6 +462,14 @@ export default function TransactionForm() {
               }}
               isLoading={isGetTransaction}
               buttons={dataTableButtons}
+              onOpenDeleteAll={(ids: string[]) => {
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+                setIdDeletes(ids)
+              }}
+              onOpenDelete={(id: string) => {
+                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                setIdDeletes([id])
+              }}
               deleteProps={deleteAnTransactionProps}
             />
           </div>

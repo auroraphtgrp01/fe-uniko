@@ -177,9 +177,6 @@ export default function FormZod<T extends z.ZodRawShape>({
   submitRef,
   formRef
 }: IFormZodProps<T> & { disabled?: boolean }) {
-  const [formFieldWatch, setFormFieldWatch] = React.useState<
-    { name: Path<z.infer<z.ZodObject<T>>>; value: any; field: any }[]
-  >([])
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(formSchema),
     defaultValues,
@@ -205,14 +202,6 @@ export default function FormZod<T extends z.ZodRawShape>({
     form.reset(defaultValues)
   }, [defaultValues, form])
 
-  useEffect(() => {
-    console.log('Changed')
-
-    // formFieldWatch.forEach((item) => {
-    //   item.field.onChange(item.value)
-    // })
-  }, [formFieldWatch])
-
   return (
     <div>
       <Form {...form}>
@@ -224,33 +213,25 @@ export default function FormZod<T extends z.ZodRawShape>({
                   control={form.control}
                   name={fieldItem.name as any}
                   key={index}
-                  render={({ field }) => {
-                    const fieldName = fieldItem.name as Path<z.infer<z.ZodObject<T>>>
-                    if (!formFieldWatch.some((item) => item.name === fieldName)) {
-                      setFormFieldWatch((prev) => [...prev, { name: fieldName, value: field.value, field: fieldItem }])
-                    }
-                    return (
-                      <FormItem className={(fieldItem.props as any)?.className}>
-                        <div className='flex justify-between'>
-                          {fieldItem?.label && (
-                            <FormLabel
-                              className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}
-                            >
-                              {fieldItem.label}
-                            </FormLabel>
-                          )}
-                          <FormMessage />
-                        </div>
-                        <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
-                          <FormFieldComponent
-                            fieldItem={fieldItem}
-                            field={field}
-                            disabled={disabled || (fieldItem.props as any)?.disabled}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )
-                  }}
+                  render={({ field }) => (
+                    <FormItem className={(fieldItem.props as any)?.className}>
+                      <div className='flex justify-between'>
+                        {fieldItem?.label && (
+                          <FormLabel className={cn((fieldItem.props as any)?.classNameLabel, 'text-muted-foreground')}>
+                            {fieldItem.label}
+                          </FormLabel>
+                        )}
+                        <FormMessage />
+                      </div>
+                      <FormControl className={cn((fieldItem.props as any)?.classNameControl)}>
+                        <FormFieldComponent
+                          fieldItem={fieldItem}
+                          field={field}
+                          disabled={disabled || (fieldItem.props as any)?.disabled}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
               ) : null
             })}
