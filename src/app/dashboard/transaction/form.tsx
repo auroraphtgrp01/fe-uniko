@@ -111,8 +111,6 @@ export default function TransactionForm() {
 
   // hooks
   const { t } = useTranslation(['transaction'])
-  const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { getAllAccountSource } = useAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
   const { getMe } = useUser()

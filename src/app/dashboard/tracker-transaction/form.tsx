@@ -121,8 +121,6 @@ export default function TrackerTransactionForm() {
 
   // hooks
   const { t } = useTranslation(['trackerTransaction', 'common'])
-  const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { getAllAccountSource } = useAccountSource()
   const {
     getAdvancedData,

@@ -57,8 +57,6 @@ export default function AccountSourceForm() {
   }, [tableData])
 
   // Hooks
-  const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { createAccountSource, updateAccountSource, getAdvancedAccountSource } = useAccountSource()
   const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
   const { setData: setDataCreate } = useUpdateModel<IAdvancedAccountSourceResponse>(

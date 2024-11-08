@@ -59,8 +59,6 @@ export default function ProfileForm() {
       }
     )
   }
-  const { verifyToken } = useAuth()
-  const { isVerifyingToken } = verifyToken({ refreshToken: getRefreshTokenFromLocalStorage() })
   const { t } = useTranslation(['profile'])
   const { userGetMeData, isGetMeUserPending } = getMe(true)
   const { setData } = useUpdateModel<IUserGetMeResponse>([USER_QUERY_ME], (oldData, newData) => {
@@ -95,7 +93,7 @@ export default function ProfileForm() {
   return (
     <div className='relative mx-auto flex gap-4 overflow-hidden rounded-md antialiased'>
       <div className='flex flex-1 flex-col gap-8 min-[1350px]:flex-row'>
-        <Card className='relative overflow-hidden flex-1'>
+        <Card className='relative flex-1 overflow-hidden'>
           <div className='absolute inset-0 bg-gradient-to-b from-primary/10 to-background/50 opacity-50' />
           <CardContent className='space-y-6 p-6'>
             <div className='flex flex-col items-center space-y-4'>
