@@ -35,12 +35,12 @@ export default function TrackerTransactionChart({ tabConfig, statisticDateRange 
           <TabsList className='col-span-2 mt-5 grid w-full grid-cols-2'>
             {tabConfig.tabContents.length > 0
               ? tabConfig.tabContents.map((tabContent: ITabContent, index: number) => (
-                  <>
+                  <React.Fragment key={tabContent.value}>
                     <TabsTrigger value={tabContent.value} className='flex items-center gap-2'>
                       {index === 0 && <TrendingDown width={15} height={15} />}
                       {tabContent.labels} {index === 1 && <TrendingUp width={15} height={15} />}
                     </TabsTrigger>
-                  </>
+                  </React.Fragment>
                 ))
               : ''}
           </TabsList>
@@ -54,11 +54,11 @@ export default function TrackerTransactionChart({ tabConfig, statisticDateRange 
           </div>
           {tabConfig.tabContents.length > 0
             ? tabConfig.tabContents.map((tabContent: ITabContent) => (
-                <>
+                <React.Fragment key={tabContent.value}>
                   <TabsContent value={tabContent.value} className='h-fit'>
                     {tabContent.content}
                   </TabsContent>
-                </>
+                </React.Fragment>
               ))
             : ''}
         </CardContent>

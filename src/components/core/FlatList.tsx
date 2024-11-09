@@ -89,7 +89,14 @@ export default function FlatList({ data, onClick }: IFlatListProps) {
       ) : (
         <div className='flex h-[200px] flex-col items-center justify-center space-y-4'>
           <div className='relative'>
-            <Image src={NoDataPlaceHolder} alt='No data available' width={120} height={120} className='opacity-80' />
+            <Image
+              priority
+              src={NoDataPlaceHolder}
+              alt='No data available'
+              width={120}
+              height={120}
+              className='opacity-80'
+            />
           </div>
           <p className='text-sm text-muted-foreground'>No transactions available at the moment</p>
         </div>

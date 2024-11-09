@@ -98,7 +98,7 @@ export default function ProfileForm() {
           <CardContent className='space-y-6 p-6'>
             <div className='flex flex-col items-center space-y-4'>
               <Avatar className='h-32 w-32 ring-2 ring-border'>
-                <Image src={AvatarDefault} alt='' width={128} height={128} />
+                <Image priority src={AvatarDefault} alt='' width={128} height={128} />
               </Avatar>
               <div className='text-center'>
                 <h2 className='text-2xl font-bold'>{userGetMeData?.data?.fullName ?? 'Unknown'}</h2>

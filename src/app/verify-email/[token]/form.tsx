@@ -19,8 +19,8 @@ export default function VerifyEmailForm({ token }: { token: string }) {
               alt='Logo'
               width={400}
               height={400}
-              layout='responsive'
-              objectFit='cover'
+              priority
+              style={{ objectFit: 'cover' }}
               className='h-full w-full'
             />
           </div>

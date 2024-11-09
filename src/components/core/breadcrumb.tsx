@@ -52,9 +52,9 @@ export default function BreadcrumbHeader() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <Link href='/' passHref>
-              <BreadcrumbLink>Home</BreadcrumbLink>
-            </Link>
+            <BreadcrumbLink asChild>
+              <Link href='/'>Home</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           {breadcrumbItems.map((item) => (
@@ -63,9 +63,9 @@ export default function BreadcrumbHeader() {
                 {item.isLast ? (
                   <BreadcrumbPage>{item.title}</BreadcrumbPage>
                 ) : (
-                  <Link href={item.href} passHref>
-                    <BreadcrumbLink>{item.title}</BreadcrumbLink>
-                  </Link>
+                  <BreadcrumbLink asChild>
+                    <Link href={item.href}>{item.title}</Link>
+                  </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
               {!item.isLast && <BreadcrumbSeparator />}

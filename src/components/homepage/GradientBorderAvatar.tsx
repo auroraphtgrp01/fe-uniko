@@ -23,7 +23,7 @@ const GradientBorderAvatar: React.FC<GradientBorderAvatarProps> = ({ src, alt = 
         <div className='animate-spin-slow absolute inset-0 rounded-full bg-gradient-to-r opacity-75 blur-sm' />
         <div className='absolute inset-0.5 rounded-full bg-black' />
         <Avatar className={`relative ${avatarSize}`}>
-          <Image src={src} alt={alt} />
+          <Image priority src={src} alt={alt} />
         </Avatar>
       </a>
     </div>

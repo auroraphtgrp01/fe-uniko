@@ -58,17 +58,18 @@ export function UserNav() {
                 /> */}
                 <Image
                   alt=''
+                  priority
                   className='h-full w-full object-cover'
                   src={AvatarDefault as any}
                   width={20}
                   height={20}
                 />
-                <AvatarFallback>
+                {/* <AvatarFallback>
                   <img
                     src='https://s3.ap-southeast-1.amazonaws.com/cdn.vntre.vn/default/avatar-cute-dong-vat-1725201830.jpg'
                     className='h-full w-full object-cover'
                   />
-                </AvatarFallback>
+                </AvatarFallback> */}
               </Avatar>
             </motion.div>
           </Button>

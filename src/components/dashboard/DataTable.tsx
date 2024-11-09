@@ -206,91 +206,42 @@ export function DataTable<TData, TValue>({
       </div>
       <div className='rounded-md border'>
         <Table classNameOfScroll={classNameOfScroll}>
-          {data?.length > 0 ? (
-            <TableHeader style={{ cursor: 'pointer' }}>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead
-                        className='text-nowrap'
-                        key={header.id}
-                        onMouseDown={(event) => {
-                          if (event.detail > 1) {
-                            event.preventDefault()
-                          }
-                        }}
-                      >
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    )
-                  })}
-                  {onOpenDelete && (
+          <TableHeader style={{ cursor: data?.length ? 'pointer' : 'default' }}>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
                     <TableHead
-                      className='text-nowrap'
-                      key={'deleteIcon'}
+                      className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''}`}
+                      key={header.id}
                       onMouseDown={(event) => {
                         if (event.detail > 1) {
                           event.preventDefault()
                         }
                       }}
-                    />
-                  )}
-                </TableRow>
-              ))}
-            </TableHeader>
-          ) : (
-            <div className='mt-20'></div>
-          )}
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, index) => {
-                return (
-                  <TableRow
-                    onMouseEnter={() => setHoveredRow(index)}
-                    onMouseLeave={() => setHoveredRow(null)}
-                    style={{ cursor: 'pointer', userSelect: 'none' }}
-                    className={getRowClassName ? getRowClassName(row.original) : ''}
-                    key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
-                    onClick={(event: any) => {
-                      if (
-                        (event.target.getAttribute('role') === null ||
-                          event.target.getAttribute('role') !== 'checkbox') &&
-                        onRowClick
-                      ) {
-                        onRowClick(row.original)
+                    >
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  )
+                })}
+                {onOpenDelete && (
+                  <TableHead
+                    className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''}`}
+                    key={'deleteIcon'}
+                    onMouseDown={(event) => {
+                      if (event.detail > 1) {
+                        event.preventDefault()
                       }
                     }}
-                    onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                    ))}
-                    {onOpenDelete && (
-                      <TableCell className='w-[50px] p-2'>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onOpenDelete((row.original as any).id)
-                          }}
-                          className={`h-8 w-8 transition-opacity duration-200 ${
-                            hoveredRow === index ? 'opacity-100' : 'opacity-0'
-                          }`}
-                        >
-                          <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
-                          <span className='sr-only'>Delete row</span>
-                        </Button>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                )
-              })
-            ) : (
-              <div className='h-24'>
-                <div className='h-24 text-center'>
+                  />
+                )}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {!data?.length ? (
+              <TableRow className='hover:bg-transparent'>
+                <TableCell colSpan={columns.length + (onOpenDelete ? 1 : 0)} className='h-24 text-center'>
                   {isLoading ? (
                     <div className='flex flex-col items-center justify-center gap-2'>
                       <Atom color='#be123c' size='small' textColor='#be123c' />
@@ -298,12 +249,55 @@ export function DataTable<TData, TValue>({
                     </div>
                   ) : (
                     <div className='flex select-none flex-col items-center justify-center gap-2'>
-                      <Image src={EmptyBox} alt='' height={50} width={50} />
+                      <Image priority src={EmptyBox} alt='' height={50} width={50} />
                       <span className='font-semibold text-foreground'>{t('table.noDataText')}</span>
                     </div>
                   )}
-                </div>
-              </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              table.getRowModel().rows.map((row, index) => (
+                <TableRow
+                  onMouseEnter={() => setHoveredRow(index)}
+                  onMouseLeave={() => setHoveredRow(null)}
+                  style={{ cursor: 'pointer', userSelect: 'none' }}
+                  className={getRowClassName ? getRowClassName(row.original) : ''}
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  onClick={(event: any) => {
+                    if (
+                      (event.target.getAttribute('role') === null ||
+                        event.target.getAttribute('role') !== 'checkbox') &&
+                      onRowClick
+                    ) {
+                      onRowClick(row.original)
+                    }
+                  }}
+                  onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  ))}
+                  {onOpenDelete && (
+                    <TableCell className='w-[50px] p-2'>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onOpenDelete((row.original as any).id)
+                        }}
+                        className={`h-8 w-8 transition-opacity duration-200 ${
+                          hoveredRow === index ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      >
+                        <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
+                        <span className='sr-only'>Delete row</span>
+                      </Button>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

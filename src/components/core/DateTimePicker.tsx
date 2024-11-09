@@ -63,197 +63,210 @@ export type DateTimeRenderTriggerProps = {
   use12HourFormat?: boolean
 }
 
-export function DateTimePicker({
-  value,
-  onChange,
-  renderTrigger,
-  min,
-  max,
-  timezone,
-  showTime = false,
-  use12HourFormat = true,
-  disabled,
-  className,
-  ...props
-}: DateTimePickerProps & CalendarProps) {
-  const [open, setOpen] = useState(false)
-  const [monthYearPicker, setMonthYearPicker] = useState<'month' | 'year' | false>(false)
-  const initDate = useMemo(() => new TZDate(value || new Date(), timezone), [value, timezone])
-
-  const [month, setMonth] = useState<Date>(initDate)
-  const [date, setDate] = useState<Date>(initDate)
-
-  const endMonth = useMemo(() => {
-    return setYear(month, getYear(month) + 1)
-  }, [month])
-  const minDate = useMemo(() => (min ? new TZDate(min, timezone) : undefined), [min, timezone])
-  const maxDate = useMemo(() => (max ? new TZDate(max, timezone) : undefined), [max, timezone])
-
-  const onDayChanged = useCallback(
-    (d: Date) => {
-      d.setHours(date.getHours(), date.getMinutes(), date.getSeconds())
-      if (min && d < min) {
-        d.setHours(min.getHours(), min.getMinutes(), min.getSeconds())
-      }
-      if (max && d > max) {
-        d.setHours(max.getHours(), max.getMinutes(), max.getSeconds())
-      }
-      setDate(d)
+export const DateTimePicker = React.forwardRef<HTMLDivElement, DateTimePickerProps & CalendarProps>(
+  (
+    {
+      value,
+      onChange,
+      renderTrigger,
+      min,
+      max,
+      timezone,
+      showTime = false,
+      use12HourFormat = true,
+      disabled,
+      className,
+      ...props
     },
-    [setDate, setMonth]
-  )
-  const onSubmit = useCallback(() => {
-    onChange(new Date(date))
-    setOpen(false)
-  }, [date, onChange])
+    ref
+  ) => {
+    const [open, setOpen] = useState(false)
+    const [monthYearPicker, setMonthYearPicker] = useState<'month' | 'year' | false>(false)
+    const initDate = useMemo(() => new TZDate(value || new Date(), timezone), [value, timezone])
 
-  const onMonthYearChanged = useCallback(
-    (d: Date, mode: 'month' | 'year') => {
-      setMonth(d)
-      if (mode === 'year') {
-        setMonthYearPicker('month')
-      } else {
+    const [month, setMonth] = useState<Date>(initDate)
+    const [date, setDate] = useState<Date>(initDate)
+
+    const endMonth = useMemo(() => {
+      return setYear(month, getYear(month) + 1)
+    }, [month])
+    const minDate = useMemo(() => (min ? new TZDate(min, timezone) : undefined), [min, timezone])
+    const maxDate = useMemo(() => (max ? new TZDate(max, timezone) : undefined), [max, timezone])
+
+    const onDayChanged = useCallback(
+      (d: Date) => {
+        d.setHours(date.getHours(), date.getMinutes(), date.getSeconds())
+        if (min && d < min) {
+          d.setHours(min.getHours(), min.getMinutes(), min.getSeconds())
+        }
+        if (max && d > max) {
+          d.setHours(max.getHours(), max.getMinutes(), max.getSeconds())
+        }
+        setDate(d)
+      },
+      [setDate, setMonth]
+    )
+    const onSubmit = useCallback(() => {
+      onChange(new Date(date))
+      setOpen(false)
+    }, [date, onChange])
+
+    const onMonthYearChanged = useCallback(
+      (d: Date, mode: 'month' | 'year') => {
+        setMonth(d)
+        if (mode === 'year') {
+          setMonthYearPicker('month')
+        } else {
+          setMonthYearPicker(false)
+        }
+      },
+      [setMonth, setMonthYearPicker]
+    )
+    const onNextMonth = useCallback(() => {
+      setMonth(addMonths(month, 1))
+    }, [month])
+    const onPrevMonth = useCallback(() => {
+      setMonth(subMonths(month, 1))
+    }, [month])
+
+    useEffect(() => {
+      if (open) {
+        setDate(initDate)
+        setMonth(initDate)
         setMonthYearPicker(false)
       }
-    },
-    [setMonth, setMonthYearPicker]
-  )
-  const onNextMonth = useCallback(() => {
-    setMonth(addMonths(month, 1))
-  }, [month])
-  const onPrevMonth = useCallback(() => {
-    setMonth(subMonths(month, 1))
-  }, [month])
+    }, [open, initDate])
 
-  useEffect(() => {
-    if (open) {
-      setDate(initDate)
-      setMonth(initDate)
-      setMonthYearPicker(false)
-    }
-  }, [open, initDate])
+    const displayValue = useMemo(() => {
+      if (!open && !value) return value
+      return open ? date : initDate
+    }, [date, value, open])
 
-  const displayValue = useMemo(() => {
-    if (!open && !value) return value
-    return open ? date : initDate
-  }, [date, value, open])
+    const displayFormat = useMemo(() => {
+      if (!displayValue) return 'Pick a date'
+      return format(
+        displayValue,
+        `${showTime ? 'MMM' : 'MMMM'} d, yyyy${showTime ? (use12HourFormat ? ', hh:mm:ss a' : ', HH:mm:ss') : ''}`
+      )
+    }, [displayValue, showTime, use12HourFormat])
 
-  const displayFormat = useMemo(() => {
-    if (!displayValue) return 'Pick a date'
-    return format(
-      displayValue,
-      `${showTime ? 'MMM' : 'MMMM'} d, yyyy${showTime ? (use12HourFormat ? ', hh:mm:ss a' : ', HH:mm:ss') : ''}`
-    )
-  }, [displayValue, showTime, use12HourFormat])
-
-  return (
-    <div className={className}>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          {renderTrigger ? (
-            renderTrigger({ value: displayValue, open, timezone, disabled, use12HourFormat })
-          ) : (
-            <Button
-              disabled={disabled}
-              variant={'outline'}
-              className={cn('flex w-full justify-start px-3 font-normal', !displayValue && 'text-muted-foreground')}
-            >
-              <CalendarIcon className='mr-2 size-4' />
-              {displayFormat}
+    return (
+      <div ref={ref} className={className}>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            {renderTrigger ? (
+              renderTrigger({ value: displayValue, open, timezone, disabled, use12HourFormat })
+            ) : (
+              <Button
+                disabled={disabled}
+                variant={'outline'}
+                className={cn('flex w-full justify-start px-3 font-normal', !displayValue && 'text-muted-foreground')}
+              >
+                <CalendarIcon className='mr-2 size-4' />
+                {displayFormat}
+              </Button>
+            )}
+          </PopoverTrigger>
+          <PopoverContent className='w-auto p-3'>
+            <div className='flex items-center justify-between'>
+              <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
+                <Button variant='ghost' size='icon' onClick={onPrevMonth}>
+                  <ChevronLeftIcon className='w-5' />
+                </Button>
+              </div>
+              <div className='text-md flex cursor-pointer items-center pb-1 font-bold'>
+                <Button
+                  className='w-full p-2'
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setMonthYearPicker(monthYearPicker === 'month' ? false : 'month')}
+                >
+                  <span className=''>{format(month, 'MMMM')}</span>{' '}
+                </Button>
+                <Button
+                  className='w-full p-2'
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setMonthYearPicker(monthYearPicker ? false : 'year')}
+                >
+                  <span className=''>{format(month, 'yyyy')}</span>{' '}
+                </Button>
+              </div>
+              <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
+                <Button variant='ghost' size='icon' onClick={onNextMonth}>
+                  <ChevronRightIcon className='w-5' />
+                </Button>
+              </div>
+            </div>
+            <div className='relative overflow-hidden'>
+              <DayPicker
+                mode='single'
+                selected={date}
+                onSelect={(d) => d && onDayChanged(d)}
+                month={month}
+                endMonth={endMonth}
+                disabled={[max ? { after: max } : null, min ? { before: min } : null].filter(Boolean) as Matcher[]}
+                onMonthChange={setMonth}
+                classNames={{
+                  dropdowns: 'flex w-full gap-2',
+                  months: 'flex w-full h-fit',
+                  month: 'flex flex-col w-full',
+                  month_caption: 'hidden',
+                  button_previous: 'hidden',
+                  button_next: 'hidden',
+                  month_grid: 'w-full border-collapse',
+                  weekdays: 'flex justify-between mt-2',
+                  weekday: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
+                  week: 'flex w-full justify-between mt-2',
+                  day: 'h-10 w-10 mx-1 text-center text-sm relative flex items-center justify-center',
+                  day_button: cn(
+                    buttonVariants({ variant: 'ghost' }),
+                    'rounded-md font-normal transition-all hover:bg-primary dark:text-white hover:text-primary-foreground'
+                  ),
+                  selected:
+                    'bg-primary h-10 w-10 text-primary-foreground dark:text-white hover:bg-primary focus:bg-primary focus:text-primary-foreground rounded-md border border-primary-light shadow-md',
+                  today: 'bg-accent text-accent-foreground rounded-md',
+                  outside:
+                    'text-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
+                  disabled: 'text-muted-foreground opacity-50',
+                  range_middle: 'bg-accent-light text-accent-foreground rounded-md',
+                  hidden: 'invisible'
+                }}
+                showOutsideDays={true}
+                {...props}
+              />
+              <div
+                className={cn('absolute bottom-0 left-0 right-0 top-0', monthYearPicker ? 'bg-popover' : 'hidden')}
+              ></div>
+              <MonthYearPicker
+                value={month}
+                mode={monthYearPicker as any}
+                onChange={onMonthYearChanged}
+                minDate={minDate}
+                maxDate={maxDate}
+                className={cn('absolute bottom-0 left-0 right-0 top-0', monthYearPicker ? '' : 'hidden')}
+              />
+            </div>
+            {showTime && (
+              <TimePicker
+                value={date}
+                onChange={setDate}
+                use12HourFormat={use12HourFormat}
+                min={minDate}
+                max={maxDate}
+              />
+            )}
+            <Button className='mt-4 w-full' onClick={onSubmit}>
+              Done
             </Button>
-          )}
-        </PopoverTrigger>
-        <PopoverContent className='w-auto p-3'>
-          <div className='flex items-center justify-between'>
-            <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
-              <Button variant='ghost' size='icon' onClick={onPrevMonth}>
-                <ChevronLeftIcon className='w-5' />
-              </Button>
-            </div>
-            <div className='text-md flex cursor-pointer items-center pb-1 font-bold'>
-              <Button
-                className='w-full p-2'
-                variant='ghost'
-                size='icon'
-                onClick={() => setMonthYearPicker(monthYearPicker === 'month' ? false : 'month')}
-              >
-                <span className=''>{format(month, 'MMMM')}</span>{' '}
-              </Button>
-              <Button
-                className='w-full p-2'
-                variant='ghost'
-                size='icon'
-                onClick={() => setMonthYearPicker(monthYearPicker ? false : 'year')}
-              >
-                <span className=''>{format(month, 'yyyy')}</span>{' '}
-              </Button>
-            </div>
-            <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
-              <Button variant='ghost' size='icon' onClick={onNextMonth}>
-                <ChevronRightIcon className='w-5' />
-              </Button>
-            </div>
-          </div>
-          <div className='relative overflow-hidden'>
-            <DayPicker
-              mode='single'
-              selected={date}
-              onSelect={(d) => d && onDayChanged(d)}
-              month={month}
-              endMonth={endMonth}
-              disabled={[max ? { after: max } : null, min ? { before: min } : null].filter(Boolean) as Matcher[]}
-              onMonthChange={setMonth}
-              classNames={{
-                dropdowns: 'flex w-full gap-2',
-                months: 'flex w-full h-fit',
-                month: 'flex flex-col w-full',
-                month_caption: 'hidden',
-                button_previous: 'hidden',
-                button_next: 'hidden',
-                month_grid: 'w-full border-collapse',
-                weekdays: 'flex justify-between mt-2',
-                weekday: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
-                week: 'flex w-full justify-between mt-2',
-                day: 'h-10 w-10 mx-1 text-center text-sm relative flex items-center justify-center',
-                day_button: cn(
-                  buttonVariants({ variant: 'ghost' }),
-                  'rounded-md font-normal transition-all hover:bg-primary dark:text-white hover:text-primary-foreground'
-                ),
-                selected:
-                  'bg-primary h-10 w-10 text-primary-foreground dark:text-white hover:bg-primary focus:bg-primary focus:text-primary-foreground rounded-md border border-primary-light shadow-md',
-                today: 'bg-accent text-accent-foreground rounded-md',
-                outside:
-                  'text-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
-                disabled: 'text-muted-foreground opacity-50',
-                range_middle: 'bg-accent-light text-accent-foreground rounded-md',
-                hidden: 'invisible'
-              }}
-              showOutsideDays={true}
-              {...props}
-            />
-            <div
-              className={cn('absolute bottom-0 left-0 right-0 top-0', monthYearPicker ? 'bg-popover' : 'hidden')}
-            ></div>
-            <MonthYearPicker
-              value={month}
-              mode={monthYearPicker as any}
-              onChange={onMonthYearChanged}
-              minDate={minDate}
-              maxDate={maxDate}
-              className={cn('absolute bottom-0 left-0 right-0 top-0', monthYearPicker ? '' : 'hidden')}
-            />
-          </div>
-          {showTime && (
-            <TimePicker value={date} onChange={setDate} use12HourFormat={use12HourFormat} min={minDate} max={maxDate} />
-          )}
-          <Button className='mt-4 w-full' onClick={onSubmit}>
-            Done
-          </Button>
-        </PopoverContent>
-      </Popover>
-    </div>
-  )
-}
+          </PopoverContent>
+        </Popover>
+      </div>
+    )
+  }
+)
+
+DateTimePicker.displayName = 'DateTimePicker'
 
 function MonthYearPicker({
   value,

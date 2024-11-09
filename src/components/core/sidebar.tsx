@@ -37,10 +37,10 @@ export default function Sidebar({ className }: SidebarProps) {
             >
               <div className='w-full'>
                 <Image
+                  priority
                   src={Logo3}
                   alt='Logo'
-                  layout='responsive'
-                  objectFit='cover'
+                  style={{ objectFit: 'cover' }}
                   className='h-full w-full object-cover'
                 />
               </div>
@@ -57,8 +57,8 @@ export default function Sidebar({ className }: SidebarProps) {
                 <Image
                   src={Logo2}
                   alt='Logo'
-                  layout='responsive'
-                  objectFit='cover'
+                  priority
+                  style={{ objectFit: 'cover' }}
                   className='h-full w-full object-cover'
                 />
               </div>

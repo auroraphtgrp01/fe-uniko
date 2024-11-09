@@ -15,12 +15,8 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const SOCKET_URL = `${process.env.NEXT_PUBLIC_BACKEND}`
     const socketInstance: Socket<DefaultEventsMap, DefaultEventsMap> = io(SOCKET_URL)
-    socketInstance.on('connect', () => {
-      console.log('Connected to socket server')
-    })
-    socketInstance.on('connect_error', (err) => {
-      console.log(err.message)
-    })
+    socketInstance.on('connect', () => {})
+    socketInstance.on('connect_error', (err) => {})
     setSocket(socketInstance)
     return () => {
       socketInstance.disconnect()

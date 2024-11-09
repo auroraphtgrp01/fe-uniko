@@ -125,7 +125,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
               />
             ) : (
               <div className='mt-12 flex flex-col items-center justify-center'>
-                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
                 <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
               </div>
             )}

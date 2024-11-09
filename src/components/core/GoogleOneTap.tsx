@@ -10,11 +10,8 @@ export default function GoogleOneTap() {
       signInGoogle({
         credential: response.credential
       })
-      console.log('Google response:', response)
     },
-    onError: () => {
-      console.error('Login Failed')
-    },
+    onError: () => {},
     promptMomentNotification: (notification) => {
       if (notification.isDisplayMoment()) {
       }

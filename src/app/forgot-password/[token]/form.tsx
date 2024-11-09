@@ -35,9 +35,9 @@ export default function ForgotPasswordDetail({ params }: { params: { token: stri
               src={Logo2}
               alt='Logo'
               width={128}
+              priority
               height={128}
-              layout='responsive'
-              objectFit='cover'
+              style={{ objectFit: 'cover' }}
               className='h-full w-full'
             />
           </div>

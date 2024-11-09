@@ -26,12 +26,12 @@ export default function ResetPasswordForm() {
         <div className='flex items-center justify-center p-4'>
           <div className='h-32 w-32'>
             <Image
+              priority
               src={Logo2}
               alt='Logo'
               width={500}
               height={500}
-              layout='responsive'
-              objectFit='cover'
+              style={{ objectFit: 'cover' }}
               className='h-full w-full'
             />
           </div>
