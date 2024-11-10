@@ -8,5 +8,5 @@ export const initTableConfig: IDataTableConfig = {
   selectedTypes: [],
   isPaginate: true,
   isVisibleSortType: true,
-  classNameOfScroll: 'h-[calc(100vh-30rem)]'
+  classNameOfScroll: 'h-[calc(100vh-29rem)]'
 }

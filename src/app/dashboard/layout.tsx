@@ -7,13 +7,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className='flex'>
       <Sidebar />
       <main className='w-full flex-1'>
-        {' '}
         <header className='sticky top-0 z-30 h-[3.2rem] border-b-[1px] bg-background_nav'>
           <Header />
         </header>
         <div className='h-[calc(100vh-3.2rem)] overflow-y-auto px-6 pt-3'>
           <div>
-            <h1 className='mb-3 py-1 text-2xl font-semibold text-foreground'>
+            <h1 className='mb-3 text-2xl font-semibold text-foreground'>
               <BreadcrumbHeader />
             </h1>
           </div>

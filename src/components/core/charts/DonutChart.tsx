@@ -48,22 +48,37 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
     donut: {
       tooltip: { trigger: 'item' },
       legend: {
-        bottom: '0%',
+        bottom: '5%',
         left: 'center',
         textStyle: { color: configTheme.textColor, fontFamily: 'latin' },
         orient: 'horizontal',
         type: 'scroll',
-        color: configTheme.textColor
+        color: configTheme.textColor,
+        pageIcons: {
+          horizontal: [
+            'path://M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM14 16L10 12L14 8',
+            'path://M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM10 8L14 12L10 16'
+          ]
+        },
+        pageIconColor: configTheme.textColor,
+        pageIconSize: 16,
+        pageIconInactiveColor: 'rgba(255, 255, 255, 0.3)',
+        pageTextStyle: {
+          color: configTheme.textColor
+        }
       },
       series: [
         {
           type: 'pie',
-          radius: ['30%', '65%'],
+          radius: ['35%', '70%'],
+          center: ['50%', '45%'],
           avoidLabelOverlap: true,
+          padAngle: 2,
           itemStyle: {
             borderRadius: 10,
-            borderColor: configTheme.borderColor,
-            borderWidth: 5
+            borderColor: 'transparent',
+            borderWidth: 5,
+            padding: 12
           },
           label: {
             fontSize: '10',
@@ -71,6 +86,22 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             position: 'outside',
             alignTo: 'none',
             fontFamily: 'latin'
+          },
+          emphasis: {
+            focus: 'series',
+            scale: true,
+            scaleSize: 10,
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              borderColor: 'transparent'
+            }
+          },
+          blur: {
+            itemStyle: {
+              opacity: 0.3
+            }
           },
           data
         }
@@ -89,16 +120,33 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
         {
           name: 'Nightingale Chart',
           type: 'pie',
-          radius: [50, 150],
-          center: ['50%', '40%'],
+          radius: [50, 140],
+          center: ['50%', '45%'],
           roseType: 'area',
           itemStyle: {
             borderRadius: 10,
-            borderColor: configTheme.borderColor
+            borderColor: 'transparent',
+            padding: 12
           },
           label: {
             fontSize: '10',
             color: configTheme.textColor
+          },
+          emphasis: {
+            focus: 'series',
+            scale: true,
+            scaleSize: 10,
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              borderColor: 'transparent'
+            }
+          },
+          blur: {
+            itemStyle: {
+              opacity: 0.3
+            }
           },
           data
         }
@@ -115,19 +163,33 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
         {
           name: 'Access From',
           type: 'pie',
-          radius: '80%',
+          radius: ['35%', '70%'],
+          center: ['50%', '45%'],
           data,
           label: {
             fontSize: '10',
             color: configTheme.textColor
           },
           emphasis: {
+            focus: 'series',
+            scale: true,
+            scaleSize: 10,
             itemStyle: {
-              borderColor: configTheme.borderColor,
               shadowBlur: 10,
               shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              borderColor: 'transparent'
             }
+          },
+          blur: {
+            itemStyle: {
+              opacity: 0.3
+            }
+          },
+          padAngle: 2,
+          itemStyle: {
+            borderColor: 'transparent',
+            padding: 12
           }
         }
       ]
@@ -140,14 +202,32 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
         {
           name: 'Access From',
           type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['50%', '70%'],
+          radius: ['40%', '75%'],
+          center: ['50%', '65%'],
           startAngle: 180,
           padAngle: 2,
           itemStyle: {
-            borderRadius: 10
+            borderRadius: 10,
+            borderColor: 'transparent',
+            padding: 12
           },
           endAngle: 360,
+          emphasis: {
+            focus: 'series',
+            scale: true,
+            scaleSize: 10,
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              borderColor: 'transparent'
+            }
+          },
+          blur: {
+            itemStyle: {
+              opacity: 0.3
+            }
+          },
           data
         }
       ]
@@ -157,7 +237,51 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
   useEffect(() => {
     registerTheme('macarons', chartConfig)
     const chartInstance = init(chartRef.current)
-    chartInstance.setOption(chartOptions[types])
+
+    const defaultOption = chartOptions[types]
+    defaultOption.series[0].emphasis = {
+      focus: 'series',
+      scale: true,
+      scaleSize: 10,
+      itemStyle: {
+        shadowBlur: 10,
+        shadowOffsetX: 0,
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        borderColor: 'transparent'
+      }
+    }
+
+    chartInstance.setOption(defaultOption)
+
+    chartInstance.on('mouseout', function (params: any) {
+      if (params.componentType === 'series') {
+        const currentOption = chartInstance.getOption() as { series: { data: any[] }[] }
+        const series = currentOption.series[0]
+
+        series.data = series.data.map((item: any) => ({
+          ...item,
+          emphasis: {
+            scale: true,
+            scaleSize: 10
+          }
+        }))
+
+        chartInstance.setOption({
+          series: [series]
+        })
+      }
+    })
+
+    chartInstance.on('click', function (params: any) {
+      console.log('Clicked data:', {
+        name: params.data.name,
+        value: params.data.value,
+        dataIndex: params.dataIndex,
+        seriesIndex: params.seriesIndex,
+        seriesName: params.seriesName
+      })
+    })
+
     const resizeChart = () => {
       chartInstance.resize()
     }
