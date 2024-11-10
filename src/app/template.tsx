@@ -20,7 +20,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
   return (
     <div>
-      {!isAuthenticated && <GoogleOneTap></GoogleOneTap>}
+      {/* {!isAuthenticated && <GoogleOneTap></GoogleOneTap>} */}
       {children}
     </div>
   )

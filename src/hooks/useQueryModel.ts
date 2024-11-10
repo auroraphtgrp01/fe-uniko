@@ -48,7 +48,11 @@ const defaultOptions: QueryOptions = {
 export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, options: QueryOptions = {}) => {
   const mergedOptions: QueryOptions = { ...defaultOptions, ...options }
   const query = mergeQueryParams(mergedOptions.query ?? {})
-  const queryKey = [modelName]
+  const modelNameParts = modelName.split('/')
+  const queryKey =
+    modelNameParts.length > 0 && modelNameParts[modelNameParts.length - 1] === 'ADVANCED'
+      ? [modelName, query]
+      : [modelName]
   const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
   return useQuery<TResponse>({
     queryKey,

@@ -1,0 +1,32 @@
+{
+    "totalBalance": "Tổng Số Dư",
+    "incomingTransaction": "Giao Dịch Đến",
+    "expenseTransaction": "Giao Dịch Chi",
+    "noChangeFromYesterday": "Không thay đổi từ hôm qua",
+    "increaseFromLastMonth": "+{{percentage}}% từ tháng trước",
+    "increaseFromYesterday": "+{{percentage}}% từ hôm qua",
+    "charts": {
+        "expenseChart": {
+            "label": "Biểu đồ Chi phí",
+            "value": "expenseChart"
+        },
+        "incomingChart": {
+            "label": "Biểu đồ Thu nhập",
+            "value": "incomingChart"
+        }
+    },
+    "trackerTransactionType": {
+        "classifyDialog": {
+            "title": "Phân Loại Giao Dịch",
+            "description": "Vui lòng điền thông tin dưới đây để phân loại giao dịch."
+        },
+        "createDialog": {
+            "title": "Tạo Giao Dịch Theo Dõi",
+            "description": "Vui lòng điền thông tin dưới đây để tạo giao dịch theo dõi mới."
+        },
+        "unclassifiedDialog": {
+            "title": "Giao Dịch Chưa Phân Loại",
+            "description": "Tổng quan về các giao dịch chưa phân loại."
+        }
+    }
+}

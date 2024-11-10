@@ -2,12 +2,19 @@ import { apiService } from '@/api'
 import { AUTH_LOGOUT } from '@/core/auth/constants'
 import { useModelQuery } from '@/hooks/useQueryModel'
 import { IUserGetMeResponse } from '@/types/user.i'
+import Cookies from 'js-cookie'
 
-const userApi = apiService.user
+const authApi = apiService.authentication
 
-export const useLogout = (execute: boolean = false) => {
-  const { data: userLogoutData } = useModelQuery<IUserGetMeResponse>(AUTH_LOGOUT, userApi.clearCache, {
-    enable: !!execute
+export const useLogout = () => {
+  const { data: userLogoutData, refetch } = useModelQuery<IUserGetMeResponse>(AUTH_LOGOUT, authApi.logOut, {
+    enable: false
   })
-  return { userLogoutData }
+
+  const executeLogout = () => {
+    Cookies.remove('token')
+    refetch()
+  }
+
+  return { userLogoutData, executeLogout }
 }

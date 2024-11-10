@@ -50,7 +50,7 @@ export interface IMutateData<TBody> {
   body: TBody
   params: IDynamicType
   headers?: Record<string, string>
-  method: 'post' | 'put' | 'patch'
+  method: 'post' | 'put' | 'patch' | 'delete'
 }
 
 export interface IEmoji {

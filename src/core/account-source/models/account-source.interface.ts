@@ -1,3 +1,4 @@
+import { IAccountBank } from '@/core/account-bank/models'
 import { IBaseResponseData } from '@/types/common.i'
 
 export type IAccountSourceResponse = IBaseResponseData<IAccountSource>
@@ -5,21 +6,20 @@ export type IAdvancedAccountSourceResponse = IBaseResponseData<IAccountSource[]>
 
 export interface IAccountSource {
   id: string
-  name: String
+  name: string
   type: EAccountSourceType
   initAmount: number
-  accountBank: any
+  accountBank: IAccountBank | null
   currency: string
   currentAmount: number
 }
 
 export interface IAccountSourceDataFormat {
   id: string
-  name: String
+  name: string
   type: any
   initAmount: string
   accountBank: string
-  currency: string
   currentAmount: string
   checkType?: string
 }
@@ -47,4 +47,6 @@ export interface IDialogAccountSource {
   isDialogCreateOpen: boolean
   isDialogUpdateOpen: boolean
   isDialogRefetchMoneyOpen: boolean
+  isDialogDeleteOpen: boolean
+  isDialogDeleteAllOpen: boolean
 }

@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { useMutationCustom } from '@/hooks/useMutationCustom'
 import { useUser } from '@/core/users/hooks'
 import { ISignInBody, ISignInResponse } from '@/core/auth/models'
+import Cookies from 'js-cookie'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {
   const router = useRouter()
@@ -21,19 +22,25 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
       onSuccess: (data) => {
         setCountLogin(countLogin + 1)
         if (data.data.user.status === 'ACTIVE') {
+          Cookies.set('token', data.data.accessToken, {
+            path: '/',
+            secure: true,
+            sameSite: 'lax',
+            expires: 1
+          })
           setAccessTokenToLocalStorage(data.data.accessToken)
           setRefreshTokenToLocalStorage(data.data.refreshToken)
           setExecuteGetMe(true)
           toast.success('Login successfully 🚀 ')
-          router.push('/dashboard')
+          router.push('/dashboard?loggedIn=true')
         }
         if (data.data.user.status === 'UNVERIFY' && countLogin < 0) {
           toast.error('Account is inactive, please contact the administrator !')
         }
       },
       onError: (error) => {
-        toast.error('Login failed, please try again !')
-
+        const errorMessage = (error as any)?.payload?.message || 'Login failed, please try again!'
+        toast.error(errorMessage)
         opts?.callBackOnError?.()
       }
     }

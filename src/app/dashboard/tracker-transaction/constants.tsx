@@ -11,22 +11,21 @@ import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
 import React from 'react'
+import { translate } from '@/libraries/utils'
+import { TFunction } from 'i18next'
+import NoDataPlaceHolder from '@/images/2.png'
+import Image from 'next/image'
+import { initEmptyDetailTransactionData } from '../transaction/constants'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
 }: {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
 }): IButtonInDataTableHeader[] => {
+  const t = translate(['trackerTransaction', 'common'])
   return [
     {
-      title: 'Classify',
-      variants: 'secondary',
-      onClick: () => {
-        setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
-      }
-    },
-    {
-      title: 'Create',
+      title: t('common:button.create'),
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))
       },
@@ -41,7 +40,11 @@ export const initDialogFlag: IDialogTrackerTransaction = {
   isDialogUpdateOpen: false,
   isDialogClassifyTransactionOpen: false,
   isDialogUnclassifiedOpen: false,
-  isDialogCreateTrackerTxTypeOpen: false
+  isDialogCreateTrackerTxTypeOpen: false,
+  isDialogDetailOpen: false,
+  isDialogDeleteOpen: false,
+  isDialogDeleteAllOpen: false,
+  isDialogDetailTransactionOpen: false
 }
 
 export const defineContentCreateTrackerTxTypeDialog = ({
@@ -107,32 +110,68 @@ export const defineContentCreateTrackerTxTypeDialog = ({
   )
 }
 
-export const initTrackerTransactionTab = (data: IChartData | undefined): ITabConfig => {
+export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>): ITabConfig => {
   return {
     default: 'expenseChart',
     tabContents: [
       {
         content: (
-          <DonutChart
-            data={data ? data.expenseTransactionTypeStats : []}
-            className={`h-[30rem] w-full`}
-            types='donut'
-          />
+          <div>
+            {data && data.expenseTransactionTypeStats?.length > 0 ? (
+              <DonutChart
+                data={data.expenseTransactionTypeStats}
+                className='mt-[-2rem] h-[20rem] w-full'
+                types='donut'
+              />
+            ) : (
+              <div className='mt-12 flex flex-col items-center justify-center'>
+                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
+          </div>
         ),
-        labels: 'Expense Chart',
-        value: 'expenseChart'
+        labels: t('trackerTransaction:charts.expenseChart.label'),
+        value: t('trackerTransaction:charts.expenseChart.value')
       },
       {
         content: (
-          <DonutChart
-            data={data ? data.incomingTransactionTypeStats : []}
-            className={`h-[30rem] w-full`}
-            types='donut'
-          />
+          <div>
+            {data && data.incomingTransactionTypeStats?.length > 0 ? (
+              <DonutChart
+                data={data.incomingTransactionTypeStats}
+                className='mt-[-2rem] h-[20rem] w-full'
+                types='donut'
+              />
+            ) : (
+              <div className='mt-12 flex flex-col items-center justify-center'>
+                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
+          </div>
         ),
-        labels: 'Incoming Chart',
-        value: 'incomingChart'
+        labels: t('trackerTransaction:charts.incomingChart.label'),
+        value: t('trackerTransaction:charts.incomingChart.value')
       }
     ]
   }
+}
+
+export const initEmptyDetailTrackerTransaction = {
+  id: 'N/A',
+  trackerTypeId: 'N/A',
+  reasonName: 'N/A',
+  description: 'N/A',
+  userId: 'N/A',
+  transactionId: 'N/A',
+  Transaction: initEmptyDetailTransactionData,
+  TrackerType: {
+    id: 'N/A',
+    name: 'N/A',
+    type: 'N/A',
+    description: 'N/A',
+    ownerIds: []
+  },
+  time: new Date().toISOString()
 }

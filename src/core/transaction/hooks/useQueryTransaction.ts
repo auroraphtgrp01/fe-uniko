@@ -2,17 +2,18 @@ import { transactionRoutes } from '@/api/transaction'
 import { GET_ADVANCED_TRANSACTION_KEY, TRANSACTION_RETRY } from '@/core/transaction/constants'
 import { IGetTransactionResponse } from '@/core/transaction/models'
 import { useModelQuery } from '@/hooks/useQueryModel'
-import { IDynamicType } from '@/types/common.i'
+import { IUseGetAdvancedProps } from '@/types/query.interface'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 
-export const useQueryAdvancedTransaction = (query: IDynamicType) => {
+export const useQueryAdvancedTransaction = (props: IUseGetAdvancedProps) => {
   const {
     isPending: isGetTransaction,
     data: dataTransaction,
     error
   } = useModelQuery<IGetTransactionResponse>(GET_ADVANCED_TRANSACTION_KEY, transactionRoutes.getAdvancedTransaction, {
-    query,
+    query: props.query,
+    enable: !!props,
     retry: TRANSACTION_RETRY
   })
 

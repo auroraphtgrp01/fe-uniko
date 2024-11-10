@@ -1,0 +1,65 @@
+{
+    "AccountSourceDialog": {
+        "createDialog": {
+            "title": "Tạo Nguồn Tài Khoản",
+            "description": "Vui lòng điền thông tin dưới đây để tạo nguồn tài khoản mới."
+        },
+        "updateDialog": {
+            "title": "Cập Nhật Nguồn Tài Khoản",
+            "description": "Vui lòng điền thông tin dưới đây để cập nhật nguồn tài khoản."
+        }
+    },
+    "form": {
+        "defineCreateAccountSourceFormBody": {
+            "reasonName": {
+                "label": "Tên Lý Do",
+                "placeholder": "Nhập tên lý do"
+            },
+            "amount": {
+                "label": "Số Tiền",
+                "placeholder": "Nhập số tiền"
+            },
+            "accountSourceId": {
+                "label": "Nguồn Tài Khoản",
+                "placeholder": "Chọn nguồn tài khoản"
+            },
+            "direction": {
+                "label": "Hướng",
+                "placeholder": "Chọn hướng",
+                "options": {
+                    "incoming": "THU VÀO",
+                    "expense": "CHI TIÊU"
+                }
+            },
+            "trackerTypeId": {
+                "label": "Loại Giao Dịch Tracker",
+                "placeholder": "Chọn loại tracker"
+            },
+            "description": {
+                "label": "Mô Tả",
+                "placeholder": "Nhập mô tả"
+            }
+        },
+        "createAccountSourceFormBody": {
+            "accountSourceName": {
+                "label": "Tên Nguồn",
+                "placeholder": "Nhập tên nguồn của bạn"
+            },
+            "accountSourceType": {
+                "label": "Loại",
+                "placeholder": "Chọn loại",
+                "options": {
+                    "wallet": "VÍ",
+                    "banking": "NGÂN HÀNG"
+                }
+            },
+            "initAmount": {
+                "label": "Số Tiền Ban Đầu",
+                "placeholder": "Nhập số tiền ban đầu của bạn"
+            }
+        },
+        "button": {
+            "save_changes_account_source": "Lưu thay đổi nguồn tài khoản"
+        }
+    }
+}

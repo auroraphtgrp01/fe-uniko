@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, Path, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
-import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl } from '@/components/ui/form'
+import { Form, FormField, FormItem, FormLabel, FormMessage, FormControl, useFormField } from '@/components/ui/form'
 import { EFieldType, IFormZodProps, InputProps, TextareaProps } from '@/types/formZod.interface'
 import { Input } from '@/components/ui/input'
 import {
@@ -24,6 +24,7 @@ import { DateRangePicker, DateRangePickerProps } from '@/components/core/DateRan
 import { DateRange } from 'react-day-picker'
 import { EEmojiPickerProps, EmojiPicker } from '@/components/common/EmojiPicker'
 import MultiInput from '@/components/core/MultiInput'
+import { MoneyInput } from '@/components/core/MoneyInput'
 
 const FormFieldComponent = React.memo(
   ({ fieldItem, field, disabled }: { fieldItem: any; field: any; disabled?: boolean }) => {
@@ -35,6 +36,18 @@ const FormFieldComponent = React.memo(
           {...field}
           disabled={disabled}
           value={String(field.value ?? '')}
+        />
+      )
+    }
+
+    if (fieldItem.type === EFieldType.MoneyInput) {
+      return (
+        <MoneyInput
+          placeholder={fieldItem.placeHolder}
+          {...(fieldItem.props as InputProps)}
+          disabled={disabled}
+          value={String(field.value ?? '')}
+          onChange={(e) => field.onChange(e.target.value)}
         />
       )
     }
@@ -161,7 +174,8 @@ export default function FormZod<T extends z.ZodRawShape>({
   buttonConfig,
   classNameForm,
   disabled,
-  submitRef
+  submitRef,
+  formRef
 }: IFormZodProps<T> & { disabled?: boolean }) {
   const form = useForm<z.infer<z.ZodObject<T>>>({
     resolver: zodResolver(formSchema),
@@ -177,6 +191,14 @@ export default function FormZod<T extends z.ZodRawShape>({
   const memoizedFormFieldBody = useMemo(() => formFieldBody, [formFieldBody])
 
   useEffect(() => {
+    if (formRef) {
+      formRef.current = {
+        ...form
+      }
+    }
+  }, [formRef, form])
+
+  useEffect(() => {
     form.reset(defaultValues)
   }, [defaultValues, form])
 
@@ -185,8 +207,8 @@ export default function FormZod<T extends z.ZodRawShape>({
       <Form {...form}>
         <form ref={submitRef} onSubmit={handleFormSubmit}>
           <div className={cn('space-y-5', classNameForm)}>
-            {memoizedFormFieldBody.map((fieldItem, index) =>
-              !fieldItem.hidden ? (
+            {memoizedFormFieldBody.map((fieldItem, index) => {
+              return !fieldItem.hidden ? (
                 <FormField
                   control={form.control}
                   name={fieldItem.name as any}
@@ -212,7 +234,7 @@ export default function FormZod<T extends z.ZodRawShape>({
                   )}
                 />
               ) : null
-            )}
+            })}
           </div>
           {!submitRef && (
             <Button {...buttonConfig} type='submit' disabled={disabled || buttonConfig?.disabled}>

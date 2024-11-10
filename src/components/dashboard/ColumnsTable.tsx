@@ -1,13 +1,13 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
 import { convertToCamelCase } from '@/libraries/utils'
 import { ArrowUpDown } from 'lucide-react'
 import { renderToString } from 'react-dom/server'
 import parse from 'html-react-parser'
+import { Checkbox } from '../ui/checkbox'
 
-export function getColumns<T>(headers: string[], isSort: boolean): ColumnDef<T>[] {
+export function getColumns<T>({ headers, isSort }: { headers: string[]; isSort: boolean }): ColumnDef<T>[] {
   const columnsFromHeaders = headers.map((header) => ({
     accessorKey: `${convertToCamelCase(header)}`,
     header: ({ column }: { column: any }) =>
@@ -37,21 +37,21 @@ export function getColumns<T>(headers: string[], isSort: boolean): ColumnDef<T>[
 
   const defaultColumn = [
     {
-      id: 'inProgress',
-      header: ({ table }: { table: any }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-          className='translate-y-[2px]'
-        />
-      ),
+      accessorKey: 'inProgress',
+      header: ({ table }: { table: any }) => {
+        return (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label='Select all'
+          />
+        )
+      },
       cell: ({ row }: { row: any }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label='Select row'
-          className='translate-y-[2px]'
         />
       ),
       enableSorting: false,

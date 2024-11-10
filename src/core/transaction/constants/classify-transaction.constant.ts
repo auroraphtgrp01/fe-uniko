@@ -1,26 +1,27 @@
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
 import { z } from 'zod'
+import { IClassifyTransactionFormProps } from '../models'
 
 export const defineClassifyTransactionFormBody = ({
-  setOpenEditTrackerTxTypeDialog,
-  typeOfTrackerType,
-  handleUpdateTrackerType,
-  handleCreateTrackerType,
-  setTypeOfEditTrackerType,
-  typeOfEditTrackerType,
-  openEditTrackerTxTypeDialog,
+  editTrackerTypeDialogProps,
   expenseTrackerType,
-  incomeTrackerType
-}: any): IBodyFormField[] => {
+  incomeTrackerType,
+  typeOfEditTrackerType,
+  setTypeOfEditTrackerType,
+  setOpenEditDialog,
+  openEditDialog
+}: IClassifyTransactionFormProps): IBodyFormField[] => {
+  const t = translate(['transaction', 'common'])
   return [
     {
       name: 'reasonName',
       type: EFieldType.Input,
-      label: 'Reason Name',
-      placeHolder: 'Enter reason name',
+      label: t('TransactionType.defineClassifyTransactionFormBody.reasonName.label'),
+      placeHolder: t('TransactionType.defineClassifyTransactionFormBody.reasonName.placeholder'),
       props: {
         autoComplete: 'reasonName'
       }
@@ -28,34 +29,34 @@ export const defineClassifyTransactionFormBody = ({
     {
       name: 'trackerTypeId',
       type: EFieldType.Combobox,
-      label: 'Tracker Type',
-      placeHolder: 'Select tracker type',
+      label: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.label'),
+      placeHolder: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.placeholder'),
       props: {
         autoComplete: 'trackerTypeId',
-        setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
+        setOpenEditDialog,
         dataArr: modifiedTrackerTypeForComboBox(
-          typeOfTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
+          editTrackerTypeDialogProps.typeDefault === ETypeOfTrackerTransactionType.INCOMING
+            ? incomeTrackerType
+            : expenseTrackerType
         ),
         dialogEdit: EditTrackerTypeDialog({
-          openEditDialog: openEditTrackerTxTypeDialog,
-          setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
+          ...editTrackerTypeDialogProps,
           dataArr: modifiedTrackerTypeForComboBox(
-            typeOfTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
+            typeOfEditTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
           ),
-          typeDefault: typeOfTrackerType,
           type: typeOfEditTrackerType,
           setType: setTypeOfEditTrackerType,
-          handleCreateTrackerType,
-          handleUpdateTrackerType
+          setOpenEditDialog,
+          openEditDialog
         }),
-        label: 'Tracker Transaction Type'
+        label: t('TransactionType.defineClassifyTransactionFormBody.trackerTypeId.labelTrackerTransactionType')
       }
     },
     {
       name: 'description',
       type: EFieldType.Textarea,
-      label: 'Description',
-      placeHolder: 'Enter description',
+      label: t('TransactionType.defineClassifyTransactionFormBody.description.label'),
+      placeHolder: t('TransactionType.defineClassifyTransactionFormBody.description.placeholder'),
       props: {
         autoComplete: 'description'
       }
@@ -67,6 +68,6 @@ export const classifyTransactionSchema = z
   .object({
     reasonName: z.string().trim().min(2).max(256),
     trackerTypeId: z.string().uuid(),
-    description: z.string().min(10).max(256).nullable()
+    description: z.any()
   })
   .strict()

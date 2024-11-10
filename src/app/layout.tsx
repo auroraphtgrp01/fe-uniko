@@ -11,7 +11,6 @@ import 'nprogress/nprogress.css'
 import dynamic from 'next/dynamic'
 import { SocketProvider } from '../libraries/useSocketIo'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import GoogleOneTap from '../components/core/GoogleOneTap'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -23,8 +22,6 @@ export const metadata: Metadata = {
   description: '',
   icons: 'favicon.ico'
 }
-
-console.info('Config Project ', configProject)
 
 const TopProgressBar = dynamic(
   () => {

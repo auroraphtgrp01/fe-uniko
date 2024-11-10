@@ -1,29 +1,30 @@
 import { IAccountBank } from '@/core/account-bank/models'
 import { ITrackerTransactionResponse } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import {
-  IClassifyTransactionFormData,
+  IClassifyTransactionBody,
   IDataTransactionTable,
   IDialogTransaction,
   IGetTransactionResponse,
-  ITransaction
+  ITransaction,
+  ITransactionSummary,
+  IUpdateTransactionBody
 } from '@/core/transaction/models'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import React from 'react'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm } from './constants'
+import { IDataTableConfig } from '@/types/common.i'
 
 export const modifyTransactionHandler = (payload: ITransaction[]): IDataTransactionTable[] => {
   return payload.map((item: ITransaction) => {
     return {
       id: item.id,
-      transactionId: item.transactionId,
-      amount: formatCurrency(item.amount, 'VND', 'vi-VN'),
+      amount: formatCurrency(item.amount, 'đ', 'vi-VN'),
       direction: item.direction,
-      accountBank: item.accountBankId,
-      currency: item.currency,
-      accountNo: item.ofAccount ? item.ofAccount.accountNo : null,
+      accountSource: item.accountSource.name,
+      accountNo: item.ofAccount ? item.ofAccount.accountNo : 'N/A',
       description: item.description,
-      time: item.time,
+      date: formatDateTimeVN(item.transactionDateTime, true),
       TrackerTransaction: item.TrackerTransaction
     }
   })
@@ -69,7 +70,10 @@ export const handleAccountBankRefetching = (
     setAccountBankRefetching(accountBankRefetchingQueue[0])
 }
 
-export const updateCacheDataUpdate = (oldData: IGetTransactionResponse, newData: any): IGetTransactionResponse => {
+export const updateCacheDataTransactionForClassify = (
+  oldData: IGetTransactionResponse,
+  newData: any
+): IGetTransactionResponse => {
   return {
     ...oldData,
     data: oldData.data.map((item: ITransaction) => {
@@ -77,6 +81,23 @@ export const updateCacheDataUpdate = (oldData: IGetTransactionResponse, newData:
         ? { ...item, TrackerTransaction: newData.Transaction.TrackerTransaction }
         : item
     })
+  }
+}
+
+export const updateCacheDataTransactionForUpdate = (oldData: IGetTransactionResponse, newData: ITransaction) => {
+  return {
+    ...oldData,
+    data: oldData.data.map((item: ITransaction) => {
+      return item.id === newData.id ? newData : item
+    })
+  }
+}
+
+export const updateCacheDataTransactionForDelete = (oldData: IGetTransactionResponse, newData: ITransaction) => {
+  const updatedData = oldData.data.filter((item: ITransaction) => item.id !== newData.id)
+  return {
+    ...oldData,
+    data: updatedData
   }
 }
 
@@ -89,8 +110,8 @@ export const handleClassifyTransaction = async ({
   setIsDialogOpen,
   hookSetDataTrackerTxs
 }: {
-  formData: IClassifyTransactionFormData
-  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionFormData>>
+  formData: IClassifyTransactionBody
+  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionBody>>
   hookCreate: any
   hookUpdateCacheUnclassified: any
   hookUpdateCache: any
@@ -106,6 +127,66 @@ export const handleClassifyTransaction = async ({
         toast.success('Classify transaction successfully!')
         setFormData(initCreateTrackerTransactionForm)
         setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
+      }
+    }
+  })
+}
+
+export const paginateTodayTransactionDataTable = ({
+  todayDataTableConfig,
+  transactionSummary,
+  setTransactionSummary
+}: {
+  todayDataTableConfig: IDataTableConfig[]
+  transactionSummary: ITransactionSummary
+  setTransactionSummary: React.Dispatch<React.SetStateAction<ITransactionSummary>>
+}) => {
+  setTransactionSummary((prev) => ({
+    ...prev,
+    transactionToday: {
+      incomeAmount: 0,
+      expenseAmount: 0,
+      count: 0,
+      data: transactionSummary.transactionToday.data.slice()
+    }
+  }))
+}
+
+export const handleUpdateTransaction = ({
+  data,
+  setIsEditing,
+  hookUpdate,
+  hookSetCacheTransaction,
+  hookResetCacheAccountSource,
+  hookResetStatistic,
+  hookSetCacheTodayTransaction,
+  hookResetCacheTrackerTransaction,
+  setDataTableConfig,
+  setDetailDialog
+}: {
+  data: IUpdateTransactionBody
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  hookUpdate: any
+  hookSetCacheTransaction: any
+  hookResetCacheAccountSource: any
+  hookResetStatistic: any
+  hookSetCacheTodayTransaction: any
+  hookResetCacheTrackerTransaction: any
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setDetailDialog: React.Dispatch<React.SetStateAction<ITransaction>>
+}) => {
+  hookUpdate(data, {
+    onSuccess: (res: any) => {
+      if (res.statusCode === 200) {
+        hookSetCacheTransaction(res.data)
+        hookResetCacheAccountSource()
+        hookResetStatistic()
+        hookSetCacheTodayTransaction(res.data)
+        hookResetCacheTrackerTransaction()
+        toast.success('Update transaction successfully!')
+        setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
+        setDetailDialog(res.data)
+        setIsEditing(false)
       }
     }
   })

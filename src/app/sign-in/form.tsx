@@ -18,9 +18,8 @@ import toast from 'react-hot-toast'
 export default function SignInForm() {
   const { signIn, isSigningIn, isRememberMe, setIsRememberMe } = useAuth()
   const formRef = useRef<HTMLFormElement>(null)
-  const isAuthenticated = getAccessTokenFromLocalStorage()
   const router = useRouter()
-  if (isAuthenticated && isSigningIn) router.push('/dashboard')
+  if (isSigningIn) router.push('/dashboard')
   const { signInGoogle } = useAuth()
   const loginGoogle = useGoogleLogin({
     onSuccess: (credentialResponse) => {

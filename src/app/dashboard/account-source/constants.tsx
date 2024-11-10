@@ -5,12 +5,12 @@ import {
   IAccountSourceDataFormat,
   IDialogAccountSource
 } from '@/core/account-source/models'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, translate } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
 
 export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDataFormat => {
-  const { id, name, type, initAmount, currency, currentAmount, accountBank } = data
+  const { id, name, type, initAmount, currentAmount, accountBank } = data
   return {
     id,
     name,
@@ -29,10 +29,9 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
           <HandCoins className='mr-2' /> <span>Transfer</span>
         </div>
       ),
-    initAmount: formatCurrency(initAmount, currency),
-    accountBank: accountBank?.type,
-    currency,
-    currentAmount: formatCurrency(currentAmount, currency),
+    initAmount: formatCurrency(initAmount, 'đ'),
+    accountBank: accountBank ? accountBank.type.split('_')[0] + ' Bank' : 'N/A',
+    currentAmount: formatCurrency(currentAmount, 'đ'),
     checkType: type
   }
 }
@@ -46,7 +45,9 @@ export const initAccountSourceFormData: IAccountSourceBody = {
 export const initDialogFlag: IDialogAccountSource = {
   isDialogCreateOpen: false,
   isDialogUpdateOpen: false,
-  isDialogRefetchMoneyOpen: false
+  isDialogRefetchMoneyOpen: false,
+  isDialogDeleteOpen: false,
+  isDialogDeleteAllOpen: false
 }
 
 export const initButtonInDataTableHeader = ({
@@ -54,9 +55,10 @@ export const initButtonInDataTableHeader = ({
 }: {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
 }): IButtonInDataTableHeader[] => {
+  const t = translate(['common'])
   return [
     {
-      title: 'Create',
+      title: t('common:button.create'),
       variants: 'default',
       onClick: () => setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true })),
       icon: <PlusIcon className='ml-2 h-4 w-4' />
