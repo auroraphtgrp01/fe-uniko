@@ -44,6 +44,7 @@ interface DataTableProps<TData, TValue> {
   onOpenDeleteAll?: (ids: string[]) => void
   onOpenDelete?: (id: string) => void
   deleteProps?: IDeleteProps
+  extendsJSX?: JSX.Element
 }
 
 export function DataTable<TData, TValue>({
@@ -59,7 +60,8 @@ export function DataTable<TData, TValue>({
   buttons,
   onOpenDeleteAll,
   onOpenDelete,
-  deleteProps
+  deleteProps,
+  extendsJSX
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation(['common'])
   const { currentPage, limit, totalPage, selectedTypes, types, isPaginate, isVisibleSortType, classNameOfScroll } =
@@ -147,6 +149,7 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className='flex items-center space-x-2'>
+          {extendsJSX}
           {onOpenDeleteAll && Object.values(table.getSelectedRowModel().rowsById).length > 0 && (
             <Button
               variant='default'
@@ -202,6 +205,7 @@ export function DataTable<TData, TValue>({
                 </Button>
               ))
             : ''}
+          {}
         </div>
       </div>
       <div className='rounded-md border'>

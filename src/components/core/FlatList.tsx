@@ -42,7 +42,7 @@ export default function FlatList({ data, onClick }: IFlatListProps) {
                 }}
                 className={cn(
                   'mb-4 cursor-pointer border-l-4 bg-card/50 bg-gradient-to-b from-background transition-all duration-300 hover:scale-[1.01]',
-                  `${item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'border-l-rose-600 dark:border-l-rose-800' : 'border-l-[#047858] dark:border-l-secondary'}`
+                  `${item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'border-l-rose-600 dark:border-l-rose-800' : 'border-l-[#047858]'}`
                 )}
               >
                 <CardHeader className='py-3'>

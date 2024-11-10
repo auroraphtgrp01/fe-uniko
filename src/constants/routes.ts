@@ -14,6 +14,12 @@ export const navItems: NavItem[] = [
     label: 'Tracker Transaction'
   },
   {
+    title: 'Expenditure Fund',
+    href: '/dashboard/expenditure-fund',
+    icon: 'chartCandlestick',
+    label: 'Expenditure Fund'
+  },
+  {
     title: 'Transaction',
     href: '/dashboard/transaction',
     icon: 'shoppingCart',
@@ -39,6 +45,7 @@ export const navItems: NavItem[] = [
       }
     ]
   },
+
   {
     title: 'Profile',
     href: '/dashboard/profile',

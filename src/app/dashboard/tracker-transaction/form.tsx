@@ -29,6 +29,7 @@ import {
   initButtonInDataTableHeader,
   initDialogFlag,
   initEmptyDetailTrackerTransaction,
+  initExtendsJSX,
   initTrackerTransactionTab
 } from './constants'
 import TrackerTransactionDialog from './dialog'
@@ -252,6 +253,7 @@ export default function TrackerTransactionForm() {
 
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+  const extendsJSX = initExtendsJSX([])
 
   const refetchTransactionBySocket = () => {
     const lastCalled = getTimeCountRefetchLimit()
@@ -324,50 +326,79 @@ export default function TrackerTransactionForm() {
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
-          <Card className='bg-gradient-to-br from-purple-500 to-indigo-600'>
+          {/* Total Balance Card */}
+          <Card className='bg-gradient-to-br from-indigo-500 to-blue-700 shadow-md'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-lg font-medium text-white'>{t('totalBalance')}</CardTitle>
+              <CardTitle className='flex items-center text-lg font-medium text-white'>
+                <PcCase className='mr-2 h-5 w-5' />
+                {t('totalBalance')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className='flex items-center justify-between'>
-                <HandCoins className='h-12 w-12 text-white opacity-75' />
+                <div className='rounded-lg bg-white/10 p-3'>
+                  <Layers2Icon className='h-8 w-8 text-white' />
+                </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
                     {formatCurrency(statisticData?.data.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='text-sm text-purple-200'>{t('increaseFromLastMonth', { percentage: 2.5 })}</p>
+                  <p className='flex items-center text-sm text-blue-100'>
+                    <ArrowUpIcon className='mr-1 h-4 w-4' />
+                    <span>{t('increaseFromLastMonth', { percentage: 2.5 })}</span>
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className='bg-gradient-to-br from-green-400 to-emerald-600'>
+
+          {/* Income Card */}
+          <Card className='bg-gradient-to-br from-teal-500 to-green-700 shadow-md'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-lg font-medium text-white'>{t('incomingTransaction')}</CardTitle>
+              <CardTitle className='flex items-center text-lg font-medium text-white'>
+                <ArrowDownToLineIcon className='mr-2 h-5 w-5' />
+                {t('incomingTransaction')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className='flex items-center justify-between'>
-                <ArrowDownIcon className='h-12 w-12 text-white opacity-75' />
+                <div className='rounded-lg bg-white/10 p-3'>
+                  <HandCoins className='h-8 w-8 text-white' />
+                </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
                     {formatCurrency(statisticData?.data.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='text-sm text-green-200'>{t('noChangeFromYesterday')}</p>
+                  <p className='flex items-center text-sm text-emerald-100'>
+                    <ArrowDownIcon className='mr-1 h-4 w-4' />
+                    <span>{t('noChangeFromYesterday')}</span>
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className='bg-gradient-to-br from-red-400 to-rose-600'>
+
+          {/* Expense Card */}
+          <Card className='bg-gradient-to-br from-rose-500 to-red-700 shadow-md'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-lg font-medium text-white'>{t('expenseTransaction')}</CardTitle>
+              <CardTitle className='flex items-center text-lg font-medium text-white'>
+                <CloudDownload className='mr-2 h-5 w-5' />
+                {t('expenseTransaction')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className='flex items-center justify-between'>
-                <ArrowUpIcon className='h-12 w-12 text-white opacity-75' />
+                <div className='rounded-lg bg-white/10 p-3'>
+                  <ArrowUpIcon className='h-8 w-8 text-white' />
+                </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white'>
                     {formatCurrency(statisticData?.data.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='text-sm text-red-200'>{t('increaseFromLastMonth', { percentage: 15 })}</p>
+                  <p className='flex items-center text-sm text-red-100'>
+                    <ArrowUpIcon className='mr-1 h-4 w-4' />
+                    <span>{t('increaseFromLastMonth', { percentage: 15 })}</span>
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -384,6 +415,7 @@ export default function TrackerTransactionForm() {
                 config={dataTableConfig}
                 setConfig={setDataTableConfig}
                 buttons={dataTableButtons}
+                extendsJSX={extendsJSX}
                 onRowClick={(rowData) => {
                   const find =
                     advancedTrackerTxData?.data.find((item) => item.id === rowData.id) ||
@@ -444,8 +476,8 @@ export default function TrackerTransactionForm() {
         <div className='h-[60%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
-        <div className='h-auto'>
-          <Card>
+        <div className='h-[calc(40%-1rem)]'>
+          <Card className='flex h-full flex-col'>
             <CardHeader className='py-4'>
               <div className='flex items-center justify-between'>
                 <CardTitle>Unclassified</CardTitle>
@@ -469,8 +501,8 @@ export default function TrackerTransactionForm() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className='h-auto'>
+            <CardContent className='flex-1'>
+              <div className='h-full w-full pb-2'>
                 <FlatList
                   data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
                   onClick={(data: IFlatListData) => {

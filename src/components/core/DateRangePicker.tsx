@@ -250,36 +250,37 @@ export function DateRangePicker({
             <Button
               disabled={disabled}
               variant={'outline'}
-              className={cn('flex w-full justify-start px-3 font-normal', !displayValue && '')}
+              className={cn(
+                'flex w-full justify-start px-3 font-normal hover:bg-accent/50',
+                !displayValue && 'text-muted-foreground'
+              )}
             >
-              <CalendarIcon className='mr-2 size-4' />
+              <CalendarIcon className='mr-2 size-4 text-muted-foreground' />
               {displayFormat}
             </Button>
           )}
         </PopoverTrigger>
-        <PopoverContent className='mt-1 w-full p-3'>
-          <div className='flex items-center justify-between'>
-            <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
-              <Button variant='ghost' size='icon' onClick={onPrevMonth}>
-                <ChevronLeftIcon className='w-5' />
+        <PopoverContent className='mt-1 w-full p-3 shadow-md'>
+          <div className='flex items-center justify-between border-b pb-2'>
+            <div className={cn('flex space-x-1', monthYearPicker ? 'hidden' : '')}>
+              <Button variant='ghost' size='icon' className='hover:bg-accent/50' onClick={onPrevMonth}>
+                <ChevronLeftIcon className='h-4 w-4 text-muted-foreground' />
               </Button>
             </div>
-            <div className='text-md flex cursor-pointer items-center pb-1 font-bold'>
+            <div className='text-md flex cursor-pointer items-center font-medium'>
               <Button
-                className='w-full p-2'
+                className='px-2 hover:bg-accent/50'
                 variant='ghost'
-                size='icon'
                 onClick={() => setMonthYearPicker(monthYearPicker === 'month' ? false : 'month')}
               >
-                <span className=''>{format(month, 'MMMM')}</span>{' '}
+                <span className='text-foreground'>{format(month, 'MMMM')}</span>
               </Button>
               <Button
-                className='w-full p-2'
+                className='px-2 hover:bg-accent/50'
                 variant='ghost'
-                size='icon'
                 onClick={() => setMonthYearPicker(monthYearPicker ? false : 'year')}
               >
-                <span className=''>{format(month, 'yyyy')}</span>{' '}
+                <span className='text-foreground'>{format(month, 'yyyy')}</span>
               </Button>
             </div>
             <div className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}>
@@ -288,16 +289,16 @@ export function DateRangePicker({
               </Button>
             </div>
           </div>
-          <div className={cn('w-full pt-1', monthYearPicker ? 'hidden' : '')}>
+          <div className={cn('w-full py-2', monthYearPicker ? 'hidden' : '')}>
             <Select value={selectedPreset} onValueChange={onPresetChanged}>
-              <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Select Date Range' />
+              <SelectTrigger className='w-full border-muted bg-background hover:bg-accent/50'>
+                <SelectValue placeholder='Select Date Range' className='text-foreground' />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Select Date Range</SelectLabel>
+                  <SelectLabel className='text-foreground'>Select Date Range</SelectLabel>
                   {DATE_RANGE_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                    <SelectItem key={option.value} value={option.value} className='text-foreground'>
                       {option.label}
                     </SelectItem>
                   ))}
@@ -305,7 +306,7 @@ export function DateRangePicker({
               </SelectContent>
             </Select>
           </div>
-          <div className='relative overflow-hidden'>
+          <div className='relative overflow-hidden rounded-md'>
             <DayPicker
               mode='range'
               selected={range}
@@ -323,20 +324,19 @@ export function DateRangePicker({
                 button_next: 'hidden',
                 month_grid: 'w-full border-collapse',
                 weekdays: 'flex justify-between mt-2',
-                weekday: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
+                weekday: 'text-foreground rounded-md w-9 font-normal text-[0.8rem]',
                 week: 'flex w-full justify-between mt-2',
-                day: 'h-10 w-10 mx-1 text-center text-sm relative flex items-center justify-center',
+                day: 'h-10 w-10 mx-1 text-center text-sm relative flex items-center justify-center text-foreground',
                 day_button: cn(
                   buttonVariants({ variant: 'ghost' }),
-                  'rounded-md font-normal transition-all hover:bg-primary dark:text-white hover:text-primary-foreground'
+                  'rounded-md font-normal transition-all hover:bg-accent/70 dark:hover:bg-accent/50 text-foreground'
                 ),
                 selected:
-                  'bg-primary h-10 w-10 text-primary-foreground dark:text-white hover:bg-primary focus:bg-primary focus:text-primary-foreground rounded-md border border-primary-light shadow-md',
-                today: 'bg-accent text-accent-foreground rounded-md',
-                outside:
-                  'text-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
+                  'bg-primary text-white hover:bg-primary/90 hover:text-white focus:bg-primary focus:text-white rounded-md shadow-sm',
+                today: 'bg-accent/20 text-accent-foreground font-medium rounded-md',
+                outside: 'text-muted-foreground/50 opacity-50 aria-selected:bg-accent/30 aria-selected:opacity-30',
                 disabled: 'text-muted-foreground opacity-50',
-                range_middle: 'bg-accent-light text-accent-foreground rounded-md',
+                range_middle: 'bg-accent/20 text-accent-foreground rounded-md',
                 hidden: 'invisible'
               }}
               showOutsideDays={true}
@@ -344,25 +344,30 @@ export function DateRangePicker({
             />
 
             <div
-              className={cn('absolute bottom-0 left-0 right-0 top-0', monthYearPicker ? 'bg-popover' : 'hidden')}
-            ></div>
-            <MonthYearPicker
-              value={month}
-              mode={monthYearPicker as any}
-              onChange={onMonthYearChanged}
-              minDate={minDate}
-              maxDate={maxDate}
-              className={cn('absolute bottom-0 left-0 right-0 top-0', monthYearPicker ? '' : 'hidden')}
-            />
+              className={cn(
+                'absolute inset-0 bg-background/95 backdrop-blur-sm transition-all duration-200',
+                monthYearPicker ? 'opacity-100' : 'pointer-events-none opacity-0'
+              )}
+            >
+              <MonthYearPicker
+                value={month}
+                mode={monthYearPicker as any}
+                onChange={onMonthYearChanged}
+                minDate={minDate}
+                maxDate={maxDate}
+                className={cn('h-full', monthYearPicker ? '' : 'hidden')}
+              />
+            </div>
           </div>
-          <Button className='mt-4 w-full' onClick={onSubmit}>
-            Done
+          <Button className='mt-3 w-full bg-primary hover:bg-primary/90' onClick={onSubmit}>
+            Apply
           </Button>
         </PopoverContent>
       </Popover>
     </div>
   )
 }
+
 function MonthYearPicker({
   value,
   minDate,
@@ -429,16 +434,16 @@ function MonthYearPicker({
     }
   }, [mode, value])
   return (
-    <div className={cn(className)}>
-      <ScrollArea className='h-full'>
+    <div className={cn('p-2', className)}>
+      <ScrollArea className='h-[240px]'>
         {mode === 'year' && (
-          <div className='grid grid-cols-4'>
+          <div className='grid grid-cols-4 gap-1 p-1'>
             {years.map((year) => (
               <div key={year.value} ref={year.value === getYear(value) ? yearRef : undefined}>
                 <Button
                   disabled={year.disabled}
                   variant={getYear(value) === year.value ? 'default' : 'ghost'}
-                  className='rounded-full'
+                  className='w-full rounded-md hover:bg-accent/50'
                   onClick={() => onYearChange(year)}
                 >
                   {year.label}
@@ -448,14 +453,13 @@ function MonthYearPicker({
           </div>
         )}
         {mode === 'month' && (
-          <div className='grid grid-cols-3 gap-4'>
+          <div className='grid grid-cols-3 gap-2 p-2'>
             {months.map((month) => (
               <Button
                 key={month.value}
-                size='lg'
                 disabled={month.disabled}
                 variant={getMonth(value) === month.value ? 'default' : 'ghost'}
-                className='rounded-full'
+                className='w-full rounded-md hover:bg-accent/50'
                 onClick={() => onChange(setMonthFns(value, month.value), 'month')}
               >
                 {month.label}

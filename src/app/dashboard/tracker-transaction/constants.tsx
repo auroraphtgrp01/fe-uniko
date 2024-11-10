@@ -16,6 +16,7 @@ import { TFunction } from 'i18next'
 import NoDataPlaceHolder from '@/images/2.png'
 import Image from 'next/image'
 import { initEmptyDetailTransactionData } from '../transaction/constants'
+import { Combobox } from '../../../components/core/Combobox'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -174,4 +175,12 @@ export const initEmptyDetailTrackerTransaction = {
     ownerIds: []
   },
   time: new Date().toISOString()
+}
+
+export const initExtendsJSX = (data: any) => {
+  return (
+    <div className='flex w-full items-center justify-center'>
+      <Combobox dataArr={data} label='Select a Expenditure Fund' />
+    </div>
+  )
 }

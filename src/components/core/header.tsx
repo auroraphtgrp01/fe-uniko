@@ -5,6 +5,7 @@ import { UserNav } from '@/components/core/user-nav'
 import ButtonCollapseSlideBar from '../dashboard/ButtonCollapseSlideBar'
 import NotificationDropdown from '../dashboard/Notification'
 import ButtonLanguage from '@/components/core/ButtonLanguage'
+import ThemeMode from '@/components/core/ThemeMode'
 
 export default function Header() {
   return (
@@ -19,8 +20,11 @@ export default function Header() {
         <div className='ml-auto mt-[0.3rem] flex items-center gap-2'>
           <ButtonLanguage />
           <NotificationDropdown />
+          <ThemeMode />
           <ModeToggle />
-          <UserNav />
+          <div className='border-l border-border pl-2'>
+            <UserNav />
+          </div>
         </div>
       </nav>
     </header>

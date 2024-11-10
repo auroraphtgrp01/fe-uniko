@@ -46,7 +46,8 @@ import {
   BanknoteIcon,
   AArrowDown,
   AArrowUp,
-  X
+  X,
+  ChartCandlestick
 } from 'lucide-react'
 import Image from 'next/image'
 
@@ -100,6 +101,7 @@ export const Icons = {
   banknote: BanknoteIcon,
   aArrowDown: AArrowDown,
   aArrowUp: AArrowUp,
+  chartCandlestick: ChartCandlestick,
   logo: () => <Image src={'/metamask.png'} alt='' height={62} width={62} />,
   gitHub: (props: LucideProps) => (
     <svg viewBox='0 0 438.549 438.549' {...props}>
