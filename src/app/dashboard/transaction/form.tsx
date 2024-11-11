@@ -112,11 +112,11 @@ export default function TransactionForm() {
   const { getAllAccountSource } = useAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
   const { getMe } = useUser()
-  const { user } = useStoreLocal()
+  const { user, fundId } = useStoreLocal()
   const socket = useSocket()
   const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
-  const { getAllData: accountSourceData } = getAllAccountSource()
-  const { dataTrackerTransactionType } = getAllTrackerTransactionType()
+  const { getAllData: accountSourceData } = getAllAccountSource(fundId)
+  const { dataTrackerTransactionType } = getAllTrackerTransactionType(fundId)
   const {
     getTransactions,
     getUnclassifiedTransactions,
@@ -124,11 +124,9 @@ export default function TransactionForm() {
     updateTransaction,
     statusUpdate,
     deleteAnTransaction,
-    deleteMultipleTransaction,
-    isDeleteMultiple,
-    isDeleteOne
+    deleteMultipleTransaction
   } = useTransaction()
-  const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions })
+  const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions, fundId })
   const { resetData, setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataTransactionForClassify
@@ -157,8 +155,8 @@ export default function TransactionForm() {
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
   const { resetData: resetCacheDataTrackerTx } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
-  const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions })
-  const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions })
+  const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions, fundId })
+  const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions, fundId })
   const { isGetMeUserPending } = getMe(true)
   const { setData: setDataTodayTxs, resetData: resetCacheTodayTx } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],

@@ -26,12 +26,12 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
     const [open, setOpen] = useState(false)
     const [searchValue, setSearchValue] = useState('')
 
-    const filteredDataArr = dataArr.filter((data) =>
+    const filteredDataArr = dataArr?.filter((data) =>
       data.label.toLowerCase().includes(searchValue.trim().toLowerCase())
     )
 
     const handleSelect = (currentValue: string) => {
-      const newValue = currentValue === controlledValue ? '' : currentValue
+      const newValue = currentValue
 
       if (onChange) {
         onChange(newValue)
@@ -47,7 +47,13 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
       <div className={cn(className)}>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
-            <Button ref={ref} variant='outline' role='combobox' aria-expanded={open} className='w-full justify-between'>
+            <Button
+              ref={ref}
+              variant='outline'
+              role='combobox'
+              aria-expanded={open}
+              className={cn(className, 'w-full justify-between')}
+            >
               {controlledValue
                 ? dataArr.find((data) => data.value === controlledValue)?.label
                 : `Select ${label ?? 'item'}`}
@@ -62,9 +68,9 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
                 placeholder={`Search ${label ?? 'item'}`}
               />
               <CommandList>
-                {filteredDataArr.length > 0 ? (
+                {filteredDataArr?.length > 0 ? (
                   <CommandGroup>
-                    {filteredDataArr.map((data) => (
+                    {filteredDataArr?.map((data) => (
                       <CommandItem key={data.value} value={data.value} onSelect={() => handleSelect(data.value)}>
                         <div className='flex w-full justify-between'>
                           {data.label}

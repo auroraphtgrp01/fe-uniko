@@ -61,7 +61,8 @@ export const initCreateTrackerTransactionForm = {
   reasonName: '',
   description: '',
   direction: '',
-  currency: ''
+  currency: '',
+  fundId: ''
 }
 
 export const initEmptyDetailTransactionData = {

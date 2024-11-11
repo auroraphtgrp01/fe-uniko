@@ -51,8 +51,8 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
   const modelNameParts = modelName.split('/')
   const queryKey =
     modelNameParts.length > 0 && modelNameParts[modelNameParts.length - 1] === 'ADVANCED'
-      ? [modelName, query]
-      : [modelName]
+      ? [modelName, query, options.condition, options.params]
+      : [modelName, options.params]
   const finalUrl = `${baseUrl}/${replaceParams(pathUrl, options.params ?? {})}?${query}`
   return useQuery<TResponse>({
     queryKey,

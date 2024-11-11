@@ -13,6 +13,9 @@ interface StoreState {
   // unclassified transaction store
   unclassifiedTransactionData: ITransaction[]
   setUnclassifiedTransactionData: (data: ITransaction[]) => void
+  // Fund of user store
+  fundId: string
+  setFundId: (fundId: string) => void
 }
 
 export const useStoreLocal = create<StoreState>((set) => ({
@@ -24,5 +27,8 @@ export const useStoreLocal = create<StoreState>((set) => ({
   setUser: (user) => set({ user }),
   // unclassified transaction store
   unclassifiedTransactionData: [],
-  setUnclassifiedTransactionData: (data) => set({ unclassifiedTransactionData: data })
+  setUnclassifiedTransactionData: (data) => set({ unclassifiedTransactionData: data }),
+  // Fund of user store
+  fundId: '',
+  setFundId: (fundId) => set({ fundId })
 }))

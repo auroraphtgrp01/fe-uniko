@@ -196,3 +196,14 @@ export interface IUpdateTrackerTransactionFormProps extends IClassifyTransaction
   currentDirection: ETypeOfTrackerTransactionType
   accountSourceData: IAccountSource[]
 }
+
+export type IFundOfUserResponse = IBaseResponseData<IFundOfUser[]>
+
+export interface IFundOfUser {
+  id: string
+  name: string
+  description: string
+  status: string
+  currentAmount: string
+  currency: string
+}

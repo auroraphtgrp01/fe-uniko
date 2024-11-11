@@ -25,6 +25,7 @@ import EmptyBox from '@/images/empty-box.png'
 import { Atom } from 'react-loading-indicators'
 import Image from 'next/image'
 import DeleteDialog, { IDeleteDialogProps } from './DeleteDialog'
+import { motion } from 'framer-motion'
 
 export interface IDeleteProps extends IDeleteDialogProps {
   onOpen: (rowData?: any) => void
@@ -45,6 +46,51 @@ interface DataTableProps<TData, TValue> {
   onOpenDelete?: (id: string) => void
   deleteProps?: IDeleteProps
   extendsJSX?: JSX.Element
+}
+
+const tableRowVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: index * 0.015,
+      duration: 0.15,
+      ease: 'easeOut'
+    }
+  })
+}
+
+const emptyStateVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.8,
+    y: 20
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: 'easeOut',
+      staggerChildren: 0.1
+    }
+  }
+}
+
+const emptyStateItemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 10
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.2
+    }
+  }
 }
 
 export function DataTable<TData, TValue>({
@@ -149,7 +195,6 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className='flex items-center space-x-2'>
-          {extendsJSX}
           {onOpenDeleteAll && Object.values(table.getSelectedRowModel().rowsById).length > 0 && (
             <Button
               variant='default'
@@ -165,33 +210,44 @@ export function DataTable<TData, TValue>({
               <Trash2Icon className='h-5 w-5' />
             </Button>
           )}
-          {table.getRowModel().rows?.length > 0 && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline' className='whitespace-nowrap'>
-                  {t('table.columnsLabel')}
-                  <ChevronDown className='ml-2 h-4 w-4' />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='w-[200px]'>
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType')
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className='capitalize'
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    )
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          {extendsJSX}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' className='whitespace-nowrap'>
+                {t('table.columnsLabel')}
+                <ChevronDown className='ml-2 h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className='w-[200px]'>
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType')
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className='capitalize'
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType').length ===
+                0 && (
+                <div className='flex items-center justify-center p-4'>
+                  <div className='text-center'>
+                    <Image priority src={EmptyBox} alt='' height={30} width={30} className='mx-auto' />
+                    <span className='mt-2 block text-sm font-semibold text-foreground'>{t('table.noDataText')}</span>
+                  </div>
+                </div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           {buttons && buttons.length > 0
             ? buttons.map((button: IButtonInDataTableHeader) => (
                 <Button
@@ -247,25 +303,47 @@ export function DataTable<TData, TValue>({
               <TableRow className='hover:bg-transparent'>
                 <TableCell colSpan={columns.length + (onOpenDelete ? 1 : 0)} className='h-24 text-center'>
                   {isLoading ? (
-                    <div className='flex flex-col items-center justify-center gap-2'>
-                      <Atom color='#be123c' size='small' textColor='#be123c' />
-                      <span className='font-semibold'>Loading</span>
-                    </div>
+                    <motion.div
+                      initial='hidden'
+                      animate='visible'
+                      variants={emptyStateVariants}
+                      className='flex flex-col items-center justify-center gap-2'
+                    >
+                      <motion.div variants={emptyStateItemVariants}>
+                        <Atom color='#be123c' size='small' textColor='#be123c' />
+                      </motion.div>
+                      <motion.span variants={emptyStateItemVariants} className='font-semibold'>
+                        Loading
+                      </motion.span>
+                    </motion.div>
                   ) : (
-                    <div className='flex select-none flex-col items-center justify-center gap-2'>
-                      <Image priority src={EmptyBox} alt='' height={50} width={50} />
-                      <span className='font-semibold text-foreground'>{t('table.noDataText')}</span>
-                    </div>
+                    <motion.div
+                      initial='hidden'
+                      animate='visible'
+                      variants={emptyStateVariants}
+                      className='flex select-none flex-col items-center justify-center gap-2'
+                    >
+                      <motion.div variants={emptyStateItemVariants}>
+                        <Image priority src={EmptyBox} alt='' height={50} width={50} />
+                      </motion.div>
+                      <motion.span variants={emptyStateItemVariants} className='font-semibold text-foreground'>
+                        {t('table.noDataText')}
+                      </motion.span>
+                    </motion.div>
                   )}
                 </TableCell>
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row, index) => (
-                <TableRow
+                <motion.tr
+                  initial='hidden'
+                  animate='visible'
+                  custom={index}
+                  variants={tableRowVariants}
                   onMouseEnter={() => setHoveredRow(index)}
                   onMouseLeave={() => setHoveredRow(null)}
                   style={{ cursor: 'pointer', userSelect: 'none' }}
-                  className={getRowClassName ? getRowClassName(row.original) : ''}
+                  className={`${getRowClassName ? getRowClassName(row.original) : ''} border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted`}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   onClick={(event: any) => {
@@ -300,7 +378,7 @@ export function DataTable<TData, TValue>({
                       </Button>
                     </TableCell>
                   )}
-                </TableRow>
+                </motion.tr>
               ))
             )}
           </TableBody>

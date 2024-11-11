@@ -6,6 +6,7 @@ import { useCreateTrackerTransaction } from './useCreateTrackerTransaction'
 import { useUpdateTrackerTransaction } from './useUpdateTrackerTransaction'
 import { useDeleteAnTrackerTransaction } from './useDeleteAnTrackerTransaction'
 import { useDeleteMultipleTrackerTransaction } from './useDeleteMultipleTrackerTransaction'
+import { useGetFundOfUser } from '@/core/tracker-transaction/hooks/useGetFundOfUser'
 
 export const useTrackerTransaction = (opts?: IUseQueryHookOptions) => {
   const { mutate: classifyTransaction, isPending: isClassing } = useClassifyTransaction(opts)
@@ -27,6 +28,7 @@ export const useTrackerTransaction = (opts?: IUseQueryHookOptions) => {
     deleteAnTrackerTransaction,
     deleteMultipleTrackerTransaction,
     isDeletingTrackerTransaction,
-    isDeletingMultipleTrackerTransaction
+    isDeletingMultipleTrackerTransaction,
+    getFundOfUser: useGetFundOfUser
   }
 }
