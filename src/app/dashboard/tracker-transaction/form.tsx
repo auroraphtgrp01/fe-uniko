@@ -98,7 +98,6 @@ export default function TrackerTransactionForm() {
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
-  // const [fundId, setFundId] = useState<string>('')
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
     useState<ITrackerTransactionTypeBody>(initTrackerTypeForm)
@@ -123,7 +122,7 @@ export default function TrackerTransactionForm() {
   const socket = useSocket()
   const { getMe } = useUser()
   const { isGetMeUserPending } = getMe(true)
-  const { user, fundId, setFundId } = useStoreLocal()
+  const { user, fundId, setFundId, fundArr, setFundArr } = useStoreLocal()
   const { t } = useTranslation(['trackerTransaction', 'common'])
   const { getAllAccountSource } = useAccountSource()
   const {
@@ -134,12 +133,11 @@ export default function TrackerTransactionForm() {
     statusUpdating: statusUpdateTrackerTransaction,
     updateTrackerTransaction,
     deleteAnTrackerTransaction,
-    deleteMultipleTrackerTransaction,
-    getFundOfUser
+    deleteMultipleTrackerTransaction
   } = useTrackerTransaction()
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions, updateTransaction, statusUpdate: statusUpdateTransaction } = useTransaction()
-  const { dataTrackerTransactionType } = getAllTrackerTransactionType(fundId)
+  const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
   const { statisticData, refetchStatistic } = getStatisticData(dates || {}, fundId)
   const { advancedTrackerTxData, isGetAdvancedPending, refetchGetAdvancedTrackerTransaction } = getAdvancedData({
     query: queryOptions,
@@ -149,8 +147,8 @@ export default function TrackerTransactionForm() {
     refetchGetAdvancedTrackerTransaction()
     refetchStatistic()
     refetchGetUnclassifiedTxs()
+    resetTransaction()
   }
-  const { fundOfUserData } = getFundOfUser()
   const { dataUnclassifiedTxs, refetchGetUnclassifiedTxs } = getUnclassifiedTransactions({
     query: uncTableQueryOptions,
     fundId
@@ -161,12 +159,6 @@ export default function TrackerTransactionForm() {
       [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
       updateCacheDataCreateClassify
     )
-
-  const { setData: setCacheTrackerTxDelete } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
-    [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
-    updateCacheDataDeleteFeat
-  )
-
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
     [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
@@ -221,11 +213,6 @@ export default function TrackerTransactionForm() {
     }))
   }, [dataTableUnclassifiedConfig])
   useEffect(() => {
-    if (fundOfUserData?.data[0]) {
-      setFundId(fundOfUserData.data[0].id)
-    }
-  }, [fundOfUserData])
-  useEffect(() => {
     if (dataTrackerTransactionType)
       initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
   }, [dataTrackerTransactionType])
@@ -272,14 +259,14 @@ export default function TrackerTransactionForm() {
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
-  const handleFundIdChange = useCallback((value: string) => {
-    setFundId(value)
-  }, [])
+  // const handleFundIdChange = useCallback((value: string) => {
+  //   setFundId(value)
+  // }, [])
 
-  const extendsJSX = useMemo(
-    () => <ExtendsJSXTrackerTransaction data={fundOfUserData?.data || []} setFundId={handleFundIdChange} />,
-    [fundOfUserData?.data, handleFundIdChange]
-  )
+  // const extendsJSX = useMemo(
+  //   () => <ExtendsJSXTrackerTransaction data={fundArr || []} setFundId={handleFundIdChange} fundId={fundId} />,
+  //   [fundArr, handleFundIdChange]
+  // )
 
   const refetchTransactionBySocket = () => {
     const lastCalled = getTimeCountRefetchLimit()
@@ -292,7 +279,8 @@ export default function TrackerTransactionForm() {
           roleId: user?.roleId ?? '',
           email: user?.email ?? '',
           fullName: user?.fullName ?? '',
-          status: (user?.status as EUserStatus) ?? EUserStatus.ACTIVE
+          status: (user?.status as EUserStatus) ?? EUserStatus.ACTIVE,
+          fundId
         }
         if (socket) {
           setTimeCountRefetchLimit()
@@ -441,7 +429,7 @@ export default function TrackerTransactionForm() {
                 config={dataTableConfig}
                 setConfig={setDataTableConfig}
                 buttons={dataTableButtons}
-                extendsJSX={extendsJSX}
+                // extendsJSX={extendsJSX}
                 onRowClick={(rowData) => {
                   const find =
                     advancedTrackerTxData?.data.find((item) => item.id === rowData.id) ||
@@ -618,9 +606,12 @@ export default function TrackerTransactionForm() {
             setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
           ) => {
             handleCreateTrackerTxType({
-              payload: data,
+              payload: {
+                ...data,
+                fundId
+              },
               hookCreate: createTrackerTxType,
-              hookUpdateCache: setCacheTrackerTxTypeCreate,
+              hookUpdateCache: refetchTrackerTransactionType,
               setIsCreating
             })
           },

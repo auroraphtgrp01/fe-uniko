@@ -7,6 +7,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface IAccountSourceDialogProps {
+  fundId: string
   sharedDialogElements: {
     isDialogOpen: IDialogAccountSource
     setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
@@ -22,16 +23,19 @@ interface IAccountSourceDialogProps {
     setDataUpdate: any
     updateAccountSource: any
   }
+  onSuccessCallback: () => void
 }
 
 export default function AccountSourceDialog({
   sharedDialogElements,
   createAccountSourceDialog,
-  UpdateAccountSourceDialog
+  UpdateAccountSourceDialog,
+  fundId,
+  onSuccessCallback
 }: IAccountSourceDialogProps) {
   const { t } = useTranslation(['accountSource', 'common'])
   const updateConfigDialog: IDialogConfig = {
-    content: CreateAndUpdateAccountSourceForm({}),
+    content: CreateAndUpdateAccountSourceForm({ fundId }),
     description: t('AccountSourceDialog.updateDialog.description'),
     title: t('AccountSourceDialog.updateDialog.title'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogUpdateOpen,
@@ -49,23 +53,29 @@ export default function AccountSourceDialog({
         setDataUpdate: UpdateAccountSourceDialog.setDataUpdate,
         setIdRowClicked: UpdateAccountSourceDialog.setIdRowClicked,
         hookResetCacheStatistic: sharedDialogElements.hookResetCacheStatistic,
-        hookResetCacheGetAllAccount: sharedDialogElements.hookResetCacheGetAllAccount
+        hookResetCacheGetAllAccount: sharedDialogElements.hookResetCacheGetAllAccount,
+        onSuccessCallback
       })
     }
     if (sharedDialogElements.isDialogOpen.isDialogCreateOpen) {
       handleCreateAccountSource({
-        payload,
+        payload: {
+          ...payload,
+          fundId
+        },
         setIsDialogOpen: sharedDialogElements.setIsDialogOpen,
         createAccountSource: createAccountSourceDialog.createAccountSource,
         setDataCreate: createAccountSourceDialog.setDataCreate,
         hookResetCacheStatistic: sharedDialogElements.hookResetCacheStatistic,
-        hookResetCacheGetAllAccount: sharedDialogElements.hookResetCacheGetAllAccount
+        hookResetCacheGetAllAccount: sharedDialogElements.hookResetCacheGetAllAccount,
+        onSuccessCallback
       })
     }
   }
   const createConfigDialog: IDialogConfig = {
     content: CreateAndUpdateAccountSourceForm({
-      callBack: handleSubmitAccountSource
+      callBack: handleSubmitAccountSource,
+      fundId
     }),
     description: t('AccountSourceDialog.createDialog.description'),
     title: t('AccountSourceDialog.createDialog.title'),

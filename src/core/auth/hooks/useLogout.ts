@@ -13,6 +13,7 @@ export const useLogout = () => {
 
   const executeLogout = () => {
     Cookies.remove('authTokenVerify')
+    localStorage.removeItem('fundId')
     refetch()
   }
 

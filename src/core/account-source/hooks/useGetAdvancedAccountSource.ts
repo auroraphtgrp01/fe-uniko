@@ -5,17 +5,21 @@ import { useModelQuery } from '@/hooks/useQueryModel'
 import { IUseGetAdvancedProps } from '@/types/query.interface'
 
 export const useGetAdvancedAccountSource = (props: IUseGetAdvancedProps) => {
-  const { isPending: isGetAdvancedPending, data: getAdvancedData } = useModelQuery<IAdvancedAccountSourceResponse>(
-    GET_ADVANCED_ACCOUNT_SOURCE_KEY,
-    accountSourceRoutes.getAdvanced,
-    {
-      query: props.query,
-      enable: !!props,
-      retry: ACCOUNT_SOURCE_RETRY_QUERY
+  const {
+    isPending: isGetAdvancedPending,
+    data: getAdvancedData,
+    refetch: refetchGetAdvanced
+  } = useModelQuery<IAdvancedAccountSourceResponse>(GET_ADVANCED_ACCOUNT_SOURCE_KEY, accountSourceRoutes.getAdvanced, {
+    query: props.query,
+    enable: !!props.fundId,
+    retry: ACCOUNT_SOURCE_RETRY_QUERY,
+    params: {
+      fundId: props.fundId
     }
-  )
+  })
   return {
     isGetAdvancedPending,
-    getAdvancedData
+    getAdvancedData,
+    refetchGetAdvanced
   }
 }

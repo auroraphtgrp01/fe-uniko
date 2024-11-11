@@ -4,8 +4,8 @@ import { MobileSidebar } from '@/components/core/mobile-sidebar'
 import { UserNav } from '@/components/core/user-nav'
 import ButtonCollapseSlideBar from '../dashboard/ButtonCollapseSlideBar'
 import NotificationDropdown from '../dashboard/Notification'
-import ButtonLanguage from '@/components/core/ButtonLanguage'
 import ThemeMode from '@/components/core/ThemeMode'
+import FundToggle from './FundToggle'
 
 export default function Header() {
   return (
@@ -17,8 +17,8 @@ export default function Header() {
         <div className='flex items-center gap-2'>
           <ButtonCollapseSlideBar />
         </div>
-        <div className='ml-auto mt-[0.3rem] flex items-center gap-2'>
-          <ButtonLanguage />
+        <div className='ml-auto mt-[0.3rem] flex items-center gap-3'>
+          <FundToggle />
           <NotificationDropdown />
           <ThemeMode />
           <ModeToggle />

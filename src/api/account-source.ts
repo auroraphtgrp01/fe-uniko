@@ -1,6 +1,6 @@
 export const accountSourceRoutes = {
   getById: 'account-sources/get-by-id/:id',
-  getAdvanced: 'account-sources',
+  getAdvanced: 'account-sources/advanced/:fundId',
   getAll: 'account-sources/all/:fundId',
   createAccountSource: 'account-sources',
   getOneAccountSourceById: 'account-sources',

@@ -1,28 +1,28 @@
+import { IdCard, Loader2 } from 'lucide-react'
+import React, { useEffect } from 'react'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuGroup,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { Palette } from 'lucide-react'
-import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 
-const THEMES = ['default', 'modern', 'purple', 'blue']
+export default function FundToggle() {
+  const { fundId, setFundId, fundArr, setFundArr } = useStoreLocal()
+  const { getFundOfUser } = useTrackerTransaction()
+  const { fundOfUserData, isGetFundPending } = getFundOfUser()
 
-export default function ThemeMode() {
   useEffect(() => {
-    const savedTheme = localStorage.getItem('app-theme') || 'default'
-    document.documentElement.setAttribute('data-theme', savedTheme)
-  }, [])
+    setFundArr(fundOfUserData?.data || [])
+  }, [fundOfUserData])
 
-  const handleThemeChange = (value: string) => {
-    document.documentElement.setAttribute('data-theme', value)
-    localStorage.setItem('app-theme', value)
-  }
+  const selectedFund = fundArr?.find((fund) => fund.id === fundId) ?? fundArr?.[0]
 
   return (
     <DropdownMenu>
@@ -32,21 +32,23 @@ export default function ThemeMode() {
           className='mt-0.5 h-7 select-none rounded-full border-none p-0 outline-none hover:bg-transparent focus:outline-none focus:ring-0'
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className='flex items-center gap-2'>
-            <Palette className='h-5 w-5' />
+            <IdCard className='h-5 w-5' />
+            <span>{selectedFund?.name}</span>
+            {isGetFundPending && <Loader2 className='h-4 w-4 animate-spin' />}
           </motion.div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='mt-5 w-56 select-none' align='center' sideOffset={5}>
         <DropdownMenuGroup>
           <div className='px-2 py-1.5 text-center text-sm font-semibold text-muted-foreground'>
-            <span>Select Theme</span>
+            <span>Expenditure Funds</span>
           </div>
           <DropdownMenuSeparator />
-          {THEMES.map((theme, index) => (
-            <React.Fragment key={theme}>
+          {fundArr?.map((fund, index) => (
+            <React.Fragment key={fund.id}>
               {index !== 0 && <DropdownMenuSeparator />}
-              <DropdownMenuItem className='cursor-pointer' onClick={() => handleThemeChange(theme)}>
-                {theme.charAt(0).toUpperCase() + theme.slice(1)}
+              <DropdownMenuItem className='cursor-pointer' onClick={() => setFundId(fund.id)}>
+                {fund.name.charAt(0).toUpperCase() + fund.name.slice(1)}
               </DropdownMenuItem>
             </React.Fragment>
           ))}
