@@ -16,11 +16,24 @@ export interface IComboboxProps {
   onValueSelect?: (value: string) => void
   value?: string
   onChange?: (value: string) => void
+  contentTrigger?: JSX.Element
+  variantTrigger?: any
 }
 
 export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
   (
-    { className, label, dataArr, dialogEdit, setOpenEditDialog, onValueSelect, value: controlledValue, onChange },
+    {
+      contentTrigger,
+      variantTrigger,
+      className,
+      label,
+      dataArr,
+      dialogEdit,
+      setOpenEditDialog,
+      onValueSelect,
+      value: controlledValue,
+      onChange
+    },
     ref
   ) => {
     const [open, setOpen] = useState(false)
@@ -49,18 +62,24 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
           <PopoverTrigger asChild>
             <Button
               ref={ref}
-              variant='outline'
+              variant={variantTrigger ?? 'outline'}
               role='combobox'
               aria-expanded={open}
               className={cn(className, 'w-full justify-between')}
             >
-              {controlledValue
-                ? dataArr.find((data) => data.value === controlledValue)?.label
-                : `Select ${label ?? 'item'}`}
-              <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+              {contentTrigger ? (
+                contentTrigger
+              ) : (
+                <>
+                  {controlledValue
+                    ? dataArr.find((data) => data.value === controlledValue)?.label
+                    : `Select ${label ?? 'item'}`}
+                  <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                </>
+              )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className='w-[--radix-popover-trigger-width] p-3'>
+          <PopoverContent className='w-full min-w-[300px] p-3'>
             <Command shouldFilter={false}>
               <CommandInput
                 value={searchValue}

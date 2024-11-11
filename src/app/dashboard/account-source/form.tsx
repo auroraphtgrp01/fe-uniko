@@ -48,6 +48,12 @@ export default function AccountSourceForm() {
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
 
+  const refetchPage = () => {
+    refetchGetAdvanced()
+    resetAccountSource()
+    resetDataUpdate()
+  }
+
   // Hooks
   const {
     createAccountSource,
@@ -57,13 +63,13 @@ export default function AccountSourceForm() {
     deleteMultipleAccountSource
   } = useAccountSource()
   const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
-  const { getAdvancedData } = getAdvancedAccountSource({ query: queryOptions, fundId })
+  const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
   const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
+    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataCreate
   )
-  const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
+  const { setData: setDataUpdate, resetData: resetDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
+    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataUpdate
   )
   const { setData: setDataForDeleteFeat } = useUpdateModel<IAdvancedAccountSourceResponse>(
@@ -146,7 +152,7 @@ export default function AccountSourceForm() {
                     {
                       onSuccess: (res: any) => {
                         if (res.statusCode === 200 || res.statusCode === 201) {
-                          setDataForDeleteFeat(res.data)
+                          refetchPage()
                           resetCacheStatistic()
                           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
                           setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
@@ -170,6 +176,8 @@ export default function AccountSourceForm() {
         </CardContent>
       </Card>
       <AccountSourceDialog
+        onSuccessCallback={refetchPage}
+        fundId={fundId}
         sharedDialogElements={{
           isDialogOpen,
           setIsDialogOpen,

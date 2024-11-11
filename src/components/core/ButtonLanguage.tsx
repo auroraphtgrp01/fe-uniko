@@ -9,7 +9,7 @@ export default function ButtonLanguage() {
   const changeLanguage = (languageCode: 'en' | 'vi') => i18n.changeLanguage(languageCode)
 
   return (
-    <Button variant='ghost' size='icon' className='relative rounded-full'>
+    <Button variant='ghost' size='icon' className='relative select-none rounded-full'>
       <motion.div
         key='english-icon'
         initial={{ opacity: 1, rotate: 0, scale: 1 }}
@@ -20,6 +20,7 @@ export default function ButtonLanguage() {
         }}
         transition={{ duration: 0.3 }}
         onClick={() => changeLanguage('vi')}
+        className='select-none'
       >
         <span>en</span>
       </motion.div>
@@ -33,7 +34,7 @@ export default function ButtonLanguage() {
           scale: currentLanguage === 'vi' ? 1 : 0
         }}
         transition={{ duration: 0.3 }}
-        className='absolute'
+        className='absolute select-none'
         onClick={() => changeLanguage('en')}
       >
         <span>vi</span>

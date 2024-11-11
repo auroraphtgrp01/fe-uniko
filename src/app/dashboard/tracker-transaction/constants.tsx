@@ -171,29 +171,30 @@ export const initEmptyDetailTrackerTransaction = {
 
 export const ExtendsJSXTrackerTransaction = ({
   data,
-  setFundId
+  setFundId,
+  fundId
 }: {
   data: IFundOfUser[]
   setFundId: (value: string) => void
+  fundId: string
 }) => {
   const [selectedValue, setSelectedValue] = React.useState<string>('')
 
   React.useEffect(() => {
     if (data?.length > 0) {
-      setFundId(data[0].id)
-      setSelectedValue(data[0].id)
+      setSelectedValue(fundId)
     }
-  }, [data, setFundId])
+  }, [data, fundId])
 
   return (
     <div className='flex'>
       <Combobox
-        className='w-[10rem]'
         dataArr={data?.map((item) => ({ value: item.id, label: item.name }))}
         onChange={(v) => {
           setFundId(v)
           setSelectedValue(v)
         }}
+        label='Expenditure Fund'
         value={selectedValue}
       />
     </div>

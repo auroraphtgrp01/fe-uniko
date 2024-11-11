@@ -1,9 +1,9 @@
 export const transactionRoutes = {
   getAllPayment: 'payment/all',
-  getAdvancedTransaction: 'transactions',
+  getAdvancedTransaction: 'transactions/advanced/:fundId',
   refetchPayment: 'payment/refetch/:id',
   getUnclassifiedTransactions: 'transactions/unclassified/:fundId',
-  getTodayTransactions: 'transactions/today',
+  getTodayTransactions: 'transactions/today/:fundId',
   updateTransaction: 'transactions/:id',
   deleteAnTransaction: 'transactions/remove-one/:id',
   deleteMultipleTransaction: 'transactions/remove-multiple/:ids'
