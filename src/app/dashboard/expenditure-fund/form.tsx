@@ -9,7 +9,17 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import { initTableConfig } from '@/constants/data-table'
 import DonutChart from '../../../components/core/charts/DonutChart'
 import { Wallet, TrendingUp, TrendingDown, DollarSign, PiggyBank, CreditCard } from 'lucide-react'
+import {
+  ICreateExpenditureFundBody,
+  IExpenditureFundDialogOpen
+} from '@/core/expenditure-fund/models/expenditure-fund.interface'
+import { initButtonInHeaders, initEmptyExpenditureFundDialogOpen } from './constants'
+import ExpenditureFundDialog from './dialog'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
+import { handleCreateExpenditureFund } from './handler'
 export default function ExpenditureFundForm() {
+  const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
+
   const [mockTransactions] = useState<IFlatListData[]>([
     {
       id: '1',
@@ -38,6 +48,10 @@ export default function ExpenditureFundForm() {
     }
   ])
 
+  // hooks
+  const { createExpenditureFund, statusCreate } = useExpenditureFund()
+
+  const buttons = initButtonInHeaders({ setIsDialogOpen })
   return (
     <div className='grid h-full grid-cols-1 gap-4'>
       <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
@@ -124,12 +138,21 @@ export default function ExpenditureFundForm() {
           <div className='mt-4'>
             <Card>
               <CardContent>
-                <DataTable columns={[]} data={[]} config={initTableConfig} setConfig={() => {}} />
+                <DataTable buttons={buttons} columns={[]} data={[]} config={initTableConfig} setConfig={() => {}} />
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
+      <ExpenditureFundDialog
+        createDialog={{
+          handleCreate: (data: ICreateExpenditureFundBody) => {
+            handleCreateExpenditureFund({ data, setIsDialogOpen, hookCreate: createExpenditureFund })
+          },
+          status: statusCreate
+        }}
+        commonDialogState={{ setIsDialogOpen, isDialogOpen }}
+      />
     </div>
   )
 }
