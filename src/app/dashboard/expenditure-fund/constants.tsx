@@ -1,11 +1,17 @@
 import {
+  ECurrencyUnit,
+  EFundStatus,
   ICreateExpenditureFundBody,
+  IExpenditureFund,
+  IExpenditureFundDataFormat,
   IExpenditureFundDialogOpen,
-  IInitButtonInHeaderProps
+  IInitButtonInHeaderProps,
+  IUpdateExpenditureFundBody
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
+import { formatCurrency } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { PlusIcon } from 'lucide-react'
-import React from 'react'
+import React, { SetStateAction } from 'react'
 
 export const initEmptyExpenditureFundDialogOpen = {
   isDialogCreateOpen: false,
@@ -27,13 +33,25 @@ export const initButtonInHeaders = ({ setIsDialogOpen }: IInitButtonInHeaderProp
   ]
 }
 
-export interface IExpenditureFundDialogProps {
-  commonDialogState: {
-    isDialogOpen: IExpenditureFundDialogOpen
-    setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
+export const formatExpenditureFundData = (data: IExpenditureFund): IExpenditureFundDataFormat => {
+  const { id, currency, currentAmount, description, name, ownerName, status } = data
+  return {
+    id,
+    name,
+    description,
+    status: <span className='rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-800'>{status}</span>,
+    currentAmount: `${formatCurrency(currentAmount || 0, 'đ')}`,
+    currency,
+    owner: ownerName
   }
-  createDialog: {
-    handleCreate: (data: ICreateExpenditureFundBody) => void
-    status: 'error' | 'idle' | 'pending' | 'success'
-  }
+}
+
+export const initEmptyDetailExpenditureFund = {
+  id: '',
+  name: '',
+  description: '',
+  status: EFundStatus.ACTIVE,
+  currentAmount: 0,
+  currency: ECurrencyUnit.VND,
+  ownerName: ''
 }

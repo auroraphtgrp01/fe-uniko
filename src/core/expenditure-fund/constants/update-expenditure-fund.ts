@@ -2,10 +2,10 @@ import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
 import { z } from 'zod'
 
-interface IDefineCreateExpenditureFundFormBodyProps {}
+interface IDefineUpdateExpenditureFundFormBodyProps {}
 
-export const defineCreateExpenditureFundFormBody =
-  ({}: IDefineCreateExpenditureFundFormBodyProps): IBodyFormField[] => {
+export const defineUpdateExpenditureFundFormBody =
+  ({}: IDefineUpdateExpenditureFundFormBodyProps): IBodyFormField[] => {
     const t = translate(['transaction', 'common'])
     return [
       {
@@ -38,6 +38,26 @@ export const defineCreateExpenditureFundFormBody =
         placeHolder: 'Select currency *'
       },
       {
+        name: 'status',
+        type: EFieldType.Select,
+        label: 'Status',
+        dataSelector: [
+          {
+            value: 'ACTIVE',
+            label: 'ACTIVE'
+          },
+          {
+            value: 'CLOSED',
+            label: 'CLOSED'
+          },
+          {
+            value: 'PENDING',
+            label: 'PENDING'
+          }
+        ],
+        placeHolder: 'Select status *'
+      },
+      {
         name: 'description',
         type: EFieldType.Textarea,
         label: 'Description',
@@ -46,10 +66,11 @@ export const defineCreateExpenditureFundFormBody =
     ]
   }
 
-export const createExpenditureFundSchema = z
+export const updateExpenditureFundSchema = z
   .object({
     name: z.string().trim().min(2).max(256),
     currency: z.enum(['USD', 'VND', 'EUR']),
+    status: z.enum(['ACTIVE', 'CLOSED', 'PENDING']),
     description: z.any()
   })
   .strict()
