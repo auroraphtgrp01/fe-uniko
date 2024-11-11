@@ -1,5 +1,5 @@
 export const trackerTransactionTypesRoutes = {
-  getAll: 'tracker-transaction-types/all',
+  getAll: 'tracker-transaction-types/all/:fundId',
   create: 'tracker-transaction-types',
   update: 'tracker-transaction-types/:id'
 }

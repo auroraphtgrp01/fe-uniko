@@ -41,37 +41,25 @@ export const handleCreateTrackerTransaction = async ({
   payload,
   hookCreate,
   setIsDialogOpen,
-  hookResetCacheStatistic,
-  hookResetTodayTxs,
-  hookSetTransactions,
   setDataTableConfig,
   setUncDataTableConfig,
-  resetAccountSource,
-  resetTransaction
+  callbackOnSuccess
 }: {
   payload: ICreateTrackerTransactionBody
   hookCreate: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
-  hookResetCacheStatistic: any
-  hookResetTodayTxs: any
-  hookSetTransactions: any
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
-  resetAccountSource: any
-  resetTransaction: any
+  callbackOnSuccess?: () => void
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        hookResetCacheStatistic()
-        hookResetTodayTxs()
-        hookSetTransactions(res.data)
-        resetAccountSource()
-        resetTransaction()
+        if (callbackOnSuccess) callbackOnSuccess()
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-        toast.success('Create tracker transaction successfully!')
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
+        toast.success('Create tracker transaction successfully!')
       }
     }
   })
@@ -91,7 +79,8 @@ export const handleClassifyTransaction = async ({
   setTodayDataTableConfig,
   setDataTableConfig,
   hookResetTrackerTx,
-  setIsEditing
+  setIsEditing,
+  callBackOnSuccess
 }: {
   payload: IClassifyTransactionBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
@@ -102,6 +91,7 @@ export const handleClassifyTransaction = async ({
   hookResetCacheStatistic: any
   hookSetCacheToday: any
   hookSetCacheTransaction?: any
+  callBackOnSuccess?: () => void
   hookResetCacheTransaction?: any
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -124,6 +114,7 @@ export const handleClassifyTransaction = async ({
         toast.success('Classify transaction successfully!')
         setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
         if (setIsEditing) setIsEditing(false)
+        if (callBackOnSuccess) callBackOnSuccess()
       }
     }
   })
@@ -300,7 +291,7 @@ export const onRowClick = (
 }
 
 export const modifiedTrackerTypeForComboBox = (type: any) => {
-  return type.map((item: any) => ({
+  return type?.map((item: any) => ({
     value: item.id,
     label: item.name,
     ...item
@@ -312,8 +303,8 @@ export const initTrackerTypeData = (
   setIncomingTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>,
   setExpenseTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>
 ) => {
-  setIncomingTrackerType(data.filter((item) => item.type === ETypeOfTrackerTransactionType.INCOMING))
-  setExpenseTrackerType(data.filter((item) => item.type === ETypeOfTrackerTransactionType.EXPENSE))
+  setIncomingTrackerType(data?.filter((item) => item.type === ETypeOfTrackerTransactionType.INCOMING))
+  setExpenseTrackerType(data?.filter((item) => item.type === ETypeOfTrackerTransactionType.EXPENSE))
 }
 
 export const handleCreateTrackerType = ({

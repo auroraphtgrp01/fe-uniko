@@ -61,6 +61,7 @@ export interface IClassifyTransactionBody {
   trackerTypeId: string
   reasonName: string
   description: string
+  fundId: string
 }
 
 export interface ICreateTrackerTransactionBody {
@@ -70,6 +71,7 @@ export interface ICreateTrackerTransactionBody {
   direction: string
   amount?: number
   accountSourceId: string
+  fundId: string
 }
 
 interface ITransactionSummaryData {

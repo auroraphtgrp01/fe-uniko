@@ -8,6 +8,7 @@ export interface IUseQueryHookOptions {
 export interface IUseGetAdvancedProps {
   query: IQueryOptions
   queryCondition?: IDynamicType[]
+  fundId: string
 }
 
 export interface IQueryOptions {
@@ -18,3 +19,5 @@ export interface IQueryOptions {
   sort?: string
   includePopulate?: string
 }
+
+export interface IUseGetFundProps {}

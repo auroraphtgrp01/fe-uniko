@@ -6,13 +6,17 @@ import {
 import { trackerTransactionTypeRoutes } from '../configs'
 import { IAdvancedTrackerTransactionTypeResponse } from '../models/tracker-transaction-type.interface'
 
-export const useGetAllTrackerTransactionType = () => {
+export const useGetAllTrackerTransactionType = (fundId: string) => {
   const { data: dataTrackerTransactionType, status: isGettingTrackerTransactionType } =
     useModelQuery<IAdvancedTrackerTransactionTypeResponse>(
       GET_ALL_TRACKER_TRANSACTION_TYPE_KEY,
       trackerTransactionTypeRoutes.getAll,
       {
-        retry: TRACKER_TRANSACTION_TYPE_MODEL_RETRY
+        enable: !!fundId,
+        retry: TRACKER_TRANSACTION_TYPE_MODEL_RETRY,
+        params: {
+          fundId
+        }
       }
     )
   return {
