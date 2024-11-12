@@ -21,6 +21,8 @@ import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@/core/users/hooks'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { locales } from '@/libraries/i18n'
 
 export function UserNav() {
   const router = useRouter()
@@ -29,7 +31,10 @@ export function UserNav() {
   const { useLogout } = useAuth()
   const { getMe } = useUser()
   const { executeGetMe, userGetMeData } = getMe(false)
-  const { executeLogout } = useLogout()
+  const { executeLogout, userLogoutData } = useLogout()
+  const { i18n } = useTranslation()
+  const currentLanguage = locales[i18n.language as keyof typeof locales]
+  const changeLanguage = (languageCode: 'en' | 'vi') => i18n.changeLanguage(languageCode)
   const logOut = () => {
     queryClient.clear()
     executeLogout()
@@ -40,7 +45,7 @@ export function UserNav() {
     router.push('/')
   }
   useEffect(() => {
-    if (!user) {
+    if (!user && !userLogoutData) {
       executeGetMe()
       if (userGetMeData?.data) {
         setUser(userGetMeData.data)
@@ -67,13 +72,19 @@ export function UserNav() {
             </motion.div>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className='mt-6 w-56 translate-x-5' align='end' forceMount>
+        <DropdownMenuContent className='mt-5 w-56 translate-x-5' align='end' forceMount>
           <DropdownMenuLabel className='font-normal'>
             <div className='flex flex-col space-y-1'>
               <p className='text-sm font-medium leading-none'>{user?.fullName}</p>
               <p className='text-xs leading-none text-muted-foreground'>{user?.email}</p>
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => changeLanguage(currentLanguage === 'en' ? 'vi' : 'en')}>
+              {currentLanguage === 'en' ? 'Tiếng Việt' : 'English'}
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <Link href='http://localhost:3000/dashboard/profile'>

@@ -18,6 +18,7 @@ export interface IUserPayloadForSocket {
   fullName: string
   roleId?: string
   status: EUserStatus
+  fundId?: string
 }
 
 /* eslint-disable no-unused-vars */

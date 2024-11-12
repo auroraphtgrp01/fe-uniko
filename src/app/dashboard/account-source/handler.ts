@@ -24,7 +24,8 @@ export const handleShowDetailAccountSource = (
     name: data.name,
     type: data.type,
     initAmount: data.initAmount,
-    accountSourceType: (data as IAccountSourceBody & { checkType?: string }).checkType as EAccountSourceType
+    accountSourceType: (data as IAccountSourceBody & { checkType?: string }).checkType as EAccountSourceType,
+    fundId: data.fundId
   })
   setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
 }
@@ -35,7 +36,8 @@ export const handleCreateAccountSource = ({
   createAccountSource,
   setDataCreate,
   hookResetCacheStatistic,
-  hookResetCacheGetAllAccount
+  hookResetCacheGetAllAccount,
+  onSuccessCallback
 }: {
   payload: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
@@ -43,6 +45,7 @@ export const handleCreateAccountSource = ({
   setDataCreate: any
   hookResetCacheStatistic: any
   hookResetCacheGetAllAccount: any
+  onSuccessCallback: () => void
 }) => {
   createAccountSource(payload, {
     onSuccess: (res: IAccountSourceResponse) => {
@@ -51,6 +54,7 @@ export const handleCreateAccountSource = ({
         setDataCreate(res.data)
         hookResetCacheStatistic()
         hookResetCacheGetAllAccount()
+        onSuccessCallback()
         toast.success('Create account source successfully!')
       }
     }
@@ -64,7 +68,8 @@ export const handleUpdateAccountSource = ({
   setDataUpdate,
   setIdRowClicked,
   hookResetCacheStatistic,
-  hookResetCacheGetAllAccount
+  hookResetCacheGetAllAccount,
+  onSuccessCallback
 }: {
   payload: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
@@ -73,6 +78,7 @@ export const handleUpdateAccountSource = ({
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
   hookResetCacheStatistic: any
   hookResetCacheGetAllAccount: any
+  onSuccessCallback: () => void
 }) => {
   updateAccountSource(payload, {
     onSuccess(res: IAccountSourceResponse) {
@@ -82,6 +88,7 @@ export const handleUpdateAccountSource = ({
         setIdRowClicked('')
         hookResetCacheStatistic()
         hookResetCacheGetAllAccount()
+        onSuccessCallback()
         toast.success('Update account source successfully!')
       }
     }

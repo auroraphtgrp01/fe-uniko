@@ -5,6 +5,7 @@ import { transactionRoutes } from '@/api/transaction'
 import { accountBanksRoutes } from './account-bank'
 import { trackerTransactionTypesRoutes } from './tracker-transaction-type'
 import { trackerTransactionRoutes } from './tracker-transaction'
+import { expenditureFundRoutes } from './expenditure-fund'
 
 export const apiService = {
   authentication: authenticationRoutes,
@@ -13,5 +14,6 @@ export const apiService = {
   transaction: transactionRoutes,
   accountBank: accountBanksRoutes,
   trackerTransactionType: trackerTransactionTypesRoutes,
-  trackerTransaction: trackerTransactionRoutes
+  trackerTransaction: trackerTransactionRoutes,
+  expenditureFund: expenditureFundRoutes
 }

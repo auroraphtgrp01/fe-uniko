@@ -1,5 +1,5 @@
 'use client'
-import { IDialogTrackerTransaction } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { IDialogTrackerTransaction, IFundOfUser } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { PlusIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -169,10 +169,34 @@ export const initEmptyDetailTrackerTransaction = {
   time: new Date().toISOString()
 }
 
-export const initExtendsJSX = (data: any) => {
+export const ExtendsJSXTrackerTransaction = ({
+  data,
+  setFundId,
+  fundId
+}: {
+  data: IFundOfUser[]
+  setFundId: (value: string) => void
+  fundId: string
+}) => {
+  const [selectedValue, setSelectedValue] = React.useState<string>('')
+
+  React.useEffect(() => {
+    if (data?.length > 0) {
+      setSelectedValue(fundId)
+    }
+  }, [data, fundId])
+
   return (
-    <div className='flex w-full items-center justify-center'>
-      <Combobox dataArr={data} label='Select a Expenditure Fund' />
+    <div className='flex'>
+      <Combobox
+        dataArr={data?.map((item) => ({ value: item.id, label: item.name }))}
+        onChange={(v) => {
+          setFundId(v)
+          setSelectedValue(v)
+        }}
+        label='Expenditure Fund'
+        value={selectedValue}
+      />
     </div>
   )
 }

@@ -5,18 +5,26 @@ import { GET_ADVANCED_TRACKER_TRANSACTION_KEY, TRACKER_TRANSACTION_MODEL_RETRY }
 import { trackerTransactionRoutes } from '../configs'
 
 export const useGetAdvancedTrackerTransaction = (props: IUseGetAdvancedProps) => {
-  const { isPending: isGetAdvancedPending, data: advancedTrackerTxData } =
-    useModelQuery<IAdvancedTrackerTransactionResponse>(
-      GET_ADVANCED_TRACKER_TRANSACTION_KEY,
-      trackerTransactionRoutes.getAdvanced,
-      {
-        query: props.query,
-        enable: !!props,
-        retry: TRACKER_TRANSACTION_MODEL_RETRY
+  const {
+    isPending: isGetAdvancedPending,
+    data: advancedTrackerTxData,
+    refetch: refetchGetAdvancedTrackerTransaction
+  } = useModelQuery<IAdvancedTrackerTransactionResponse>(
+    GET_ADVANCED_TRACKER_TRANSACTION_KEY,
+    trackerTransactionRoutes.getAdvanced,
+    {
+      query: props.query,
+      condition: props.fundId,
+      enable: !!props.fundId,
+      retry: TRACKER_TRANSACTION_MODEL_RETRY,
+      params: {
+        fundId: props.fundId
       }
-    )
+    }
+  )
   return {
     isGetAdvancedPending,
-    advancedTrackerTxData
+    advancedTrackerTxData,
+    refetchGetAdvancedTrackerTransaction
   }
 }

@@ -14,6 +14,7 @@ export interface ITrackerTransactionType {
 
 export interface ITrackerTransactionTypeBody {
   name: string
+  fundId?: string
   type: string
   description?: string | undefined
 }

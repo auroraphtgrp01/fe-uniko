@@ -32,8 +32,6 @@ import { useUpdateModel } from '@/hooks/useQueryModel'
 import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY, GET_ALL_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
-import { useAuth } from '@/core/auth/hooks'
-import { arraysEqual, getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
 import { useTranslation } from 'react-i18next'
 import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
 import toast from 'react-hot-toast'
@@ -50,25 +48,28 @@ export default function AccountSourceForm() {
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
 
+  const refetchPage = () => {
+    refetchGetAdvanced()
+    resetAccountSource()
+    resetDataUpdate()
+  }
+
   // Hooks
   const {
     createAccountSource,
     updateAccountSource,
     getAdvancedAccountSource,
     deleteAnAccountSource,
-    deleteMultipleAccountSource,
-    isDeletingMultiple,
-    isDeletingOne,
-    isCreating,
-    isUpdating
+    deleteMultipleAccountSource
   } = useAccountSource()
-  const { getAdvancedData, isGetAdvancedPending } = getAdvancedAccountSource({ query: queryOptions })
+  const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
+  const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
   const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
+    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataCreate
   )
-  const { setData: setDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
+  const { setData: setDataUpdate, resetData: resetDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
+    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataUpdate
   )
   const { setData: setDataForDeleteFeat } = useUpdateModel<IAdvancedAccountSourceResponse>(
@@ -77,7 +78,6 @@ export default function AccountSourceForm() {
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
-  const { setAccountSourceData, accountSourceData } = useStoreLocal()
 
   // Memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
@@ -152,7 +152,7 @@ export default function AccountSourceForm() {
                     {
                       onSuccess: (res: any) => {
                         if (res.statusCode === 200 || res.statusCode === 201) {
-                          setDataForDeleteFeat(res.data)
+                          refetchPage()
                           resetCacheStatistic()
                           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
                           setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
@@ -176,6 +176,8 @@ export default function AccountSourceForm() {
         </CardContent>
       </Card>
       <AccountSourceDialog
+        onSuccessCallback={refetchPage}
+        fundId={fundId}
         sharedDialogElements={{
           isDialogOpen,
           setIsDialogOpen,

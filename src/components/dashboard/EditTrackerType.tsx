@@ -31,7 +31,7 @@ export default function EditTrackerTypeDialog({
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
-  const filteredDataArr = dataArr.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))
+  const filteredDataArr = dataArr?.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))
   const [accordionValue, setAccordionValue] = useState<string | null>(null)
   const onHandleUpdate = () => {
     if (isUpdate) {
@@ -163,7 +163,7 @@ export default function EditTrackerTypeDialog({
               collapsible
               className='w-full'
             >
-              {filteredDataArr.length > 0
+              {filteredDataArr?.length > 0
                 ? filteredDataArr.map((data) => (
                     <AccordionItem key={data.value} value={data.value}>
                       <AccordionTrigger className='flex justify-between'>{data.label}</AccordionTrigger>

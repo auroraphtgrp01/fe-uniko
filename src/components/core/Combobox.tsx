@@ -16,22 +16,35 @@ export interface IComboboxProps {
   onValueSelect?: (value: string) => void
   value?: string
   onChange?: (value: string) => void
+  contentTrigger?: JSX.Element
+  variantTrigger?: any
 }
 
 export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
   (
-    { className, label, dataArr, dialogEdit, setOpenEditDialog, onValueSelect, value: controlledValue, onChange },
+    {
+      contentTrigger,
+      variantTrigger,
+      className,
+      label,
+      dataArr,
+      dialogEdit,
+      setOpenEditDialog,
+      onValueSelect,
+      value: controlledValue,
+      onChange
+    },
     ref
   ) => {
     const [open, setOpen] = useState(false)
     const [searchValue, setSearchValue] = useState('')
 
-    const filteredDataArr = dataArr.filter((data) =>
+    const filteredDataArr = dataArr?.filter((data) =>
       data.label.toLowerCase().includes(searchValue.trim().toLowerCase())
     )
 
     const handleSelect = (currentValue: string) => {
-      const newValue = currentValue === controlledValue ? '' : currentValue
+      const newValue = currentValue
 
       if (onChange) {
         onChange(newValue)
@@ -47,14 +60,26 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
       <div className={cn(className)}>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
-            <Button ref={ref} variant='outline' role='combobox' aria-expanded={open} className='w-full justify-between'>
-              {controlledValue
-                ? dataArr.find((data) => data.value === controlledValue)?.label
-                : `Select ${label ?? 'item'}`}
-              <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+            <Button
+              ref={ref}
+              variant={variantTrigger ?? 'outline'}
+              role='combobox'
+              aria-expanded={open}
+              className={cn(className, 'w-full justify-between')}
+            >
+              {contentTrigger ? (
+                contentTrigger
+              ) : (
+                <>
+                  {controlledValue
+                    ? dataArr.find((data) => data.value === controlledValue)?.label
+                    : `Select ${label ?? 'item'}`}
+                  <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                </>
+              )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className='w-[--radix-popover-trigger-width] p-3'>
+          <PopoverContent className='w-full min-w-[300px] p-3'>
             <Command shouldFilter={false}>
               <CommandInput
                 value={searchValue}
@@ -62,9 +87,9 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
                 placeholder={`Search ${label ?? 'item'}`}
               />
               <CommandList>
-                {filteredDataArr.length > 0 ? (
+                {filteredDataArr?.length > 0 ? (
                   <CommandGroup>
-                    {filteredDataArr.map((data) => (
+                    {filteredDataArr?.map((data) => (
                       <CommandItem key={data.value} value={data.value} onSelect={() => handleSelect(data.value)}>
                         <div className='flex w-full justify-between'>
                           {data.label}

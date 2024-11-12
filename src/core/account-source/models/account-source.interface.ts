@@ -36,6 +36,7 @@ export interface IAccountSourceBody {
   login_id?: string
   type?: string
   accounts?: string[]
+  fundId?: string
 }
 
 export enum EAccountSourceType {
