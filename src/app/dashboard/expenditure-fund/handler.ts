@@ -5,6 +5,8 @@ import {
   IExpenditureFundDataFormat,
   IExpenditureFundDialogOpen,
   IHandleCreateExpenditureFundProps,
+  IHandleDeleteAnExpenditureFundProps,
+  IHandleDeleteMultipleExpenditureFundProps,
   IHandleUpdateExpenditureFundProps
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { formatArrayData, getTypes } from '@/libraries/utils'
@@ -24,14 +26,16 @@ export const handleCreateExpenditureFund = async ({
   data,
   hookCreate,
   setIsDialogOpen,
-  callBackRefetchAPI
+  callBackRefetchAPI,
+  setDataTableConfig
 }: IHandleCreateExpenditureFundProps) => {
   hookCreate(data, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
+        callBackRefetchAPI()
+        setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
         toast.success('Create expenditure fund successfully!')
-        callBackRefetchAPI()
       }
     }
   })
@@ -42,15 +46,17 @@ export const handleUpdateExpenditureFund = async ({
   hookUpdate,
   callBackRefetchAPI,
   setDetailData,
-  setIsDialogOpen
+  setIsDialogOpen,
+  setDataTableConfig
 }: IHandleUpdateExpenditureFundProps) => {
   hookUpdate(data, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
+        callBackRefetchAPI()
         setDetailData((prev) => ({ ...prev, ...res.data }))
+        setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         toast.success('Update expenditure fund successfully!')
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
-        callBackRefetchAPI()
       }
     }
   })
@@ -71,4 +77,48 @@ export const initExpenditureFundDataTable = (
     }))
     setTableData(formattedData)
   }
+}
+
+export const handleDeleteAnExpenditureFund = async ({
+  id,
+  setDataTableConfig,
+  setIsDialogOpen,
+  hookDelete,
+  setIdDeletes
+}: IHandleDeleteAnExpenditureFundProps) => {
+  hookDelete(
+    { id },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIdDeletes([])
+          toast.success('Delete expenditure fund successfully')
+        }
+      }
+    }
+  )
+}
+
+export const handleDeleteAllExpenditureFund = async ({
+  ids,
+  setDataTableConfig,
+  setIsDialogOpen,
+  hookDelete,
+  setIdDeletes
+}: IHandleDeleteMultipleExpenditureFundProps) => {
+  hookDelete(
+    { ids },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIdDeletes([])
+          toast.success('Delete all expenditure fund successfully')
+        }
+      }
+    }
+  )
 }

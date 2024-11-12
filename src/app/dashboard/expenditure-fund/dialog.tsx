@@ -8,6 +8,7 @@ import { IExpenditureFundDialogProps } from '@/core/expenditure-fund/models/expe
 import CreateExpenditureFundForm from '@/components/dashboard/expenditure-fund/create-expenditure-fund'
 import { DetailExpenditureFund } from '@/components/dashboard/expenditure-fund/detail-expenditure-fund'
 import UpdateExpenditureFundForm from '@/components/dashboard/expenditure-fund/update-expenditure-fund'
+import DeleteDialog from '@/components/dashboard/DeleteDialog'
 
 export default function ExpenditureFundDialog(params: IExpenditureFundDialogProps) {
   const formCreateExpenditureFundRef = useRef<HTMLFormElement>(null)

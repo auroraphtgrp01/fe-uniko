@@ -19,10 +19,17 @@ import {
 import { initButtonInHeaders, initEmptyDetailExpenditureFund, initEmptyExpenditureFundDialogOpen } from './constants'
 import ExpenditureFundDialog from './dialog'
 import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
-import { handleCreateExpenditureFund, handleUpdateExpenditureFund, initExpenditureFundDataTable } from './handler'
+import {
+  handleCreateExpenditureFund,
+  handleDeleteAnExpenditureFund,
+  handleUpdateExpenditureFund,
+  initExpenditureFundDataTable
+} from './handler'
 import { initQueryOptions } from '@/constants/init-query-options'
 import { IQueryOptions } from '@/types/query.interface'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
+import { useTransaction } from '@/core/transaction/hooks'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
 export default function ExpenditureFundForm() {
   // states
   const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
@@ -30,23 +37,30 @@ export default function ExpenditureFundForm() {
   const [dataTable, setDataTable] = useState<IExpenditureFundDataFormat[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [detailData, setDetailData] = useState<IExpenditureFund>(initEmptyDetailExpenditureFund)
+  const [idDeletes, setIdDeletes] = useState<string[]>([])
+  const [summaryRecentTransactions, setSummaryRecentTransactions] = useState<IFlatListData[]>([])
 
-  const [mockTransactions] = useState<IFlatListData[]>([
-    {
-      id: '1',
-      amount: formatCurrency(1500000, 'đ', 'vi-VN'),
-      accountNo: '123456789',
-      direction: ETypeOfTrackerTransactionType.INCOMING,
-      transactionDateTime: '2024-03-20 10:30'
-    },
-    {
-      id: '2',
-      amount: formatCurrency(2500000, 'đ', 'vi-VN'),
-      accountNo: '987654321',
-      direction: ETypeOfTrackerTransactionType.EXPENSE,
-      transactionDateTime: '2024-03-20 15:45'
-    }
-  ])
+  const { fundId } = useStoreLocal()
+  useEffect(() => {
+    console.log('fundId', fundId)
+  }, [fundId])
+
+  // const [mockTransactions] = useState<IFlatListData[]>([
+  //   {
+  //     id: '1',
+  //     amount: formatCurrency(1500000, 'đ', 'vi-VN'),
+  //     accountNo: '123456789',
+  //     direction: ETypeOfTrackerTransactionType.INCOMING,
+  //     transactionDateTime: '2024-03-20 10:30'
+  //   },
+  //   {
+  //     id: '2',
+  //     amount: formatCurrency(2500000, 'đ', 'vi-VN'),
+  //     accountNo: '987654321',
+  //     direction: ETypeOfTrackerTransactionType.EXPENSE,
+  //     transactionDateTime: '2024-03-20 15:45'
+  //   }
+  // ])
 
   const [balanceData] = useState([
     {
@@ -71,15 +85,39 @@ export default function ExpenditureFundForm() {
   }, [dataTable])
 
   // hooks
-  const { createExpenditureFund, statusCreate, getAdvancedExpenditureFund, updateExpenditureFund, statusUpdate } =
-    useExpenditureFund()
+  const { getSummaryRecentTransactions } = useTransaction()
+  const {
+    createExpenditureFund,
+    statusCreate,
+    getAdvancedExpenditureFund,
+    updateExpenditureFund,
+    statusUpdate,
+    deleteAnExpenditureFund,
+    statusDeleteAnExpenditureFund
+  } = useExpenditureFund()
+  const { dataSummaryRecentTransactions, refetchGetSummaryRecentTransactions, isGetSummaryRecentTransactions } =
+    getSummaryRecentTransactions({
+      fundId
+    })
   const { advancedExpenditureFundData, isGetAdvancedPending, refetchAdvancedExpendingFund } =
     getAdvancedExpenditureFund({ query: queryOptions })
 
   // effects
   useEffect(() => {
-    console.log('advancedExpenditureFundData', advancedExpenditureFundData)
-  }, [advancedExpenditureFundData])
+    if (dataSummaryRecentTransactions) {
+      setSummaryRecentTransactions(
+        dataSummaryRecentTransactions.data.summaryRecentTransactions.map(
+          (item): IFlatListData => ({
+            id: item.id,
+            amount: formatCurrency(item.amount, 'đ', 'vi-VN'),
+            accountNo: item.ofAccount?.accountNo || 'N/A',
+            direction: item.direction as ETypeOfTrackerTransactionType,
+            transactionDateTime: item.transactionDateTime
+          })
+        )
+      )
+    }
+  }, [dataSummaryRecentTransactions])
   useEffect(() => {
     console.log('detailData', detailData)
   }, [detailData])
@@ -106,10 +144,11 @@ export default function ExpenditureFundForm() {
             <CardContent>
               <div className='h-auto'>
                 <FlatList
-                  data={mockTransactions}
+                  data={summaryRecentTransactions}
                   onClick={(data) => {
                     console.log('Clicked transaction:', data)
                   }}
+                  isLoading={isGetSummaryRecentTransactions}
                 />
               </div>
             </CardContent>
@@ -151,7 +190,13 @@ export default function ExpenditureFundForm() {
                 <div className='flex items-center justify-between'>
                   <TrendingUp className='h-12 w-12 rotate-45 transform text-white opacity-75' />
                   <div className='text-right'>
-                    <p className='text-2xl font-bold text-white'>{formatCurrency(1500000, 'đ', 'vi-VN')}</p>
+                    <p className='text-2xl font-bold text-white'>
+                      {formatCurrency(
+                        dataSummaryRecentTransactions?.data.totalAmountIncomingTransaction || 0,
+                        'đ',
+                        'vi-VN'
+                      )}
+                    </p>
                     <p className='text-sm text-emerald-100'>No change from yesterday</p>
                   </div>
                 </div>
@@ -166,7 +211,13 @@ export default function ExpenditureFundForm() {
                 <div className='flex items-center justify-between'>
                   <CreditCard className='h-12 w-12 -rotate-12 transform text-white opacity-75' />
                   <div className='text-right'>
-                    <p className='text-2xl font-bold text-white'>{formatCurrency(2500000, 'đ', 'vi-VN')}</p>
+                    <p className='text-2xl font-bold text-white'>
+                      {formatCurrency(
+                        dataSummaryRecentTransactions?.data.totalAmountExpenseTransaction || 0,
+                        'đ',
+                        'vi-VN'
+                      )}
+                    </p>
                     <p className='text-sm text-orange-100'>+15% from last month</p>
                   </div>
                 </div>
@@ -191,6 +242,36 @@ export default function ExpenditureFundForm() {
                       setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
                     }
                   }}
+                  onOpenDelete={(id: string) => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                    setIdDeletes([id])
+                  }}
+                  onOpenDeleteAll={(ids: string[]) => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+                    setIdDeletes(ids)
+                  }}
+                  deleteProps={{
+                    isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+                    onDelete: () => {
+                      if (idDeletes.length > 0)
+                        handleDeleteAnExpenditureFund({
+                          id: idDeletes[0],
+                          hookDelete: deleteAnExpenditureFund,
+                          setIsDialogOpen,
+                          callBackRefetchAPI: refetchAdvancedExpendingFund,
+                          setDataTableConfig,
+                          setIdDeletes
+                        })
+                    },
+                    onOpen: (rowData: any) => {
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                      setIdDeletes((prev) => [...prev, rowData.id])
+                    },
+                    onClose: () => {
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                      setIdDeletes([])
+                    }
+                  }}
                 />
               </CardContent>
             </Card>
@@ -204,7 +285,8 @@ export default function ExpenditureFundForm() {
               data,
               setIsDialogOpen,
               hookCreate: createExpenditureFund,
-              callBackRefetchAPI: refetchAdvancedExpendingFund
+              callBackRefetchAPI: refetchAdvancedExpendingFund,
+              setDataTableConfig
             })
           },
           status: statusCreate
@@ -216,7 +298,8 @@ export default function ExpenditureFundForm() {
               hookUpdate: updateExpenditureFund,
               callBackRefetchAPI: refetchAdvancedExpendingFund,
               setIsDialogOpen,
-              setDetailData
+              setDetailData,
+              setDataTableConfig
             })
           },
           data: detailData,

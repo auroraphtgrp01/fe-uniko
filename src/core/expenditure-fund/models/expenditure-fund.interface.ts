@@ -1,5 +1,5 @@
 import { ITransaction } from '@/core/transaction/models'
-import { IBaseResponseData } from '@/types/common.i'
+import { IBaseResponseData, IDataTableConfig } from '@/types/common.i'
 import { RefObject } from 'react'
 
 export interface IExpenditureFundDialogOpen {
@@ -132,10 +132,22 @@ export interface IHandleCreateExpenditureFundProps {
   hookCreate: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
   callBackRefetchAPI: () => void
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
 }
 
 export interface IHandleUpdateExpenditureFundProps extends Omit<IHandleCreateExpenditureFundProps, 'hookCreate'> {
   data: IUpdateExpenditureFundBody
   hookUpdate: any
   setDetailData: React.Dispatch<React.SetStateAction<IExpenditureFund>>
+}
+
+export interface IHandleDeleteAnExpenditureFundProps
+  extends Omit<IHandleCreateExpenditureFundProps, 'hookCreate' | 'data' | 'setDetailData'> {
+  id: string
+  hookDelete: any
+  setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+}
+
+export interface IHandleDeleteMultipleExpenditureFundProps extends Omit<IHandleDeleteAnExpenditureFundProps, 'id'> {
+  ids: string[]
 }

@@ -34,7 +34,13 @@ export interface ITransaction {
 }
 
 export type IGetTransactionResponse = IBaseResponseData<ITransaction[]>
+export type IGetSummaryRecentTransactionResponse = IBaseResponseData<ISummaryRecentTransaction>
 
+interface ISummaryRecentTransaction {
+  totalAmountIncomingTransaction: number
+  totalAmountExpenseTransaction: number
+  summaryRecentTransactions: ITransaction[]
+}
 export interface IDialogTransaction {
   isDialogDetailOpen: boolean
   isDialogTransactionTodayOpen: boolean

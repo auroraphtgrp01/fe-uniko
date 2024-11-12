@@ -61,7 +61,7 @@ const tableRowVariants = {
   })
 }
 
-const emptyStateVariants = {
+export const emptyStateVariants = {
   hidden: {
     opacity: 0,
     scale: 0.8,
@@ -79,7 +79,7 @@ const emptyStateVariants = {
   }
 }
 
-const emptyStateItemVariants = {
+export const emptyStateItemVariants = {
   hidden: {
     opacity: 0,
     y: 10
