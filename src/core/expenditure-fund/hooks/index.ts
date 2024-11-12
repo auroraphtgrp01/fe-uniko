@@ -3,6 +3,7 @@ import { useCreateExpenditureFund } from './useCreateExpenditureFund'
 import { useGetAdvancedExpenditureFund } from './useQueryAdvancedExpenditureFund'
 import { useUpdateExpenditureFund } from './useUpdateExpenditureFund'
 import { useDeleteAnExpenditureFund } from './useDeleteAnExpenditureFund'
+import { useGetStatisticExpenditureFund } from './useStatisticExpendittureFund'
 
 export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
   const { mutate: createExpenditureFund, status: statusCreate } = useCreateExpenditureFund(opts)
@@ -15,6 +16,7 @@ export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
     statusUpdate,
     getAdvancedExpenditureFund: useGetAdvancedExpenditureFund,
     deleteAnExpenditureFund,
-    statusDeleteAnExpenditureFund
+    statusDeleteAnExpenditureFund,
+    getStatisticExpenditureFund: useGetStatisticExpenditureFund
   }
 }

@@ -39,11 +39,9 @@ export default function ExpenditureFundForm() {
   const [detailData, setDetailData] = useState<IExpenditureFund>(initEmptyDetailExpenditureFund)
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   const [summaryRecentTransactions, setSummaryRecentTransactions] = useState<IFlatListData[]>([])
+  const [chartData, setChartData] = useState<{ name: string; value: number }[]>([])
 
   const { fundId } = useStoreLocal()
-  useEffect(() => {
-    console.log('fundId', fundId)
-  }, [fundId])
 
   // const [mockTransactions] = useState<IFlatListData[]>([
   //   {
@@ -62,16 +60,16 @@ export default function ExpenditureFundForm() {
   //   }
   // ])
 
-  const [balanceData] = useState([
-    {
-      name: '👛 Personal',
-      value: 1200000
-    },
-    {
-      name: '❤️ Love',
-      value: 800000
-    }
-  ])
+  // const [balanceData] = useState([
+  //   {
+  //     name: '👛 Personal',
+  //     value: 1200000
+  //   },
+  //   {
+  //     name: '❤️ Love',
+  //     value: 800000
+  //   }
+  // ])
 
   // memos
   const titles = ['Name', 'Status', 'Current Amount', 'Owner']
@@ -93,7 +91,8 @@ export default function ExpenditureFundForm() {
     updateExpenditureFund,
     statusUpdate,
     deleteAnExpenditureFund,
-    statusDeleteAnExpenditureFund
+    statusDeleteAnExpenditureFund,
+    getStatisticExpenditureFund
   } = useExpenditureFund()
   const { dataSummaryRecentTransactions, refetchGetSummaryRecentTransactions, isGetSummaryRecentTransactions } =
     getSummaryRecentTransactions({
@@ -101,8 +100,19 @@ export default function ExpenditureFundForm() {
     })
   const { advancedExpenditureFundData, isGetAdvancedPending, refetchAdvancedExpendingFund } =
     getAdvancedExpenditureFund({ query: queryOptions })
+  const { getStatisticExpenditureFundData, isGetStatisticPending, refetchGetStatisticExpendingFund } =
+    getStatisticExpenditureFund()
 
   // effects
+  useEffect(() => {
+    if (getStatisticExpenditureFundData)
+      setChartData(
+        getStatisticExpenditureFundData.data.expenditureFunds.map((item: IExpenditureFund) => ({
+          name: item.name,
+          value: item.currentAmount
+        }))
+      )
+  }, [getStatisticExpenditureFundData])
   useEffect(() => {
     if (dataSummaryRecentTransactions) {
       setSummaryRecentTransactions(
@@ -160,7 +170,7 @@ export default function ExpenditureFundForm() {
             </CardHeader>
             <CardContent>
               <div>
-                <DonutChart data={balanceData} className='mt-[-2rem] h-[20rem] w-full' types='donut' />
+                <DonutChart data={chartData} className='mt-[-2rem] h-[20rem] w-full' types='donut' />
               </div>
             </CardContent>
           </Card>
@@ -175,7 +185,9 @@ export default function ExpenditureFundForm() {
                 <div className='flex items-center justify-between'>
                   <PiggyBank className='h-12 w-12 text-white opacity-75' />
                   <div className='text-right'>
-                    <p className='text-2xl font-bold text-white'>{formatCurrency(4000000, 'đ', 'vi-VN')}</p>
+                    <p className='text-2xl font-bold text-white'>
+                      {formatCurrency(getStatisticExpenditureFundData?.data.totalBalanceSummary || 0, 'đ', 'vi-VN')}
+                    </p>
                     <p className='text-sm text-blue-100'>+2.5% from last month</p>
                   </div>
                 </div>

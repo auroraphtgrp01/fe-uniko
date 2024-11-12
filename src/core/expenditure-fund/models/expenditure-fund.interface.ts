@@ -32,6 +32,12 @@ export interface ICreateExpenditureFundFormProps {
 
 export type IExpenditureFundResponse = IBaseResponseData<IExpenditureFund>
 export type IAdvancedExpenditureFundResponse = IBaseResponseData<IExpenditureFund[]>
+export type IGetStatisticExpenditureFundResponse = IBaseResponseData<IStatisticExpenditureFund>
+
+export interface IStatisticExpenditureFund {
+  totalBalanceSummary: number
+  expenditureFunds: IExpenditureFund[]
+}
 
 export enum EFundStatus {
   ACTIVE = 'ACTIVE',
