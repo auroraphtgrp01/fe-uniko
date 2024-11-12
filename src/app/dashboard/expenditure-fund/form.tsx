@@ -22,6 +22,7 @@ import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 import {
   handleCreateExpenditureFund,
   handleDeleteAnExpenditureFund,
+  handleInviteParticipant,
   handleUpdateExpenditureFund,
   initExpenditureFundDataTable
 } from './handler'
@@ -42,34 +43,6 @@ export default function ExpenditureFundForm() {
   const [chartData, setChartData] = useState<{ name: string; value: number }[]>([])
 
   const { fundId } = useStoreLocal()
-
-  // const [mockTransactions] = useState<IFlatListData[]>([
-  //   {
-  //     id: '1',
-  //     amount: formatCurrency(1500000, 'đ', 'vi-VN'),
-  //     accountNo: '123456789',
-  //     direction: ETypeOfTrackerTransactionType.INCOMING,
-  //     transactionDateTime: '2024-03-20 10:30'
-  //   },
-  //   {
-  //     id: '2',
-  //     amount: formatCurrency(2500000, 'đ', 'vi-VN'),
-  //     accountNo: '987654321',
-  //     direction: ETypeOfTrackerTransactionType.EXPENSE,
-  //     transactionDateTime: '2024-03-20 15:45'
-  //   }
-  // ])
-
-  // const [balanceData] = useState([
-  //   {
-  //     name: '👛 Personal',
-  //     value: 1200000
-  //   },
-  //   {
-  //     name: '❤️ Love',
-  //     value: 800000
-  //   }
-  // ])
 
   // memos
   const titles = ['Name', 'Status', 'Current Amount', 'Owner']
@@ -92,7 +65,9 @@ export default function ExpenditureFundForm() {
     statusUpdate,
     deleteAnExpenditureFund,
     statusDeleteAnExpenditureFund,
-    getStatisticExpenditureFund
+    getStatisticExpenditureFund,
+    inviteParticipantToExpenditureFund,
+    statusInviteParticipant
   } = useExpenditureFund()
   const { dataSummaryRecentTransactions, refetchGetSummaryRecentTransactions, isGetSummaryRecentTransactions } =
     getSummaryRecentTransactions({
@@ -319,6 +294,19 @@ export default function ExpenditureFundForm() {
           status: statusUpdate
         }}
         commonDialogState={{ setIsDialogOpen, isDialogOpen }}
+        inviteParticipantDialog={{
+          handleInvite: (data: string[]) => {
+            handleInviteParticipant({
+              data: {
+                fundId: detailData.id,
+                userInfoValues: data
+              },
+              hookInvite: inviteParticipantToExpenditureFund,
+              setIsDialogOpen
+            })
+          },
+          status: statusInviteParticipant
+        }}
       />
     </div>
   )

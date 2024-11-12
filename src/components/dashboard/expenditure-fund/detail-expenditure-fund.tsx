@@ -7,7 +7,7 @@ import {
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
-import { ArrowDownIcon, ArrowUpIcon, CalendarDays, Tag, Users2Icon } from 'lucide-react'
+import { ArrowDownIcon, ArrowUpIcon, CalendarDays, PlusCircleIcon, Tag, Users2Icon } from 'lucide-react'
 import Image from 'next/image'
 import EmptyBox from '@/images/empty-box.png'
 import NoDataPlaceHolder from '@/images/2.png'

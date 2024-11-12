@@ -68,6 +68,8 @@ export const initExpenditureFundDataTable = (
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>,
   setTableData: React.Dispatch<React.SetStateAction<IExpenditureFundDataFormat[]>>
 ) => {
+  console.log('getAdvancedData', getAdvancedData)
+
   if (!isGetAdvancedPending && getAdvancedData) {
     const formattedData: IExpenditureFundDataFormat[] = formatArrayData(getAdvancedData.data, formatExpenditureFundData)
 
@@ -121,4 +123,24 @@ export const handleDeleteAllExpenditureFund = async ({
       }
     }
   )
+}
+
+export const handleInviteParticipant = async ({
+  hookInvite,
+  data,
+  setIsDialogOpen
+}: {
+  hookInvite: any
+  data: {
+    fundId: string
+    userInfoValues: string[]
+  }
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
+}) => {
+  hookInvite(data, {
+    onSuccess: () => {
+      toast.success('Send invite participant successfully')
+      setIsDialogOpen((prev) => ({ ...prev, isDialogInviteOpen: false }))
+    }
+  })
 }

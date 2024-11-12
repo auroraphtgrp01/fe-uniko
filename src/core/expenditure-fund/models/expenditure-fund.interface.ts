@@ -8,6 +8,7 @@ export interface IExpenditureFundDialogOpen {
   isDialogUpdateOpen: boolean
   isDialogDeleteOpen: boolean
   isDialogDeleteAllOpen: boolean
+  isDialogInviteOpen: boolean
 }
 
 export interface IInitButtonInHeaderProps {
@@ -121,6 +122,10 @@ export interface IExpenditureFundDialogProps {
     setDetailData: React.Dispatch<React.SetStateAction<IExpenditureFund>>
     status: 'error' | 'idle' | 'pending' | 'success'
   }
+  inviteParticipantDialog: {
+    handleInvite: (data: string[]) => void
+    status: 'error' | 'idle' | 'pending' | 'success'
+  }
 }
 
 export interface IDetailExpenditureFundProps {
@@ -156,4 +161,9 @@ export interface IHandleDeleteAnExpenditureFundProps
 
 export interface IHandleDeleteMultipleExpenditureFundProps extends Omit<IHandleDeleteAnExpenditureFundProps, 'id'> {
   ids: string[]
+}
+
+export interface IInviteParticipantFormProps {
+  handleInvite: (data: string[]) => void
+  formInviteRef: RefObject<HTMLFormElement>
 }
