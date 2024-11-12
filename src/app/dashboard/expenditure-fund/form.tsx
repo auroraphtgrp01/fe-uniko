@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/libraries/utils'
@@ -9,7 +9,28 @@ import { DataTable } from '@/components/dashboard/DataTable'
 import { initTableConfig } from '@/constants/data-table'
 import DonutChart from '../../../components/core/charts/DonutChart'
 import { Wallet, TrendingUp, TrendingDown, DollarSign, PiggyBank, CreditCard } from 'lucide-react'
+import {
+  ICreateExpenditureFundBody,
+  IExpenditureFund,
+  IExpenditureFundDataFormat,
+  IExpenditureFundDialogOpen,
+  IUpdateExpenditureFundBody
+} from '@/core/expenditure-fund/models/expenditure-fund.interface'
+import { initButtonInHeaders, initEmptyDetailExpenditureFund, initEmptyExpenditureFundDialogOpen } from './constants'
+import ExpenditureFundDialog from './dialog'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
+import { handleCreateExpenditureFund, handleUpdateExpenditureFund, initExpenditureFundDataTable } from './handler'
+import { initQueryOptions } from '@/constants/init-query-options'
+import { IQueryOptions } from '@/types/query.interface'
+import { getColumns } from '@/components/dashboard/ColumnsTable'
 export default function ExpenditureFundForm() {
+  // states
+  const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
+  const [dataTableConfig, setDataTableConfig] = useState({ ...initTableConfig, isVisibleSortType: false })
+  const [dataTable, setDataTable] = useState<IExpenditureFundDataFormat[]>([])
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const [detailData, setDetailData] = useState<IExpenditureFund>(initEmptyDetailExpenditureFund)
+
   const [mockTransactions] = useState<IFlatListData[]>([
     {
       id: '1',
@@ -38,6 +59,33 @@ export default function ExpenditureFundForm() {
     }
   ])
 
+  // memos
+  const titles = ['Name', 'Status', 'Current Amount', 'Currency', 'Owner']
+
+  const columns = useMemo(() => {
+    if (dataTable.length === 0) return []
+    return getColumns<IExpenditureFundDataFormat>({
+      headers: titles,
+      isSort: true
+    })
+  }, [dataTable])
+
+  // hooks
+  const { createExpenditureFund, statusCreate, getAdvancedExpenditureFund, updateExpenditureFund, statusUpdate } =
+    useExpenditureFund()
+  const { advancedExpenditureFundData, isGetAdvancedPending, refetchAdvancedExpendingFund } =
+    getAdvancedExpenditureFund({ query: queryOptions })
+
+  // effects
+  useEffect(() => {
+    if (advancedExpenditureFundData)
+      initExpenditureFundDataTable(isGetAdvancedPending, advancedExpenditureFundData, setDataTableConfig, setDataTable)
+  }, [advancedExpenditureFundData])
+  useEffect(() => {
+    setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
+  }, [dataTableConfig])
+
+  const buttons = initButtonInHeaders({ setIsDialogOpen })
   return (
     <div className='grid h-full grid-cols-1 gap-4'>
       <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
@@ -124,12 +172,56 @@ export default function ExpenditureFundForm() {
           <div className='mt-4'>
             <Card>
               <CardContent>
-                <DataTable columns={[]} data={[]} config={initTableConfig} setConfig={() => {}} />
+                <DataTable
+                  buttons={buttons}
+                  columns={columns}
+                  data={dataTable}
+                  config={dataTableConfig}
+                  setConfig={setDataTableConfig}
+                  onRowClick={(data) => {
+                    const detail = advancedExpenditureFundData?.data.find((item) => item.id === data.id)
+                    if (detail) {
+                      setDetailData(detail)
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailUpdateOpen: true }))
+                    }
+                  }}
+                />
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
+      <ExpenditureFundDialog
+        createDialog={{
+          handleCreate: (data: ICreateExpenditureFundBody) => {
+            handleCreateExpenditureFund({
+              data,
+              setIsDialogOpen,
+              hookCreate: createExpenditureFund,
+              callBackRefetchAPI: refetchAdvancedExpendingFund
+            })
+          },
+          status: statusCreate
+        }}
+        detailUpdateDialog={{
+          handleUpdate: (
+            data: IUpdateExpenditureFundBody,
+            setEditing: React.Dispatch<React.SetStateAction<boolean>>
+          ) => {
+            handleUpdateExpenditureFund({
+              data,
+              hookUpdate: updateExpenditureFund,
+              callBackRefetchAPI: refetchAdvancedExpendingFund,
+              setIsDialogOpen,
+              setEditing
+            })
+          },
+          data: detailData,
+          setDetailData,
+          status: statusUpdate
+        }}
+        commonDialogState={{ setIsDialogOpen, isDialogOpen }}
+      />
     </div>
   )
 }
