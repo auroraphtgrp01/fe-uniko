@@ -60,7 +60,7 @@ export default function ExpenditureFundForm() {
   ])
 
   // memos
-  const titles = ['Name', 'Status', 'Current Amount', 'Currency', 'Owner']
+  const titles = ['Name', 'Status', 'Current Amount', 'Owner']
 
   const columns = useMemo(() => {
     if (dataTable.length === 0) return []
@@ -77,6 +77,12 @@ export default function ExpenditureFundForm() {
     getAdvancedExpenditureFund({ query: queryOptions })
 
   // effects
+  useEffect(() => {
+    console.log('advancedExpenditureFundData', advancedExpenditureFundData)
+  }, [advancedExpenditureFundData])
+  useEffect(() => {
+    console.log('detailData', detailData)
+  }, [detailData])
   useEffect(() => {
     if (advancedExpenditureFundData)
       initExpenditureFundDataTable(isGetAdvancedPending, advancedExpenditureFundData, setDataTableConfig, setDataTable)
@@ -182,7 +188,7 @@ export default function ExpenditureFundForm() {
                     const detail = advancedExpenditureFundData?.data.find((item) => item.id === data.id)
                     if (detail) {
                       setDetailData(detail)
-                      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailUpdateOpen: true }))
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
                     }
                   }}
                 />
@@ -204,16 +210,13 @@ export default function ExpenditureFundForm() {
           status: statusCreate
         }}
         detailUpdateDialog={{
-          handleUpdate: (
-            data: IUpdateExpenditureFundBody,
-            setEditing: React.Dispatch<React.SetStateAction<boolean>>
-          ) => {
+          handleUpdate: (data: IUpdateExpenditureFundBody) => {
             handleUpdateExpenditureFund({
               data,
               hookUpdate: updateExpenditureFund,
               callBackRefetchAPI: refetchAdvancedExpendingFund,
               setIsDialogOpen,
-              setEditing
+              setDetailData
             })
           },
           data: detailData,

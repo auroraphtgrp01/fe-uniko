@@ -1,9 +1,11 @@
+import { ITransaction } from '@/core/transaction/models'
 import { IBaseResponseData } from '@/types/common.i'
 import { RefObject } from 'react'
 
 export interface IExpenditureFundDialogOpen {
   isDialogCreateOpen: boolean
-  isDialogDetailUpdateOpen: boolean
+  isDialogDetailOpen: boolean
+  isDialogUpdateOpen: boolean
   isDialogDeleteOpen: boolean
   isDialogDeleteAllOpen: boolean
 }
@@ -14,12 +16,13 @@ export interface IInitButtonInHeaderProps {
 
 export interface ICreateExpenditureFundBody {
   name: string
-  currency: 'USD' | 'VND' | 'EUR'
+  // currency: ECurrencyUnit
   description?: string
 }
 
 export interface IUpdateExpenditureFundBody extends ICreateExpenditureFundBody {
   status: EFundStatus
+  id: string
 }
 
 export interface ICreateExpenditureFundFormProps {
@@ -42,14 +45,49 @@ export enum ECurrencyUnit {
   EUR = 'EUR'
 }
 
+enum EParticipantRole {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER'
+}
+
+interface IExpenditureFundParticipant {
+  id: string
+  role: EParticipantRole
+  user: {
+    id: string
+    fullName: string
+    email: string
+    phone_number: string
+  }
+}
+
+enum ICategoryTrackerType {
+  DEFAULT = 'DEFAULT',
+  CUSTOM = 'CUSTOM',
+  CONTRIBUTE = 'CONTRIBUTE'
+}
+
+interface IExpenditureFundCategories {
+  id: string
+  name: string
+  description: string
+  trackerType: ICategoryTrackerType
+}
+
 export interface IExpenditureFund {
   id: string
   name: string
   description: string
   status: EFundStatus
   currentAmount: number
-  currency: ECurrencyUnit
+  // currency: ECurrencyUnit
   ownerName: string
+  participants: IExpenditureFundParticipant[]
+  categories: IExpenditureFundCategories[]
+  time: string
+  transactions: ITransaction[]
+  countParticipants: number
 }
 
 export interface IExpenditureFundDataFormat {
@@ -58,7 +96,7 @@ export interface IExpenditureFundDataFormat {
   description: string
   status: JSX.Element
   currentAmount: string
-  currency: string
+  // currency: string
   owner: string
 }
 
@@ -72,20 +110,21 @@ export interface IExpenditureFundDialogProps {
     status: 'error' | 'idle' | 'pending' | 'success'
   }
   detailUpdateDialog: {
-    handleUpdate: (data: IUpdateExpenditureFundBody, setEditing: React.Dispatch<React.SetStateAction<boolean>>) => void
+    handleUpdate: (data: IUpdateExpenditureFundBody) => void
     data: IExpenditureFund
     setDetailData: React.Dispatch<React.SetStateAction<IExpenditureFund>>
     status: 'error' | 'idle' | 'pending' | 'success'
   }
 }
 
+export interface IDetailExpenditureFundProps {
+  detailData: IExpenditureFund
+}
+
 export interface IUpdateExpenditureFundFormProps {
-  handleUpdate: (data: IUpdateExpenditureFundBody, setIsEditing: React.Dispatch<React.SetStateAction<boolean>>) => void
+  handleUpdate: (data: IUpdateExpenditureFundBody) => void
   formUpdateRef: RefObject<HTMLFormElement>
   defaultValues: IUpdateExpenditureFundBody
-  isEditing: boolean
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
-  detailData: IExpenditureFund
 }
 
 export interface IHandleCreateExpenditureFundProps {
@@ -98,5 +137,5 @@ export interface IHandleCreateExpenditureFundProps {
 export interface IHandleUpdateExpenditureFundProps extends Omit<IHandleCreateExpenditureFundProps, 'hookCreate'> {
   data: IUpdateExpenditureFundBody
   hookUpdate: any
-  setEditing: React.Dispatch<React.SetStateAction<boolean>>
+  setDetailData: React.Dispatch<React.SetStateAction<IExpenditureFund>>
 }

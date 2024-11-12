@@ -40,14 +40,16 @@ export const handleCreateExpenditureFund = async ({
 export const handleUpdateExpenditureFund = async ({
   data,
   hookUpdate,
-  setIsDialogOpen,
-  callBackRefetchAPI
+  callBackRefetchAPI,
+  setDetailData,
+  setIsDialogOpen
 }: IHandleUpdateExpenditureFundProps) => {
   hookUpdate(data, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
+        setDetailData((prev) => ({ ...prev, ...res.data }))
         toast.success('Update expenditure fund successfully!')
+        setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
         callBackRefetchAPI()
       }
     }

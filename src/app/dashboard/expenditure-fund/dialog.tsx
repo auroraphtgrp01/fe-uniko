@@ -1,18 +1,15 @@
 import CustomDialog from '@/components/dashboard/Dialog'
 import { initEmptyDetailExpenditureFund } from './constants'
 import { IDialogConfig } from '@/types/common.i'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { t } from 'i18next'
-import {
-  IExpenditureFundDialogProps,
-  IUpdateExpenditureFundBody
-} from '@/core/expenditure-fund/models/expenditure-fund.interface'
+import { IExpenditureFundDialogProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import CreateExpenditureFundForm from '@/components/dashboard/expenditure-fund/create-expenditure-fund'
+import { DetailExpenditureFund } from '@/components/dashboard/expenditure-fund/detail-expenditure-fund'
 import UpdateExpenditureFundForm from '@/components/dashboard/expenditure-fund/update-expenditure-fund'
 
 export default function ExpenditureFundDialog(params: IExpenditureFundDialogProps) {
-  const [isEditing, setIsEditing] = useState(false)
   const formCreateExpenditureFundRef = useRef<HTMLFormElement>(null)
   const formUpdateExpenditureFundRef = useRef<HTMLFormElement>(null)
 
@@ -33,54 +30,52 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
     )
   }
 
-  const detailUpdatesConfigDialog: IDialogConfig = {
-    content: UpdateExpenditureFundForm({
-      formUpdateRef: formUpdateExpenditureFundRef,
-      handleUpdate: detailUpdateDialog.handleUpdate,
-      defaultValues: {
-        currency: detailUpdateDialog.data.currency,
-        description: detailUpdateDialog.data.description,
-        name: detailUpdateDialog.data.name,
-        status: detailUpdateDialog.data.status
-      },
-      detailData: detailUpdateDialog.data,
-      isEditing,
-      setIsEditing
+  const detailConfigDialog: IDialogConfig = {
+    className: 'sm:max-w-[325px] md:max-w-[900px]',
+    content: DetailExpenditureFund({
+      detailData: detailUpdateDialog.data
     }),
     description: 'Detail information of the expenditure fund.',
     title: 'Expenditure Fund Details',
-    isOpen: commonDialogState.isDialogOpen.isDialogDetailUpdateOpen,
+    isOpen: commonDialogState.isDialogOpen.isDialogDetailOpen,
     onClose: () => {
       detailUpdateDialog.setDetailData(initEmptyDetailExpenditureFund)
-      // setIsEditing(false)
-      commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailUpdateOpen: false }))
+      commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
     },
     footer: (
-      <div className='flex'>
-        {isEditing === true ? (
-          <>
-            <Button variant='outline' onClick={() => setIsEditing(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => formUpdateExpenditureFundRef.current?.requestSubmit()}
-              className='ml-2'
-              type='button'
-            >
-              {t('common:button.save')}
-            </Button>
-          </>
-        ) : (
-          <Button onClick={() => setIsEditing(true)}>Update</Button>
-        )}
-      </div>
+      <Button onClick={() => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))}>
+        Update
+      </Button>
+    )
+  }
+
+  const updateConfigDialog: IDialogConfig = {
+    content: UpdateExpenditureFundForm({
+      handleUpdate: detailUpdateDialog.handleUpdate,
+      formUpdateRef: formUpdateExpenditureFundRef,
+      defaultValues: {
+        id: detailUpdateDialog.data.id,
+        description: detailUpdateDialog.data.description,
+        name: detailUpdateDialog.data.name,
+        status: detailUpdateDialog.data.status
+      }
+    }),
+    isOpen: commonDialogState.isDialogOpen.isDialogUpdateOpen,
+    onClose: () => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false })),
+    title: 'Update Expenditure Fund',
+    description: 'Update a new expenditure fund',
+    footer: (
+      <Button onClick={() => formUpdateExpenditureFundRef.current?.requestSubmit()} type='button'>
+        {t('common:button.save')}
+      </Button>
     )
   }
 
   return (
     <div>
       <CustomDialog config={createExpenditureFundDialog} />
-      <CustomDialog config={detailUpdatesConfigDialog} />
+      <CustomDialog config={detailConfigDialog} />
+      <CustomDialog config={updateConfigDialog} />
     </div>
   )
 }

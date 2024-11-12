@@ -17,26 +17,26 @@ export const defineCreateExpenditureFundFormBody =
           autoComplete: 'name'
         }
       },
-      {
-        name: 'currency',
-        type: EFieldType.Select,
-        label: 'Currency',
-        dataSelector: [
-          {
-            value: 'USD',
-            label: 'USD'
-          },
-          {
-            value: 'VND',
-            label: 'VND'
-          },
-          {
-            value: 'EUR',
-            label: 'EUR'
-          }
-        ],
-        placeHolder: 'Select currency *'
-      },
+      // {
+      //   name: 'currency',
+      //   type: EFieldType.Select,
+      //   label: 'Currency',
+      //   dataSelector: [
+      //     {
+      //       value: 'USD',
+      //       label: 'USD'
+      //     },
+      //     {
+      //       value: 'VND',
+      //       label: 'VND'
+      //     },
+      //     {
+      //       value: 'EUR',
+      //       label: 'EUR'
+      //     }
+      //   ],
+      //   placeHolder: 'Select currency *'
+      // },
       {
         name: 'description',
         type: EFieldType.Textarea,
@@ -49,7 +49,7 @@ export const defineCreateExpenditureFundFormBody =
 export const createExpenditureFundSchema = z
   .object({
     name: z.string().trim().min(2).max(256),
-    currency: z.enum(['USD', 'VND', 'EUR']),
+    // currency: z.enum(['USD', 'VND', 'EUR']),
     description: z.any()
   })
   .strict()
