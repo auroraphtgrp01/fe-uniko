@@ -57,7 +57,7 @@ export const initEmptyDetailExpenditureFund = {
   ownerName: '',
   participants: [],
   categories: [],
-  time: formatDateTimeVN(new Date().toString(), true),
+  time: new Date().toISOString(),
   transactions: [],
   countParticipants: 0
 }

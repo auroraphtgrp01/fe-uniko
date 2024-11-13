@@ -92,6 +92,7 @@ import { useUser } from '@/core/users/hooks'
 import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { DetailTransactionDialog } from '@/components/dashboard/transaction/Detail'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 
 export default function TrackerTransactionForm() {
   // states
@@ -135,8 +136,10 @@ export default function TrackerTransactionForm() {
     deleteAnTrackerTransaction,
     deleteMultipleTrackerTransaction
   } = useTrackerTransaction()
+  const { getStatisticExpenditureFund } = useExpenditureFund()
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions, updateTransaction, statusUpdate: statusUpdateTransaction } = useTransaction()
+  const { refetchGetStatisticExpendingFund } = getStatisticExpenditureFund()
   const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
   const { statisticData, refetchStatistic } = getStatisticData(dates || {}, fundId)
   const { advancedTrackerTxData, isGetAdvancedPending, refetchGetAdvancedTrackerTransaction } = getAdvancedData({
@@ -588,6 +591,7 @@ export default function TrackerTransactionForm() {
               },
               callbackOnSuccess: () => {
                 refetchDataOnPage()
+                refetchGetStatisticExpendingFund()
               },
               hookCreate: createTrackerTransaction,
               setIsDialogOpen: setIsDialogOpen,

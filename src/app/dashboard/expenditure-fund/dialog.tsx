@@ -96,7 +96,7 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
       />
     ),
     isOpen: commonDialogState.isDialogOpen.isDialogInviteOpen,
-    onClose: () => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false })),
+    onClose: () => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogInviteOpen: false })),
     title: 'Invite Participant',
     description: 'Invite participant to the expenditure fund',
     footer: (

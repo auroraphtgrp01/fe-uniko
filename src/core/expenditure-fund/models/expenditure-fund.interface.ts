@@ -34,10 +34,12 @@ export interface ICreateExpenditureFundFormProps {
 export type IExpenditureFundResponse = IBaseResponseData<IExpenditureFund>
 export type IAdvancedExpenditureFundResponse = IBaseResponseData<IExpenditureFund[]>
 export type IGetStatisticExpenditureFundResponse = IBaseResponseData<IStatisticExpenditureFund>
-
 export interface IStatisticExpenditureFund {
   totalBalanceSummary: number
+  totalAmountIncomingTransaction: number
+  totalAmountExpenseTransaction: number
   expenditureFunds: IExpenditureFund[]
+  summaryRecentTransactions: ITransaction[]
 }
 
 export enum EFundStatus {

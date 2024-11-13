@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import { CalendarIcon, CreditCard, Pencil, BookUserIcon, FileTextIcon, WalletCardsIcon } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { IUpdateTransactionBody } from '@/core/transaction/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { Button } from '@/components/ui/button'
@@ -21,10 +21,9 @@ import {
 import toast from 'react-hot-toast'
 import {
   defineUpdateTrackerTransactionFormBody,
-  TUpdateTrackerTransactionSchema,
   updateTrackerTransactionSchema
 } from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
-import { UseFormSetValue } from 'react-hook-form'
+import { Pencil2Icon } from '@radix-ui/react-icons'
 
 export default function DetailUpdateTransaction({
   updateTransactionProps,
@@ -35,6 +34,10 @@ export default function DetailUpdateTransaction({
   const submitUpdateTransactionRef = useRef<HTMLFormElement>(null)
   const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
   const formUpdateTrackerTransactionRef = useRef<any>()
+
+  useEffect(() => {
+    console.log('updateTransactionProps', updateTransactionProps.transaction)
+  }, [updateTransactionProps])
 
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
@@ -99,7 +102,6 @@ export default function DetailUpdateTransaction({
         )}
         <div className='space-y-2'>
           <div className='font-semibold'>Ví gửi</div>
-
           {updateTransactionProps.transaction.ofAccount ? (
             <div className='flex items-start gap-3'>
               <Avatar>
@@ -109,22 +111,18 @@ export default function DetailUpdateTransaction({
               </Avatar>
               <div className='flex flex-col'>
                 <span className='font-medium'>{updateTransactionProps.transaction.accountSource?.name}</span>
-                {updateTransactionProps.transaction.accountSource.accountBank && (
-                  <span className='text-sm text-muted-foreground'>
-                    {updateTransactionProps.transaction.ofAccount.accountNo +
-                      ' • ' +
-                      (updateTransactionProps.transaction.accountSource.accountBank.type === 'MB_BANK'
-                        ? 'MB Bank'
-                        : 'N/A')}
-                  </span>
-                )}
+                <span className='text-sm text-muted-foreground'>
+                  {updateTransactionProps.transaction.ofAccount.accountNo +
+                    ' • ' +
+                    (updateTransactionProps.transaction.accountBank.type === 'MB_BANK' ? 'MB Bank' : 'N/A')}
+                </span>
               </div>
             </div>
           ) : (
             <div className='flex items-center space-x-4'>
               <Avatar>
                 <AvatarFallback>
-                  <WalletCardsIcon />
+                  <WalletCardsIcon className='text-muted-foreground' />
                 </AvatarFallback>
               </Avatar>
               <span className='font-medium'>{updateTransactionProps.transaction.accountSource?.name}</span>
@@ -150,6 +148,19 @@ export default function DetailUpdateTransaction({
             </div>
           </div>
         )}
+        <div className='space-y-2'>
+          <div className='font-semibold'>Nội dung chuyển tiền</div>
+          <div className='flex items-start gap-3'>
+            <Avatar>
+              <AvatarFallback className='bg-muted'>
+                <Pencil2Icon className='h-5 w-5 bg-muted' />
+              </AvatarFallback>
+            </Avatar>
+            <div className='flex flex-col'>
+              <span className='text-sm text-muted-foreground'>{updateTransactionProps.transaction.description}</span>
+            </div>
+          </div>
+        </div>
         {updateTrackerTransactionProps && (
           <>
             <div className='flex items-center space-x-4'>

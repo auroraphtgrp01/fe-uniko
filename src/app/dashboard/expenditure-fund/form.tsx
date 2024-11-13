@@ -56,7 +56,6 @@ export default function ExpenditureFundForm() {
   }, [dataTable])
 
   // hooks
-  const { getSummaryRecentTransactions } = useTransaction()
   const {
     createExpenditureFund,
     statusCreate,
@@ -69,10 +68,6 @@ export default function ExpenditureFundForm() {
     inviteParticipantToExpenditureFund,
     statusInviteParticipant
   } = useExpenditureFund()
-  const { dataSummaryRecentTransactions, refetchGetSummaryRecentTransactions, isGetSummaryRecentTransactions } =
-    getSummaryRecentTransactions({
-      fundId
-    })
   const { advancedExpenditureFundData, isGetAdvancedPending, refetchAdvancedExpendingFund } =
     getAdvancedExpenditureFund({ query: queryOptions })
   const { getStatisticExpenditureFundData, isGetStatisticPending, refetchGetStatisticExpendingFund } =
@@ -80,18 +75,15 @@ export default function ExpenditureFundForm() {
 
   // effects
   useEffect(() => {
-    if (getStatisticExpenditureFundData)
+    if (getStatisticExpenditureFundData) {
       setChartData(
         getStatisticExpenditureFundData.data.expenditureFunds.map((item: IExpenditureFund) => ({
           name: item.name,
           value: item.currentAmount
         }))
       )
-  }, [getStatisticExpenditureFundData])
-  useEffect(() => {
-    if (dataSummaryRecentTransactions) {
       setSummaryRecentTransactions(
-        dataSummaryRecentTransactions.data.summaryRecentTransactions.map(
+        getStatisticExpenditureFundData.data.summaryRecentTransactions.map(
           (item): IFlatListData => ({
             id: item.id,
             amount: formatCurrency(item.amount, 'đ', 'vi-VN'),
@@ -102,10 +94,7 @@ export default function ExpenditureFundForm() {
         )
       )
     }
-  }, [dataSummaryRecentTransactions])
-  useEffect(() => {
-    console.log('detailData', detailData)
-  }, [detailData])
+  }, [getStatisticExpenditureFundData])
   useEffect(() => {
     if (advancedExpenditureFundData)
       initExpenditureFundDataTable(isGetAdvancedPending, advancedExpenditureFundData, setDataTableConfig, setDataTable)
@@ -133,7 +122,7 @@ export default function ExpenditureFundForm() {
                   onClick={(data) => {
                     console.log('Clicked transaction:', data)
                   }}
-                  isLoading={isGetSummaryRecentTransactions}
+                  isLoading={isGetStatisticPending}
                 />
               </div>
             </CardContent>
@@ -179,7 +168,7 @@ export default function ExpenditureFundForm() {
                   <div className='text-right'>
                     <p className='text-2xl font-bold text-white'>
                       {formatCurrency(
-                        dataSummaryRecentTransactions?.data.totalAmountIncomingTransaction || 0,
+                        getStatisticExpenditureFundData?.data.totalAmountIncomingTransaction || 0,
                         'đ',
                         'vi-VN'
                       )}
@@ -200,7 +189,7 @@ export default function ExpenditureFundForm() {
                   <div className='text-right'>
                     <p className='text-2xl font-bold text-white'>
                       {formatCurrency(
-                        dataSummaryRecentTransactions?.data.totalAmountExpenseTransaction || 0,
+                        getStatisticExpenditureFundData?.data.totalAmountExpenseTransaction || 0,
                         'đ',
                         'vi-VN'
                       )}

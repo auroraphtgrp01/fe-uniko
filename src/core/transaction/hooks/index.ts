@@ -7,7 +7,6 @@ import { useGetTodayTransactions } from './useGetTodayTransactions'
 import { useUpdateTransaction } from './useUpdateTransaction'
 import { useDeleteAnTransaction } from './useDeleteAnTransaction'
 import { useDeleteMultipleTransaction } from './useDeleteMultipleTransaction'
-import { useGetSummaryRecentTransactions } from './useGetSummaryRecentTransaction'
 
 export const useTransaction = (opts?: IUseQueryHookOptions) => {
   const { status: statusUpdate, mutate: updateTransaction } = useUpdateTransaction(opts)
@@ -19,7 +18,6 @@ export const useTransaction = (opts?: IUseQueryHookOptions) => {
     refetchPayment: useRefetchPayment,
     getUnclassifiedTransactions: useGetUnclassifiedTransactions,
     getTodayTransactions: useGetTodayTransactions,
-    getSummaryRecentTransactions: useGetSummaryRecentTransactions,
     updateTransaction,
     statusUpdate,
     deleteAnTransaction,

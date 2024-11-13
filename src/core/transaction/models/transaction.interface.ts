@@ -31,16 +31,14 @@ export interface ITransaction {
   time: string
   TrackerTransaction: ITrackerTransaction | null
   accountSource: IAccountSource
+  accountBank: {
+    id: string
+    type: string
+  }
 }
 
 export type IGetTransactionResponse = IBaseResponseData<ITransaction[]>
-export type IGetSummaryRecentTransactionResponse = IBaseResponseData<ISummaryRecentTransaction>
 
-interface ISummaryRecentTransaction {
-  totalAmountIncomingTransaction: number
-  totalAmountExpenseTransaction: number
-  summaryRecentTransactions: ITransaction[]
-}
 export interface IDialogTransaction {
   isDialogDetailOpen: boolean
   isDialogTransactionTodayOpen: boolean
