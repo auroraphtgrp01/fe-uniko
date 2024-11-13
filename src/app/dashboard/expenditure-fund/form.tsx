@@ -42,8 +42,6 @@ export default function ExpenditureFundForm() {
   const [summaryRecentTransactions, setSummaryRecentTransactions] = useState<IFlatListData[]>([])
   const [chartData, setChartData] = useState<{ name: string; value: number }[]>([])
 
-  const { fundId } = useStoreLocal()
-
   // memos
   const titles = ['Name', 'Status', 'Current Amount', 'Owner']
 
@@ -112,7 +110,6 @@ export default function ExpenditureFundForm() {
             <CardHeader className='py-4'>
               <div className='flex items-center justify-between'>
                 <CardTitle>Summary Recent Transactions</CardTitle>
-                <Button variant='default'>Refresh</Button>
               </div>
             </CardHeader>
             <CardContent>

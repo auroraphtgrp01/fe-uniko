@@ -30,14 +30,14 @@ export function DetailExpenditureFund({ detailData }: IDetailExpenditureFundProp
         <span>{detailData.name}</span>
         <Badge className={getStatusColor(detailData.status)}>{detailData.status}</Badge>
       </div>
-      <Tabs defaultValue='overview' className='w-full'>
-        <TabsList className='grid w-full grid-cols-3'>
+      <Tabs defaultValue='overview' className='h-[23rem] w-full'>
+        <TabsList className='grid w-full grid-cols-3 pb-10'>
           <TabsTrigger value='overview'>Overview</TabsTrigger>
           <TabsTrigger value='transactions'>Transactions</TabsTrigger>
           <TabsTrigger value='statistics'>Statistics</TabsTrigger>
         </TabsList>
-        <TabsContent value='overview' className='space-y-4'>
-          <div className='mt-3 rounded-lg bg-muted p-4'>
+        <TabsContent value='overview' className='h-[23rem] space-y-4'>
+          <div className='rounded-lg bg-muted p-3'>
             <div className='mb-2 flex items-center justify-between'>
               <span className='text-sm font-medium'>Current Balance</span>
               <span className='text-2xl font-bold'>{formatCurrency(detailData.currentAmount, 'đ')}</span>
@@ -78,7 +78,7 @@ export function DetailExpenditureFund({ detailData }: IDetailExpenditureFundProp
           </div>
           <div>
             <h3 className='mb-2 text-sm font-medium'>Participants</h3>
-            <div className='flex flex-wrap gap-2'>
+            <div className='flex gap-2'>
               {detailData.participants.map((participant, index) => (
                 <Badge key={index} variant='outline'>
                   {participant.user.fullName}
@@ -93,13 +93,16 @@ export function DetailExpenditureFund({ detailData }: IDetailExpenditureFundProp
             </div>
           </div>
         </TabsContent>
-        <TabsContent value='transactions' className='space-y-4'>
+        <TabsContent value='transactions' className='h-[23rem] space-y-4'>
           <h3 className='mb-2 text-lg font-semibold'>Recent Transactions</h3>
           <div className='space-y-2'>
             {detailData.transactions.length > 0 ? (
               detailData.transactions.map((transaction) => (
-                <div key={transaction.id} className='flex items-center justify-between rounded bg-muted p-2 text-sm'>
-                  <div className='flex items-center gap-2'>
+                <div
+                  key={transaction.id}
+                  className='grid grid-cols-5 grid-rows-1 items-center gap-4 rounded bg-muted p-2 text-sm'
+                >
+                  <div className='col-span-3 flex items-center gap-2'>
                     {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? (
                       <ArrowUpIcon className='h-4 w-4 text-green-500' />
                     ) : (
@@ -107,25 +110,29 @@ export function DetailExpenditureFund({ detailData }: IDetailExpenditureFundProp
                     )}
                     <span>{transaction.TrackerTransaction ? transaction.TrackerTransaction.reasonName : 'N/A'}</span>
                   </div>
-                  <div className='flex items-center gap-4'>
+                  <div className='col-start-4'>
                     <Badge variant={transaction.TrackerTransaction !== undefined ? 'outline' : 'greenPastel1'}>
                       {transaction.TrackerTransaction
                         ? transaction.TrackerTransaction.TrackerType.name
                         : 'Unclassified'}
                     </Badge>
-                    <span
-                      className={
-                        transaction.direction === ETypeOfTrackerTransactionType.INCOMING
-                          ? 'text-green-500'
-                          : 'text-red-500'
-                      }
-                    >
-                      {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? '+' : '-'}
-                      {formatCurrency(transaction.amount, 'đ')}
-                    </span>
-                    <span className='text-muted-foreground'>
-                      {/* {formatDateTimeVN(transaction.transactionDateTime, false)} */}
-                    </span>
+                  </div>
+                  <div className='col-start-5 flex gap-2 text-end'>
+                    <div className='flex text-end'>
+                      <span
+                        className={
+                          transaction.direction === ETypeOfTrackerTransactionType.INCOMING
+                            ? 'font-semibold text-green-500'
+                            : 'font-semibold text-red-500'
+                        }
+                      >
+                        {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? '+' : '-'}
+                        {formatCurrency(transaction.amount, 'đ')}
+                      </span>
+                      <span className='text-muted-foreground'>
+                        {/* {formatDateTimeVN(transaction.transactionDateTime, false)} */}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))
@@ -139,15 +146,15 @@ export function DetailExpenditureFund({ detailData }: IDetailExpenditureFundProp
             )}
           </div>
         </TabsContent>
-        <TabsContent value='statistics' className='space-y-4'>
+        <TabsContent value='statistics' className='h-[23rem] space-y-4'>
           {true ? (
-            <div className='mt-12 flex flex-col items-center justify-center'>
+            <div className='flex flex-col items-center justify-center pt-20'>
               <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
               <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
             </div>
           ) : (
             <>
-              <h3 className='mb-2 text-lg font-semibold'>Monthly Spending</h3>
+              <h3 className='text-lg font-semibold'>Monthly Spending</h3>
               {/* Chart */}
             </>
           )}
