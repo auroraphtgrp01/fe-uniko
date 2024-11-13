@@ -23,7 +23,8 @@ import {
   ICustomTrackerTransaction,
   IDialogTrackerTransaction,
   ITrackerTransaction,
-  IUpdateTrackerTransactionBody
+  IUpdateTrackerTransactionBody,
+  TTrackerTransactionActions
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import {
   initButtonInDataTableHeader,
@@ -67,7 +68,9 @@ import {
   handleUpdateTrackerTxType,
   handleUpdateTrackerTransaction,
   updateCacheDataDeleteFeat,
-  modifyFlatListData
+  modifyFlatListData,
+  handleDeleteTrackerTransaction,
+  handleDeleteMultipleTrackerTransaction
 } from './handlers'
 import {
   GET_ADVANCED_TRANSACTION_KEY,
@@ -93,6 +96,10 @@ import { EUserStatus, IUserPayloadForSocket } from '@/types/user.i'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { DetailTransactionDialog } from '@/components/dashboard/transaction/Detail'
 import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
+import {
+  GET_ADVANCED_EXPENDITURE_FUND_KEY,
+  GET_STATISTIC_EXPENDITURE_FUND_KEY
+} from '@/core/expenditure-fund/constants'
 
 export default function TrackerTransactionForm() {
   // states
@@ -120,11 +127,12 @@ export default function TrackerTransactionForm() {
   )
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   // hooks
+  // declare hooks
   const socket = useSocket()
+  const { user, fundId } = useStoreLocal()
   const { getMe } = useUser()
-  const { isGetMeUserPending } = getMe(true)
-  const { user, fundId, setFundId, fundArr, setFundArr } = useStoreLocal()
   const { t } = useTranslation(['trackerTransaction', 'common'])
+  const { isGetMeUserPending } = getMe(true)
   const { getAllAccountSource } = useAccountSource()
   const {
     getAdvancedData,
@@ -136,27 +144,28 @@ export default function TrackerTransactionForm() {
     deleteAnTrackerTransaction,
     deleteMultipleTrackerTransaction
   } = useTrackerTransaction()
-  const { getStatisticExpenditureFund } = useExpenditureFund()
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions, updateTransaction, statusUpdate: statusUpdateTransaction } = useTransaction()
-  const { refetchGetStatisticExpendingFund } = getStatisticExpenditureFund()
   const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
-  const { statisticData, refetchStatistic } = getStatisticData(dates || {}, fundId)
-  const { advancedTrackerTxData, isGetAdvancedPending, refetchGetAdvancedTrackerTransaction } = getAdvancedData({
+  const { statisticData } = getStatisticData(dates || {}, fundId)
+  const { advancedTrackerTxData, isGetAdvancedPending } = getAdvancedData({
     query: queryOptions,
     fundId
   })
-  const refetchDataOnPage = () => {
-    refetchGetAdvancedTrackerTransaction()
-    refetchStatistic()
-    refetchGetUnclassifiedTxs()
-    resetTransaction()
-  }
+
+  // fetch data
   const { dataUnclassifiedTxs, refetchGetUnclassifiedTxs } = getUnclassifiedTransactions({
     query: uncTableQueryOptions,
     fundId
   })
   const { getAllData: getAllAccountSourceData } = getAllAccountSource(fundId)
+
+  // custom hooks
+  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => {})
+  const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
+    [GET_STATISTIC_EXPENDITURE_FUND_KEY],
+    () => {}
+  )
   const { setData: setCacheTrackerTxCreateClassify, resetData: resetCacheTrackerTx } =
     useUpdateModel<IAdvancedTrackerTransactionResponse>(
       [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
@@ -187,14 +196,33 @@ export default function TrackerTransactionForm() {
     }
   )
   const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
-  const { resetData: resetTransaction } = useUpdateModel<IGetTransactionResponse>(
+  const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY],
     updateCacheDataTransactionForClassify
   )
 
-  // memos
-  const titles = ['Reason Name', 'Type', 'Tracker Type', 'Amount', 'Transaction Date', 'Account Source']
+  // functions
+  const actionMap: Record<TTrackerTransactionActions, () => void> = {
+    getTransactions: resetCacheTransaction,
+    getTodayTransactions: resetCacheTodayTxs,
+    getUnclassifiedTransactions: resetCacheUnclassifiedTxs,
+    getAllAccountSource: resetAccountSource,
+    getStatistic: resetCacheStatistic,
+    getAllTrackerTransactionType: refetchTrackerTransactionType,
+    getTrackerTransaction: resetCacheTrackerTx,
+    getStatisticExpenditureFund: resetCacheStatisticExpenditureFund,
+    getExpenditureFund: resetCacheExpenditureFund
+  }
+  const callBackRefetchTrackerTransactionPage = (actionMaps: TTrackerTransactionActions[]) => {
+    actionMaps.forEach((action) => {
+      if (actionMap[action]) {
+        actionMap[action]()
+      }
+    })
+  }
 
+  const titles = ['Reason Name', 'Type', 'Tracker Type', 'Amount', 'Transaction Date', 'Account Source']
+  // memos
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
     return getColumns<ICustomTrackerTransaction>({
@@ -242,7 +270,6 @@ export default function TrackerTransactionForm() {
       }))
     }
   }, [dataUnclassifiedTxs])
-
   useEffect(() => {
     if (advancedTrackerTxData && statisticData?.data)
       setTableData(
@@ -252,7 +279,6 @@ export default function TrackerTransactionForm() {
         )
       )
   }, [advancedTrackerTxData, statisticData])
-
   useEffect(() => {
     if (statisticData) {
       setChartData(statisticData.data)
@@ -454,20 +480,14 @@ export default function TrackerTransactionForm() {
                   isDialogOpen: isDialogOpen.isDialogDeleteOpen,
                   onDelete: () => {
                     if (idDeletes.length > 0)
-                      deleteAnTrackerTransaction(
-                        { id: idDeletes[0] },
-                        {
-                          onSuccess: (res: any) => {
-                            if (res.statusCode === 200 || res.statusCode === 201) {
-                              refetchDataOnPage()
-                              setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                              setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                              setIdDeletes([])
-                              toast.success('Delete transaction successfully')
-                            }
-                          }
-                        }
-                      )
+                      handleDeleteTrackerTransaction({
+                        hookDelete: deleteAnTrackerTransaction,
+                        id: idDeletes[0],
+                        callBackOnSuccess: callBackRefetchTrackerTransactionPage,
+                        setIdDeletes,
+                        setIsDialogOpen,
+                        setDataTableConfig
+                      })
                   },
                   onOpen: (rowData: any) => {
                     setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
@@ -550,11 +570,7 @@ export default function TrackerTransactionForm() {
               data,
               setIsEditing,
               hookUpdate: updateTrackerTransaction,
-              hookResetTransactions: resetTransaction,
-              hookResetAccountSource: resetAccountSource,
-              hookResetCacheStatistic: resetCacheStatistic,
-              hookResetTodayTxs: resetCacheTodayTxs,
-              hookResetCacheTrackerTransaction: resetCacheTrackerTx,
+              callBackOnSuccess: callBackRefetchTrackerTransactionPage,
               setDataTableConfig,
               setIsDialogOpen
             }),
@@ -568,17 +584,11 @@ export default function TrackerTransactionForm() {
                 ...data,
                 fundId
               },
-              callBackOnSuccess: () => {
-                refetchDataOnPage()
-              },
-              hookCreate: classifyTransaction,
-              hookResetCacheUnclassified: resetCacheUnclassifiedTxs,
-              hookResetCacheStatistic: resetCacheStatistic,
-              hookSetTrackerTx: setCacheTrackerTxCreateClassify,
-              hookSetCacheToday: resetCacheTodayTxs,
-              hookResetCacheTransaction: resetTransaction,
+              callBackOnSuccess: callBackRefetchTrackerTransactionPage,
+              hookClassify: classifyTransaction,
               setIsDialogOpen,
-              setUncDataTableConfig: setDataTableUnclassifiedConfig
+              setUncDataTableConfig: setDataTableUnclassifiedConfig,
+              setDataTableConfig: setDataTableConfig
             })
           }
         }}
@@ -589,10 +599,7 @@ export default function TrackerTransactionForm() {
                 ...data,
                 fundId
               },
-              callbackOnSuccess: () => {
-                refetchDataOnPage()
-                refetchGetStatisticExpendingFund()
-              },
+              callbackOnSuccess: callBackRefetchTrackerTransactionPage,
               hookCreate: createTrackerTransaction,
               setIsDialogOpen: setIsDialogOpen,
               setUncDataTableConfig: setDataTableUnclassifiedConfig,
@@ -610,12 +617,9 @@ export default function TrackerTransactionForm() {
             setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
           ) => {
             handleCreateTrackerTxType({
-              payload: {
-                ...data,
-                fundId
-              },
+              payload: data,
               hookCreate: createTrackerTxType,
-              hookUpdateCache: refetchTrackerTransactionType,
+              callBackOnSuccess: callBackRefetchTrackerTransactionPage,
               setIsCreating
             })
           },
@@ -647,24 +651,16 @@ export default function TrackerTransactionForm() {
         customDescription='Bạn chắc chắn muốn xóa tất cả dữ liệu này?'
         onDelete={() => {
           if (idDeletes.length > 0)
-            deleteMultipleTrackerTransaction(
-              { ids: idDeletes },
-              {
-                onSuccess: (res: any) => {
-                  if (res.statusCode === 200 || res.statusCode === 201) {
-                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
-                    // resetCacheTrackerTx()
-                    // resetTransaction()
-                    // resetCacheUnclassifiedTxs()
-                    // resetCacheTodayTxs()
-                    // resetCacheStatistic()
-                    setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                    setIdDeletes([])
-                    toast.success('Delete all tracker transaction successfully')
-                  }
-                }
-              }
-            )
+            handleDeleteMultipleTrackerTransaction({
+              hookDelete: deleteMultipleTrackerTransaction,
+              ids: idDeletes,
+              callBackOnSuccess: callBackRefetchTrackerTransactionPage,
+              setIdDeletes,
+              setIsDialogOpen,
+              setDataTableConfig,
+              setTodayDataTableConfig: setDataTableUnclassifiedConfig,
+              setUncDataTableConfig: setDataTableUnclassifiedConfig
+            })
         }}
         onClose={() => {
           setIdDeletes([])

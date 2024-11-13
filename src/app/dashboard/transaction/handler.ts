@@ -7,7 +7,8 @@ import {
   IGetTransactionResponse,
   ITransaction,
   ITransactionSummary,
-  IUpdateTransactionBody
+  IUpdateTransactionBody,
+  TTransactionActions
 } from '@/core/transaction/models'
 import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import React from 'react'
@@ -156,33 +157,27 @@ export const handleUpdateTransaction = ({
   data,
   setIsEditing,
   hookUpdate,
-  hookSetCacheTransaction,
-  hookResetCacheAccountSource,
-  hookResetStatistic,
-  hookSetCacheTodayTransaction,
-  hookResetCacheTrackerTransaction,
   setDataTableConfig,
-  setDetailDialog
+  setDetailDialog,
+  callBackOnSuccess
 }: {
   data: IUpdateTransactionBody
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
   hookUpdate: any
-  hookSetCacheTransaction: any
-  hookResetCacheAccountSource: any
-  hookResetStatistic: any
-  hookSetCacheTodayTransaction: any
-  hookResetCacheTrackerTransaction: any
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDetailDialog: React.Dispatch<React.SetStateAction<ITransaction>>
+  callBackOnSuccess: (actions: TTransactionActions[]) => void
 }) => {
   hookUpdate(data, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200) {
-        hookSetCacheTransaction(res.data)
-        hookResetCacheAccountSource()
-        hookResetStatistic()
-        hookSetCacheTodayTransaction(res.data)
-        hookResetCacheTrackerTransaction()
+        callBackOnSuccess([
+          'getAllAccountSource',
+          'getTransactions',
+          'getTodayTransactions',
+          'getStatistic',
+          'getUnclassifiedTransactions'
+        ])
         toast.success('Update transaction successfully!')
         setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
         setDetailDialog(res.data)
@@ -190,4 +185,90 @@ export const handleUpdateTransaction = ({
       }
     }
   })
+}
+
+export const handleDeleteTransaction = ({
+  callBackOnSuccess,
+  hookDelete,
+  setIdDeletes,
+  setIsDialogOpen,
+  setUncDataTableConfig,
+  setTodayDataTableConfig,
+  setDataTableConfig,
+  id
+}: {
+  hookDelete: any
+  id: string
+  setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
+  setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setTodayDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  callBackOnSuccess: (actions: TTransactionActions[]) => void
+}) => {
+  hookDelete(
+    { id },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackOnSuccess([
+            'getTransactions',
+            'getUnclassifiedTransactions',
+            'getTodayTransactions',
+            'getStatistic',
+            'getAllAccountSource'
+          ])
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIdDeletes([])
+          toast.success('Delete account source successfully')
+        }
+      }
+    }
+  )
+}
+
+export const handleDeleteMultipleTransaction = ({
+  callBackOnSuccess,
+  hookDelete,
+  setIdDeletes,
+  setIsDialogOpen,
+  setUncDataTableConfig,
+  setTodayDataTableConfig,
+  setDataTableConfig,
+  ids
+}: {
+  hookDelete: any
+  ids: string[]
+  setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
+  setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setTodayDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  callBackOnSuccess: (actions: TTransactionActions[]) => void
+}) => {
+  hookDelete(
+    { ids },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackOnSuccess([
+            'getTransactions',
+            'getUnclassifiedTransactions',
+            'getTodayTransactions',
+            'getStatistic',
+            'getAllAccountSource'
+          ])
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIdDeletes([])
+          toast.success('Delete all transaction successfully')
+        }
+      }
+    }
+  )
 }

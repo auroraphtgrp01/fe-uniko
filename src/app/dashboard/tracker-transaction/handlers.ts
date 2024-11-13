@@ -4,16 +4,19 @@ import {
   IDialogTrackerTransaction,
   ITrackerTransaction,
   ITrackerTransactionResponse,
-  IUpdateTrackerTransactionBody
+  IUpdateTrackerTransactionBody,
+  TTrackerTransactionActions
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import {
   IClassifyTransactionBody,
   ICreateTrackerTransactionBody,
   IDataTransactionTable,
+  IDialogTransaction,
   IGetTransactionResponse,
   ITransaction,
   ITransactionSummary,
-  IUpdateTransactionBody
+  IUpdateTransactionBody,
+  TTransactionActions
 } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm, initTrackerTypeForm } from '../transaction/constants'
@@ -50,12 +53,20 @@ export const handleCreateTrackerTransaction = async ({
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
-  callbackOnSuccess?: () => void
+  callbackOnSuccess: (actions: TTrackerTransactionActions[]) => void
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        if (callbackOnSuccess) callbackOnSuccess()
+        callbackOnSuccess([
+          'getTrackerTransaction',
+          'getStatistic',
+          'getTodayTransactions',
+          'getTransactions',
+          'getAllAccountSource',
+          'getStatisticExpenditureFund',
+          'getStatisticExpenditureFund'
+        ])
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
@@ -68,53 +79,38 @@ export const handleCreateTrackerTransaction = async ({
 export const handleClassifyTransaction = async ({
   payload,
   setIsDialogOpen,
-  hookCreate,
-  hookResetCacheUnclassified,
-  hookSetCacheToday,
-  hookResetCacheStatistic,
-  hookSetTrackerTx,
-  hookSetCacheTransaction,
-  hookResetCacheTransaction,
+  hookClassify,
   setUncDataTableConfig,
   setTodayDataTableConfig,
   setDataTableConfig,
-  hookResetTrackerTx,
   setIsEditing,
   callBackOnSuccess
 }: {
   payload: IClassifyTransactionBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
-  hookCreate: any
-  hookResetCacheUnclassified: any
-  hookSetTrackerTx?: any
-  hookResetTrackerTx?: any
-  hookResetCacheStatistic: any
-  hookSetCacheToday: any
-  hookSetCacheTransaction?: any
-  callBackOnSuccess?: () => void
-  hookResetCacheTransaction?: any
+  hookClassify: any
+  callBackOnSuccess: (actions: TTransactionActions[]) => void
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
-  hookCreate(payload, {
+  hookClassify(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        if (hookSetCacheTransaction) hookSetCacheTransaction(res.data)
-        else hookResetCacheTransaction()
-        hookResetCacheUnclassified()
-        hookSetCacheToday(res.data)
-        if (hookSetTrackerTx) hookSetTrackerTx(res.data)
-        else if (hookResetTrackerTx) hookResetTrackerTx()
-        hookResetCacheStatistic()
+        callBackOnSuccess([
+          'getTransactions',
+          'getUnclassifiedTransactions',
+          'getTodayTransactions',
+          'getStatistic',
+          'getTrackerTransaction'
+        ])
         if (setUncDataTableConfig) setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setDataTableConfig) setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-        toast.success('Classify transaction successfully!')
-        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
         if (setIsEditing) setIsEditing(false)
-        if (callBackOnSuccess) callBackOnSuccess()
+        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
+        toast.success('Classify transaction successfully!')
       }
     }
   })
@@ -197,18 +193,18 @@ export const updateCacheDataDeleteFeat = (
 export const handleCreateTrackerTxType = ({
   payload,
   hookCreate,
-  hookUpdateCache,
-  setIsCreating
+  setIsCreating,
+  callBackOnSuccess
 }: {
   payload: ITrackerTransactionTypeBody
   hookCreate: any
-  hookUpdateCache: any
   setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+  callBackOnSuccess: (actions: TTransactionActions[]) => void
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        hookUpdateCache(res.data)
+        callBackOnSuccess(['getAllTrackerTransactionType'])
         toast.success('Create tracker transaction type successfully!')
         setIsCreating(false)
       }
@@ -332,38 +328,33 @@ export const handleCreateTrackerType = ({
 export const handleUpdateTrackerTransaction = async ({
   data,
   hookUpdate,
-  hookResetCacheTrackerTransaction,
-  hookResetCacheStatistic,
-  hookResetTodayTxs,
-  hookResetTransactions,
-  hookResetAccountSource,
   setDataTableConfig,
   setIsEditing,
-  setIsDialogOpen
+  setIsDialogOpen,
+  callBackOnSuccess
 }: {
   data: IUpdateTrackerTransactionBody
   hookUpdate: any
-  hookResetCacheTrackerTransaction: any
-  hookResetCacheStatistic: any
-  hookResetTodayTxs: any
-  hookResetTransactions: any
-  hookResetAccountSource: any
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  callBackOnSuccess: (actions: TTrackerTransactionActions[]) => void
 }) => {
   hookUpdate(data, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200) {
-        hookResetCacheTrackerTransaction()
-        hookResetCacheStatistic()
-        hookResetTodayTxs()
-        hookResetTransactions()
-        hookResetAccountSource()
+        callBackOnSuccess([
+          'getTrackerTransaction',
+          'getStatistic',
+          'getTodayTransactions',
+          'getTransactions',
+          'getAllAccountSource',
+          'getExpenditureFund'
+        ])
         setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
-        toast.success('Update transaction successfully!')
         setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
         setIsEditing(false)
+        toast.success('Update transaction successfully!')
       }
     }
   })
@@ -377,4 +368,86 @@ export const modifyFlatListData = (data: ITransaction[]): IFlatListData[] => {
     direction: item.direction as ETypeOfTrackerTransactionType,
     transactionDateTime: formatDateTimeVN(item.transactionDateTime, true)
   }))
+}
+
+export const handleDeleteTrackerTransaction = ({
+  id,
+  hookDelete,
+  callBackOnSuccess,
+  setDataTableConfig,
+  setIdDeletes,
+  setIsDialogOpen
+}: {
+  callBackOnSuccess: (actions: TTrackerTransactionActions[]) => void
+  id: string
+  hookDelete: any
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+}) => {
+  hookDelete(
+    { id },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackOnSuccess([
+            'getStatistic',
+            'getTransactions',
+            'getUnclassifiedTransactions',
+            'getTodayTransactions',
+            'getTrackerTransaction'
+          ])
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIdDeletes([])
+          toast.success('Delete transaction successfully')
+        }
+      }
+    }
+  )
+}
+
+export const handleDeleteMultipleTrackerTransaction = ({
+  callBackOnSuccess,
+  hookDelete,
+  setIdDeletes,
+  setIsDialogOpen,
+  setUncDataTableConfig,
+  setTodayDataTableConfig,
+  setDataTableConfig,
+  ids
+}: {
+  hookDelete: any
+  ids: string[]
+  setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
+  setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setTodayDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  callBackOnSuccess: (actions: TTrackerTransactionActions[]) => void
+}) => {
+  hookDelete(
+    { ids },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackOnSuccess([
+            'getTransactions',
+            'getUnclassifiedTransactions',
+            'getTodayTransactions',
+            'getStatistic',
+            'getAllAccountSource',
+            'getExpenditureFund',
+            'getTrackerTransaction'
+          ])
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+          setIdDeletes([])
+          toast.success('Delete all transaction successfully')
+        }
+      }
+    }
+  )
 }

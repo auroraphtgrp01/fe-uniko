@@ -109,3 +109,8 @@ export const initEmptyTransactionSummaryData = {
   },
   unclassifiedTransaction: { count: 0, incomeAmount: 0, expenseAmount: 0, data: [] }
 }
+
+export const initCallBackRefetchTransactionPage = {
+  advancedData: false,
+  accountSourceData: false
+}

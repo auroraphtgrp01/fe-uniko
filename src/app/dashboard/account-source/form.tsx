@@ -36,6 +36,7 @@ import { useTranslation } from 'react-i18next'
 import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
 import toast from 'react-hot-toast'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
+import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
@@ -62,6 +63,7 @@ export default function AccountSourceForm() {
     deleteAnAccountSource,
     deleteMultipleAccountSource
   } = useAccountSource()
+  const { getStatisticData } = useTrackerTransaction()
   const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
   const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
   const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
@@ -71,10 +73,6 @@ export default function AccountSourceForm() {
   const { setData: setDataUpdate, resetData: resetDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
     [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataUpdate
-  )
-  const { setData: setDataForDeleteFeat } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
-    updateCacheDataForDeleteFeat
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})

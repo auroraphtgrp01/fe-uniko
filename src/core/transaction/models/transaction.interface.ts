@@ -122,3 +122,12 @@ export interface IClassifyTransactionFormProps
   setOpenEditDialog: React.Dispatch<React.SetStateAction<boolean>>
   openEditDialog: boolean
 }
+
+export type TTransactionActions =
+  | 'getTransactions'
+  | 'getTodayTransactions'
+  | 'getUnclassifiedTransactions'
+  | 'getAllAccountSource'
+  | 'getStatistic'
+  | 'getAllTrackerTransactionType'
+  | 'getTrackerTransaction'

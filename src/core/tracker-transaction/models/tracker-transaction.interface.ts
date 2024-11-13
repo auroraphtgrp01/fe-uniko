@@ -207,3 +207,14 @@ export interface IFundOfUser {
   currentAmount: string
   currency: string
 }
+
+export type TTrackerTransactionActions =
+  | 'getTransactions'
+  | 'getTodayTransactions'
+  | 'getUnclassifiedTransactions'
+  | 'getAllAccountSource'
+  | 'getStatistic'
+  | 'getAllTrackerTransactionType'
+  | 'getTrackerTransaction'
+  | 'getStatisticExpenditureFund'
+  | 'getExpenditureFund'
