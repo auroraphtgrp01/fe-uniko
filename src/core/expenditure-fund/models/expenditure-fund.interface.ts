@@ -69,6 +69,7 @@ export interface IExpenditureFundParticipant {
   id: string
   role: EParticipantRole
   status: 'PENDING' | 'ACCEPTED'
+  subEmail: string | null
   user: {
     id: string
     fullName: string

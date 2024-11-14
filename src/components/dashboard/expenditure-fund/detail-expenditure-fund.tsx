@@ -238,7 +238,7 @@ export function DetailExpenditureFund({
                     participant.role === 'OWNER' ? 'bg-yellow-500 text-yellow-900' : 'bg-gray-500 text-gray-900'
                   }
                 >
-                  {participant.user.fullName}
+                  {participant.user?.fullName ?? 'N/A'}
                 </Badge>
               ))}
             </div>
@@ -357,14 +357,12 @@ export function DetailExpenditureFund({
                   <div key={participant.id} className='flex items-center justify-between rounded-lg p-2'>
                     <div className='flex items-center space-x-3'>
                       <Avatar>
-                        <AvatarImage
-                          src={participant.user.avatar === null ? AvatarDefault.src : participant.user.avatar}
-                        />
-                        <AvatarFallback>{participant.user.fullName.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={participant.user?.avatar ?? AvatarDefault.src} />
+                        <AvatarFallback>{participant.user?.fullName.charAt(0) ?? 'N/A'}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className='text-sm font-medium'>{participant.user.fullName}</p>
-                        <p className='text-xs'>{participant.user.email}</p>
+                        <p className='text-sm font-medium'>{participant.user?.fullName ?? 'N/A'}</p>
+                        <p className='text-xs'>{participant.user?.email ?? participant?.subEmail}</p>
                       </div>
                     </div>
                     <div className='flex items-center space-x-2'>

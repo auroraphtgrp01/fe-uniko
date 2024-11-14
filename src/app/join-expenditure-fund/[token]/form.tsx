@@ -7,8 +7,6 @@ import Image from 'next/image'
 import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 
 export default function JoinExpenditureFund({ token }: { token: string }) {
-  console.log('JoinExpenditureFund', token)
-
   const { joinExpenditureFund } = useExpenditureFund()
   const { isJoinExpenditureFundPending, joinExpenditureFundData } = joinExpenditureFund({ token })
   return (
