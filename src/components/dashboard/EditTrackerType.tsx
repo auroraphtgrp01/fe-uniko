@@ -15,6 +15,7 @@ import {
 import FormZod from '../core/FormZod'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import {
   defineEditTrackerTypeBody,
   editTrackerTypeSchema
@@ -31,11 +32,16 @@ export default function EditTrackerTypeDialog({
   handleUpdateTrackerType,
   expenditureFund
 }: IEditTrackerTypeDialogProps) {
+  const { isDeleteOne, deleteTrackerType } = useTrackerTransactionType()
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
   const filteredDataArr = dataArr?.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))
   const [accordionValue, setAccordionValue] = useState<string | null>(null)
+  const handleDeleteTrackerType = (id: string) => {
+    deleteTrackerType({ id })
+    setOpenEditDialog(false)
+  }
   const onHandleUpdate = () => {
     if (isUpdate) {
       formRefEdit.current?.requestSubmit()
@@ -129,7 +135,7 @@ export default function EditTrackerTypeDialog({
                       <AccordionTrigger className='flex justify-between'>{data.label}</AccordionTrigger>
                       <AccordionContent>
                         <div className='flex w-full justify-between'>
-                          <Button variant={'destructive'}>
+                          <Button variant={'destructive'} onClick={() => handleDeleteTrackerType(data.id)}>
                             Delete
                             <Delete className='h-4' />
                           </Button>

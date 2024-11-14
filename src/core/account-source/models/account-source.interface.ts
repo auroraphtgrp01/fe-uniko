@@ -50,4 +50,5 @@ export interface IDialogAccountSource {
   isDialogRefetchMoneyOpen: boolean
   isDialogDeleteOpen: boolean
   isDialogDeleteAllOpen: boolean
+  isDialogDetailOpen: boolean
 }

@@ -8,11 +8,13 @@ import { IQueryOptions } from '@/types/query.interface'
 import {
   initAccountSourceFormData,
   initButtonInDataTableHeader,
-  initDialogFlag
+  initDialogFlag,
+  initEmptyDetailAccountSource
 } from '@/app/dashboard/account-source/constants'
 import {
   handleShowDetailAccountSource,
   initDataTable,
+  onRowClick,
   updateCacheDataCreate,
   updateCacheDataForDeleteFeat,
   updateCacheDataUpdate
@@ -41,6 +43,7 @@ import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
   // States
+  const [dataDetail, setDataDetail] = useState<IAccountSourceDataFormat>(initEmptyDetailAccountSource)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   const [idRowClicked, setIdRowClicked] = useState<string>('')
@@ -131,7 +134,7 @@ export default function AccountSourceForm() {
             config={dataTableConfig}
             setConfig={setDataTableConfig}
             columns={columns}
-            onRowClick={(data: IAccountSourceDataFormat) => setIdRowClicked(data.id)}
+            onRowClick={(rowData) => onRowClick(rowData, getAdvancedData, setIsDialogOpen, setDataDetail)}
             buttons={dataTableButtons}
             onOpenDeleteAll={(ids: string[]) => {
               setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
@@ -186,6 +189,11 @@ export default function AccountSourceForm() {
         UpdateAccountSourceDialog={{
           setDataUpdate,
           updateAccountSource,
+          setIdRowClicked,
+          dataDetail
+        }}
+        detailAccountSourceDialog={{
+          dataDetail,
           setIdRowClicked
         }}
       />
