@@ -19,7 +19,7 @@ export interface ITrackerTransactionTypeBody {
   description?: string | undefined
 }
 
-interface IEditTrackerTypeDialogData extends ITrackerTransactionType {
+export interface IEditTrackerTypeDialogData extends ITrackerTransactionType {
   value: string
   label: string
 }

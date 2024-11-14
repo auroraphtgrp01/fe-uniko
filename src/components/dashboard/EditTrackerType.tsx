@@ -17,6 +17,10 @@ import { z } from 'zod'
 import FormZod from '../core/FormZod'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import {
+  defineEditTrackerTypeBody,
+  editTrackerTypeSchema
+} from '@/core/tracker-transaction-type/constants/update-tracker-transaction-type.constant'
 
 export default function EditTrackerTypeDialog({
   openEditDialog,
@@ -39,50 +43,6 @@ export default function EditTrackerTypeDialog({
     }
     setIsUpdate(!isUpdate)
   }
-  const editTrackerTypeBody: IBodyFormField[] = [
-    {
-      name: 'name',
-      type: EFieldType.Input,
-      label: 'Name',
-      placeHolder: 'Enter tracker transaction type name',
-      props: {
-        autoComplete: 'name',
-        disabled: !isUpdate
-      }
-    },
-    {
-      name: 'type',
-      type: EFieldType.Select,
-      label: 'Type',
-      placeHolder: 'Select type for tracker transaction type',
-      props: {
-        autoComplete: 'type',
-        disabled: !isUpdate,
-        value: type
-      },
-      dataSelector: [
-        { value: 'INCOMING', label: 'Incoming' },
-        { value: 'EXPENSE', label: 'Expense' }
-      ]
-    },
-    {
-      name: 'description',
-      type: EFieldType.Textarea,
-      label: 'Description',
-      placeHolder: 'Enter tracker transaction type description',
-      props: {
-        disabled: !isUpdate
-      }
-    }
-  ]
-
-  const editTrackerTypeSchema = z
-    .object({
-      name: z.string().trim().min(2).max(256),
-      type: z.enum(['INCOMING', 'EXPENSE']),
-      description: z.string().min(10).max(256).nullable()
-    })
-    .strict()
 
   const formRefCreate = useRef<HTMLFormElement>(null)
   const formRefEdit = useRef<HTMLFormElement>(null)
@@ -213,7 +173,10 @@ export default function EditTrackerTypeDialog({
                               type: data.type as ETypeOfTrackerTransactionType,
                               description: data.description
                             }}
-                            formFieldBody={editTrackerTypeBody}
+                            formFieldBody={defineEditTrackerTypeBody(
+                              isUpdate,
+                              data.type as ETypeOfTrackerTransactionType
+                            )}
                             formSchema={editTrackerTypeSchema}
                             onSubmit={(data) => {
                               handleUpdateTrackerType({ ...data, id: accordionValue } as ITrackerTransactionTypeBody)

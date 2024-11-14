@@ -199,7 +199,7 @@ export const handleCreateTrackerTxType = ({
   payload: ITrackerTransactionTypeBody
   hookCreate: any
   setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
-  callBackOnSuccess: (actions: TTransactionActions[]) => void
+  callBackOnSuccess: (actions: 'getAllTrackerTransactionType'[]) => void
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {

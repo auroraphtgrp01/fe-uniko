@@ -1,20 +1,20 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/libraries/utils'
 import FlatList, { IFlatListData } from '@/components/core/FlatList'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { initTableConfig } from '@/constants/data-table'
 import DonutChart from '../../../components/core/charts/DonutChart'
-import { Wallet, TrendingUp, TrendingDown, DollarSign, PiggyBank, CreditCard } from 'lucide-react'
+import { TrendingUp, PiggyBank, CreditCard } from 'lucide-react'
 import {
   ICreateExpenditureFundBody,
   IExpenditureFund,
   IExpenditureFundDataFormat,
   IExpenditureFundDialogOpen,
-  IUpdateExpenditureFundBody
+  IUpdateExpenditureFundBody,
+  TExpenditureFundActions
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { initButtonInHeaders, initEmptyDetailExpenditureFund, initEmptyExpenditureFundDialogOpen } from './constants'
 import ExpenditureFundDialog from './dialog'
@@ -29,8 +29,12 @@ import {
 import { initQueryOptions } from '@/constants/init-query-options'
 import { IQueryOptions } from '@/types/query.interface'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { useTransaction } from '@/core/transaction/hooks'
-import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { handleCreateTrackerTxType } from '../tracker-transaction/handlers'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
+import { useUpdateModel } from '@/hooks/useQueryModel'
+import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'
+
 export default function ExpenditureFundForm() {
   // states
   const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
@@ -54,6 +58,7 @@ export default function ExpenditureFundForm() {
   }, [dataTable])
 
   // hooks
+  const { createTrackerTxType } = useTrackerTransactionType()
   const {
     createExpenditureFund,
     statusCreate,
@@ -70,6 +75,22 @@ export default function ExpenditureFundForm() {
     getAdvancedExpenditureFund({ query: queryOptions })
   const { getStatisticExpenditureFundData, isGetStatisticPending, refetchGetStatisticExpendingFund } =
     getStatisticExpenditureFund()
+
+  const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ALL_TRACKER_TRANSACTION_TYPE_KEY], () => {})
+
+  const actionMap: Record<TExpenditureFundActions, () => void> = {
+    getExpenditureFund: refetchAdvancedExpendingFund,
+    getStatisticExpenditureFund: refetchGetStatisticExpendingFund,
+    getAllTrackerTransactionType: resetCacheTrackerTxType
+  }
+
+  const callBackRefetchExpenditureFundPage = (actions: TExpenditureFundActions[]) => {
+    actions.forEach((action) => {
+      if (actionMap[action]) {
+        actionMap[action]()
+      }
+    })
+  }
 
   // effects
   useEffect(() => {
@@ -96,6 +117,11 @@ export default function ExpenditureFundForm() {
   useEffect(() => {
     if (advancedExpenditureFundData)
       initExpenditureFundDataTable(isGetAdvancedPending, advancedExpenditureFundData, setDataTableConfig, setDataTable)
+    if (detailData !== initEmptyDetailExpenditureFund) {
+      setDetailData(
+        advancedExpenditureFundData?.data.find((item) => item.id === detailData.id) || initEmptyDetailExpenditureFund
+      )
+    }
   }, [advancedExpenditureFundData])
   useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
@@ -288,10 +314,25 @@ export default function ExpenditureFundForm() {
                 userInfoValues: data
               },
               hookInvite: inviteParticipantToExpenditureFund,
-              setIsDialogOpen
+              setIsDialogOpen,
+              callBackOnSuccess: callBackRefetchExpenditureFundPage
             })
           },
           status: statusInviteParticipant
+        }}
+        createUpdateCategory={{
+          handleCreateTrackerType: (
+            data: ITrackerTransactionTypeBody,
+            setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+          ) => {
+            handleCreateTrackerTxType({
+              payload: data,
+              hookCreate: createTrackerTxType,
+              callBackOnSuccess: callBackRefetchExpenditureFundPage,
+              setIsCreating
+            })
+          },
+          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
         }}
       />
     </div>

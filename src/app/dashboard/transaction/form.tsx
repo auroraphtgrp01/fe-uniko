@@ -145,12 +145,7 @@ export default function TransactionForm() {
     [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataTransactionForUpdate
   )
-  const { resetData: resetCacheTrackerTxType } = useUpdateModel<any>(
-    [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
-    (oldData, newData) => {
-      return { ...oldData, data: [...oldData.data, newData] }
-    }
-  )
+  const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ALL_TRACKER_TRANSACTION_TYPE_KEY], () => {})
   const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
     [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
     updateCacheDataClassifyFeat

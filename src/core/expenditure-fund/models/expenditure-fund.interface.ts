@@ -1,5 +1,9 @@
-import { ITransaction } from '@/core/transaction/models'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { IUpdateTrackerTransactionBody } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { ICreateTrackerTransactionBody, ITransaction } from '@/core/transaction/models'
 import { IBaseResponseData, IDataTableConfig } from '@/types/common.i'
+import { IUser } from '@/types/user.i'
 import { RefObject } from 'react'
 
 export interface IExpenditureFundDialogOpen {
@@ -60,14 +64,16 @@ enum EParticipantRole {
   MEMBER = 'MEMBER'
 }
 
-interface IExpenditureFundParticipant {
+export interface IExpenditureFundParticipant {
   id: string
   role: EParticipantRole
+  status: 'PENDING' | 'ACCEPTED'
   user: {
     id: string
     fullName: string
     email: string
     phone_number: string
+    avatar: string | null
   }
 }
 
@@ -81,6 +87,7 @@ interface IExpenditureFundCategories {
   id: string
   name: string
   description: string
+  type: ETypeOfTrackerTransactionType
   trackerType: ICategoryTrackerType
 }
 
@@ -91,7 +98,7 @@ export interface IExpenditureFund {
   status: EFundStatus
   currentAmount: number
   // currency: ECurrencyUnit
-  ownerName: string
+  owner: { id: string; fullName: string }
   participants: IExpenditureFundParticipant[]
   categories: IExpenditureFundCategories[]
   time: string
@@ -128,10 +135,30 @@ export interface IExpenditureFundDialogProps {
     handleInvite: (data: string[]) => void
     status: 'error' | 'idle' | 'pending' | 'success'
   }
+  createUpdateCategory: {
+    handleCreateTrackerType: (
+      data: ITrackerTransactionTypeBody,
+      setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+    ) => void
+    handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+  }
 }
 
 export interface IDetailExpenditureFundProps {
   detailData: IExpenditureFund
+  inviteTabProps: {
+    formRef: RefObject<HTMLFormElement>
+    handleInvite: (data: string[]) => void
+  }
+  categoryTabProps: {
+    handleUpdate: (data: ITrackerTransactionTypeBody) => void
+    handleCreate: (
+      data: ITrackerTransactionTypeBody,
+      setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+    ) => void
+    isEditing: boolean
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  }
 }
 
 export interface IUpdateExpenditureFundFormProps {
@@ -169,3 +196,8 @@ export interface IInviteParticipantFormProps {
   handleInvite: (data: string[]) => void
   formInviteRef: RefObject<HTMLFormElement>
 }
+
+export type TExpenditureFundActions =
+  | 'getExpenditureFund'
+  | 'getStatisticExpenditureFund'
+  | 'getAllTrackerTransactionType'

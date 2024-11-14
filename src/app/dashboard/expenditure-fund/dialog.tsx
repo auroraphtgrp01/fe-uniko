@@ -13,18 +13,16 @@ import { Input } from '@/components/ui/input'
 import { Loader2Icon, UserPlus } from 'lucide-react'
 import MultiInput from '@/components/core/MultiInput'
 import { InviteParticipantForm } from '@/components/dashboard/expenditure-fund/invite-participant'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 export default function ExpenditureFundDialog(params: IExpenditureFundDialogProps) {
+  const [isEditing, setIsEditing] = useState<boolean>(false)
   const formCreateExpenditureFundRef = useRef<HTMLFormElement>(null)
   const formUpdateExpenditureFundRef = useRef<HTMLFormElement>(null)
   const formInviteParticipantRef = useRef<HTMLFormElement>(null)
   const [emails, setEmails] = useState<string[]>([])
 
-  useEffect(() => {
-    console.log('emails', emails)
-  }, [emails])
-
-  const { commonDialogState, createDialog, detailUpdateDialog, inviteParticipantDialog } = params
+  const { commonDialogState, createDialog, detailUpdateDialog, inviteParticipantDialog, createUpdateCategory } = params
   const createExpenditureFundDialog: IDialogConfig = {
     content: CreateExpenditureFundForm({
       handleCreate: createDialog.handleCreate,
@@ -44,7 +42,17 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
   const detailConfigDialog: IDialogConfig = {
     className: 'sm:max-w-[325px] md:max-w-[650px]',
     content: DetailExpenditureFund({
-      detailData: detailUpdateDialog.data
+      detailData: detailUpdateDialog.data,
+      inviteTabProps: {
+        formRef: formInviteParticipantRef,
+        handleInvite: inviteParticipantDialog.handleInvite
+      },
+      categoryTabProps: {
+        handleCreate: createUpdateCategory.handleCreateTrackerType,
+        handleUpdate: createUpdateCategory.handleUpdateTrackerType,
+        isEditing,
+        setIsEditing
+      }
     }),
     description: 'Detail information of the expenditure fund.',
     title: 'Expenditure Fund Details',
@@ -54,15 +62,9 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
       commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
     },
     footer: (
-      <div className='mb-4 flex w-full items-center justify-between gap-4'>
-        <Button onClick={() => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogInviteOpen: true }))}>
-          <UserPlus className='mr-2 h-4 w-4' />
-          Invite
-        </Button>
-        <Button onClick={() => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))}>
-          Update
-        </Button>
-      </div>
+      <Button onClick={() => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))}>
+        Update
+      </Button>
     )
   }
 

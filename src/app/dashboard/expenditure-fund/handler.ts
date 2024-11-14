@@ -7,7 +7,8 @@ import {
   IHandleCreateExpenditureFundProps,
   IHandleDeleteAnExpenditureFundProps,
   IHandleDeleteMultipleExpenditureFundProps,
-  IHandleUpdateExpenditureFundProps
+  IHandleUpdateExpenditureFundProps,
+  TExpenditureFundActions
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { formatArrayData, getTypes } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
@@ -128,7 +129,8 @@ export const handleDeleteAllExpenditureFund = async ({
 export const handleInviteParticipant = async ({
   hookInvite,
   data,
-  setIsDialogOpen
+  setIsDialogOpen,
+  callBackOnSuccess
 }: {
   hookInvite: any
   data: {
@@ -136,9 +138,11 @@ export const handleInviteParticipant = async ({
     userInfoValues: string[]
   }
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
+  callBackOnSuccess: (action: TExpenditureFundActions[]) => void
 }) => {
   hookInvite(data, {
     onSuccess: () => {
+      callBackOnSuccess(['getExpenditureFund'])
       toast.success('Send invite participant successfully')
       setIsDialogOpen((prev) => ({ ...prev, isDialogInviteOpen: false }))
     }
