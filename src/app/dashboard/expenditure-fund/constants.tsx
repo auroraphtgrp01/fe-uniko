@@ -43,7 +43,7 @@ export const formatExpenditureFundData = (data: IExpenditureFund): IExpenditureF
     description,
     status: <span className='rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-800'>{status}</span>,
     currentAmount: `${formatCurrency(currentAmount || 0, 'đ')}`,
-    owner: owner.fullName
+    owner: owner?.fullName
   }
 }
 
