@@ -70,7 +70,8 @@ import {
   updateCacheDataDeleteFeat,
   modifyFlatListData,
   handleDeleteTrackerTransaction,
-  handleDeleteMultipleTrackerTransaction
+  handleDeleteMultipleTrackerTransaction,
+  modifiedTrackerTypeForComboBox
 } from './handlers'
 import {
   GET_ADVANCED_TRANSACTION_KEY,
@@ -152,6 +153,7 @@ export default function TrackerTransactionForm() {
     query: queryOptions,
     fundId
   })
+  const { getAllExpenditureFund } = useExpenditureFund()
 
   // fetch data
   const { dataUnclassifiedTxs, refetchGetUnclassifiedTxs } = getUnclassifiedTransactions({
@@ -159,6 +161,7 @@ export default function TrackerTransactionForm() {
     fundId
   })
   const { getAllData: getAllAccountSourceData } = getAllAccountSource(fundId)
+  const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
 
   // custom hooks
   const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => {})
@@ -221,7 +224,7 @@ export default function TrackerTransactionForm() {
     })
   }
 
-  const titles = ['Reason Name', 'Type', 'Tracker Type', 'Amount', 'Transaction Date', 'Account Source']
+  const titles = ['Reason Name', 'Type', 'Category', 'Amount', 'Transaction Date', 'Account Source']
   // memos
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
@@ -627,12 +630,13 @@ export default function TrackerTransactionForm() {
             handleUpdateTrackerTxType({
               payload: data,
               hookUpdate: updateTrackerTxType,
-              hookUpdateCache: setCacheTrackerTxTypeUpdate
+              callBackOnSuccess: callBackRefetchTrackerTransactionPage
             })
           },
           accountSourceData: getAllAccountSourceData?.data || [],
           typeOfTrackerType,
-          setTypeOfTrackerType
+          setTypeOfTrackerType,
+          expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
         }}
         unclassifiedTxDialog={{
           columns: columnUnclassifiedTxTables,

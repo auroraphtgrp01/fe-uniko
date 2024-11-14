@@ -67,7 +67,8 @@ export function DetailExpenditureFund({
   detailData,
   inviteTabProps,
   categoryTabProps,
-  statisticProps
+  statisticProps,
+  setIsDialogOpen
 }: IDetailExpenditureFundProps) {
   const [valueSearch, setValueSearch] = useState<string>('')
   const [type, setType] = useState<ETypeOfTrackerTransactionType>(ETypeOfTrackerTransactionType.INCOMING)
@@ -142,6 +143,7 @@ export function DetailExpenditureFund({
         handleCreateTrackerType={categoryTabProps.handleCreate}
         setIsCreating={setIsCreating}
         selectType={true}
+        expenditureFund={[]}
       />
     ),
     isOpen: isCreating,
@@ -169,10 +171,10 @@ export function DetailExpenditureFund({
       <Tabs defaultValue='overview' className='h-[23rem] w-full'>
         <TabsList className='grid w-full grid-cols-5 pb-10'>
           <TabsTrigger value='overview'>Overview</TabsTrigger>
-          <TabsTrigger value='transactions'>Transactions</TabsTrigger>
-          <TabsTrigger value='statistics'>Statistics</TabsTrigger>
           <TabsTrigger value='participants'>Participants</TabsTrigger>
           <TabsTrigger value='categories'>Categories</TabsTrigger>
+          <TabsTrigger value='transactions'>Transactions</TabsTrigger>
+          <TabsTrigger value='statistics'>Statistics</TabsTrigger>
         </TabsList>
         <TabsContent value='overview' className='h-[23rem] space-y-4'>
           <div className='rounded-lg bg-muted p-3'>
@@ -202,9 +204,7 @@ export function DetailExpenditureFund({
           <div>
             <h3 className='mb-2 text-sm font-medium'>Description</h3>
             <p className='text-sm text-muted-foreground'>
-              {!detailData.description || detailData.description === ''
-                ? 'Description content...'
-                : detailData.description}
+              {!detailData.description || detailData.description === '' ? 'N/A' : detailData.description}
             </p>
           </div>
           <div>
@@ -212,13 +212,17 @@ export function DetailExpenditureFund({
             <div className='flex flex-wrap gap-2'>
               {detailData.categories.length > 0 ? (
                 detailData.categories.map((category, index) => (
-                  <Badge key={index} variant='secondary'>
+                  <Badge
+                    style={{ userSelect: 'none', pointerEvents: 'none', cursor: 'none' }}
+                    key={index}
+                    variant={category.type === ETypeOfTrackerTransactionType.INCOMING ? 'secondary' : 'destructive'}
+                  >
                     <Tag className='mr-1 h-3 w-3' />
                     {category.name}
                   </Badge>
                 ))
               ) : (
-                <p className='text-sm text-muted-foreground'>Categories...</p>
+                <p className='text-sm text-muted-foreground'>N/A</p>
               )}
             </div>
           </div>
@@ -226,78 +230,89 @@ export function DetailExpenditureFund({
             <h3 className='mb-2 text-sm font-medium'>Participants</h3>
             <div className='flex gap-2'>
               {detailData.participants.map((participant, index) => (
-                <Badge key={index} variant='outline'>
+                <Badge
+                  style={{ userSelect: 'none', pointerEvents: 'none', cursor: 'none' }}
+                  key={index}
+                  variant='outline'
+                  className={
+                    participant.role === 'OWNER' ? 'bg-yellow-500 text-yellow-900' : 'bg-gray-500 text-gray-900'
+                  }
+                >
                   {participant.user.fullName}
                 </Badge>
               ))}
             </div>
           </div>
-          <div className='grid grid-cols-2 gap-4 text-sm'>
-            <div>
-              <span className='font-medium'>Fund Owner:</span>
-              <span className='ml-2'>{detailData.owner.fullName}</span>
-            </div>
+          <div className='flex justify-end'>
+            <Button
+              onClick={() => {
+                setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
+              }}
+            >
+              Update
+            </Button>
           </div>
         </TabsContent>
         <TabsContent value='transactions' className='h-[23rem] space-y-4'>
-          <h3 className='mb-2 text-lg font-semibold'>Recent Transactions</h3>
-          <div className='space-y-2'>
-            {detailData.transactions.length > 0 ? (
-              detailData.transactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className='grid grid-cols-5 grid-rows-1 items-center gap-4 rounded bg-muted p-2 text-sm'
-                >
-                  <div className='col-span-3 flex items-center gap-2'>
-                    {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? (
-                      <ArrowUpIcon className='h-4 w-4 text-green-500' />
-                    ) : (
-                      <ArrowDownIcon className='h-4 w-4 text-red-500' />
-                    )}
-                    <span>{transaction.TrackerTransaction ? transaction.TrackerTransaction.reasonName : 'N/A'}</span>
-                  </div>
-                  <div className='col-start-4'>
-                    <Badge
-                      style={{ userSelect: 'none', pointerEvents: 'none', cursor: 'none' }}
-                      className='no-wrap'
-                      variant={transaction.TrackerTransaction !== undefined ? 'outline' : 'greenPastel1'}
-                    >
-                      {transaction.TrackerTransaction
-                        ? transaction.TrackerTransaction.TrackerType.name
-                        : 'Unclassified'}
-                    </Badge>
-                  </div>
-                  <div className='col-start-5 flex gap-2 text-end'>
-                    <div className='flex text-end'>
-                      <span
-                        className={
-                          transaction.direction === ETypeOfTrackerTransactionType.INCOMING
-                            ? 'font-semibold text-green-500'
-                            : 'font-semibold text-red-500'
-                        }
+          <ScrollArea className='h-[255px]'>
+            <div className='space-y-2'>
+              {detailData.transactions.length > 0 ? (
+                detailData.transactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className='grid grid-cols-5 grid-rows-1 items-center gap-4 rounded bg-muted p-2 text-sm'
+                  >
+                    <div className='col-span-3 flex items-center gap-2'>
+                      {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? (
+                        <ArrowUpIcon className='h-4 w-4 text-green-500' />
+                      ) : (
+                        <ArrowDownIcon className='h-4 w-4 text-red-500' />
+                      )}
+                      <span>{transaction.TrackerTransaction ? transaction.TrackerTransaction.reasonName : 'N/A'}</span>
+                    </div>
+                    <div className='col-start-4 flex justify-end'>
+                      <Badge
+                        style={{ userSelect: 'none', pointerEvents: 'none', cursor: 'none' }}
+                        className='text-nowrap'
+                        variant={transaction.TrackerTransaction !== undefined ? 'outline' : 'greenPastel1'}
                       >
-                        {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? '+' : '-'}
-                        {formatCurrency(transaction.amount, 'đ')}
-                      </span>
-                      <span className='text-muted-foreground'>
-                        {/* {formatDateTimeVN(transaction.transactionDateTime, false)} */}
-                      </span>
+                        {transaction.TrackerTransaction
+                          ? transaction.TrackerTransaction.TrackerType.name
+                          : 'Unclassified'}
+                      </Badge>
+                    </div>
+                    <div className='col-start-5 flex gap-2 text-end'>
+                      <div className='flex text-end'>
+                        <span
+                          className={
+                            transaction.direction === ETypeOfTrackerTransactionType.INCOMING
+                              ? 'font-semibold text-green-500'
+                              : 'font-semibold text-red-500'
+                          }
+                        >
+                          {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? '+' : '-'}
+                          {formatCurrency(transaction.amount, 'đ')}
+                        </span>
+                        <span className='text-muted-foreground'>
+                          {/* {formatDateTimeVN(transaction.transactionDateTime, false)} */}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className='flex items-center justify-center p-4'>
+                  <div className='text-center'>
+                    <Image priority src={EmptyBox} alt='' height={60} width={60} className='mx-auto' />
+                    <span className='mt-2 block text-sm font-semibold text-foreground'>No data available</span>
+                  </div>
                 </div>
-              ))
-            ) : (
-              <div className='flex items-center justify-center p-4'>
-                <div className='text-center'>
-                  <Image priority src={EmptyBox} alt='' height={60} width={60} className='mx-auto' />
-                  <span className='mt-2 block text-sm font-semibold text-foreground'>No data available</span>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          </ScrollArea>
         </TabsContent>
         <TabsContent value='statistics' className='h-[23rem] space-y-4'>
-          {false ? (
+          {statisticProps.data.length === 0 ? (
             <div className='flex flex-col items-center justify-center pt-20'>
               <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
               <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
@@ -336,11 +351,10 @@ export function DetailExpenditureFund({
                 </Button>
               </div>
             </div>
-
             <ScrollArea className='h-[255px] rounded-md border'>
               <div className='space-y-2 p-2'>
                 {detailData.participants.map((participant) => (
-                  <div key={participant.id} className='flex items-center justify-between rounded-lg bg-[#2a2a2a] p-2'>
+                  <div key={participant.id} className='flex items-center justify-between rounded-lg p-2'>
                     <div className='flex items-center space-x-3'>
                       <Avatar>
                         <AvatarImage
@@ -349,8 +363,8 @@ export function DetailExpenditureFund({
                         <AvatarFallback>{participant.user.fullName.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className='text-sm font-medium text-white'>{participant.user.fullName}</p>
-                        <p className='text-xs text-gray-400'>{participant.user.email}</p>
+                        <p className='text-sm font-medium'>{participant.user.fullName}</p>
+                        <p className='text-xs'>{participant.user.email}</p>
                       </div>
                     </div>
                     <div className='flex items-center space-x-2'>
@@ -380,16 +394,9 @@ export function DetailExpenditureFund({
                             <MoreHorizontalIcon className='h-4 w-4 text-gray-400' />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align='end' className='border-gray-700 bg-[#2a2a2a]'>
-                          <DropdownMenuItem className='text-gray-200 focus:bg-gray-700 focus:text-white'>
-                            <MailIcon className='mr-2 h-4 w-4' />
-                            <span>Send Email</span>
-                          </DropdownMenuItem>
+                        <DropdownMenuContent align='end'>
                           {participant.role !== 'OWNER' && (
-                            <DropdownMenuItem
-                              className='text-red-400 focus:bg-red-900 focus:text-red-100'
-                              onClick={() => {}}
-                            >
+                            <DropdownMenuItem className='text-red-400' onClick={() => {}}>
                               <Trash2Icon className='mr-2 h-4 w-4' />
                               <span>Remove</span>
                             </DropdownMenuItem>
@@ -408,7 +415,7 @@ export function DetailExpenditureFund({
             <Input
               value={valueSearch}
               onChange={(e) => setValueSearch(e.target.value)}
-              className='w-full border-gray-700 bg-gray-800 text-white'
+              className='w-full'
               placeholder='Search Tracker Transaction Type'
             />
             <div className='flex space-x-2'>

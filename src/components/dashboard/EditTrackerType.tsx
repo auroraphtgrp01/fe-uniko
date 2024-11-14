@@ -12,8 +12,6 @@ import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
-import { z } from 'zod'
 import FormZod from '../core/FormZod'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
@@ -30,7 +28,8 @@ export default function EditTrackerTypeDialog({
   type,
   setType,
   handleCreateTrackerType,
-  handleUpdateTrackerType
+  handleUpdateTrackerType,
+  expenditureFund
 }: IEditTrackerTypeDialogProps) {
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
@@ -57,21 +56,21 @@ export default function EditTrackerTypeDialog({
     <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
       <DialogContent className='rsm:max-w-[525px]'>
         <DialogHeader>
-          <DialogTitle>Edit Tracker Transaction Type</DialogTitle>
-          <DialogDescription>Make changes to your Tracker Transaction Type</DialogDescription>
+          <DialogTitle>Edit Category</DialogTitle>
+          <DialogDescription>Make changes to your category</DialogDescription>
           <div className='mt-3 w-full'>
             <div className='flex flex-col gap-2 sm:flex-row'>
               <Input
                 value={valueSearch}
                 onChange={(e) => setValueSearch(e.target.value)}
                 className='w-full'
-                placeholder='Search Tracker Transaction Type'
+                placeholder='Search Category'
               />
             </div>
             <div className='mt-2 flex w-full flex-col gap-2 sm:flex-row'>
               <Select onValueChange={(value: ETypeOfTrackerTransactionType) => setType(value)} value={type}>
                 <SelectTrigger>
-                  <SelectValue placeholder='Select type for tracker transaction type' />
+                  <SelectValue placeholder='Select type for category' />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem key={'INCOMING'} value={'INCOMING'}>
@@ -111,6 +110,7 @@ export default function EditTrackerTypeDialog({
                 formRef={formRefCreate}
                 handleCreateTrackerType={handleCreateTrackerType}
                 setIsCreating={setIsCreating}
+                expenditureFund={expenditureFund}
               />
             </div>
           )}

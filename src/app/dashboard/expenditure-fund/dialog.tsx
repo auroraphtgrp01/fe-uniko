@@ -60,7 +60,8 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
         isEditing,
         setIsEditing
       },
-      statisticProps
+      statisticProps,
+      setIsDialogOpen: commonDialogState.setIsDialogOpen
     }),
     description: 'Detail information of the expenditure fund.',
     title: 'Expenditure Fund Details',
@@ -68,12 +69,7 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
     onClose: () => {
       detailUpdateDialog.setDetailData(initEmptyDetailExpenditureFund)
       commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
-    },
-    footer: (
-      <Button onClick={() => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))}>
-        Update
-      </Button>
-    )
+    }
   }
 
   const updateConfigDialog: IDialogConfig = {

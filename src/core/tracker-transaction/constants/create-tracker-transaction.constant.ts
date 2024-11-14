@@ -16,7 +16,8 @@ export const defineCreateTrackerTransactionFormBody = ({
   typeOfEditTrackerType,
   setTypeOfEditTrackerType,
   handleCreateTrackerType,
-  handleUpdateTrackerType
+  handleUpdateTrackerType,
+  expenditureFund
 }: any) => {
   const t = translate(['accountSource'])
   return [
@@ -91,7 +92,8 @@ export const defineCreateTrackerTransactionFormBody = ({
           type: typeOfEditTrackerType,
           setType: setTypeOfEditTrackerType,
           handleCreateTrackerType,
-          handleUpdateTrackerType
+          handleUpdateTrackerType,
+          expenditureFund
         }),
         label: 'Tracker Transaction Type'
       }

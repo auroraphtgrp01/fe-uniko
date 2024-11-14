@@ -1,5 +1,5 @@
 import { IBaseResponseData, IBaseResponsePagination } from '@/types/common.i'
-import { ETypeOfTrackerTransactionType } from './tracker-transaction-type.enum'
+import { ETrackerTypeOfTrackerTransactionType, ETypeOfTrackerTransactionType } from './tracker-transaction-type.enum'
 
 export type TrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType>
 export type IAdvancedTrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType[]>
@@ -17,6 +17,7 @@ export interface ITrackerTransactionTypeBody {
   fundId?: string
   type: string
   description?: string | undefined
+  trackerType?: ETrackerTypeOfTrackerTransactionType
 }
 
 export interface IEditTrackerTypeDialogData extends ITrackerTransactionType {
@@ -36,4 +37,5 @@ export interface IEditTrackerTypeDialogProps {
     setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
   ) => void
   handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+  expenditureFund: { label: string; value: string | number }[]
 }

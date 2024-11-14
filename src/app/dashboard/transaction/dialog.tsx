@@ -63,6 +63,7 @@ export interface ITransactionDialogProps {
       setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
     ) => void
     handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+    expenditureFund: { label: string; value: string | number }[]
   }
   deleteProps: {
     deleteAnTransactionProps: IDeleteProps
@@ -98,7 +99,8 @@ export default function TransactionDialog(params: ITransactionDialogProps) {
               editTrackerTypeDialogProps={{
                 typeDefault: classifyDialog.typeOfTrackerType,
                 handleCreateTrackerType: dialogEditTrackerType.handleCreateTrackerType,
-                handleUpdateTrackerType: dialogEditTrackerType.handleUpdateTrackerType
+                handleUpdateTrackerType: dialogEditTrackerType.handleUpdateTrackerType,
+                expenditureFund: dialogEditTrackerType.expenditureFund
               }}
               formClassifyRef={formClassifyRef}
               handleClassify={(data: IClassifyTransactionBody) => {

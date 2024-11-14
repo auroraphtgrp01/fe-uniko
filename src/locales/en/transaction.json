@@ -1,53 +1,53 @@
 {
-    "transactionToday": "Transaction Today",
-    "viewAll": "View all",
-    "transactionTodayDescription": "Overview of today`s transactions",
-    "totalTransactions": "Total Transactions",
-    "totalAmount": "Total Amount",
-    "unclassifiedTransaction": "Unclassified Transaction",
-    "classify": "Classify",
-    "unclassifiedTransactionDescription": "Transactions without a tracker",
-    "TransactionType": {
-        "detailsDialog": {
-            "title": "Transaction Detail",
-            "description": "Detailed information of the transaction."
-        },
-        "transactionsTodayDialog": {
-            "title": "Transaction Today",
-            "description": "Overview of today’s transactions."
-        },
-        "unclassifiedTransactionsDialog": {
-            "title": "Unclassified Transaction",
-            "description": "Overview of unclassified transactions."
-        },
-        "classifyingTransactionDialog": {
-            "title": "Classify Transaction",
-            "description": "Please fill in the information below to classify the transaction."
-        },
-        "detailsConfigDialog": {
-            "trackerTransaction": "Tracker Transaction",
-            "amount": "Amount",
-            "transactionId": "Transaction Id",
-            "direction": "Direction",
-            "currency": "Currency",
-            "accountBank": "Account Bank",
-            "accountNo": "Account No",
-            "description": "Description"
-        },
-        "defineClassifyTransactionFormBody": {
-            "reasonName": {
-                "label": "Reason Name",
-                "placeholder": "Enter reason name"
-            },
-            "trackerTypeId": {
-                "label": "Tracker Type",
-                "placeholder": "Select tracker type",
-                "labelTrackerTransactionType": "Tracker Transaction Type"
-            },
-            "description": {
-                "label": "Description",
-                "placeholder": "Enter description"
-            }
-        }
+  "transactionToday": "Transaction Today",
+  "viewAll": "View all",
+  "transactionTodayDescription": "Overview of today`s transactions",
+  "totalTransactions": "Total Transactions",
+  "totalAmount": "Total Amount",
+  "unclassifiedTransaction": "Unclassified Transaction",
+  "classify": "Classify",
+  "unclassifiedTransactionDescription": "Transactions without a tracker",
+  "TransactionType": {
+    "detailsDialog": {
+      "title": "Transaction Detail",
+      "description": "Detailed information of the transaction."
+    },
+    "transactionsTodayDialog": {
+      "title": "Transaction Today",
+      "description": "Overview of today’s transactions."
+    },
+    "unclassifiedTransactionsDialog": {
+      "title": "Unclassified Transaction",
+      "description": "Overview of unclassified transactions."
+    },
+    "classifyingTransactionDialog": {
+      "title": "Classify Transaction",
+      "description": "Please fill in the information below to classify the transaction."
+    },
+    "detailsConfigDialog": {
+      "trackerTransaction": "Tracker Transaction",
+      "amount": "Amount",
+      "transactionId": "Transaction Id",
+      "direction": "Direction",
+      "currency": "Currency",
+      "accountBank": "Account Bank",
+      "accountNo": "Account No",
+      "description": "Description"
+    },
+    "defineClassifyTransactionFormBody": {
+      "reasonName": {
+        "label": "Reason Name",
+        "placeholder": "Enter reason name"
+      },
+      "trackerTypeId": {
+        "label": "Category",
+        "placeholder": "Select category",
+        "labelTrackerTransactionType": "Category"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Enter description"
+      }
     }
+  }
 }

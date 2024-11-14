@@ -89,7 +89,15 @@ export const handleClassifyTransaction = async ({
   payload: IClassifyTransactionBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
   hookClassify: any
-  callBackOnSuccess: (actions: TTransactionActions[]) => void
+  callBackOnSuccess: (
+    actions: (
+      | 'getTransactions'
+      | 'getUnclassifiedTransactions'
+      | 'getTodayTransactions'
+      | 'getStatistic'
+      | 'getTrackerTransaction'
+    )[]
+  ) => void
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -215,16 +223,16 @@ export const handleCreateTrackerTxType = ({
 export const handleUpdateTrackerTxType = ({
   payload,
   hookUpdate,
-  hookUpdateCache
+  callBackOnSuccess
 }: {
   payload: ITrackerTransactionTypeBody
   hookUpdate: any
-  hookUpdateCache: any
+  callBackOnSuccess: (actions: 'getAllTrackerTransactionType'[]) => void
 }) => {
   hookUpdate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        hookUpdateCache(res.data)
+        callBackOnSuccess(['getAllTrackerTransactionType'])
         toast.success('Update tracker transaction type successfully!')
       }
     }

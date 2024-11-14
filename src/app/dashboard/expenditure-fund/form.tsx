@@ -87,7 +87,8 @@ export default function ExpenditureFundForm() {
   const actionMap: Record<TExpenditureFundActions, () => void> = {
     getExpenditureFund: refetchAdvancedExpendingFund,
     getStatisticExpenditureFund: refetchGetStatisticExpendingFund,
-    getAllTrackerTransactionType: resetCacheTrackerTxType
+    getAllTrackerTransactionType: resetCacheTrackerTxType,
+    getAllStatisticDetailOfFund: refetchGetStatisticDetailOfFund
   }
 
   const callBackRefetchExpenditureFundPage = (actions: TExpenditureFundActions[]) => {

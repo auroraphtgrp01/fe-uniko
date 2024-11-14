@@ -1,5 +1,6 @@
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
 import { z } from 'zod'
+import { ETypeOfTrackerTransactionType } from '../models/tracker-transaction-type.enum'
 
 export const defineEditTrackerTypeBody = (isUpdate: boolean, type: string): IBodyFormField[] => {
   return [
@@ -42,7 +43,7 @@ export const defineEditTrackerTypeBody = (isUpdate: boolean, type: string): IBod
 export const editTrackerTypeSchema = z
   .object({
     name: z.string().trim().min(2).max(256),
-    type: z.enum(['INCOMING', 'EXPENSE']),
+    type: z.nativeEnum(ETypeOfTrackerTransactionType),
     description: z.string().min(10).max(256).nullable()
   })
   .strict()

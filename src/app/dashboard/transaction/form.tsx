@@ -49,7 +49,9 @@ import {
   updateCacheDataClassifyFeat,
   handleClassifyTransaction,
   handleCreateTrackerTxType,
-  updateCacheDataTodayTxClassifyFeat
+  updateCacheDataTodayTxClassifyFeat,
+  modifiedTrackerTypeForComboBox,
+  handleUpdateTrackerTxType
 } from '../tracker-transaction/handlers'
 import {
   ITrackerTransactionType,
@@ -75,6 +77,7 @@ import { useTranslation } from 'react-i18next'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 
 export default function TransactionForm() {
   // states
@@ -124,10 +127,11 @@ export default function TransactionForm() {
   } = useTransaction()
   const { getAllAccountSource } = useAccountSource()
   const { classifyTransaction } = useTrackerTransaction()
-  const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
+  const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { user, fundId } = useStoreLocal()
   const { getMe } = useUser()
   const socket = useSocket()
+  const { getAllExpenditureFund } = useExpenditureFund()
 
   // fetch data
   const { getAllData: accountSourceData } = getAllAccountSource(fundId)
@@ -139,6 +143,7 @@ export default function TransactionForm() {
   })
   const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions, fundId })
   const { isGetMeUserPending } = getMe(true)
+  const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
 
   // custom hooks
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
@@ -165,7 +170,8 @@ export default function TransactionForm() {
     getAllAccountSource: resetCacheAccountSource,
     getStatistic: resetCacheStatistic,
     getAllTrackerTransactionType: resetCacheTrackerTxType,
-    getTrackerTransaction: resetCacheDataTrackerTx
+    getTrackerTransaction: resetCacheDataTrackerTx,
+    getAllExpenditureFund: refetchAllExpendingFund
   }
 
   const callBackRefetchTransactionPage = (actions: TTransactionActions[]) => {
@@ -531,7 +537,14 @@ export default function TransactionForm() {
                 setIsCreating
               })
             },
-            handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
+            handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {
+              handleUpdateTrackerTxType({
+                payload: data,
+                hookUpdate: updateTrackerTxType,
+                callBackOnSuccess: callBackRefetchTransactionPage
+              })
+            },
+            expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
           }}
           deleteProps={{
             deleteAnTransactionProps

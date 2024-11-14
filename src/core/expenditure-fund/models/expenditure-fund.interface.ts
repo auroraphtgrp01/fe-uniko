@@ -170,6 +170,7 @@ export interface IDetailExpenditureFundProps {
     dateRange: string
     setDateRange: React.Dispatch<React.SetStateAction<string>>
   }
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
 }
 
 export interface IUpdateExpenditureFundFormProps {
@@ -212,3 +213,4 @@ export type TExpenditureFundActions =
   | 'getExpenditureFund'
   | 'getStatisticExpenditureFund'
   | 'getAllTrackerTransactionType'
+  | 'getAllStatisticDetailOfFund'
