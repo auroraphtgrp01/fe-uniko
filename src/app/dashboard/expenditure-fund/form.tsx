@@ -1,14 +1,13 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/libraries/utils'
 import FlatList, { IFlatListData } from '@/components/core/FlatList'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { initTableConfig } from '@/constants/data-table'
 import DonutChart from '../../../components/core/charts/DonutChart'
-import { Wallet, TrendingUp, TrendingDown, DollarSign, PiggyBank, CreditCard } from 'lucide-react'
+import { TrendingUp, PiggyBank, CreditCard } from 'lucide-react'
 import {
   ICreateExpenditureFundBody,
   IExpenditureFund,

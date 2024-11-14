@@ -1,5 +1,7 @@
+import { initEmptyDetailAccountSourceType } from '@/app/dashboard/account-source/constants'
 import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dashboard/account-source/handler'
 import CreateAndUpdateAccountSourceForm from '@/components/dashboard/account-source/Create&UpdateForm'
+import DetailUpdateAccountSourceForm from '@/components/dashboard/account-source/DetailUpdateForm'
 import CustomDialog from '@/components/dashboard/Dialog'
 import { IDialogAccountSource } from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
@@ -22,6 +24,12 @@ interface IAccountSourceDialogProps {
     setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
     setDataUpdate: any
     updateAccountSource: any
+    tableData?: any
+    dataDetail?: any
+  }
+  detailAccountSourceDialog: {
+    dataDetail: any
+    setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
   }
   onSuccessCallback: () => void
 }
@@ -30,20 +38,11 @@ export default function AccountSourceDialog({
   sharedDialogElements,
   createAccountSourceDialog,
   UpdateAccountSourceDialog,
+  detailAccountSourceDialog,
   fundId,
   onSuccessCallback
 }: IAccountSourceDialogProps) {
   const { t } = useTranslation(['accountSource', 'common'])
-  const updateConfigDialog: IDialogConfig = {
-    content: CreateAndUpdateAccountSourceForm({ fundId }),
-    description: t('AccountSourceDialog.updateDialog.description'),
-    title: t('AccountSourceDialog.updateDialog.title'),
-    isOpen: sharedDialogElements.isDialogOpen.isDialogUpdateOpen,
-    onClose: () => {
-      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
-      UpdateAccountSourceDialog.setIdRowClicked('')
-    }
-  }
   const handleSubmitAccountSource = (payload: any) => {
     if (sharedDialogElements.isDialogOpen.isDialogUpdateOpen) {
       handleUpdateAccountSource({
@@ -72,6 +71,23 @@ export default function AccountSourceDialog({
       })
     }
   }
+
+  const updateConfigDialog: IDialogConfig = {
+    content: CreateAndUpdateAccountSourceForm({
+      fundId, callBack: handleSubmitAccountSource,
+      defaultValue: sharedDialogElements.isDialogOpen.isDialogUpdateOpen
+        ? UpdateAccountSourceDialog.dataDetail
+        : initEmptyDetailAccountSourceType
+    }),
+    description: t('AccountSourceDialog.updateDialog.description'),
+    title: t('AccountSourceDialog.updateDialog.title'),
+    isOpen: sharedDialogElements.isDialogOpen.isDialogUpdateOpen,
+    onClose: () => {
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
+      UpdateAccountSourceDialog.setIdRowClicked('')
+    }
+  }
+
   const createConfigDialog: IDialogConfig = {
     content: CreateAndUpdateAccountSourceForm({
       callBack: handleSubmitAccountSource,
@@ -85,10 +101,28 @@ export default function AccountSourceDialog({
     }
   }
 
+  const detailsConfigDialog: IDialogConfig = {
+    content: (
+      <DetailUpdateAccountSourceForm
+        detailUpdateAccountSource={{
+          detailAccountSourceDialog,
+          sharedDialogElements
+        }}
+      />
+    ),
+    description: 'Thông tin chi tiết về account source',
+    title: 'Chi tiết giao dịch account source',
+    isOpen: sharedDialogElements.isDialogOpen.isDialogDetailOpen,
+    onClose: () => {
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
+    }
+  }
+
   return (
     <div>
       <CustomDialog config={createConfigDialog} />
       <CustomDialog config={updateConfigDialog} />
+      <CustomDialog config={detailsConfigDialog} />
     </div>
   )
 }

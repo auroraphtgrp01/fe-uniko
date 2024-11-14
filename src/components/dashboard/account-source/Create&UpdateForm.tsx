@@ -6,12 +6,14 @@ import {
   createAccountSourceFormBody,
   createAccountSourceSchema
 } from '@/core/account-source/constants/create-account-source.constant'
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import {
   createAccountBankFormBody,
-  createAccountBankSchema
+  createAccountBankSchema,
 } from '@/core/account-source/constants/create-account-bank.constant'
 import { useTranslation } from 'react-i18next'
+import { updateAccountSourceFormBody, updateAccountSourceSchema } from '@/core/account-source/constants/update-account-source.constant'
+import { updateAccountBankFormBody, updateAccountBankSchema } from '@/core/account-source/constants/update-account-bank.constant'
 
 export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValue, fundId }: any) {
   const [typeState, setTypeState] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
@@ -19,6 +21,8 @@ export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValu
   const formCreateAccountSourceRef = useRef<HTMLFormElement>(null)
   const formCreateAccountBankRef = useRef<HTMLFormElement>(null)
   let payload = { fundId }
+
+
   const { t } = useTranslation(['accountSource'])
   const handleSubmit = (v: any) => {
     payload = { ...v, initAmount: Number(v.initAmount), name: v.accountSourceName }
@@ -40,40 +44,72 @@ export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValu
   }
 
   useEffect(() => {
-    setDefaultValueData({
-      accountBank: {
-        type: defaultValue?.type,
-        login_id: defaultValue?.login_id,
-        password: defaultValue?.password,
-        accounts: defaultValue?.accounts
-      },
-      accountSource: {
-        accountSourceName: defaultValue?.accountSourceName,
-        accountSourceType: defaultValue?.accountSourceType,
-        initAmount: defaultValue?.initAmount
-      }
-    })
+    if (defaultValue) {
+      setDefaultValueData({
+        accountBank: {
+          id: defaultValue?.data?.accountBank?.id ?? '',
+          type: defaultValue?.data?.accountBank?.type ?? '',
+          login_id: defaultValue?.data?.accountBank?.login_id ?? '',
+          accounts: defaultValue?.data?.accountBankId ?? ''
+        },
+        accountSource: {
+          id: defaultValue?.id,
+          accountSourceName: defaultValue?.name,
+          accountSourceType: defaultValue?.checkType
+        }
+      })
+      setTypeState(defaultValue?.checkType)
+    }
   }, [defaultValue])
+
   return (
     <div>
-      <FormZod
-        defaultValues={defaultValueData.accountSource}
-        classNameForm='space-y-4'
-        formSchema={createAccountSourceSchema}
-        formFieldBody={createAccountSourceFormBody(setTypeState)}
-        onSubmit={handleSubmit}
-        submitRef={formCreateAccountSourceRef}
-      />
-      {typeState === EAccountSourceType.BANKING && (
-        <FormZod
-          defaultValues={defaultValueData.accountBank}
-          classNameForm='space-y-4 mt-4'
-          formSchema={createAccountBankSchema}
-          formFieldBody={createAccountBankFormBody}
-          onSubmit={handleSubmitBank}
-          submitRef={formCreateAccountBankRef}
-        />
-      )}
+      <Fragment>
+        {!defaultValue ? (
+          <Fragment>
+            <FormZod
+              defaultValues={defaultValueData.accountSource}
+              classNameForm='space-y-4'
+              formSchema={createAccountSourceSchema}
+              formFieldBody={createAccountSourceFormBody(setTypeState)}
+              onSubmit={handleSubmit}
+              submitRef={formCreateAccountSourceRef}
+            />
+            {typeState === EAccountSourceType.BANKING && (
+              <FormZod
+                defaultValues={defaultValueData.accountBank}
+                classNameForm='space-y-4 mt-4'
+                formSchema={createAccountBankSchema}
+                formFieldBody={createAccountBankFormBody}
+                onSubmit={handleSubmitBank}
+                submitRef={formCreateAccountBankRef}
+              />
+            )}
+          </Fragment>
+        ) : (
+          <Fragment>
+            <FormZod
+              defaultValues={defaultValueData.accountSource}
+              classNameForm='space-y-4'
+              formSchema={updateAccountSourceSchema}
+              formFieldBody={updateAccountSourceFormBody(setTypeState)}
+              onSubmit={handleSubmit}
+              submitRef={formCreateAccountSourceRef}
+            />
+
+            {typeState === EAccountSourceType.BANKING && (
+              <FormZod
+                defaultValues={defaultValueData.accountBank}
+                classNameForm='space-y-4 mt-4'
+                formSchema={updateAccountBankSchema}
+                formFieldBody={updateAccountBankFormBody}
+                onSubmit={handleSubmitBank}
+                submitRef={formCreateAccountBankRef}
+              />
+            )}
+          </Fragment>
+        )}
+      </Fragment>
       <Button onClick={onSubmitAll} className='mt-4 w-full'>
         {t('form.button.save_changes_account_source')}
       </Button>

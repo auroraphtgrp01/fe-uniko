@@ -26,8 +26,10 @@ import { Briefcase, Calendar, Mail, MapPin, Phone, Save, SaveIcon, User2 } from 
 import AvatarDefault from '@/images/avatar.jpg'
 import Image from 'next/image'
 import { Separator } from '@/components/ui/separator'
+import { useSearchParams } from 'next/navigation'
 
 export default function ProfileForm() {
+  const searchParams = useSearchParams()
   const [defaultUser, setIsDefaultUser] = useState({})
   const { getMe, updateUser, isUpdating, isPasswordUpdating, updatePassword } = useUser()
   const handleUpdatePassword = (formData: { currentPassword?: string; newPassword: string }) => {
@@ -126,7 +128,7 @@ export default function ProfileForm() {
         </Card>
         <Card className='h-full flex-1 rounded-md pt-4'>
           <CardContent>
-            <Tabs defaultValue='account' className='h-full flex-1 rounded-md'>
+            <Tabs defaultValue={searchParams.get('openTab') || 'account'} className='h-full flex-1 rounded-md'>
               <TabsList className='grid w-full grid-cols-2'>
                 <TabsTrigger value='account'>{t('tabs.account')}</TabsTrigger>
                 <TabsTrigger value='password'>{t('tabs.password')}</TabsTrigger>

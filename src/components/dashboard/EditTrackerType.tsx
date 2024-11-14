@@ -17,6 +17,7 @@ import { z } from 'zod'
 import FormZod from '../core/FormZod'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 
 export default function EditTrackerTypeDialog({
   openEditDialog,
@@ -28,11 +29,16 @@ export default function EditTrackerTypeDialog({
   handleCreateTrackerType,
   handleUpdateTrackerType
 }: IEditTrackerTypeDialogProps) {
+  const { isDeleteOne, deleteTrackerType } = useTrackerTransactionType()
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
   const filteredDataArr = dataArr?.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))
   const [accordionValue, setAccordionValue] = useState<string | null>(null)
+  const handleDeleteTrackerType = (id: string) => {
+    deleteTrackerType({ id })
+    setOpenEditDialog(false)
+  }
   const onHandleUpdate = () => {
     if (isUpdate) {
       formRefEdit.current?.requestSubmit()
@@ -165,64 +171,64 @@ export default function EditTrackerTypeDialog({
             >
               {filteredDataArr?.length > 0
                 ? filteredDataArr.map((data) => (
-                    <AccordionItem key={data.value} value={data.value}>
-                      <AccordionTrigger className='flex justify-between'>{data.label}</AccordionTrigger>
-                      <AccordionContent>
-                        <div className='flex w-full justify-between'>
-                          <Button variant={'destructive'}>
-                            Delete
-                            <Delete className='h-4' />
-                          </Button>
-                          <div className='flex gap-2'>
-                            {isUpdate && (
-                              <Button
-                                onClick={() => {
-                                  setIsUpdate(false)
-                                }}
-                                className='w-full'
-                                variant={'blueVin'}
-                              >
-                                <div className='flex w-full justify-between'>
-                                  <Undo2 className='h-4' />
-                                  <span>Discard</span>
-                                </div>
-                              </Button>
-                            )}
-                            <Button variant={'default'} onClick={onHandleUpdate} className='w-full'>
-                              {isUpdate ? (
-                                <div>
-                                  <div className='flex w-full justify-between'>
-                                    <Save className='h-4' />
-                                    <span>Save</span>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div className='flex w-full justify-between'>
-                                  <Edit className='h-4' />
-                                  <span>Edit</span>
-                                </div>
-                              )}
+                  <AccordionItem key={data.value} value={data.value}>
+                    <AccordionTrigger className='flex justify-between'>{data.label}</AccordionTrigger>
+                    <AccordionContent>
+                      <div className='flex w-full justify-between'>
+                        <Button variant={'destructive'} onClick={() => handleDeleteTrackerType(data.id)}>
+                          Delete
+                          <Delete className='h-4' />
+                        </Button>
+                        <div className='flex gap-2'>
+                          {isUpdate && (
+                            <Button
+                              onClick={() => {
+                                setIsUpdate(false)
+                              }}
+                              className='w-full'
+                              variant={'blueVin'}
+                            >
+                              <div className='flex w-full justify-between'>
+                                <Undo2 className='h-4' />
+                                <span>Discard</span>
+                              </div>
                             </Button>
-                          </div>
+                          )}
+                          <Button variant={'default'} onClick={onHandleUpdate} className='w-full'>
+                            {isUpdate ? (
+                              <div>
+                                <div className='flex w-full justify-between'>
+                                  <Save className='h-4' />
+                                  <span>Save</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className='flex w-full justify-between'>
+                                <Edit className='h-4' />
+                                <span>Edit</span>
+                              </div>
+                            )}
+                          </Button>
                         </div>
-                        <div className='grid gap-4 py-4'>
-                          <FormZod
-                            submitRef={formRefEdit}
-                            defaultValues={{
-                              name: data.name,
-                              type: data.type as ETypeOfTrackerTransactionType,
-                              description: data.description
-                            }}
-                            formFieldBody={editTrackerTypeBody}
-                            formSchema={editTrackerTypeSchema}
-                            onSubmit={(data) => {
-                              handleUpdateTrackerType({ ...data, id: accordionValue } as ITrackerTransactionTypeBody)
-                            }}
-                          />
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))
+                      </div>
+                      <div className='grid gap-4 py-4'>
+                        <FormZod
+                          submitRef={formRefEdit}
+                          defaultValues={{
+                            name: data.name,
+                            type: data.type as ETypeOfTrackerTransactionType,
+                            description: data.description
+                          }}
+                          formFieldBody={editTrackerTypeBody}
+                          formSchema={editTrackerTypeSchema}
+                          onSubmit={(data) => {
+                            handleUpdateTrackerType({ ...data, id: accordionValue } as ITrackerTransactionTypeBody)
+                          }}
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))
                 : ''}
             </Accordion>
           </ScrollArea>
