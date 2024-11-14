@@ -56,21 +56,28 @@ export function UserNav() {
     <div className='ms-1 mt-1 select-none pr-4'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='relative h-8 w-8 rounded-full border-0 p-0 hover:bg-transparent'>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className='h-full w-full rounded-full'>
-              <Avatar className='h-full w-full rounded-full hover:cursor-pointer'>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.99 }}
+            className='h-full w-full overflow-hidden rounded-full ring-2 ring-primary hover:ring-primary focus:outline-none'
+          >
+            <Avatar className='h-full w-full rounded-full border-2 bg-gradient-to-r from-primary to-primary/60'>
+              {user?.avatarId ? (
                 <Image
                   alt='User avatar'
-                  priority
+                  loading='lazy'
                   className='h-full w-full rounded-full object-cover'
-                  src={AvatarDefault}
-                  width={32}
-                  height={32}
+                  src={`/avatars/${user?.avatarId}.png`}
+                  width={25}
+                  height={25}
                 />
-                <AvatarFallback>{user?.fullName?.charAt(0) || 'U'}</AvatarFallback>
-              </Avatar>
-            </motion.div>
-          </Button>
+              ) : (
+                <AvatarFallback className='animate-pulse'>
+                  <div className='h-full w-full bg-muted' />
+                </AvatarFallback>
+              )}
+            </Avatar>
+          </motion.button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='mt-5 w-56 translate-x-5' align='end' forceMount>
           <DropdownMenuLabel className='font-normal'>

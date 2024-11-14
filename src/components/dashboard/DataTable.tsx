@@ -387,7 +387,7 @@ export function DataTable<TData, TValue>({
         <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 sm:flex-row sm:space-y-0'>
           <p className='text-xs text-gray-500 sm:text-sm'>
             {t('table.selectedRowsText', {
-              selected: table.getFilteredSelectedRowModel().rows.length,
+              selected: table?.getFilteredSelectedRowModel().rows.length,
               total: table.getFilteredRowModel().rows.length
             })}
           </p>

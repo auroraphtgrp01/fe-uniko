@@ -47,7 +47,7 @@ export interface IUser {
   forgetPasswordToken: string
   refresh_token: string
   emailVerifyToken: string
-  avatarUrl: string
+  avatarId: string
   provider?: string
   accessToken?: string
 }
