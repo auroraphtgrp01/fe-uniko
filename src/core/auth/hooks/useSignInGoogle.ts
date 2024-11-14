@@ -31,7 +31,7 @@ export const useSignInGoogle = () => {
         setCountLogin(countLogin + 1)
         setAccessTokenToLocalStorage(data.data.accessToken)
         setRefreshTokenToLocalStorage(data.data.refreshToken)
-        setExecuteGetMe(true)
+        if (redirectUrl === '/dashboard?loggedIn=true') setExecuteGetMe(true)
         toast.success('Login successfully 🚀 ')
         router.push(redirectUrl)
       },
@@ -42,7 +42,7 @@ export const useSignInGoogle = () => {
   })
 
   const { getMe } = useUser()
-  if (redirectUrl === '/dashboard?loggedIn=true') getMe(executeGetMe)
+  getMe(executeGetMe)
 
   return mutation
 }

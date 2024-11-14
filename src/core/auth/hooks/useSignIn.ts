@@ -33,7 +33,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
           })
           setAccessTokenToLocalStorage(data.data.accessToken)
           setRefreshTokenToLocalStorage(data.data.refreshToken)
-          setExecuteGetMe(true)
+          if (redirectUrl === '/dashboard?loggedIn=true') setExecuteGetMe(true)
           toast.success('Login successfully 🚀 ')
           console.log('redirectUrl', redirectUrl)
 
@@ -52,9 +52,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
   })
 
   const { getMe } = useUser()
-  if (redirectUrl === '/dashboard?loggedIn=true') {
-    getMe(executeGetMe)
-  }
+  getMe(executeGetMe)
 
   return mutation
 }
