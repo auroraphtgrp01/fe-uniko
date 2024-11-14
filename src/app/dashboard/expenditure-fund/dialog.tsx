@@ -22,7 +22,14 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
   const formInviteParticipantRef = useRef<HTMLFormElement>(null)
   const [emails, setEmails] = useState<string[]>([])
 
-  const { commonDialogState, createDialog, detailUpdateDialog, inviteParticipantDialog, createUpdateCategory } = params
+  const {
+    commonDialogState,
+    createDialog,
+    detailUpdateDialog,
+    inviteParticipantDialog,
+    createUpdateCategory,
+    statisticProps
+  } = params
   const createExpenditureFundDialog: IDialogConfig = {
     content: CreateExpenditureFundForm({
       handleCreate: createDialog.handleCreate,
@@ -52,7 +59,8 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
         handleUpdate: createUpdateCategory.handleUpdateTrackerType,
         isEditing,
         setIsEditing
-      }
+      },
+      statisticProps
     }),
     description: 'Detail information of the expenditure fund.',
     title: 'Expenditure Fund Details',

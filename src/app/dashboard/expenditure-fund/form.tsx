@@ -45,6 +45,7 @@ export default function ExpenditureFundForm() {
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   const [summaryRecentTransactions, setSummaryRecentTransactions] = useState<IFlatListData[]>([])
   const [chartData, setChartData] = useState<{ name: string; value: number }[]>([])
+  const [dateRange, setDateRange] = useState<string>('1-week')
 
   // memos
   const titles = ['Name', 'Status', 'Current Amount', 'Owner']
@@ -69,12 +70,17 @@ export default function ExpenditureFundForm() {
     statusDeleteAnExpenditureFund,
     getStatisticExpenditureFund,
     inviteParticipantToExpenditureFund,
-    statusInviteParticipant
+    statusInviteParticipant,
+    getStatisticDetailOfFund
   } = useExpenditureFund()
   const { advancedExpenditureFundData, isGetAdvancedPending, refetchAdvancedExpendingFund } =
     getAdvancedExpenditureFund({ query: queryOptions })
   const { getStatisticExpenditureFundData, isGetStatisticPending, refetchGetStatisticExpendingFund } =
     getStatisticExpenditureFund()
+  const { refetchGetStatisticDetailOfFund, getStatisticDetailOfFundData } = getStatisticDetailOfFund(
+    detailData.id,
+    dateRange
+  )
 
   const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ALL_TRACKER_TRANSACTION_TYPE_KEY], () => {})
 
@@ -334,6 +340,7 @@ export default function ExpenditureFundForm() {
           },
           handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
         }}
+        statisticProps={{ data: getStatisticDetailOfFundData?.data || [], dateRange, setDateRange }}
       />
     </div>
   )

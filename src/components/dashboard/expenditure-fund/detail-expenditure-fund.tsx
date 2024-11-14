@@ -61,10 +61,14 @@ import {
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import { IDialogConfig } from '@/types/common.i'
 import CustomDialog from '../Dialog'
+import DonutChart from '@/components/core/charts/DonutChart'
 
-export function DetailExpenditureFund({ detailData, inviteTabProps, categoryTabProps }: IDetailExpenditureFundProps) {
-  console.log(detailData)
-
+export function DetailExpenditureFund({
+  detailData,
+  inviteTabProps,
+  categoryTabProps,
+  statisticProps
+}: IDetailExpenditureFundProps) {
   const [valueSearch, setValueSearch] = useState<string>('')
   const [type, setType] = useState<ETypeOfTrackerTransactionType>(ETypeOfTrackerTransactionType.INCOMING)
   const [isCreating, setIsCreating] = useState<boolean>(false)
@@ -293,15 +297,19 @@ export function DetailExpenditureFund({ detailData, inviteTabProps, categoryTabP
           </div>
         </TabsContent>
         <TabsContent value='statistics' className='h-[23rem] space-y-4'>
-          {true ? (
+          {false ? (
             <div className='flex flex-col items-center justify-center pt-20'>
               <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
               <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
             </div>
           ) : (
             <>
-              <h3 className='text-lg font-semibold'>Monthly Spending</h3>
-              {/* Chart */}
+              {/* Input DateRange */}
+              <DonutChart
+                data={statisticProps.data ? statisticProps.data : []}
+                className='h-[23rem] w-full'
+                types='line'
+              />
             </>
           )}
         </TabsContent>

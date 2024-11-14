@@ -1,3 +1,4 @@
+import { IPayloadDataChart } from '@/components/core/charts/DonutChart'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IUpdateTrackerTransactionBody } from '@/core/tracker-transaction/models/tracker-transaction.interface'
@@ -142,6 +143,11 @@ export interface IExpenditureFundDialogProps {
     ) => void
     handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
   }
+  statisticProps: {
+    data: IPayloadDataChart[]
+    dateRange: string
+    setDateRange: React.Dispatch<React.SetStateAction<string>>
+  }
 }
 
 export interface IDetailExpenditureFundProps {
@@ -158,6 +164,11 @@ export interface IDetailExpenditureFundProps {
     ) => void
     isEditing: boolean
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+  }
+  statisticProps: {
+    data: IPayloadDataChart[]
+    dateRange: string
+    setDateRange: React.Dispatch<React.SetStateAction<string>>
   }
 }
 
