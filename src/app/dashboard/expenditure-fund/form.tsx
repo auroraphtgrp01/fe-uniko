@@ -136,102 +136,108 @@ export default function ExpenditureFundForm() {
 
   const buttons = initButtonInHeaders({ setIsDialogOpen })
   return (
-    <div className='grid h-full grid-cols-1 gap-4'>
-      <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        <div className='flex h-full w-full flex-col space-y-4'>
-          <Card className='flex-shrink-0'>
-            <CardHeader className='py-4'>
-              <div className='flex items-center justify-between'>
+    <div className="grid h-full grid-cols-1 gap-4">
+      <div className="grid h-full grid-cols-1 gap-4 xl:col-span-2 lg:grid-cols-3">
+        <div className="flex h-full w-full lg:col-span-3 xl:col-span-1 flex-col space-y-4">
+          {/* Summary Recent Transactions Card */}
+          <Card className="flex-shrink-0">
+            <CardHeader className="py-4">
+              <div className="flex items-center md:justify-center justify-between ">
                 <CardTitle>Summary Recent Transactions</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <div className='h-auto'>
+              <div className="h-auto">
                 <FlatList
                   data={summaryRecentTransactions}
                   onClick={(data) => {
-                    console.log('Clicked transaction:', data)
+                    console.log('Clicked transaction:', data);
                   }}
                   isLoading={isGetStatisticPending}
                 />
               </div>
             </CardContent>
           </Card>
-
-          <Card className='flex-1'>
-            <CardHeader className='py-4'>
+  
+          {/* Balance Summary Card */}
+          <Card className="flex-1">
+            <CardHeader className="py-4">
               <CardTitle>Balance Summary</CardTitle>
             </CardHeader>
             <CardContent>
               <div>
-                <DonutChart data={chartData} className='mt-[-2rem] h-[20rem] w-full' types='donut' />
+                <DonutChart data={chartData} className="mt-[-2rem] h-[20rem] w-full" types="donut" />
               </div>
             </CardContent>
           </Card>
         </div>
-        <div className='flex w-full flex-col md:col-span-2'>
-          <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
-            <Card className='bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg'>
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-lg font-medium text-white'>Total Balance Summary</CardTitle>
+  
+        {/* Right Side Section for Transaction Summaries */}
+        <div className="flex w-full flex-col md:col-span-1 lg:col-span-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 xl:grid-cols-3">
+            {/* Total Balance Summary Card */}
+            <Card className="bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-medium text-white">Total Balance Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='flex items-center justify-between'>
-                  <PiggyBank className='h-12 w-12 text-white opacity-75' />
-                  <div className='text-right'>
-                    <p className='text-2xl font-bold text-white'>
+                <div className="flex items-center justify-between">
+                  <PiggyBank className="h-12 w-12 text-white opacity-75" />
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-white">
                       {formatCurrency(getStatisticExpenditureFundData?.data.totalBalanceSummary || 0, 'đ', 'vi-VN')}
                     </p>
-                    <p className='text-sm text-blue-100'>+2.5% from last month</p>
+                    <p className="text-sm text-blue-100">+2.5% from last month</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            <Card className='bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 transition-all duration-300 hover:shadow-lg'>
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-lg font-medium text-white'>Incoming Transaction Summary</CardTitle>
+  
+            {/* Incoming Transaction Summary Card */}
+            <Card className="bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 transition-all duration-300 hover:shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-medium text-white">Incoming Transaction Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='flex items-center justify-between'>
-                  <TrendingUp className='h-12 w-12 rotate-45 transform text-white opacity-75' />
-                  <div className='text-right'>
-                    <p className='text-2xl font-bold text-white'>
+                <div className="flex items-center justify-between">
+                  <TrendingUp className="h-12 w-12 rotate-45 transform text-white opacity-75" />
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-white">
                       {formatCurrency(
                         getStatisticExpenditureFundData?.data.totalAmountIncomingTransaction || 0,
                         'đ',
                         'vi-VN'
                       )}
                     </p>
-                    <p className='text-sm text-emerald-100'>No change from yesterday</p>
+                    <p className="text-sm text-emerald-100">No change from yesterday</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            <Card className='bg-gradient-to-br from-orange-400 via-pink-500 to-rose-600 transition-all duration-300 hover:shadow-lg'>
-              <CardHeader className='pb-2'>
-                <CardTitle className='text-lg font-medium text-white'>Expense Transaction Summary</CardTitle>
+  
+            {/* Expense Transaction Summary Card */}
+            <Card className="bg-gradient-to-br from-orange-400 via-pink-500 to-rose-600 transition-all duration-300 hover:shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-medium text-white">Expense Transaction Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='flex items-center justify-between'>
-                  <CreditCard className='h-12 w-12 -rotate-12 transform text-white opacity-75' />
-                  <div className='text-right'>
-                    <p className='text-2xl font-bold text-white'>
+                <div className="flex items-center justify-between">
+                  <CreditCard className="h-12 w-12 -rotate-12 transform text-white opacity-75" />
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-white">
                       {formatCurrency(
                         getStatisticExpenditureFundData?.data.totalAmountExpenseTransaction || 0,
                         'đ',
                         'vi-VN'
                       )}
                     </p>
-                    <p className='text-sm text-orange-100'>+15% from last month</p>
+                    <p className="text-sm text-orange-100">+15% from last month</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* DataTable moved here */}
           <div className='mt-4'>
             <Card>
               <CardContent>
