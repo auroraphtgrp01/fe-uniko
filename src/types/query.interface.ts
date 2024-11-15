@@ -6,7 +6,7 @@ export interface IUseQueryHookOptions {
 }
 
 export interface IUseGetAdvancedProps {
-  query: IQueryOptions
+  query?: IQueryOptions
   queryCondition?: IDynamicType[]
   fundId?: string
 }

@@ -7,8 +7,8 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement> & { classNameOfScroll?: string }
 >(({ className, classNameOfScroll, ...props }, ref) => (
-  <div className='relative w-full overflow-auto'>
-    <ScrollArea className={cn('relative overflow-auto', classNameOfScroll)}>
+  <div className='relative w-full'>
+    <ScrollArea className={cn('relative', classNameOfScroll)}>
       <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
       <ScrollBar orientation='horizontal' />
     </ScrollArea>

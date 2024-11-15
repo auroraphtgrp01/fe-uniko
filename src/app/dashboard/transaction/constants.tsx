@@ -93,6 +93,10 @@ export const initEmptyDetailTransactionData = {
     accountBank: null,
     currency: 'N/A',
     currentAmount: 0
+  },
+  accountBank: {
+    id: '',
+    type: ''
   }
 }
 
@@ -104,4 +108,9 @@ export const initEmptyTransactionSummaryData = {
     data: []
   },
   unclassifiedTransaction: { count: 0, incomeAmount: 0, expenseAmount: 0, data: [] }
+}
+
+export const initCallBackRefetchTransactionPage = {
+  advancedData: false,
+  accountSourceData: false
 }

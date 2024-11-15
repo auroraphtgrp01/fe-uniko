@@ -83,13 +83,12 @@ export const handleUpdateAccountSource = ({
   updateAccountSource(payload, {
     onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        setDataUpdate(res.data)
-        setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
+        setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false, isDialogDetailOpen: false }))
         setIdRowClicked('')
         hookResetCacheStatistic()
         hookResetCacheGetAllAccount()
-        onSuccessCallback()
         toast.success('Update account source successfully!')
+        onSuccessCallback()
       }
     }
   })
@@ -147,4 +146,19 @@ export const initDataTable = (
   )
 
   setTableData(dataFormat)
+}
+
+export const onRowClick = (
+  rowData: IAccountSourceDataFormat,
+  advancedTrackerTxData: IAdvancedAccountSourceResponse | undefined,
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>,
+  setDataDetail: React.Dispatch<React.SetStateAction<IAccountSourceDataFormat>>
+) => {
+  if (advancedTrackerTxData) {
+    const matchingData = advancedTrackerTxData.data.find((data) => data.id === rowData.id)
+    if (!matchingData) return
+    const updatedData = { ...rowData, data: { ...matchingData } }
+    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+    setDataDetail(updatedData)
+  }
 }

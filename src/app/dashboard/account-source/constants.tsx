@@ -47,7 +47,8 @@ export const initDialogFlag: IDialogAccountSource = {
   isDialogUpdateOpen: false,
   isDialogRefetchMoneyOpen: false,
   isDialogDeleteOpen: false,
-  isDialogDeleteAllOpen: false
+  isDialogDeleteAllOpen: false,
+  isDialogDetailOpen: false
 }
 
 export const initButtonInDataTableHeader = ({
@@ -64,4 +65,31 @@ export const initButtonInDataTableHeader = ({
       icon: <PlusIcon className='ml-2 h-4 w-4' />
     }
   ]
+}
+
+export const initEmptyDetailAccountSource: IAccountSourceDataFormat = {
+  id: '',
+  name: '',
+  type: '',
+  initAmount: '',
+  accountBank: '',
+  currentAmount: '',
+  checkType: ''
+}
+
+export const initEmptyDetailAccountSourceType = {
+  type: EAccountSourceType.WALLET,
+  data: {
+    accountBank: {
+      id: '',
+      type: '',
+      login_id: '',
+      accounts: ''
+    },
+    accountSource: {
+      id: '',
+      accountSourceName: '',
+      accountSourceType: EAccountSourceType.WALLET
+    }
+  }
 }

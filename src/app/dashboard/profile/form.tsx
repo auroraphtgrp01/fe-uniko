@@ -26,10 +26,15 @@ import { Briefcase, Calendar, Mail, MapPin, Phone, Save, SaveIcon, User2 } from 
 import AvatarDefault from '@/images/avatar.jpg'
 import Image from 'next/image'
 import { Separator } from '@/components/ui/separator'
+import AvatarSelector from '../../../components/dashboard/profile/AvatarSelector'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { useSearchParams } from 'next/navigation'
 
 export default function ProfileForm() {
+  const searchParams = useSearchParams()
   const [defaultUser, setIsDefaultUser] = useState({})
   const { getMe, updateUser, isUpdating, isPasswordUpdating, updatePassword } = useUser()
+  const { setUser } = useStoreLocal()
   const handleUpdatePassword = (formData: { currentPassword?: string; newPassword: string }) => {
     updatePassword({
       ...formData,
@@ -37,12 +42,13 @@ export default function ProfileForm() {
     })
   }
   const handleUpdateUser = (formData: {
-    fullName: string
-    dateOfBirth: Date
-    gender: string
-    workplace: string
-    phone_number: string
-    address: string
+    fullName?: string
+    dateOfBirth?: Date
+    gender?: string
+    workplace?: string
+    phone_number?: string
+    address?: string
+    avatarId?: string
   }) => {
     updateUser(
       {
@@ -53,7 +59,8 @@ export default function ProfileForm() {
         onSuccess: (res: IBaseResponseData<IUser>) => {
           if (!isUpdating && (res.statusCode === 200 || res.statusCode === 201)) {
             setData(res.data)
-            toast.success('Update common information successfully')
+            setUser(res.data)
+            toast.success('Update successfully !')
           }
         }
       }
@@ -88,6 +95,7 @@ export default function ProfileForm() {
         address: userGetMeData?.data.address
       })
     }
+    console.log(userGetMeData?.data?.avatarId)
   }, [userGetMeData])
 
   return (
@@ -97,9 +105,7 @@ export default function ProfileForm() {
           <div className='absolute inset-0 bg-gradient-to-b from-primary/10 to-background/50 opacity-50' />
           <CardContent className='space-y-6 p-6'>
             <div className='flex flex-col items-center space-y-4'>
-              <Avatar className='h-32 w-32 ring-2 ring-border'>
-                <Image priority src={AvatarDefault} alt='' width={128} height={128} />
-              </Avatar>
+              <AvatarSelector onSelect={handleUpdateUser} value={userGetMeData?.data?.avatarId} />
               <div className='text-center'>
                 <h2 className='text-2xl font-bold'>{userGetMeData?.data?.fullName ?? 'Unknown'}</h2>
                 <p className='text-sm text-muted-foreground'>{userGetMeData?.data?.email ?? 'Unknown'}</p>
@@ -126,7 +132,7 @@ export default function ProfileForm() {
         </Card>
         <Card className='h-full flex-1 rounded-md pt-4'>
           <CardContent>
-            <Tabs defaultValue='account' className='h-full flex-1 rounded-md'>
+            <Tabs defaultValue={searchParams.get('openTab') || 'account'} className='h-full flex-1 rounded-md'>
               <TabsList className='grid w-full grid-cols-2'>
                 <TabsTrigger value='account'>{t('tabs.account')}</TabsTrigger>
                 <TabsTrigger value='password'>{t('tabs.password')}</TabsTrigger>

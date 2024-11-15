@@ -8,7 +8,7 @@ export interface IChartProps {
   data: IPayloadDataChart[]
   options?: any
   className?: string | string[]
-  types?: 'nightingale' | 'referer' | 'donut' | 'haftDonut'
+  types?: 'nightingale' | 'referer' | 'donut' | 'haftDonut' | 'line'
 }
 
 export interface IPayloadDataChart {
@@ -229,6 +229,22 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             }
           },
           data
+        }
+      ]
+    },
+    line: {
+      xAxis: {
+        type: 'category',
+        data: data.length > 0 ? data.map((item) => item.name) : []
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: data.length > 0 ? data.map((item) => item.value) : [],
+          type: 'line',
+          smooth: true
         }
       ]
     }

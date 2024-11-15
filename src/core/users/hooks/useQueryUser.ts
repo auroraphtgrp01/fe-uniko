@@ -5,10 +5,12 @@ import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { setUserInfoToLocalStorage } from '@/libraries/helpers'
 import { IUserGetMeResponse } from '@/types/user.i'
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 const userApi = apiService.user
 
 export const useGetMeUser = (execute: boolean) => {
+  const router = useRouter()
   const { setUser } = useStoreLocal()
   const {
     isPending: isGetMeUserPending,
@@ -28,6 +30,8 @@ export const useGetMeUser = (execute: boolean) => {
     if (!isGetMeUserPending && userGetMeData) {
       setUserInfoToLocalStorage(userGetMeData.data)
       setUser(userGetMeData.data)
+      if (userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword)
+        router.push('/dashboard/profile?openTab=password')
     }
   }, [userGetMeData, isGetMeUserPending])
 

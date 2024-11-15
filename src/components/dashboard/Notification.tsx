@@ -61,11 +61,13 @@ export default function NotificationDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' className='relative rounded-full'>
+        <Button
+          variant='ghost'
+          size='icon'
+          className='mt-0.5 h-7 select-none rounded-full !border-0 p-0 outline-none hover:bg-transparent focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0'
+        >
           <Bell className='h-4 w-4' />
-          {unreadCount > 0 && (
-            <span className='absolute right-0 top-0 me-[5px] mt-[5px] h-2 w-2 rounded-full bg-red-500' />
-          )}
+          {unreadCount > 0 && <span className='absolute right-0 top-0 me-[5px] mt-[5px] h-2 w-2 rounded-full' />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-60 md:w-80'>

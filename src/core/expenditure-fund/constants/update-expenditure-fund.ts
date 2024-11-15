@@ -17,26 +17,26 @@ export const defineUpdateExpenditureFundFormBody =
           autoComplete: 'name'
         }
       },
-      {
-        name: 'currency',
-        type: EFieldType.Select,
-        label: 'Currency',
-        dataSelector: [
-          {
-            value: 'USD',
-            label: 'USD'
-          },
-          {
-            value: 'VND',
-            label: 'VND'
-          },
-          {
-            value: 'EUR',
-            label: 'EUR'
-          }
-        ],
-        placeHolder: 'Select currency *'
-      },
+      // {
+      //   name: 'currency',
+      //   type: EFieldType.Select,
+      //   label: 'Currency',
+      //   dataSelector: [
+      //     {
+      //       value: 'USD',
+      //       label: 'USD'
+      //     },
+      //     {
+      //       value: 'VND',
+      //       label: 'VND'
+      //     },
+      //     {
+      //       value: 'EUR',
+      //       label: 'EUR'
+      //     }
+      //   ],
+      //   placeHolder: 'Select currency *'
+      // },
       {
         name: 'status',
         type: EFieldType.Select,
@@ -69,7 +69,7 @@ export const defineUpdateExpenditureFundFormBody =
 export const updateExpenditureFundSchema = z
   .object({
     name: z.string().trim().min(2).max(256),
-    currency: z.enum(['USD', 'VND', 'EUR']),
+    // currency: z.enum(['USD', 'VND', 'EUR']),
     status: z.enum(['ACTIVE', 'CLOSED', 'PENDING']),
     description: z.any()
   })

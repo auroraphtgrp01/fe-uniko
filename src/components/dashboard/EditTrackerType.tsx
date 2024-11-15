@@ -12,11 +12,14 @@ import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
-import { z } from 'zod'
 import FormZod from '../core/FormZod'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
+import {
+  defineEditTrackerTypeBody,
+  editTrackerTypeSchema
+} from '@/core/tracker-transaction-type/constants/update-tracker-transaction-type.constant'
 
 export default function EditTrackerTypeDialog({
   openEditDialog,
@@ -26,63 +29,25 @@ export default function EditTrackerTypeDialog({
   type,
   setType,
   handleCreateTrackerType,
-  handleUpdateTrackerType
+  handleUpdateTrackerType,
+  expenditureFund
 }: IEditTrackerTypeDialogProps) {
+  const { isDeleteOne, deleteTrackerType } = useTrackerTransactionType()
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
   const filteredDataArr = dataArr?.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))
   const [accordionValue, setAccordionValue] = useState<string | null>(null)
+  const handleDeleteTrackerType = (id: string) => {
+    deleteTrackerType({ id })
+    setOpenEditDialog(false)
+  }
   const onHandleUpdate = () => {
     if (isUpdate) {
       formRefEdit.current?.requestSubmit()
     }
     setIsUpdate(!isUpdate)
   }
-  const editTrackerTypeBody: IBodyFormField[] = [
-    {
-      name: 'name',
-      type: EFieldType.Input,
-      label: 'Name',
-      placeHolder: 'Enter tracker transaction type name',
-      props: {
-        autoComplete: 'name',
-        disabled: !isUpdate
-      }
-    },
-    {
-      name: 'type',
-      type: EFieldType.Select,
-      label: 'Type',
-      placeHolder: 'Select type for tracker transaction type',
-      props: {
-        autoComplete: 'type',
-        disabled: !isUpdate,
-        value: type
-      },
-      dataSelector: [
-        { value: 'INCOMING', label: 'Incoming' },
-        { value: 'EXPENSE', label: 'Expense' }
-      ]
-    },
-    {
-      name: 'description',
-      type: EFieldType.Textarea,
-      label: 'Description',
-      placeHolder: 'Enter tracker transaction type description',
-      props: {
-        disabled: !isUpdate
-      }
-    }
-  ]
-
-  const editTrackerTypeSchema = z
-    .object({
-      name: z.string().trim().min(2).max(256),
-      type: z.enum(['INCOMING', 'EXPENSE']),
-      description: z.string().min(10).max(256).nullable()
-    })
-    .strict()
 
   const formRefCreate = useRef<HTMLFormElement>(null)
   const formRefEdit = useRef<HTMLFormElement>(null)
@@ -97,21 +62,21 @@ export default function EditTrackerTypeDialog({
     <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
       <DialogContent className='rsm:max-w-[525px]'>
         <DialogHeader>
-          <DialogTitle>Edit Tracker Transaction Type</DialogTitle>
-          <DialogDescription>Make changes to your Tracker Transaction Type</DialogDescription>
+          <DialogTitle>Edit Category</DialogTitle>
+          <DialogDescription>Make changes to your category</DialogDescription>
           <div className='mt-3 w-full'>
             <div className='flex flex-col gap-2 sm:flex-row'>
               <Input
                 value={valueSearch}
                 onChange={(e) => setValueSearch(e.target.value)}
                 className='w-full'
-                placeholder='Search Tracker Transaction Type'
+                placeholder='Search Category'
               />
             </div>
             <div className='mt-2 flex w-full flex-col gap-2 sm:flex-row'>
               <Select onValueChange={(value: ETypeOfTrackerTransactionType) => setType(value)} value={type}>
                 <SelectTrigger>
-                  <SelectValue placeholder='Select type for tracker transaction type' />
+                  <SelectValue placeholder='Select type for category' />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem key={'INCOMING'} value={'INCOMING'}>
@@ -151,6 +116,7 @@ export default function EditTrackerTypeDialog({
                 formRef={formRefCreate}
                 handleCreateTrackerType={handleCreateTrackerType}
                 setIsCreating={setIsCreating}
+                expenditureFund={expenditureFund}
               />
             </div>
           )}
@@ -169,7 +135,7 @@ export default function EditTrackerTypeDialog({
                       <AccordionTrigger className='flex justify-between'>{data.label}</AccordionTrigger>
                       <AccordionContent>
                         <div className='flex w-full justify-between'>
-                          <Button variant={'destructive'}>
+                          <Button variant={'destructive'} onClick={() => handleDeleteTrackerType(data.id)}>
                             Delete
                             <Delete className='h-4' />
                           </Button>
@@ -213,7 +179,10 @@ export default function EditTrackerTypeDialog({
                               type: data.type as ETypeOfTrackerTransactionType,
                               description: data.description
                             }}
-                            formFieldBody={editTrackerTypeBody}
+                            formFieldBody={defineEditTrackerTypeBody(
+                              isUpdate,
+                              data.type as ETypeOfTrackerTransactionType
+                            )}
                             formSchema={editTrackerTypeSchema}
                             onSubmit={(data) => {
                               handleUpdateTrackerType({ ...data, id: accordionValue } as ITrackerTransactionTypeBody)

@@ -124,6 +124,7 @@ export interface ISharedDialogElements {
   accountSourceData: IAccountSource[]
   typeOfTrackerType: ETypeOfTrackerTransactionType
   setTypeOfTrackerType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
+  expenditureFund: { label: string; value: string | number }[]
 }
 
 export interface IDetailUpdateTrackerTransactionDialog {
@@ -207,3 +208,14 @@ export interface IFundOfUser {
   currentAmount: string
   currency: string
 }
+
+export type TTrackerTransactionActions =
+  | 'getTransactions'
+  | 'getTodayTransactions'
+  | 'getUnclassifiedTransactions'
+  | 'getAllAccountSource'
+  | 'getStatistic'
+  | 'getAllTrackerTransactionType'
+  | 'getTrackerTransaction'
+  | 'getStatisticExpenditureFund'
+  | 'getExpenditureFund'

@@ -13,8 +13,11 @@ export const useGetTodayTransactions = (props: IUseGetAdvancedProps) => {
     error
   } = useModelQuery<IGetTransactionResponse>(GET_TODAY_TRANSACTION_KEY, transactionRoutes.getTodayTransactions, {
     query: props.query,
-    enable: !!props,
-    retry: TRANSACTION_RETRY
+    enable: !!props.fundId,
+    retry: TRANSACTION_RETRY,
+    params: {
+      fundId: props.fundId
+    }
   })
 
   useEffect(() => {
