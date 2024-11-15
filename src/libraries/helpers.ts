@@ -63,6 +63,8 @@ export const removeTokensFromLocalStorage = () => {
   isClient && localStorage.removeItem('refreshToken')
 }
 
+export const setDefaultFundIdToLocalStorage = (value: string) => isClient && localStorage.setItem('fundId', value)
+
 export const setTimeCountRefetchLimit = () => {
   if (isClient) {
     const now = Date.now()

@@ -22,6 +22,7 @@ import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 import {
   handleCreateExpenditureFund,
   handleDeleteAnExpenditureFund,
+  handleDeleteParticipant,
   handleInviteParticipant,
   handleUpdateExpenditureFund,
   initExpenditureFundDataTable
@@ -30,7 +31,7 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import { IQueryOptions } from '@/types/query.interface'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { handleCreateTrackerTxType } from '../tracker-transaction/handlers'
+import { handleCreateTrackerTxType, modifiedTrackerTypeForComboBox } from '../tracker-transaction/handlers'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'
@@ -71,7 +72,9 @@ export default function ExpenditureFundForm() {
     getStatisticExpenditureFund,
     inviteParticipantToExpenditureFund,
     statusInviteParticipant,
-    getStatisticDetailOfFund
+    getStatisticDetailOfFund,
+    deleteAnParticipant,
+    getAllExpenditureFund
   } = useExpenditureFund()
   const { advancedExpenditureFundData, isGetAdvancedPending, refetchAdvancedExpendingFund } =
     getAdvancedExpenditureFund({ query: queryOptions })
@@ -81,6 +84,7 @@ export default function ExpenditureFundForm() {
     detailData.id,
     dateRange
   )
+  const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
 
   const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ALL_TRACKER_TRANSACTION_TYPE_KEY], () => {})
 
@@ -88,7 +92,8 @@ export default function ExpenditureFundForm() {
     getExpenditureFund: refetchAdvancedExpendingFund,
     getStatisticExpenditureFund: refetchGetStatisticExpendingFund,
     getAllTrackerTransactionType: resetCacheTrackerTxType,
-    getAllStatisticDetailOfFund: refetchGetStatisticDetailOfFund
+    getAllStatisticDetailOfFund: refetchGetStatisticDetailOfFund,
+    getAllExpendingFund: refetchAllExpendingFund
   }
 
   const callBackRefetchExpenditureFundPage = (actions: TExpenditureFundActions[]) => {
@@ -264,7 +269,7 @@ export default function ExpenditureFundForm() {
                           id: idDeletes[0],
                           hookDelete: deleteAnExpenditureFund,
                           setIsDialogOpen,
-                          callBackRefetchAPI: refetchAdvancedExpendingFund,
+                          callBackRefetchAPI: callBackRefetchExpenditureFundPage,
                           setDataTableConfig,
                           setIdDeletes
                         })
@@ -291,7 +296,7 @@ export default function ExpenditureFundForm() {
               data,
               setIsDialogOpen,
               hookCreate: createExpenditureFund,
-              callBackRefetchAPI: refetchAdvancedExpendingFund,
+              callBackRefetchAPI: callBackRefetchExpenditureFundPage,
               setDataTableConfig
             })
           },
@@ -302,7 +307,7 @@ export default function ExpenditureFundForm() {
             handleUpdateExpenditureFund({
               data,
               hookUpdate: updateExpenditureFund,
-              callBackRefetchAPI: refetchAdvancedExpendingFund,
+              callBackRefetchAPI: callBackRefetchExpenditureFundPage,
               setIsDialogOpen,
               setDetailData,
               setDataTableConfig
@@ -310,7 +315,15 @@ export default function ExpenditureFundForm() {
           },
           data: detailData,
           setDetailData,
-          status: statusUpdate
+          status: statusUpdate,
+          handleDeleteParticipant: (id: string) => {
+            handleDeleteParticipant({
+              callBackOnSuccess: callBackRefetchExpenditureFundPage,
+              hookDelete: deleteAnParticipant,
+              setIsDialogOpen,
+              id
+            })
+          }
         }}
         commonDialogState={{ setIsDialogOpen, isDialogOpen }}
         inviteParticipantDialog={{
@@ -339,7 +352,8 @@ export default function ExpenditureFundForm() {
               setIsCreating
             })
           },
-          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
+          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {},
+          expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
         }}
         statisticProps={{ data: getStatisticDetailOfFundData?.data || [], dateRange, setDateRange }}
       />

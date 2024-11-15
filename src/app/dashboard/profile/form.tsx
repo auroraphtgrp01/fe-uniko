@@ -95,7 +95,6 @@ export default function ProfileForm() {
         address: userGetMeData?.data.address
       })
     }
-    console.log(userGetMeData?.data?.avatarId)
   }, [userGetMeData])
 
   return (

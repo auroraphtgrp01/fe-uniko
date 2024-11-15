@@ -3,8 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   EFundStatus,
   IDetailExpenditureFundProps,
-  IExpenditureFundParticipant,
-  IUpdateExpenditureFundFormProps
+  IExpenditureFundParticipant
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
@@ -14,32 +13,25 @@ import {
   CalendarDays,
   CheckIcon,
   Clock,
-  Command,
   DeleteIcon,
   EditIcon,
   Loader2Icon,
-  MailIcon,
   MoreHorizontalIcon,
-  PlusCircleIcon,
   PlusIcon,
   SaveIcon,
-  Search,
   Tag,
   Trash2Icon,
   Undo2Icon,
   UserPlus,
-  Users2Icon,
-  XIcon
+  Users2Icon
 } from 'lucide-react'
 import Image from 'next/image'
 import EmptyBox from '@/images/empty-box.png'
 import NoDataPlaceHolder from '@/images/2.png'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/common/tooltip'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -53,7 +45,7 @@ import {
   IEditTrackerTypeDialogData,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
   defineEditTrackerTypeBody,
   editTrackerTypeSchema
@@ -68,7 +60,8 @@ export function DetailExpenditureFund({
   inviteTabProps,
   categoryTabProps,
   statisticProps,
-  setIsDialogOpen
+  setIsDialogOpen,
+  participantProps
 }: IDetailExpenditureFundProps) {
   const [valueSearch, setValueSearch] = useState<string>('')
   const [type, setType] = useState<ETypeOfTrackerTransactionType>(ETypeOfTrackerTransactionType.INCOMING)
@@ -85,6 +78,7 @@ export function DetailExpenditureFund({
   const formRefCreate = useRef<HTMLFormElement>(null)
   const formRefEdit = useRef<HTMLFormElement>(null)
   const { user } = useStoreLocal()
+  const isOwner = detailData.owner.id === user?.id
 
   const onHandleUpdate = () => {
     if (isUpdate) {
@@ -143,7 +137,8 @@ export function DetailExpenditureFund({
         handleCreateTrackerType={categoryTabProps.handleCreate}
         setIsCreating={setIsCreating}
         selectType={true}
-        expenditureFund={[]}
+        expenditureFund={categoryTabProps.expenditureFund}
+        defaultFundId={detailData.id}
       />
     ),
     isOpen: isCreating,
@@ -328,86 +323,97 @@ export function DetailExpenditureFund({
             </>
           )}
         </TabsContent>
-        {/* {detailData.owner.id === user.id && (
-          
-        )} */}
-        <TabsContent value='participants' className='h-[23rem] space-y-4'>
+        <TabsContent value='participants' className='flex h-[23rem] flex-col space-y-4 overflow-hidden'>
           <TooltipProvider>
-            <div className='grid w-full grid-cols-6 items-end gap-2'>
-              <div className='col-span-5 h-full w-full'>
-                <InviteParticipantForm
-                  formInviteRef={inviteTabProps.formRef}
-                  handleInvite={inviteTabProps.handleInvite}
-                />
+            {isOwner && (
+              <div className='grid w-full grid-cols-6 items-end gap-2'>
+                <div className='col-span-5 h-full w-full'>
+                  <InviteParticipantForm
+                    formInviteRef={inviteTabProps.formRef}
+                    handleInvite={inviteTabProps.handleInvite}
+                  />
+                </div>
+                <div className='col-span-1 w-full'>
+                  <Button
+                    onClick={() => inviteTabProps.formRef.current?.requestSubmit()}
+                    disabled={false}
+                    className='flex h-full w-full items-center justify-center'
+                  >
+                    {false ? <Loader2Icon className='h-4 w-4 animate-spin' /> : <UserPlus className='mr-2 h-4 w-4' />}
+                    Invite
+                  </Button>
+                </div>
               </div>
-              <div className='col-span-1 w-full'>
-                <Button
-                  onClick={() => inviteTabProps.formRef.current?.requestSubmit()}
-                  disabled={false}
-                  className='flex h-full w-full items-center justify-center'
-                >
-                  {false ? <Loader2Icon className='h-4 w-4 animate-spin' /> : <UserPlus className='mr-2 h-4 w-4' />}
-                  Invite
-                </Button>
-              </div>
-            </div>
-            <ScrollArea className='h-[255px] rounded-md border'>
-              <div className='space-y-2 p-2'>
-                {detailData.participants.map((participant) => (
-                  <div key={participant.id} className='flex items-center justify-between rounded-lg p-2'>
-                    <div className='flex items-center space-x-3'>
-                      <Avatar>
-                        <AvatarImage src={participant.user?.avatar ?? AvatarDefault.src} />
-                        <AvatarFallback>{participant.user?.fullName.charAt(0) ?? 'N/A'}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className='text-sm font-medium'>{participant.user?.fullName ?? 'N/A'}</p>
-                        <p className='text-xs'>{participant.user?.email ?? participant?.subEmail}</p>
+            )}
+            <div className={`flex-1 overflow-hidden ${!isOwner ? 'mt-2' : ''}`}>
+              <ScrollArea className={`h-[${isOwner ? '17rem' : '20rem'}] overflow-y-auto rounded-md border`}>
+                <div className='space-y-2 p-2'>
+                  {detailData.participants.map((participant) => (
+                    <div key={participant.id} className='flex items-center justify-between rounded-lg p-2'>
+                      <div className='flex items-center space-x-3'>
+                        <Avatar>
+                          <AvatarImage src={participant.user?.avatar ?? AvatarDefault.src} />
+                          <AvatarFallback>{participant.user?.fullName.charAt(0) ?? 'N/A'}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className='text-sm font-medium'>{participant.user?.fullName ?? 'N/A'}</p>
+                          <p className='text-xs'>{participant.user?.email ?? participant?.subEmail}</p>
+                        </div>
+                      </div>
+                      <div className='flex items-center space-x-2'>
+                        {participant.status === 'ACCEPTED' ? (
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <CheckIcon className='h-4 w-4 text-green-500' />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Accepted</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Clock className='h-4 w-4 text-yellow-500' />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Pending</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        {getRoleBadge(participant.role)}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              disabled={participant.role === 'OWNER' || isOwner === false}
+                              variant='ghost'
+                              className='h-8 w-8 p-0'
+                            >
+                              <MoreHorizontalIcon className='h-4 w-4 text-gray-400' />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align='end'>
+                            {participant.role !== 'OWNER' && (
+                              <DropdownMenuItem
+                                className='text-red-400'
+                                onClick={() => {
+                                  participantProps.handleDelete(participant.id)
+                                }}
+                              >
+                                <Trash2Icon className='mr-2 h-4 w-4' />
+                                <span>Remove</span>
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
-                    <div className='flex items-center space-x-2'>
-                      {participant.status === 'ACCEPTED' ? (
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <CheckIcon className='h-4 w-4 text-green-500' />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Accepted</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : (
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Clock className='h-4 w-4 text-yellow-500' />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Pending</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      {getRoleBadge(participant.role)}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant='ghost' className='h-8 w-8 p-0'>
-                            <MoreHorizontalIcon className='h-4 w-4 text-gray-400' />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align='end'>
-                          {participant.role !== 'OWNER' && (
-                            <DropdownMenuItem className='text-red-400' onClick={() => {}}>
-                              <Trash2Icon className='mr-2 h-4 w-4' />
-                              <span>Remove</span>
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
           </TooltipProvider>
         </TabsContent>
+
         <TabsContent value='categories' className='h-[23rem] space-y-4'>
           <div className='w-full space-y-3'>
             <Input
@@ -450,7 +456,7 @@ export function DetailExpenditureFund({
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className='flex w-full justify-between'>
-                        <Button variant={'destructive'}>
+                        <Button onClick={() => {}} variant={'destructive'}>
                           Delete
                           <DeleteIcon className='h-4' />
                         </Button>

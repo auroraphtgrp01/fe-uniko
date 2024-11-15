@@ -19,7 +19,8 @@ export const initEmptyExpenditureFundDialogOpen = {
   isDialogUpdateOpen: false,
   isDialogDeleteOpen: false,
   isDialogDeleteAllOpen: false,
-  isDialogInviteOpen: false
+  isDialogInviteOpen: false,
+  isDialogDeleteParticipantOpen: false
 }
 
 export const initButtonInHeaders = ({ setIsDialogOpen }: IInitButtonInHeaderProps): IButtonInDataTableHeader[] => {

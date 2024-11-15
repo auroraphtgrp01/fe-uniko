@@ -12,6 +12,7 @@ import {
   ETypeOfTrackerTransactionType
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
 
 interface ICreateTrackerTypeFormProps {
   typeOfTrackerType: ETypeOfTrackerTransactionType
@@ -23,6 +24,7 @@ interface ICreateTrackerTypeFormProps {
   setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
   selectType?: boolean
   expenditureFund: { label: string; value: string | number }[]
+  defaultFundId?: string
 }
 
 export default function CreateTrackerTypeForm({
@@ -31,10 +33,13 @@ export default function CreateTrackerTypeForm({
   handleCreateTrackerType,
   setIsCreating,
   selectType,
-  expenditureFund
+  expenditureFund,
+  defaultFundId
 }: ICreateTrackerTypeFormProps) {
+  const { fundId } = useStoreLocal()
+
   const [currentTrackerType, setCurrentTrackerType] = React.useState<ETrackerTypeOfTrackerTransactionType>(
-    ETrackerTypeOfTrackerTransactionType.DEFAULT
+    ETrackerTypeOfTrackerTransactionType.CUSTOM
   )
   const [currentType, setCurrentType] = React.useState<ETypeOfTrackerTransactionType>(
     typeOfTrackerType || ETypeOfTrackerTransactionType.INCOMING
@@ -44,21 +49,26 @@ export default function CreateTrackerTypeForm({
     .object({
       name: z.string().trim().min(2).max(256),
       description: z.any(),
-      type: z.nativeEnum(ETypeOfTrackerTransactionType).optional(),
-      trackerType: z.nativeEnum(ETrackerTypeOfTrackerTransactionType),
-      fundId: z.string().optional()
+      type: z.nativeEnum(ETypeOfTrackerTransactionType),
+      fundId: z.string()
     })
     .strict()
 
   const form = useForm<z.infer<typeof createTrackerTypeSchema>>({
-    resolver: zodResolver(createTrackerTypeSchema)
+    resolver: zodResolver(createTrackerTypeSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      fundId: defaultFundId || fundId,
+      type: currentType
+    }
   })
 
   const onSubmit = (data: z.infer<typeof createTrackerTypeSchema>) => {
     const payload: ITrackerTransactionTypeBody = {
       ...data,
       type: currentType,
-      trackerType: data.trackerType as ETrackerTypeOfTrackerTransactionType
+      trackerType: currentTrackerType
     }
     handleCreateTrackerType(payload, setIsCreating)
   }
@@ -107,27 +117,25 @@ export default function CreateTrackerTypeForm({
         />
         <FormField
           control={form.control}
-          name='trackerType'
+          name='fundId'
           render={({ field }) => (
             <FormItem className='grid grid-cols-4 items-center gap-4'>
-              <FormLabel className='text-white-700'>Tracker Type</FormLabel>
+              <FormLabel className='text-white-700'>Expenditure Fund</FormLabel>
               <FormControl className='col-span-3'>
                 <div className='flex flex-col gap-1'>
                   <FormMessage />
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      setCurrentTrackerType(value as ETrackerTypeOfTrackerTransactionType)
-                    }}
-                    value={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={defaultFundId || fundId} value={field.value}>
                     <SelectTrigger>
-                      <SelectValue placeholder='Select tracker type for category' />
+                      <SelectValue placeholder='Select expenditure fund' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='DEFAULT'>Default</SelectItem>
-                      <SelectItem value='CUSTOM'>Custom</SelectItem>
-                      <SelectItem value='CONTRIBUTE'>Contribute</SelectItem>
+                      {expenditureFund.map((fund) => {
+                        return (
+                          <>
+                            <SelectItem value={fund.value as string}>{fund.label}</SelectItem>
+                          </>
+                        )
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -135,38 +143,6 @@ export default function CreateTrackerTypeForm({
             </FormItem>
           )}
         />
-        {currentTrackerType === ETrackerTypeOfTrackerTransactionType.CONTRIBUTE ? (
-          <FormField
-            control={form.control}
-            name='fundId'
-            render={({ field }) => (
-              <FormItem className='grid grid-cols-4 items-center gap-4'>
-                <FormLabel className='text-white-700'>Expenditure Fund</FormLabel>
-                <FormControl className='col-span-3'>
-                  <div className='flex flex-col gap-1'>
-                    <FormMessage />
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Select expenditure fund' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {expenditureFund.map((fund) => {
-                          return (
-                            <>
-                              <SelectItem value={fund.value as string}>{fund.label}</SelectItem>
-                            </>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        ) : (
-          ''
-        )}
         {selectType && (
           <FormField
             control={form.control}

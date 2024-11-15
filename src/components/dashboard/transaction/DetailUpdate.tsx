@@ -35,10 +35,6 @@ export default function DetailUpdateTransaction({
   const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
   const formUpdateTrackerTransactionRef = useRef<any>()
 
-  useEffect(() => {
-    console.log('updateTransactionProps', updateTransactionProps.transaction)
-  }, [updateTransactionProps])
-
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
       if (

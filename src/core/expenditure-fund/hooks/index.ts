@@ -8,6 +8,7 @@ import { useInviteParticipantToExpenditureFund } from './useInviteParticipant'
 import { useJoinExpenditureFund } from './useJoinExpenditureFund'
 import { useGetStatisticDetailOfFund } from './useGetStatisticDetailOfFund'
 import { useGetAllExpenditureFund } from './useGetAllExpenditureFund'
+import { useDeleteAnParticipant } from './useDeleteAnParticipant'
 
 export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
   const { mutate: createExpenditureFund, status: statusCreate } = useCreateExpenditureFund(opts)
@@ -15,6 +16,7 @@ export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
     useInviteParticipantToExpenditureFund(opts)
   const { mutate: updateExpenditureFund, status: statusUpdate } = useUpdateExpenditureFund(opts)
   const { mutate: deleteAnExpenditureFund, status: statusDeleteAnExpenditureFund } = useDeleteAnExpenditureFund(opts)
+  const { mutate: deleteAnParticipant, status: statusDeleteAnParticipant } = useDeleteAnParticipant(opts)
   return {
     createExpenditureFund,
     statusCreate,
@@ -28,6 +30,8 @@ export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
     statusInviteParticipant,
     joinExpenditureFund: useJoinExpenditureFund,
     getStatisticDetailOfFund: useGetStatisticDetailOfFund,
-    getAllExpenditureFund: useGetAllExpenditureFund
+    getAllExpenditureFund: useGetAllExpenditureFund,
+    deleteAnParticipant,
+    statusDeleteAnParticipant
   }
 }

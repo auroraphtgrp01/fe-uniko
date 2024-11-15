@@ -8,5 +8,6 @@ export const expenditureFundRoutes = {
   updateExpenditureFund: 'expenditure-funds/:id',
   joinExpenditureFund: 'participants/join-to-fund/:token',
   deleteExpenditureFund: 'expenditure-funds/remove-one/:id',
+  deleteParticipant: 'participants/:id',
   deleteMultipleExpenditureFund: 'expenditure-funds/remove-multiple/:ids'
 }

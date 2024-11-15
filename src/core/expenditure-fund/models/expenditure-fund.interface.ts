@@ -12,6 +12,7 @@ export interface IExpenditureFundDialogOpen {
   isDialogDetailOpen: boolean
   isDialogUpdateOpen: boolean
   isDialogDeleteOpen: boolean
+  isDialogDeleteParticipantOpen: boolean
   isDialogDeleteAllOpen: boolean
   isDialogInviteOpen: boolean
 }
@@ -132,6 +133,7 @@ export interface IExpenditureFundDialogProps {
     data: IExpenditureFund
     setDetailData: React.Dispatch<React.SetStateAction<IExpenditureFund>>
     status: 'error' | 'idle' | 'pending' | 'success'
+    handleDeleteParticipant: (id: string) => void
   }
   inviteParticipantDialog: {
     handleInvite: (data: string[]) => void
@@ -143,6 +145,7 @@ export interface IExpenditureFundDialogProps {
       setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
     ) => void
     handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+    expenditureFund: { label: string; value: string }[]
   }
   statisticProps: {
     data: IPayloadDataChart[]
@@ -165,11 +168,15 @@ export interface IDetailExpenditureFundProps {
     ) => void
     isEditing: boolean
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    expenditureFund: { label: string; value: string }[]
   }
   statisticProps: {
     data: IPayloadDataChart[]
     dateRange: string
     setDateRange: React.Dispatch<React.SetStateAction<string>>
+  }
+  participantProps: {
+    handleDelete: (id: string) => void
   }
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
 }
@@ -184,7 +191,7 @@ export interface IHandleCreateExpenditureFundProps {
   data: ICreateExpenditureFundBody
   hookCreate: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
-  callBackRefetchAPI: () => void
+  callBackRefetchAPI: (actions: TExpenditureFundActions[]) => void
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
 }
 
@@ -215,3 +222,4 @@ export type TExpenditureFundActions =
   | 'getStatisticExpenditureFund'
   | 'getAllTrackerTransactionType'
   | 'getAllStatisticDetailOfFund'
+  | 'getAllExpendingFund'
