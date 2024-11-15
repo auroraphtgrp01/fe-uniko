@@ -11,6 +11,7 @@ import 'nprogress/nprogress.css'
 import dynamic from 'next/dynamic'
 import { SocketProvider } from '../libraries/useSocketIo'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import Script from 'next/script'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -54,6 +55,22 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <head>
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
+        <Script
+          strategy='afterInteractive'
+          src={`https://www.googletagmanager.com/gtag/js?id=${configProject.NEXT_PUBLIC_GA_ID}`}
+        />
+        <Script
+          id='google-analytics'
+          strategy='afterInteractive'
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${configProject.NEXT_PUBLIC_GA_ID}');
+            `
+          }}
+        />
       </head>
       <body className={cn('min-h-screen font-sans antialiased', fontSans.variable)}>
         <Toaster
