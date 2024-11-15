@@ -5,7 +5,7 @@ import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/m
 
 import { Button } from '@/components/ui/button'
 import CreateTrackerTypeForm from '../CreateTrackerTypeForm'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IDialogConfig } from '@/types/common.i'
 import CustomDialog from '../Dialog'
 import OverviewTabsContent from './detail-expenditure-fund-tabs-content/overview-tabs-content'
@@ -13,6 +13,7 @@ import TransactionTabsContent from './detail-expenditure-fund-tabs-content/trans
 import StatisticTabsContent from './detail-expenditure-fund-tabs-content/statistic-tabs-content'
 import ParticipantTabsContent from './detail-expenditure-fund-tabs-content/participant-tabs-content'
 import CategoryTabsContent from './detail-expenditure-fund-tabs-content/category-tabs-content'
+import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export function DetailExpenditureFund({
   detailData,
@@ -24,7 +25,6 @@ export function DetailExpenditureFund({
 }: IDetailExpenditureFundProps) {
   const [type, setType] = useState<ETypeOfTrackerTransactionType>(ETypeOfTrackerTransactionType.INCOMING)
   const [isCreating, setIsCreating] = useState<boolean>(false)
-  const formRefCreate = useRef<HTMLFormElement>(null)
 
   const getStatusColor = (status: EFundStatus) => {
     switch (status) {
@@ -35,29 +35,6 @@ export function DetailExpenditureFund({
       default:
         return 'bg-blue-100 text-blue-800'
     }
-  }
-
-  const createTrackerTypeDialog: IDialogConfig = {
-    content: (
-      <CreateTrackerTypeForm
-        typeOfTrackerType={type}
-        formRef={formRefCreate}
-        handleCreateTrackerType={categoryTabProps.handleCreate}
-        setIsCreating={setIsCreating}
-        selectType={true}
-        expenditureFund={categoryTabProps.expenditureFund}
-        defaultFundId={detailData.id}
-      />
-    ),
-    isOpen: isCreating,
-    onClose: () => setIsCreating(false),
-    title: 'Create Tracker Transaction Type',
-    description: 'Create a new tracker transaction type',
-    footer: (
-      <Button onClick={() => formRefCreate.current?.requestSubmit()} type='button'>
-        Save
-      </Button>
-    )
   }
 
   return (
@@ -103,10 +80,10 @@ export function DetailExpenditureFund({
             categoryTabProps={categoryTabProps}
             setIsCreating={setIsCreating}
             setIsDialogOpen={setIsDialogOpen}
+            isCreating={isCreating}
           />
         </TabsContent>
       </Tabs>
-      <CustomDialog config={createTrackerTypeDialog} />
     </>
   )
 }

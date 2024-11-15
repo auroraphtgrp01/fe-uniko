@@ -9,7 +9,7 @@ import { Clock } from 'lucide-react'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import Image from 'next/image'
 import NoDataPlaceHolder from '@/images/2.png'
-import { cn } from '@/libraries/utils'
+import { cn, formatDateTimeVN } from '@/libraries/utils'
 import { Atom } from 'react-loading-indicators'
 import { emptyStateItemVariants, emptyStateVariants } from '../dashboard/DataTable'
 import EmptyBox from '@/images/empty-box.png'
@@ -82,7 +82,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                       </Badge>
                       <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
                         <Clock className='h-3 w-3' />
-                        <span>{item.transactionDateTime}</span>
+                        <span>{formatDateTimeVN(item.transactionDateTime, true)}</span>
                       </div>
                     </div>
                   </div>

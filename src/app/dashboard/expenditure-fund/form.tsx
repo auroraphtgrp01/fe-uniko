@@ -31,7 +31,11 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import { IQueryOptions } from '@/types/query.interface'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { handleCreateTrackerTxType, modifiedTrackerTypeForComboBox } from '../tracker-transaction/handlers'
+import {
+  handleCreateTrackerTxType,
+  handleUpdateTrackerTxType,
+  modifiedTrackerTypeForComboBox
+} from '../tracker-transaction/handlers'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'
@@ -60,7 +64,7 @@ export default function ExpenditureFundForm() {
   }, [dataTable])
 
   // hooks
-  const { createTrackerTxType } = useTrackerTransactionType()
+  const { createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const {
     createExpenditureFund,
     statusCreate,
@@ -352,7 +356,14 @@ export default function ExpenditureFundForm() {
               setIsCreating
             })
           },
-          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {},
+          handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {
+            // handleUpdateTrackerTxType({
+            //   payload: data,
+            //   hookUpdate: updateTrackerTxType,
+            //   callBackOnSuccess: callBackRefetchExpenditureFundPage
+            // })
+            console.log('Ổn')
+          },
           expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
         }}
         statisticProps={{ data: getStatisticDetailOfFundData?.data || [], dateRange, setDateRange }}

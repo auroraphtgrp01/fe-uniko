@@ -1,13 +1,13 @@
 'use client'
 
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
-import FormZod from '@/components/core/FormZod'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ICategoryTabsContentProps, IExpenditureFund } from '@/core/expenditure-fund/models/expenditure-fund.interface'
+import { ICategoryTabsContentProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
+import FormZod from '../../../core/FormZod'
 import {
   defineEditTrackerTypeBody,
   editTrackerTypeSchema
@@ -17,16 +17,24 @@ import {
   IEditTrackerTypeDialogData,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { IDialogConfig } from '@/types/common.i'
 import { DeleteIcon, EditIcon, PlusIcon, SaveIcon, Undo2Icon } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import CreateTrackerTypeForm from '../../CreateTrackerTypeForm'
+import CustomDialog from '../../Dialog'
+import AccordionEditTrackerType from '../../AccordionEditTrackerType'
 
 export default function CategoryTabsContent({
   detailData,
   type,
   setType,
   categoryTabProps,
-  setIsCreating
+  setIsCreating,
+  isCreating
 }: ICategoryTabsContentProps) {
+  const formRefCreate = useRef<HTMLFormElement>(null)
+  const formRefSave = useRef<HTMLFormElement>(null)
+
   const [valueSearch, setValueSearch] = useState<string>('')
   const [accordionValue, setAccordionValue] = useState<string>('')
   const [isUpdate, setIsUpdate] = useState(false)
@@ -34,17 +42,32 @@ export default function CategoryTabsContent({
     () => modifiedTrackerTypeForComboBox(detailData.categories.filter((category) => category.type === type)),
     [detailData.categories, type]
   )
+
   const filteredDataArr = editCategories?.filter((data: IEditTrackerTypeDialogData) =>
     data.label.toLowerCase().includes(valueSearch.trim().toLowerCase())
   )
 
-  const formRefEdit = useRef<HTMLFormElement>(null)
-
-  const onHandleUpdate = () => {
-    if (isUpdate) {
-      formRefEdit.current?.requestSubmit()
-    }
-    setIsUpdate(!isUpdate)
+  const createTrackerTypeDialog: IDialogConfig = {
+    content: (
+      <CreateTrackerTypeForm
+        typeOfTrackerType={type}
+        formRef={formRefCreate}
+        handleCreateTrackerType={categoryTabProps.handleCreate}
+        setIsCreating={setIsCreating}
+        selectType={true}
+        expenditureFund={categoryTabProps.expenditureFund}
+        defaultFundId={detailData.id}
+      />
+    ),
+    isOpen: isCreating,
+    onClose: () => setIsCreating(false),
+    title: 'Create Tracker Transaction Type',
+    description: 'Create a new tracker transaction type',
+    footer: (
+      <Button onClick={() => formRefCreate.current?.requestSubmit()} type='button'>
+        Save
+      </Button>
+    )
   }
 
   return (
@@ -57,10 +80,10 @@ export default function CategoryTabsContent({
       />
       <div className='flex space-x-2'>
         <Select onValueChange={(value) => setType(value as ETypeOfTrackerTransactionType)} value={type}>
-          <SelectTrigger>
+          <SelectTrigger style={{ userSelect: 'none' }}>
             <SelectValue placeholder='Select type' />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent style={{ userSelect: 'none' }}>
             <SelectItem value='INCOMING'>Incoming</SelectItem>
             <SelectItem value='EXPENSE'>Expense</SelectItem>
           </SelectContent>
@@ -69,81 +92,13 @@ export default function CategoryTabsContent({
           Create <PlusIcon className='ml-1 h-4 w-4' />
         </Button>
       </div>
-      <ScrollArea className='h-52 overflow-y-auto rounded-md border p-4'>
-        <Accordion
-          onValueChange={(value) => {
-            setAccordionValue(value)
-          }}
-          type='single'
-          collapsible
-          className='w-full'
-        >
-          {filteredDataArr.map((item, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className='text-white hover:text-gray-300'>
-                <span>{item.label}</span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className='flex w-full justify-between'>
-                  <Button onClick={() => {}} variant={'destructive'}>
-                    Delete
-                    <DeleteIcon className='h-4' />
-                  </Button>
-                  <div className='flex gap-2'>
-                    {isUpdate && (
-                      <Button
-                        onClick={() => {
-                          setIsUpdate(false)
-                        }}
-                        className='w-full'
-                        variant={'blueVin'}
-                      >
-                        <div className='flex w-full justify-between'>
-                          <Undo2Icon className='h-4' />
-                          <span>Discard</span>
-                        </div>
-                      </Button>
-                    )}
-                    <Button variant={'default'} onClick={onHandleUpdate} className='w-full'>
-                      {isUpdate ? (
-                        <div>
-                          <div className='flex w-full justify-between'>
-                            <SaveIcon className='h-4' />
-                            <span>Save</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className='flex w-full justify-between'>
-                          <EditIcon className='h-4' />
-                          <span>Edit</span>
-                        </div>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                <div className='grid gap-4 py-4'>
-                  <FormZod
-                    submitRef={formRefEdit}
-                    defaultValues={{
-                      name: item.name,
-                      type: item.type as ETypeOfTrackerTransactionType,
-                      description: item.description
-                    }}
-                    formFieldBody={defineEditTrackerTypeBody(isUpdate, item.type as ETypeOfTrackerTransactionType)}
-                    formSchema={editTrackerTypeSchema}
-                    onSubmit={(data) => {
-                      categoryTabProps.handleUpdate({
-                        ...data,
-                        id: accordionValue
-                      } as ITrackerTransactionTypeBody)
-                    }}
-                  />
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </ScrollArea>
+      <AccordionEditTrackerType
+        dataArr={filteredDataArr || []}
+        handleDeleteTrackerType={(id: string) => {}}
+        handleUpdateTrackerType={categoryTabProps.handleUpdate}
+        className='h-52 overflow-y-auto rounded-md border p-4'
+      />
+      <CustomDialog config={createTrackerTypeDialog} />
     </div>
   )
 }

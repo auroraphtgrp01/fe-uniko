@@ -189,6 +189,7 @@ export interface ICategoryTabsContentProps
   setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
   type: ETypeOfTrackerTransactionType
   setType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
+  isCreating: boolean
 }
 
 export interface IOverviewTabsContentProps {

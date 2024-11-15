@@ -16,6 +16,7 @@ export default function TransactionTabsContent({ detailData }: ITransactionTabsC
         {detailData.transactions.length > 0 ? (
           detailData.transactions.map((transaction) => (
             <div
+              style={{ userSelect: 'none' }}
               key={transaction.id}
               className='grid grid-cols-5 grid-rows-1 items-center gap-4 rounded bg-muted p-2 text-sm'
             >

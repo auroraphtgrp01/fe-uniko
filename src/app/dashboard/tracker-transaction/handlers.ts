@@ -210,12 +210,12 @@ export const handleCreateTrackerTxType = ({
   payload: ITrackerTransactionTypeBody
   hookCreate: any
   setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
-  callBackOnSuccess: (actions: 'getAllTrackerTransactionType'[]) => void
+  callBackOnSuccess: (actions: ('getAllTrackerTransactionType' | 'getExpenditureFund')[]) => void
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        callBackOnSuccess(['getAllTrackerTransactionType'])
+        callBackOnSuccess(['getAllTrackerTransactionType', 'getExpenditureFund'])
         toast.success('Create tracker transaction type successfully!')
         setIsCreating(false)
       }

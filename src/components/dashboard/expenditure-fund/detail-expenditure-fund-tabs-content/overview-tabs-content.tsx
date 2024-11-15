@@ -41,7 +41,7 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
         </p>
       </div>
       <div>
-        <h3 className='mb-2 mt-2 text-sm font-medium'>Expense Categories</h3>
+        <h3 className='mb-2 mt-2 text-sm font-medium'>Categories</h3>
         <div className='flex flex-wrap gap-2'>
           {detailData.categories.length > 0 ? (
             detailData.categories.map((category, index) => (
@@ -50,7 +50,6 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
                 key={index}
                 variant={category.type === ETypeOfTrackerTransactionType.INCOMING ? 'secondary' : 'destructive'}
               >
-                <Tag className='mr-1 h-3 w-3' />
                 {category.name}
               </Badge>
             ))

@@ -122,6 +122,7 @@ export default function ParticipantTabsContent({
                     <DropdownMenuContent align='end'>
                       {participant.role !== 'OWNER' && (
                         <DropdownMenuItem
+                          style={{ cursor: 'pointer' }}
                           className='text-red-400'
                           onClick={() => {
                             participantProps.handleDelete(participant.id)
