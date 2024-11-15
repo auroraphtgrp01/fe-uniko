@@ -35,8 +35,26 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode
 }>) {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'UNIKO',
+    applicationCategory: 'FinanceApplication',
+    description:
+      'Phần mềm quản lý tài chính thông minh UNIKO giúp tối ưu hóa việc theo dõi và quản lý tài chính cá nhân',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    }
+  }
+
   return (
     <html lang='en' suppressHydrationWarning>
+      <head>
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
+      </head>
       <body className={cn('min-h-screen font-sans antialiased', fontSans.variable)}>
         <Toaster
           toastOptions={{

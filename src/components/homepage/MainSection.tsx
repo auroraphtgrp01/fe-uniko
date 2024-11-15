@@ -15,7 +15,13 @@ export default function MainSection() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const contributors = [
-    { name: 'Le Minh Tuan', role: 'Lead Developer', image: AvatarTuan, srcGit: 'https://github.com/auroraphtgrp01' },
+    {
+      name: 'Le Minh Tuan',
+      role: 'Lead Developer',
+      image: AvatarTuan,
+      srcGit: 'https://github.com/auroraphtgrp01',
+      priority: true
+    },
     {
       name: 'Tran Nguyen Duy Khanh',
       role: 'Fullstack Developer',
@@ -39,12 +45,11 @@ export default function MainSection() {
 
   return (
     <div ref={containerRef} className='relative bg-black'>
-      {/* Animated background */}
       <div className='fixed inset-0 overflow-hidden'>
         <Spotlight className='left-0 top-40 md:-top-20 md:left-60' fill='white' />
 
         <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,0,0,0.1),transparent_70%)]' />
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 10 }).map((_, i) => (
           <motion.div
             key={i}
             className='absolute h-2 w-2 rounded-full bg-red-500/20'
@@ -54,7 +59,7 @@ export default function MainSection() {
               scale: [0, 1, 0]
             }}
             transition={{
-              duration: Math.random() * 5 + 5,
+              duration: Math.random() * 3 + 3,
               repeat: Infinity,
               ease: 'linear'
             }}
@@ -62,7 +67,6 @@ export default function MainSection() {
         ))}
       </div>
 
-      {/* Grid overlay */}
       <div
         className='fixed inset-0'
         style={{
@@ -72,7 +76,6 @@ export default function MainSection() {
         }}
       />
 
-      {/* Main content */}
       <div className='relative z-10'>
         <HeroSection />
         <ContributorsSection contributors={contributors} />

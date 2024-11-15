@@ -11,39 +11,43 @@ export default function HeroSection() {
   const isLoginUser = isLogin()
   return (
     <section className='flex min-h-screen flex-col items-center justify-center p-4 text-center'>
-      {/* Logo */}
+      {/* Logo - Prioritized */}
       <motion.div
-        initial={{ scale: 0 }}
+        initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
-        transition={{ type: 'spring', duration: 1 }}
+        transition={{ type: 'spring', duration: 0.5 }}
         className='mb-12'
       >
         <div className='flex items-center justify-center space-x-2'>
           <Boxes className='h-12 w-12 text-red-500' />
-          <h1 className='text-4xl font-bold text-red-500'>UNIKO</h1>
+          <h1 className='text-4xl font-bold text-red-500'>
+            UNIKO
+            <span className='sr-only'>- Giải Pháp Quản Lý Tài Chính Thông Minh</span>
+          </h1>
         </div>
       </motion.div>
 
-      {/* Headline */}
+      {/* Headline - Optimized for LCP and SEO */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0.8, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ duration: 0.3 }}
         className='max-w-4xl space-y-6'
       >
         <h2 className='text-4xl font-bold leading-tight text-white sm:text-6xl'>
           <span className='inline-block bg-gradient-to-r from-red-500 to-rose-500 bg-clip-text text-transparent'>
-            Optimized financial solutions
+            Giải pháp tối ưu về quản lý tài chính
           </span>
           <br />
           <FlipWords
             className='font-semibold leading-snug tracking-tighter'
-            duration={3000}
-            words={['lasting success', 'future development']}
+            duration={4000}
+            words={['thành công bền vững', 'phát triển tương lai']}
           ></FlipWords>
         </h2>
         <p className='mx-auto max-w-2xl text-lg text-gray-400'>
-          The open-source financial management software that helps you manage your finances with ease.
+          UNIKO - Phần mềm quản lý tài chính mã nguồn mở giúp bạn theo dõi, quản lý và tối ưu hóa tài chính một cách dễ
+          dàng và hiệu quả.
         </p>
       </motion.div>
 
@@ -103,7 +107,7 @@ export default function HeroSection() {
         </Button>
       </motion.div>
 
-      {/* Features */}
+      {/* Features - SEO Optimized */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -113,18 +117,18 @@ export default function HeroSection() {
         {[
           {
             icon: <Boxes className='h-6 w-6' />,
-            title: 'Open Source',
-            description: 'Community-driven and transparent, built for trust and collaboration.'
+            title: 'Quản Lý Tài Chính Thông Minh',
+            description: 'Giải pháp toàn diện cho việc theo dõi và quản lý tài chính cá nhân.'
           },
           {
             icon: <Sparkles className='h-6 w-6' />,
-            title: 'Automated Tracking',
-            description: 'Automatically organizes and tracks your finances for easy management.'
+            title: 'Theo Dõi Tự Động',
+            description: 'Tự động hóa việc tổ chức và theo dõi tài chính của bạn.'
           },
           {
             icon: <Sparkles className='h-6 w-6' />,
-            title: 'Goal-Oriented Budgeting',
-            description: 'Set and track financial goals with tools designed for success.'
+            title: 'Lập Kế Hoạch Tài Chính',
+            description: 'Thiết lập và theo dõi mục tiêu tài chính với công cụ chuyên nghiệp.'
           }
         ].map((feature, i) => (
           <motion.div
