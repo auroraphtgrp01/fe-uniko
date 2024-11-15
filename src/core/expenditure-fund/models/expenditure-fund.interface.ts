@@ -181,6 +181,31 @@ export interface IDetailExpenditureFundProps {
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
 }
 
+export interface IParticipantTabsContentProps
+  extends Omit<IDetailExpenditureFundProps, 'categoryTabProps' | 'statisticProps' | 'setIsDialogOpen'> {}
+
+export interface ICategoryTabsContentProps
+  extends Omit<IDetailExpenditureFundProps, 'inviteTabProps' | 'statisticProps' | 'participantProps'> {
+  setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+  type: ETypeOfTrackerTransactionType
+  setType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
+}
+
+export interface IOverviewTabsContentProps {
+  detailData: IExpenditureFund
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
+}
+
+export interface IStatisticTabsContentProps {
+  chartData: IPayloadDataChart[]
+}
+
+export interface ITransactionTabsContentProps {
+  detailData: IExpenditureFund
+}
+
+// ------------------ Expenditure Fund ------------------
+
 export interface IUpdateExpenditureFundFormProps {
   handleUpdate: (data: IUpdateExpenditureFundBody) => void
   formUpdateRef: RefObject<HTMLFormElement>

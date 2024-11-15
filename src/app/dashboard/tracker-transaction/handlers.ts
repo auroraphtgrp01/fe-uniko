@@ -65,7 +65,8 @@ export const handleCreateTrackerTransaction = async ({
           'getTransactions',
           'getAllAccountSource',
           'getStatisticExpenditureFund',
-          'getStatisticExpenditureFund'
+          'getStatisticExpenditureFund',
+          'getExpenditureFund'
         ])
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
@@ -96,6 +97,7 @@ export const handleClassifyTransaction = async ({
       | 'getTodayTransactions'
       | 'getStatistic'
       | 'getTrackerTransaction'
+      | 'getExpenditureFund'
     )[]
   ) => void
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -111,7 +113,8 @@ export const handleClassifyTransaction = async ({
           'getUnclassifiedTransactions',
           'getTodayTransactions',
           'getStatistic',
-          'getTrackerTransaction'
+          'getTrackerTransaction',
+          'getExpenditureFund'
         ])
         if (setUncDataTableConfig) setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
