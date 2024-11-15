@@ -239,56 +239,54 @@ export default function ExpenditureFundForm() {
           </div>
 
           <div className='mt-4'>
-          <Card className="w-full sm:w-full  md:w-full">
-  <CardContent className='sm:col-span-2'>
-    <div className="overflow-x-auto">  
-      <DataTable
-        buttons={buttons}
-        columns={columns}
-        data={dataTable}
-        config={dataTableConfig}
-        setConfig={setDataTableConfig}
-        onRowClick={(data) => {
-          const detail = advancedExpenditureFundData?.data.find((item) => item.id === data.id);
-          if (detail) {
-            setDetailData(detail);
-            setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }));
-          }
-        }}
-        onOpenDelete={(id: string) => {
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }));
-          setIdDeletes([id]);
-        }}
-        onOpenDeleteAll={(ids: string[]) => {
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }));
-          setIdDeletes(ids);
-        }}
-        deleteProps={{
-          isDialogOpen: isDialogOpen.isDialogDeleteOpen,
-          onDelete: () => {
-            if (idDeletes.length > 0)
-              handleDeleteAnExpenditureFund({
-                id: idDeletes[0],
-                hookDelete: deleteAnExpenditureFund,
-                setIsDialogOpen,
-                callBackRefetchAPI: refetchAdvancedExpendingFund,
-                setDataTableConfig,
-                setIdDeletes,
-              });
-          },
-          onOpen: (rowData: any) => {
-            setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }));
-            setIdDeletes((prev) => [...prev, rowData.id]);
-          },
-          onClose: () => {
-            setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }));
-            setIdDeletes([]);
-          },
-        }}
-      />
-    </div>
-  </CardContent>
-</Card>
+            <Card >
+              <CardContent>
+                <DataTable
+                  buttons={buttons}
+                  columns={columns}
+                  data={dataTable}
+                  config={dataTableConfig}
+                  setConfig={setDataTableConfig}
+                  onRowClick={(data) => {
+                    const detail = advancedExpenditureFundData?.data.find((item) => item.id === data.id)
+                    if (detail) {
+                      setDetailData(detail)
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+                    }
+                  }}
+                  onOpenDelete={(id: string) => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                    setIdDeletes([id])
+                  }}
+                  onOpenDeleteAll={(ids: string[]) => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+                    setIdDeletes(ids)
+                  }}
+                  deleteProps={{
+                    isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+                    onDelete: () => {
+                      if (idDeletes.length > 0)
+                        handleDeleteAnExpenditureFund({
+                          id: idDeletes[0],
+                          hookDelete: deleteAnExpenditureFund,
+                          setIsDialogOpen,
+                          callBackRefetchAPI: refetchAdvancedExpendingFund,
+                          setDataTableConfig,
+                          setIdDeletes
+                        })
+                    },
+                    onOpen: (rowData: any) => {
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                      setIdDeletes((prev) => [...prev, rowData.id])
+                    },
+                    onClose: () => {
+                      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                      setIdDeletes([])
+                    }
+                  }}
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

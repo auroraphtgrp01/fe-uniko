@@ -154,17 +154,17 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div className='h-full w-full p-1'>
-      <div className='flex items-center justify-between py-4'>
+    <div className='h-full w-full p-1 '>
+      <div className='flex flex-wrap items-center py-4 space-x-2 max-[543px]:flex-col max-[543px]:items-center max-[543px]:justify-center'>
         <div className='flex items-center space-x-2'>
-          <div className='min-w-0'>
+          <div className='min-w-0 '>
             <Input
               placeholder={t('table.filterPlaceholder')}
               defaultValue={''}
               onChange={(event) => {
                 table.setGlobalFilter(event.target.value)
               }}
-              className='w-[200px]'
+              className='w-[200px] max-[300px]:w-[70px] mr-2 max-[543px]:mb-3 max-[543px]:w-[200px]'
             />
           </div>
           {isVisibleSortType && (
@@ -196,7 +196,7 @@ export function DataTable<TData, TValue>({
         </div>
         <div className='flex items-center space-x-2'>
           {onOpenDeleteAll && Object.values(table.getSelectedRowModel().rowsById).length > 0 && (
-            <Button
+            <Button className=''
               variant='default'
               size='icon'
               onClick={(e) => {
@@ -264,8 +264,8 @@ export function DataTable<TData, TValue>({
           {}
         </div>
       </div>
-      <div className='rounded-md border'>
-        <Table classNameOfScroll={classNameOfScroll}>
+      <div className='rounded-md border w-full'>
+        <Table className='w-full' classNameOfScroll={classNameOfScroll}>
           <TableHeader style={{ cursor: data?.length ? 'pointer' : 'default' }}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
