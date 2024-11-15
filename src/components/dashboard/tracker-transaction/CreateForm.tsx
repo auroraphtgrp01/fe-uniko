@@ -25,6 +25,7 @@ interface ICreateTrackerTransactionFormProps {
   ) => void
   handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
   formCreateRef: React.RefObject<HTMLFormElement>
+  expenditureFund: { label: string; value: string | number }[]
 }
 
 export default function CreateTrackerTransactionForm({
@@ -36,7 +37,8 @@ export default function CreateTrackerTransactionForm({
   setOpenEditTrackerTxTypeDialog,
   handleCreate,
   handleCreateTrackerType,
-  handleUpdateTrackerType
+  handleUpdateTrackerType,
+  expenditureFund
 }: ICreateTrackerTransactionFormProps) {
   const [currentDirection, setCurrentDirection] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
@@ -63,7 +65,8 @@ export default function CreateTrackerTransactionForm({
         typeOfEditTrackerType,
         setTypeOfEditTrackerType,
         handleCreateTrackerType,
-        handleUpdateTrackerType
+        handleUpdateTrackerType,
+        expenditureFund
       })}
       onSubmit={(data: any) => {
         const payload = { ...data, amount: Number(data.amount) }

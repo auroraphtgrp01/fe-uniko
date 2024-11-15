@@ -29,7 +29,7 @@ export default function ThemeMode() {
       <DropdownMenuTrigger asChild>
         <Button
           variant='ghost'
-          className='mt-0.5 h-7 select-none rounded-full border-none p-0 outline-none hover:bg-transparent focus:outline-none focus:ring-0'
+          className='mt-0.5 h-7 select-none rounded-full !border-0 p-0 outline-none hover:bg-transparent focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0'
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className='flex items-center gap-2'>
             <Palette className='h-5 w-5' />

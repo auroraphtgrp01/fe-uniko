@@ -83,7 +83,7 @@ export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (old
   }
 
   const resetData = () => {
-    queryClient.invalidateQueries({ queryKey: key })
+    // queryClient.invalidateQueries({ queryKey: key })
     queryClient.refetchQueries({ queryKey: key })
   }
 

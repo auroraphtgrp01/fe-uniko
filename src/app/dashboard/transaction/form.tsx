@@ -11,6 +11,8 @@ import { initTableConfig } from '@/constants/data-table'
 import TransactionDialog from '@/app/dashboard/transaction/dialog'
 import {
   handleAccountBankRefetching,
+  handleDeleteMultipleTransaction,
+  handleDeleteTransaction,
   handleUpdateTransaction,
   modifyTransactionHandler,
   updateCacheDataTransactionForClassify,
@@ -26,7 +28,8 @@ import {
   IGetTransactionResponse,
   ITransaction,
   ITransactionSummary,
-  IUpdateTransactionBody
+  IUpdateTransactionBody,
+  TTransactionActions
 } from '@/core/transaction/models'
 import {
   initButtonInDataTableHeader,
@@ -46,7 +49,9 @@ import {
   updateCacheDataClassifyFeat,
   handleClassifyTransaction,
   handleCreateTrackerTxType,
-  updateCacheDataTodayTxClassifyFeat
+  updateCacheDataTodayTxClassifyFeat,
+  modifiedTrackerTypeForComboBox,
+  handleUpdateTrackerTxType
 } from '../tracker-transaction/handlers'
 import {
   ITrackerTransactionType,
@@ -72,6 +77,7 @@ import { useTranslation } from 'react-i18next'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 
 export default function TransactionForm() {
   // states
@@ -108,15 +114,8 @@ export default function TransactionForm() {
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
 
   // hooks
+  // declare hooks
   const { t } = useTranslation(['transaction'])
-  const { getAllAccountSource } = useAccountSource()
-  const { classifyTransaction } = useTrackerTransaction()
-  const { getMe } = useUser()
-  const { user, fundId } = useStoreLocal()
-  const socket = useSocket()
-  const { getAllTrackerTransactionType, createTrackerTxType } = useTrackerTransactionType()
-  const { getAllData: accountSourceData } = getAllAccountSource(fundId)
-  const { dataTrackerTransactionType } = getAllTrackerTransactionType(fundId)
   const {
     getTransactions,
     getUnclassifiedTransactions,
@@ -126,28 +125,32 @@ export default function TransactionForm() {
     deleteAnTransaction,
     deleteMultipleTransaction
   } = useTransaction()
-  const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions, fundId })
-  const { resetData, setData: setDataTransactionClassifyFeat } = useUpdateModel<IGetTransactionResponse>(
-    [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
-    updateCacheDataTransactionForClassify
-  )
+  const { getAllAccountSource } = useAccountSource()
+  const { classifyTransaction } = useTrackerTransaction()
+  const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
+  const { user, fundId } = useStoreLocal()
+  const { getMe } = useUser()
+  const socket = useSocket()
+  const { getAllExpenditureFund } = useExpenditureFund()
 
-  const { setData: setDataTransactionUpdateFeat } = useUpdateModel<IGetTransactionResponse>(
+  // fetch data
+  const { getAllData: accountSourceData } = getAllAccountSource(fundId)
+  const { dataTrackerTransactionType } = getAllTrackerTransactionType(fundId)
+  const { dataTransaction, isGetTransaction } = getTransactions({ query: queryOptions, fundId })
+  const { dataUnclassifiedTxs } = getUnclassifiedTransactions({
+    query: uncTableQueryOptions,
+    fundId
+  })
+  const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions, fundId })
+  const { isGetMeUserPending } = getMe(true)
+  const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
+
+  // custom hooks
+  const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataTransactionForUpdate
   )
-
-  const { setData: setDataTransactionDeleteFeat } = useUpdateModel<IGetTransactionResponse>(
-    [GET_ADVANCED_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
-    updateCacheDataTransactionForDelete
-  )
-
-  const { setData: setCacheTrackerTxType } = useUpdateModel<any>(
-    [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
-    (oldData, newData) => {
-      return { ...oldData, data: [...oldData.data, newData] }
-    }
-  )
+  const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ALL_TRACKER_TRANSACTION_TYPE_KEY], () => {})
   const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
     [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
     updateCacheDataClassifyFeat
@@ -155,21 +158,29 @@ export default function TransactionForm() {
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
   const { resetData: resetCacheDataTrackerTx } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
-  const { dataUnclassifiedTxs } = getUnclassifiedTransactions({ query: uncTableQueryOptions, fundId })
-  const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions, fundId })
-  const { isGetMeUserPending } = getMe(true)
-  const { setData: setDataTodayTxs, resetData: resetCacheTodayTx } = useUpdateModel(
+  const { resetData: resetCacheTodayTx } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
     updateCacheDataTodayTxClassifyFeat
   )
-  const { setData: setDataTodayTxUpdateFeat } = useUpdateModel(
-    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
-    updateCacheDataTransactionForUpdate
-  )
-  const { setData: setDataTodayTxDeleteFeat } = useUpdateModel(
-    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(todayTableQueryOptions)],
-    updateCacheDataTransactionForDelete
-  )
+
+  const actionMap: Record<TTransactionActions, () => void> = {
+    getTransactions: resetCacheTransaction,
+    getTodayTransactions: resetCacheTodayTx,
+    getUnclassifiedTransactions: resetCacheUnclassifiedTxs,
+    getAllAccountSource: resetCacheAccountSource,
+    getStatistic: resetCacheStatistic,
+    getAllTrackerTransactionType: resetCacheTrackerTxType,
+    getTrackerTransaction: resetCacheDataTrackerTx,
+    getAllExpenditureFund: refetchAllExpendingFund
+  }
+
+  const callBackRefetchTransactionPage = (actions: TTransactionActions[]) => {
+    actions.forEach((action) => {
+      if (actionMap[action]) {
+        actionMap[action]()
+      }
+    })
+  }
 
   const refetchTransactionBySocket = () => {
     const lastCalled = getTimeCountRefetchLimit()
@@ -309,7 +320,13 @@ export default function TransactionForm() {
   }, [accountBankRefetchingQueue])
 
   const reloadDataFunction = () => {
-    resetData()
+    callBackRefetchTransactionPage([
+      'getTransactions',
+      'getTodayTransactions',
+      'getUnclassifiedTransactions',
+      'getAllAccountSource',
+      'getStatistic'
+    ])
     while (!isGetTransaction) {
       if (dataTransaction?.statusCode === 200) toast.success('Reload data successfully!')
       else toast.error('Failed to get transaction !')
@@ -336,26 +353,16 @@ export default function TransactionForm() {
     isDialogOpen: isDialogOpen.isDialogDeleteOpen,
     onDelete: () => {
       if (idDeletes.length > 0)
-        deleteAnTransaction(
-          { id: idDeletes[0] },
-          {
-            onSuccess: (res: any) => {
-              if (res.statusCode === 200 || res.statusCode === 201) {
-                setDataTransactionDeleteFeat(res.data)
-                resetCacheUnclassifiedTxs()
-                setDataTodayTxDeleteFeat(res.data)
-                resetCacheStatistic()
-                resetCacheAccountSource()
-                setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                setIdDeletes([])
-                toast.success('Delete account source successfully')
-              }
-            }
-          }
-        )
+        handleDeleteTransaction({
+          id: idDeletes[0],
+          hookDelete: deleteAnTransaction,
+          callBackOnSuccess: callBackRefetchTransactionPage,
+          setDataTableConfig,
+          setIsDialogOpen,
+          setUncDataTableConfig,
+          setTodayDataTableConfig,
+          setIdDeletes
+        })
     },
     onOpen: (rowData: any) => {
       setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
@@ -486,14 +493,10 @@ export default function TransactionForm() {
               handleUpdateTransaction({
                 data,
                 setIsEditing,
-                hookResetStatistic: resetCacheStatistic,
-                hookResetCacheTrackerTransaction: resetCacheDataTrackerTx,
-                hookSetCacheTodayTransaction: setDataTodayTxUpdateFeat,
                 hookUpdate: updateTransaction,
-                hookSetCacheTransaction: setDataTransactionUpdateFeat,
-                hookResetCacheAccountSource: resetCacheAccountSource,
                 setDataTableConfig: setDataTableConfig,
-                setDetailDialog: setDataDetail
+                setDetailDialog: setDataDetail,
+                callBackOnSuccess: callBackRefetchTransactionPage
               }),
             statusUpdateTransaction: statusUpdate
           }}
@@ -509,18 +512,14 @@ export default function TransactionForm() {
               setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
             ) => {
               handleClassifyTransaction({
-                payload: data,
-                hookCreate: classifyTransaction,
-                hookResetCacheUnclassified: resetCacheUnclassifiedTxs,
-                hookSetCacheToday: setDataTodayTxs,
-                hookResetTrackerTx: resetCacheDataTrackerTx,
+                payload: { ...data, fundId },
+                hookClassify: classifyTransaction,
                 setUncDataTableConfig: setUncDataTableConfig,
                 setTodayDataTableConfig: setTodayDataTableConfig,
                 setDataTableConfig: setDataTableConfig,
                 setIsDialogOpen: setIsDialogOpen,
-                hookSetCacheTransaction: setDataTransactionClassifyFeat,
                 setIsEditing,
-                hookResetCacheStatistic: resetCacheStatistic
+                callBackOnSuccess: callBackRefetchTransactionPage
               })
             },
             typeOfTrackerType,
@@ -534,11 +533,18 @@ export default function TransactionForm() {
               handleCreateTrackerTxType({
                 payload: data,
                 hookCreate: createTrackerTxType,
-                hookUpdateCache: setCacheTrackerTxType,
+                callBackOnSuccess: callBackRefetchTransactionPage,
                 setIsCreating
               })
             },
-            handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {}
+            handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {
+              handleUpdateTrackerTxType({
+                payload: data,
+                hookUpdate: updateTrackerTxType,
+                callBackOnSuccess: callBackRefetchTransactionPage
+              })
+            },
+            expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
           }}
           deleteProps={{
             deleteAnTransactionProps
@@ -549,24 +555,16 @@ export default function TransactionForm() {
         customDescription='Bạn chắc chắn muốn xóa tất cả dữ liệu này?'
         onDelete={() => {
           if (idDeletes.length > 0)
-            deleteMultipleTransaction(
-              { ids: idDeletes },
-              {
-                onSuccess: (res: any) => {
-                  if (res.statusCode === 200 || res.statusCode === 201) {
-                    resetData()
-                    resetCacheUnclassifiedTxs()
-                    resetCacheTodayTx()
-                    resetCacheAccountSource()
-                    resetCacheStatistic()
-                    setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
-                    setIdDeletes([])
-                    toast.success('Delete all transaction successfully')
-                  }
-                }
-              }
-            )
+            handleDeleteMultipleTransaction({
+              ids: idDeletes,
+              hookDelete: deleteMultipleTransaction,
+              callBackOnSuccess: callBackRefetchTransactionPage,
+              setDataTableConfig,
+              setIsDialogOpen,
+              setUncDataTableConfig,
+              setTodayDataTableConfig,
+              setIdDeletes
+            })
         }}
         onClose={() => {
           setIdDeletes([])

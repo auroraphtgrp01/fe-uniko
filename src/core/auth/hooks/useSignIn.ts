@@ -1,5 +1,5 @@
 import { setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/libraries/helpers'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { authServices } from '../configs'
 import { AUTH_RETRY } from '@/core/auth/constants'
@@ -14,7 +14,10 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
   const router = useRouter()
   const [executeGetMe, setExecuteGetMe] = useState<boolean>(false)
   const [countLogin, setCountLogin] = useState<number>(0)
-
+  const params = useSearchParams()
+  const redirect = params.get('redirect')
+  const redirectUrl = redirect || '/dashboard?loggedIn=true'
+  console.log('params', redirectUrl)
   const mutation = useMutationCustom<ISignInBody, ISignInResponse>({
     pathUrl: authServices.signIn,
     mutateOption: {
@@ -30,9 +33,11 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
           })
           setAccessTokenToLocalStorage(data.data.accessToken)
           setRefreshTokenToLocalStorage(data.data.refreshToken)
-          setExecuteGetMe(true)
+          if (redirectUrl === '/dashboard?loggedIn=true') setExecuteGetMe(true)
           toast.success('Login successfully 🚀 ')
-          router.push('/dashboard?loggedIn=true')
+          console.log('redirectUrl', redirectUrl)
+
+          router.push(redirectUrl)
         }
         if (data.data.user.status === 'UNVERIFY' && countLogin < 0) {
           toast.error('Account is inactive, please contact the administrator !')
@@ -47,7 +52,6 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
   })
 
   const { getMe } = useUser()
-
   getMe(executeGetMe)
 
   return mutation

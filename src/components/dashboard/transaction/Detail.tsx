@@ -7,11 +7,11 @@ import {
 import { ITransaction } from '@/core/transaction/models'
 import { formatDateTimeVN } from '@/libraries/utils'
 import { IDialogConfig } from '@/types/common.i'
-import { Avatar, AvatarFallback } from '@radix-ui/react-avatar'
-import { BookUserIcon, CalendarIcon, CreditCard, FileTextIcon, WalletCardsIcon } from 'lucide-react'
+import { BookUserIcon, CalendarIcon, CreditCard, WalletCardsIcon } from 'lucide-react'
 import CustomDialog from '../Dialog'
 import { Badge } from '@/components/ui/badge'
 import { Pencil2Icon } from '@radix-ui/react-icons'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 export function DetailTransactionDialog({
   detailData,
@@ -22,6 +22,8 @@ export function DetailTransactionDialog({
   isDialogOpen: IDialogTrackerTransaction
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
 }) {
+  console.log(detailData)
+
   const config: IDialogConfig = {
     content: (
       <div className='space-y-6'>
@@ -79,13 +81,11 @@ export function DetailTransactionDialog({
                 </Avatar>
                 <div className='flex flex-col'>
                   <span className='font-medium'>{detailData.accountSource?.name}</span>
-                  {detailData.accountSource.accountBank && (
-                    <span className='text-sm text-muted-foreground'>
-                      {detailData.ofAccount.accountNo +
-                        ' • ' +
-                        (detailData.accountSource.accountBank.type === 'MB_BANK' ? 'MB Bank' : 'N/A')}
-                    </span>
-                  )}
+                  <span className='text-sm text-muted-foreground'>
+                    {detailData.ofAccount.accountNo +
+                      ' • ' +
+                      (detailData.accountBank.type === 'MB_BANK' ? 'MB Bank' : 'N/A')}
+                  </span>
                 </div>
               </div>
             ) : (
@@ -123,7 +123,7 @@ export function DetailTransactionDialog({
                 <div className='flex items-start gap-3'>
                   <Avatar>
                     <AvatarFallback className='bg-muted'>
-                      <Pencil2Icon />
+                      <Pencil2Icon className='h-5 w-5' />
                     </AvatarFallback>
                   </Avatar>
                   <div className='flex flex-col'>
@@ -139,7 +139,9 @@ export function DetailTransactionDialog({
     title: 'Chi tiết giao dịch',
     footer: (
       <div className='flex justify-end'>
-        <Button onClick={() => {}}>Đóng</Button>
+        <Button onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: false }))}>
+          Đóng
+        </Button>
       </div>
     ),
     onClose: () => {

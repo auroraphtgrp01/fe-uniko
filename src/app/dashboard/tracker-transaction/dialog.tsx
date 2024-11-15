@@ -35,7 +35,8 @@ export default function TrackerTransactionDialog({
       editTrackerTypeDialogProps: {
         typeDefault: sharedDialogElements.typeOfTrackerType,
         handleCreateTrackerType: sharedDialogElements.handleCreateTrackerType,
-        handleUpdateTrackerType: sharedDialogElements.handleUpdateTrackerType
+        handleUpdateTrackerType: sharedDialogElements.handleUpdateTrackerType,
+        expenditureFund: sharedDialogElements.expenditureFund
       },
       formClassifyRef,
       handleClassify: classifyTransactionDialog.handleClassify
@@ -64,7 +65,8 @@ export default function TrackerTransactionDialog({
       formCreateRef,
       handleCreateTrackerType: sharedDialogElements.handleCreateTrackerType,
       handleUpdateTrackerType: sharedDialogElements.handleUpdateTrackerType,
-      handleCreate: createTrackerTransactionDialog.handleCreate
+      handleCreate: createTrackerTransactionDialog.handleCreate,
+      expenditureFund: sharedDialogElements.expenditureFund
     }),
     footer: (
       <Button type='button' onClick={() => formCreateRef.current?.requestSubmit()}>
@@ -117,7 +119,8 @@ export default function TrackerTransactionDialog({
           editTrackerTypeDialogProps: {
             typeDefault: sharedDialogElements.typeOfTrackerType,
             handleCreateTrackerType: sharedDialogElements.handleCreateTrackerType,
-            handleUpdateTrackerType: sharedDialogElements.handleUpdateTrackerType
+            handleUpdateTrackerType: sharedDialogElements.handleUpdateTrackerType,
+            expenditureFund: sharedDialogElements.expenditureFund
           },
           setOpenEditTrackerTxTypeDialog,
           openEditTrackerTxTypeDialog

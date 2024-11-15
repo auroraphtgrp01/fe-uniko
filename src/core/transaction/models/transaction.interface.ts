@@ -31,6 +31,10 @@ export interface ITransaction {
   time: string
   TrackerTransaction: ITrackerTransaction | null
   accountSource: IAccountSource
+  accountBank: {
+    id: string
+    type: string
+  }
 }
 
 export type IGetTransactionResponse = IBaseResponseData<ITransaction[]>
@@ -118,3 +122,13 @@ export interface IClassifyTransactionFormProps
   setOpenEditDialog: React.Dispatch<React.SetStateAction<boolean>>
   openEditDialog: boolean
 }
+
+export type TTransactionActions =
+  | 'getTransactions'
+  | 'getTodayTransactions'
+  | 'getUnclassifiedTransactions'
+  | 'getAllAccountSource'
+  | 'getStatistic'
+  | 'getAllTrackerTransactionType'
+  | 'getTrackerTransaction'
+  | 'getAllExpenditureFund'

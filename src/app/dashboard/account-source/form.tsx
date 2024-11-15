@@ -8,11 +8,13 @@ import { IQueryOptions } from '@/types/query.interface'
 import {
   initAccountSourceFormData,
   initButtonInDataTableHeader,
-  initDialogFlag
+  initDialogFlag,
+  initEmptyDetailAccountSource
 } from '@/app/dashboard/account-source/constants'
 import {
   handleShowDetailAccountSource,
   initDataTable,
+  onRowClick,
   updateCacheDataCreate,
   updateCacheDataForDeleteFeat,
   updateCacheDataUpdate
@@ -36,10 +38,12 @@ import { useTranslation } from 'react-i18next'
 import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
 import toast from 'react-hot-toast'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
+import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
   // States
+  const [dataDetail, setDataDetail] = useState<IAccountSourceDataFormat>(initEmptyDetailAccountSource)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   const [idRowClicked, setIdRowClicked] = useState<string>('')
@@ -62,6 +66,7 @@ export default function AccountSourceForm() {
     deleteAnAccountSource,
     deleteMultipleAccountSource
   } = useAccountSource()
+  const { getStatisticData } = useTrackerTransaction()
   const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
   const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
   const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
@@ -71,10 +76,6 @@ export default function AccountSourceForm() {
   const { setData: setDataUpdate, resetData: resetDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
     [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataUpdate
-  )
-  const { setData: setDataForDeleteFeat } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions)],
-    updateCacheDataForDeleteFeat
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
@@ -133,7 +134,7 @@ export default function AccountSourceForm() {
             config={dataTableConfig}
             setConfig={setDataTableConfig}
             columns={columns}
-            onRowClick={(data: IAccountSourceDataFormat) => setIdRowClicked(data.id)}
+            onRowClick={(rowData) => onRowClick(rowData, getAdvancedData, setIsDialogOpen, setDataDetail)}
             buttons={dataTableButtons}
             onOpenDeleteAll={(ids: string[]) => {
               setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
@@ -188,6 +189,11 @@ export default function AccountSourceForm() {
         UpdateAccountSourceDialog={{
           setDataUpdate,
           updateAccountSource,
+          setIdRowClicked,
+          dataDetail
+        }}
+        detailAccountSourceDialog={{
+          dataDetail,
           setIdRowClicked
         }}
       />
