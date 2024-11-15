@@ -173,7 +173,7 @@ export default function ExpenditureFundForm() {
         </div>
   
         {/* Right Side Section for Transaction Summaries */}
-        <div className="flex w-full flex-col md:col-span-1 lg:col-span-2">
+        <div className="flex w-full flex-col lg:col-span-3 xl:col-span-2">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 xl:grid-cols-3">
             {/* Total Balance Summary Card */}
             <Card className="bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg">
@@ -239,54 +239,56 @@ export default function ExpenditureFundForm() {
           </div>
 
           <div className='mt-4'>
-            <Card>
-              <CardContent>
-                <DataTable
-                  buttons={buttons}
-                  columns={columns}
-                  data={dataTable}
-                  config={dataTableConfig}
-                  setConfig={setDataTableConfig}
-                  onRowClick={(data) => {
-                    const detail = advancedExpenditureFundData?.data.find((item) => item.id === data.id)
-                    if (detail) {
-                      setDetailData(detail)
-                      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
-                    }
-                  }}
-                  onOpenDelete={(id: string) => {
-                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
-                    setIdDeletes([id])
-                  }}
-                  onOpenDeleteAll={(ids: string[]) => {
-                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
-                    setIdDeletes(ids)
-                  }}
-                  deleteProps={{
-                    isDialogOpen: isDialogOpen.isDialogDeleteOpen,
-                    onDelete: () => {
-                      if (idDeletes.length > 0)
-                        handleDeleteAnExpenditureFund({
-                          id: idDeletes[0],
-                          hookDelete: deleteAnExpenditureFund,
-                          setIsDialogOpen,
-                          callBackRefetchAPI: refetchAdvancedExpendingFund,
-                          setDataTableConfig,
-                          setIdDeletes
-                        })
-                    },
-                    onOpen: (rowData: any) => {
-                      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
-                      setIdDeletes((prev) => [...prev, rowData.id])
-                    },
-                    onClose: () => {
-                      setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                      setIdDeletes([])
-                    }
-                  }}
-                />
-              </CardContent>
-            </Card>
+          <Card className="w-full sm:w-full  md:w-full">
+  <CardContent className='sm:col-span-2'>
+    <div className="overflow-x-auto">  
+      <DataTable
+        buttons={buttons}
+        columns={columns}
+        data={dataTable}
+        config={dataTableConfig}
+        setConfig={setDataTableConfig}
+        onRowClick={(data) => {
+          const detail = advancedExpenditureFundData?.data.find((item) => item.id === data.id);
+          if (detail) {
+            setDetailData(detail);
+            setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }));
+          }
+        }}
+        onOpenDelete={(id: string) => {
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }));
+          setIdDeletes([id]);
+        }}
+        onOpenDeleteAll={(ids: string[]) => {
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }));
+          setIdDeletes(ids);
+        }}
+        deleteProps={{
+          isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+          onDelete: () => {
+            if (idDeletes.length > 0)
+              handleDeleteAnExpenditureFund({
+                id: idDeletes[0],
+                hookDelete: deleteAnExpenditureFund,
+                setIsDialogOpen,
+                callBackRefetchAPI: refetchAdvancedExpendingFund,
+                setDataTableConfig,
+                setIdDeletes,
+              });
+          },
+          onOpen: (rowData: any) => {
+            setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }));
+            setIdDeletes((prev) => [...prev, rowData.id]);
+          },
+          onClose: () => {
+            setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }));
+            setIdDeletes([]);
+          },
+        }}
+      />
+    </div>
+  </CardContent>
+</Card>
           </div>
         </div>
       </div>
