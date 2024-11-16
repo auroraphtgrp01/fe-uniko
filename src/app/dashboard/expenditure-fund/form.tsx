@@ -140,7 +140,7 @@ export default function ExpenditureFundForm() {
       <div className="grid h-full grid-cols-1 gap-4 xl:col-span-2 lg:grid-cols-3">
         <div className="flex h-full w-full lg:col-span-3 xl:col-span-1 flex-col space-y-4">
           {/* Summary Recent Transactions Card */}
-          <Card className="flex-shrink-0">
+          <Card className="flex-shrink-0 max-[390px]:w-[400px]">
             <CardHeader className="py-4">
               <div className="flex items-center md:justify-center justify-between ">
                 <CardTitle>Summary Recent Transactions</CardTitle>

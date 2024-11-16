@@ -29,7 +29,7 @@ interface IFlatListProps {
 
 export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
   return (
-    <Card className='mx-auto w-full to-muted/20'>
+    <Card className='mx-auto max-[492px]:w-[300px] w-full to-muted/20'>
       {data?.length > 0 ? (
         <ScrollArea className='h-[200px] w-full rounded-md p-4'>
           {data.map((item) => (
@@ -50,7 +50,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                   `${item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'border-l-rose-600 dark:border-l-rose-800' : 'border-l-[#047858]'}`
                 )}
               >
-                <CardHeader className='py-3'>
+                <CardHeader className='py-3 max-[492px]:py-6'>
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
                       <div
@@ -63,7 +63,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                         {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '↓' : '↑'}
                       </div>
                       <div className='flex flex-col'>
-                        <CardTitle className='text-xl font-bold tracking-tight'>
+                        <CardTitle className='text-xl max-[492px]:text-xs font-bold tracking-tight'>
                           {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '- ' : '+ '}
                           {item.amount}
                         </CardTitle>
