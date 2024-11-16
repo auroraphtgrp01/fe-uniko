@@ -1,7 +1,7 @@
 import CustomDialog from '@/components/dashboard/Dialog'
 import { initEmptyDetailExpenditureFund } from './constants'
 import { IDialogConfig } from '@/types/common.i'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { t } from 'i18next'
 import { IExpenditureFundDialogProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
@@ -15,7 +15,6 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
   const formCreateExpenditureFundRef = useRef<HTMLFormElement>(null)
   const formUpdateExpenditureFundRef = useRef<HTMLFormElement>(null)
   const formInviteParticipantRef = useRef<HTMLFormElement>(null)
-  const [emails, setEmails] = useState<string[]>([])
   const [idParticipantDelete, setIdParticipantDelete] = useState<string>('')
 
   const {

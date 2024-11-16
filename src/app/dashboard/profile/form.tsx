@@ -18,25 +18,21 @@ import {
   updatePassWordSchemaWithoutCurrentPassword
 } from '@/core/users/constants/update-password-schema.constant'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from '@/core/auth/hooks'
-import { getRefreshTokenFromLocalStorage } from '@/libraries/helpers'
-import { formatDateToInput, getTranslatedFormBody } from '@/libraries/utils'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Briefcase, Calendar, Mail, MapPin, Phone, Save, SaveIcon, User2 } from 'lucide-react'
-import AvatarDefault from '@/images/avatar.jpg'
-import Image from 'next/image'
-import { Separator } from '@/components/ui/separator'
-import AvatarSelector from '../../../components/dashboard/profile/AvatarSelector'
+import { getTranslatedFormBody } from '@/libraries/utils'
+import { SaveIcon } from 'lucide-react'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useSearchParams } from 'next/navigation'
 import UserProfile from '@/components/dashboard/profile/UserProfile'
 import { initEmptyUser } from './constants'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 
 export default function ProfileForm() {
   const searchParams = useSearchParams()
   const [defaultUser, setIsDefaultUser] = useState({})
   const { getMe, updateUser, isUpdating, isPasswordUpdating, updatePassword } = useUser()
   const { setUser } = useStoreLocal()
+  const { getAdvancedExpenditureFund } = useExpenditureFund()
+  const { refetchAdvancedExpendingFund } = getAdvancedExpenditureFund({})
   const handleUpdatePassword = (formData: { currentPassword?: string; newPassword: string }) => {
     updatePassword({
       ...formData,
@@ -62,6 +58,7 @@ export default function ProfileForm() {
           if (!isUpdating && (res.statusCode === 200 || res.statusCode === 201)) {
             setData(res.data)
             setUser(res.data)
+            refetchAdvancedExpendingFund()
             toast.success('Update successfully !')
           }
         }

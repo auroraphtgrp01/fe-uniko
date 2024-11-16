@@ -1,7 +1,5 @@
 import {
   IAdvancedExpenditureFundResponse,
-  ICreateExpenditureFundBody,
-  IExpenditureFund,
   IExpenditureFundDataFormat,
   IExpenditureFundDialogOpen,
   IHandleCreateExpenditureFundProps,
@@ -10,7 +8,7 @@ import {
   IHandleUpdateExpenditureFundProps,
   TExpenditureFundActions
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
-import { formatArrayData, getTypes } from '@/libraries/utils'
+import { formatArrayData } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import toast from 'react-hot-toast'
 import { formatExpenditureFundData } from './constants'

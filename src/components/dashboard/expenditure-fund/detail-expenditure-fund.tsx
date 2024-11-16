@@ -3,17 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EFundStatus, IDetailExpenditureFundProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
-import { Button } from '@/components/ui/button'
-import CreateTrackerTypeForm from '../CreateTrackerTypeForm'
-import { useEffect, useRef, useState } from 'react'
-import { IDialogConfig } from '@/types/common.i'
-import CustomDialog from '../Dialog'
+import { useState } from 'react'
 import OverviewTabsContent from './detail-expenditure-fund-tabs-content/overview-tabs-content'
 import TransactionTabsContent from './detail-expenditure-fund-tabs-content/transaction-tabs-content'
 import StatisticTabsContent from './detail-expenditure-fund-tabs-content/statistic-tabs-content'
 import ParticipantTabsContent from './detail-expenditure-fund-tabs-content/participant-tabs-content'
 import CategoryTabsContent from './detail-expenditure-fund-tabs-content/category-tabs-content'
-import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export function DetailExpenditureFund({
   detailData,

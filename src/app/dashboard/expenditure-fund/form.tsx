@@ -31,11 +31,7 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import { IQueryOptions } from '@/types/query.interface'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import {
-  handleCreateTrackerTxType,
-  handleUpdateTrackerTxType,
-  modifiedTrackerTypeForComboBox
-} from '../tracker-transaction/handlers'
+import { handleCreateTrackerTxType, modifiedTrackerTypeForComboBox } from '../tracker-transaction/handlers'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'

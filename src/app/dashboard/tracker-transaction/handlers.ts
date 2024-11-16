@@ -7,21 +7,9 @@ import {
   IUpdateTrackerTransactionBody,
   TTrackerTransactionActions
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
-import {
-  IClassifyTransactionBody,
-  ICreateTrackerTransactionBody,
-  IDataTransactionTable,
-  IDialogTransaction,
-  IGetTransactionResponse,
-  ITransaction,
-  ITransactionSummary,
-  IUpdateTransactionBody,
-  TTransactionActions
-} from '@/core/transaction/models'
+import { IClassifyTransactionBody, ICreateTrackerTransactionBody, ITransaction } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
-import { initCreateTrackerTransactionForm, initTrackerTypeForm } from '../transaction/constants'
 import React from 'react'
-import { modifyTransactionHandler } from '../transaction/handler'
 import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import {
   ITrackerTransactionType,
@@ -29,16 +17,7 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { formatArrayData, formatCurrency, formatDateTimeVN, getTypes } from '@/libraries/utils'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
-import { IQueryOptions } from '@/types/query.interface'
-import { initTableConfig } from '@/constants/data-table'
-import { IAccountSource } from '@/core/account-source/models'
 import { IFlatListData } from '@/components/core/FlatList'
-
-// const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-//   if (event.key === 'Enter') {
-//     handleAddNewItem()
-//   }
-// }
 
 export const handleCreateTrackerTransaction = async ({
   payload,
@@ -179,27 +158,6 @@ export const updateCacheDataDeleteFeat = (
 
   return { ...oldData, data: updatedData }
 }
-
-// export const updateCacheDataUpdateFeatWithoutTransaction = (
-//   oldData: IAdvancedTrackerTransactionResponse,
-//   newData: ITrackerTransaction
-// ): IAdvancedTrackerTransactionResponse => {
-//   const { Transaction, ...dataUpdate } = newData
-//   return {
-//     ...oldData,
-//     data: oldData.data.map((item) => (item.id === newData.id ? { ...item, ...dataUpdate } : item))
-//   }
-// }
-
-// export const updateCacheDataTransactionOfTrackerTxUpdateFeat = (
-//   oldData: IAdvancedTrackerTransactionResponse,
-//   newData: any
-// ): IAdvancedTrackerTransactionResponse => {
-//   return {
-//     ...oldData,
-//     data: oldData.data.map((item) => (item.id === newData.id ? { ...item, Transaction: newData } : item))
-//   }
-// }
 
 export const handleCreateTrackerTxType = ({
   payload,

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { IOverviewTabsContentProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
-import { CalendarDays, Tag, Users2Icon } from 'lucide-react'
+import { CalendarDays, Users2Icon } from 'lucide-react'
 
 export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOverviewTabsContentProps) {
   return (

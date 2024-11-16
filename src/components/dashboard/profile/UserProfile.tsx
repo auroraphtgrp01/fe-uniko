@@ -5,7 +5,7 @@ import { formatDateToInput } from '@/libraries/utils'
 import { IUser } from '@/types/user.i'
 import { Briefcase, Calendar, Mail, MapPin, Phone, User2 } from 'lucide-react'
 import Image from 'next/image'
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 
 interface IUserProfileProps {
   handleUpdateUser?: (formData: {

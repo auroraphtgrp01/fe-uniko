@@ -1,29 +1,18 @@
 'use client'
 
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ICategoryTabsContentProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
-import FormZod from '../../../core/FormZod'
-import {
-  defineEditTrackerTypeBody,
-  editTrackerTypeSchema
-} from '@/core/tracker-transaction-type/constants/update-tracker-transaction-type.constant'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
-import {
-  IEditTrackerTypeDialogData,
-  ITrackerTransactionTypeBody
-} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { IEditTrackerTypeDialogData } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { IDialogConfig } from '@/types/common.i'
-import { DeleteIcon, EditIcon, PlusIcon, SaveIcon, Undo2Icon } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { PlusIcon } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
 import CreateTrackerTypeForm from '../../CreateTrackerTypeForm'
 import CustomDialog from '../../Dialog'
 import AccordionEditTrackerType from '../../AccordionEditTrackerType'
-import EditTrackerTypeDialog from '../../EditTrackerType'
 
 export default function CategoryTabsContent({
   detailData,
