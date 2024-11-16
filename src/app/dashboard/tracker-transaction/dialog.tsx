@@ -139,7 +139,8 @@ export default function TrackerTransactionDialog({
       detailUpdateTrackerTransactionDialog.setDataDetail(initEmptyDetailTrackerTransaction)
       setIsEditing(false)
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
-    }
+    },
+    className: 'sm:max-w-[425px] md:max-w-[460px]'
   }
 
   return (

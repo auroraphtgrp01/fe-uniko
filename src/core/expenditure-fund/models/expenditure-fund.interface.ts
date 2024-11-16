@@ -12,6 +12,7 @@ export interface IExpenditureFundDialogOpen {
   isDialogDetailOpen: boolean
   isDialogUpdateOpen: boolean
   isDialogDeleteOpen: boolean
+  isDialogDeleteParticipantOpen: boolean
   isDialogDeleteAllOpen: boolean
   isDialogInviteOpen: boolean
 }
@@ -59,24 +60,23 @@ export enum ECurrencyUnit {
   EUR = 'EUR'
 }
 
-enum EParticipantRole {
+export enum EParticipantRole {
   OWNER = 'OWNER',
   ADMIN = 'ADMIN',
   MEMBER = 'MEMBER'
 }
 
+export enum EParticipantStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED'
+}
+
 export interface IExpenditureFundParticipant {
   id: string
   role: EParticipantRole
-  status: 'PENDING' | 'ACCEPTED'
+  status: EParticipantStatus
   subEmail: string | null
-  user: {
-    id: string
-    fullName: string
-    email: string
-    phone_number: string
-    avatar: string | null
-  }
+  user: IUser
 }
 
 enum ICategoryTrackerType {
@@ -132,6 +132,7 @@ export interface IExpenditureFundDialogProps {
     data: IExpenditureFund
     setDetailData: React.Dispatch<React.SetStateAction<IExpenditureFund>>
     status: 'error' | 'idle' | 'pending' | 'success'
+    handleDeleteParticipant: (id: string) => void
   }
   inviteParticipantDialog: {
     handleInvite: (data: string[]) => void
@@ -143,6 +144,7 @@ export interface IExpenditureFundDialogProps {
       setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
     ) => void
     handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+    expenditureFund: { label: string; value: string }[]
   }
   statisticProps: {
     data: IPayloadDataChart[]
@@ -165,14 +167,44 @@ export interface IDetailExpenditureFundProps {
     ) => void
     isEditing: boolean
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
+    expenditureFund: { label: string; value: string }[]
   }
   statisticProps: {
     data: IPayloadDataChart[]
     dateRange: string
     setDateRange: React.Dispatch<React.SetStateAction<string>>
   }
+  participantProps: {
+    handleDelete: (id: string) => void
+  }
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
 }
+
+export interface IParticipantTabsContentProps
+  extends Omit<IDetailExpenditureFundProps, 'categoryTabProps' | 'statisticProps' | 'setIsDialogOpen'> {}
+
+export interface ICategoryTabsContentProps
+  extends Omit<IDetailExpenditureFundProps, 'inviteTabProps' | 'statisticProps' | 'participantProps'> {
+  setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+  type: ETypeOfTrackerTransactionType
+  setType: React.Dispatch<React.SetStateAction<ETypeOfTrackerTransactionType>>
+  isCreating: boolean
+}
+
+export interface IOverviewTabsContentProps {
+  detailData: IExpenditureFund
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
+}
+
+export interface IStatisticTabsContentProps {
+  chartData: IPayloadDataChart[]
+}
+
+export interface ITransactionTabsContentProps {
+  detailData: IExpenditureFund
+}
+
+// ------------------ Expenditure Fund ------------------
 
 export interface IUpdateExpenditureFundFormProps {
   handleUpdate: (data: IUpdateExpenditureFundBody) => void
@@ -184,7 +216,7 @@ export interface IHandleCreateExpenditureFundProps {
   data: ICreateExpenditureFundBody
   hookCreate: any
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
-  callBackRefetchAPI: () => void
+  callBackRefetchAPI: (actions: TExpenditureFundActions[]) => void
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
 }
 
@@ -215,3 +247,4 @@ export type TExpenditureFundActions =
   | 'getStatisticExpenditureFund'
   | 'getAllTrackerTransactionType'
   | 'getAllStatisticDetailOfFund'
+  | 'getAllExpendingFund'

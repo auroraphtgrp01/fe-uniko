@@ -17,7 +17,6 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
   const params = useSearchParams()
   const redirect = params.get('redirect')
   const redirectUrl = redirect || '/dashboard?loggedIn=true'
-  console.log('params', redirectUrl)
   const mutation = useMutationCustom<ISignInBody, ISignInResponse>({
     pathUrl: authServices.signIn,
     mutateOption: {
@@ -35,8 +34,6 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
           setRefreshTokenToLocalStorage(data.data.refreshToken)
           if (redirectUrl === '/dashboard?loggedIn=true') setExecuteGetMe(true)
           toast.success('Login successfully 🚀 ')
-          console.log('redirectUrl', redirectUrl)
-
           router.push(redirectUrl)
         }
         if (data.data.user.status === 'UNVERIFY' && countLogin < 0) {

@@ -50,6 +50,7 @@ export interface IUser {
   avatarId: string
   provider?: string
   accessToken?: string
+  defaultExpenditureFundId: string
 }
 
 export type IUserGetMeResponse = IBaseResponseData<IUser>

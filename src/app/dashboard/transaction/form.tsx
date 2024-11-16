@@ -131,7 +131,7 @@ export default function TransactionForm() {
   const { user, fundId } = useStoreLocal()
   const { getMe } = useUser()
   const socket = useSocket()
-  const { getAllExpenditureFund } = useExpenditureFund()
+  const { getAllExpenditureFund, getAdvancedExpenditureFund } = useExpenditureFund()
 
   // fetch data
   const { getAllData: accountSourceData } = getAllAccountSource(fundId)
@@ -144,6 +144,7 @@ export default function TransactionForm() {
   const { dataTodayTxs } = getTodayTransactions({ query: todayTableQueryOptions, fundId })
   const { isGetMeUserPending } = getMe(true)
   const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
+  const { refetchAdvancedExpendingFund } = getAdvancedExpenditureFund({})
 
   // custom hooks
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
@@ -171,7 +172,8 @@ export default function TransactionForm() {
     getStatistic: resetCacheStatistic,
     getAllTrackerTransactionType: resetCacheTrackerTxType,
     getTrackerTransaction: resetCacheDataTrackerTx,
-    getAllExpenditureFund: refetchAllExpendingFund
+    getAllExpenditureFund: refetchAllExpendingFund,
+    getExpenditureFund: refetchAdvancedExpendingFund
   }
 
   const callBackRefetchTransactionPage = (actions: TTransactionActions[]) => {
@@ -266,10 +268,13 @@ export default function TransactionForm() {
           })
         } else if (data.status == 'NEW_TRANSACTION') {
           reloadDataFunction()
-          resetCacheUnclassifiedTxs()
-          resetCacheStatistic()
-          resetCacheTodayTx()
-          resetCacheAccountSource()
+          callBackRefetchTransactionPage([
+            'getUnclassifiedTransactions',
+            'getStatistic',
+            'getTodayTransactions',
+            'getAllAccountSource',
+            'getExpenditureFund'
+          ])
           setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
           setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))

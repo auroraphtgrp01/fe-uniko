@@ -7,21 +7,9 @@ import {
   IUpdateTrackerTransactionBody,
   TTrackerTransactionActions
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
-import {
-  IClassifyTransactionBody,
-  ICreateTrackerTransactionBody,
-  IDataTransactionTable,
-  IDialogTransaction,
-  IGetTransactionResponse,
-  ITransaction,
-  ITransactionSummary,
-  IUpdateTransactionBody,
-  TTransactionActions
-} from '@/core/transaction/models'
+import { IClassifyTransactionBody, ICreateTrackerTransactionBody, ITransaction } from '@/core/transaction/models'
 import toast from 'react-hot-toast'
-import { initCreateTrackerTransactionForm, initTrackerTypeForm } from '../transaction/constants'
 import React from 'react'
-import { modifyTransactionHandler } from '../transaction/handler'
 import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
 import {
   ITrackerTransactionType,
@@ -29,16 +17,7 @@ import {
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { formatArrayData, formatCurrency, formatDateTimeVN, getTypes } from '@/libraries/utils'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
-import { IQueryOptions } from '@/types/query.interface'
-import { initTableConfig } from '@/constants/data-table'
-import { IAccountSource } from '@/core/account-source/models'
 import { IFlatListData } from '@/components/core/FlatList'
-
-// const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-//   if (event.key === 'Enter') {
-//     handleAddNewItem()
-//   }
-// }
 
 export const handleCreateTrackerTransaction = async ({
   payload,
@@ -65,7 +44,8 @@ export const handleCreateTrackerTransaction = async ({
           'getTransactions',
           'getAllAccountSource',
           'getStatisticExpenditureFund',
-          'getStatisticExpenditureFund'
+          'getStatisticExpenditureFund',
+          'getExpenditureFund'
         ])
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
@@ -96,6 +76,7 @@ export const handleClassifyTransaction = async ({
       | 'getTodayTransactions'
       | 'getStatistic'
       | 'getTrackerTransaction'
+      | 'getExpenditureFund'
     )[]
   ) => void
   setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
@@ -111,7 +92,8 @@ export const handleClassifyTransaction = async ({
           'getUnclassifiedTransactions',
           'getTodayTransactions',
           'getStatistic',
-          'getTrackerTransaction'
+          'getTrackerTransaction',
+          'getExpenditureFund'
         ])
         if (setUncDataTableConfig) setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
@@ -177,27 +159,6 @@ export const updateCacheDataDeleteFeat = (
   return { ...oldData, data: updatedData }
 }
 
-// export const updateCacheDataUpdateFeatWithoutTransaction = (
-//   oldData: IAdvancedTrackerTransactionResponse,
-//   newData: ITrackerTransaction
-// ): IAdvancedTrackerTransactionResponse => {
-//   const { Transaction, ...dataUpdate } = newData
-//   return {
-//     ...oldData,
-//     data: oldData.data.map((item) => (item.id === newData.id ? { ...item, ...dataUpdate } : item))
-//   }
-// }
-
-// export const updateCacheDataTransactionOfTrackerTxUpdateFeat = (
-//   oldData: IAdvancedTrackerTransactionResponse,
-//   newData: any
-// ): IAdvancedTrackerTransactionResponse => {
-//   return {
-//     ...oldData,
-//     data: oldData.data.map((item) => (item.id === newData.id ? { ...item, Transaction: newData } : item))
-//   }
-// }
-
 export const handleCreateTrackerTxType = ({
   payload,
   hookCreate,
@@ -207,12 +168,12 @@ export const handleCreateTrackerTxType = ({
   payload: ITrackerTransactionTypeBody
   hookCreate: any
   setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
-  callBackOnSuccess: (actions: 'getAllTrackerTransactionType'[]) => void
+  callBackOnSuccess: (actions: ('getAllTrackerTransactionType' | 'getExpenditureFund')[]) => void
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        callBackOnSuccess(['getAllTrackerTransactionType'])
+        callBackOnSuccess(['getAllTrackerTransactionType', 'getExpenditureFund'])
         toast.success('Create tracker transaction type successfully!')
         setIsCreating(false)
       }
@@ -268,7 +229,7 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
     checkType: data.Transaction?.direction || '',
     trackerType: data.TrackerType.name || '',
     amount: `${formatCurrency(data.Transaction?.amount || 0, 'đ')}`,
-    transactionDate: data.time ? formatDateTimeVN(data.time, true) : '',
+    transactionDate: data.time ? data.time : '',
     accountSource: data.Transaction?.accountSource?.name || ''
   }
 }
@@ -297,7 +258,7 @@ export const onRowClick = (
 export const modifiedTrackerTypeForComboBox = (type: any) => {
   return type?.map((item: any) => ({
     value: item.id,
-    label: item.name,
+    label: `${item.name}${item.currentAmount ? ` - ${formatCurrency(item.currentAmount)}` : ''}`,
     ...item
   }))
 }
@@ -374,7 +335,7 @@ export const modifyFlatListData = (data: ITransaction[]): IFlatListData[] => {
     amount: formatCurrency(item.amount, 'đ'),
     accountNo: item.ofAccount?.accountNo || '',
     direction: item.direction as ETypeOfTrackerTransactionType,
-    transactionDateTime: formatDateTimeVN(item.transactionDateTime, true)
+    transactionDateTime: item.transactionDateTime
   }))
 }
 

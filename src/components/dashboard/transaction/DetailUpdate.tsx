@@ -1,14 +1,24 @@
 'use client'
 
 import React, { useEffect, useRef } from 'react'
-import { CalendarIcon, CreditCard, Pencil, BookUserIcon, FileTextIcon, WalletCardsIcon } from 'lucide-react'
+import {
+  CalendarIcon,
+  CreditCard,
+  Pencil,
+  BookUserIcon,
+  FileTextIcon,
+  WalletCardsIcon,
+  User,
+  Clock,
+  ChartBarStackedIcon
+} from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { IUpdateTransactionBody } from '@/core/transaction/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { Button } from '@/components/ui/button'
-import { formatDateTimeVN } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import {
   IDetailUpdateTransactionDialogProps,
   IUpdateTrackerTransactionBody
@@ -24,6 +34,7 @@ import {
   updateTrackerTransactionSchema
 } from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
 import { Pencil2Icon } from '@radix-ui/react-icons'
+import { Separator } from '@/components/ui/separator'
 
 export default function DetailUpdateTransaction({
   updateTransactionProps,
@@ -34,10 +45,6 @@ export default function DetailUpdateTransaction({
   const submitUpdateTransactionRef = useRef<HTMLFormElement>(null)
   const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
   const formUpdateTrackerTransactionRef = useRef<any>()
-
-  useEffect(() => {
-    console.log('updateTransactionProps', updateTransactionProps.transaction)
-  }, [updateTransactionProps])
 
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
@@ -58,9 +65,7 @@ export default function DetailUpdateTransaction({
     <div className='space-y-6'>
       <div className='space-y-2'>
         <div className='flex items-center justify-between'>
-          <h3 className='text-2xl font-bold'>
-            {updateTransactionProps.transaction.amount.toLocaleString()} {updateTransactionProps.transaction.currency}
-          </h3>
+          <h3 className='text-2xl font-bold'>{formatCurrency(updateTransactionProps.transaction.amount, 'đ')}</h3>
           <Badge
             className='rounded-full px-4 py-1 text-base font-semibold'
             style={{
@@ -87,21 +92,15 @@ export default function DetailUpdateTransaction({
               : 'Expense'}
           </Badge>
         </div>
-        <p className='text-sm text-muted-foreground'>{'Chuyển khoản'}</p>
-      </div>
-      <div className='space-y-4'>
-        <div className='flex items-center space-x-4'>
-          <CalendarIcon className='text-muted-foreground' />
-          <span>{formatDateTimeVN(updateTransactionProps.transaction.time, true)}</span>
+        <div className='flex items-center gap-2'>
+          <Clock className='h-4 w-4 text-muted-foreground' />
+          <p className='font-medium'>{formatDateTimeVN(updateTransactionProps.transaction.time, true)}</p>
         </div>
-        {updateTransactionProps.transaction.transactionId && (
-          <div className='flex items-center space-x-4'>
-            <CreditCard className='text-muted-foreground' />
-            <span>Mã giao dịch: {updateTransactionProps.transaction.transactionId}</span>
-          </div>
-        )}
-        <div className='space-y-2'>
-          <div className='font-semibold'>Ví gửi</div>
+      </div>
+
+      <div className='grid grid-cols-2 gap-4'>
+        <div className='space-y-1'>
+          <p className='text-sm text-muted-foreground'>Ví gửi</p>
           {updateTransactionProps.transaction.ofAccount ? (
             <div className='flex items-start gap-3'>
               <Avatar>
@@ -119,7 +118,7 @@ export default function DetailUpdateTransaction({
               </div>
             </div>
           ) : (
-            <div className='flex items-center space-x-4'>
+            <div className='flex items-center gap-3'>
               <Avatar>
                 <AvatarFallback>
                   <WalletCardsIcon className='text-muted-foreground' />
@@ -131,8 +130,8 @@ export default function DetailUpdateTransaction({
         </div>
 
         {updateTransactionProps.transaction.toAccountNo && (
-          <div className='space-y-2'>
-            <div className='font-semibold'>Tài khoản nhận</div>
+          <div className='space-y-1'>
+            <p className='text-sm text-muted-foreground'>Tài khoản nhận</p>
             <div className='flex items-start gap-3'>
               <Avatar>
                 <AvatarFallback className='bg-muted'>
@@ -148,8 +147,11 @@ export default function DetailUpdateTransaction({
             </div>
           </div>
         )}
-        <div className='space-y-2'>
-          <div className='font-semibold'>Nội dung chuyển tiền</div>
+      </div>
+
+      <div className='space-y-2'>
+        <div className='text-sm text-muted-foreground'>Nội dung chuyển tiền</div>
+        {updateTransactionProps.transaction.description ? (
           <div className='flex items-start gap-3'>
             <Avatar>
               <AvatarFallback className='bg-muted'>
@@ -157,28 +159,84 @@ export default function DetailUpdateTransaction({
               </AvatarFallback>
             </Avatar>
             <div className='flex flex-col'>
-              <span className='text-sm text-muted-foreground'>{updateTransactionProps.transaction.description}</span>
+              <span className='text-sm text-muted-foreground'>
+                {updateTransactionProps.transaction.description || 'N/A'}
+              </span>
             </div>
           </div>
-        </div>
-        {updateTrackerTransactionProps && (
-          <>
-            <div className='flex items-center space-x-4'>
-              <FileTextIcon className='text-muted-foreground' />
-              <span>Mô tả: {updateTrackerTransactionProps.trackerTransaction.reasonName}</span>
-            </div>
-            <div className='space-y-2'>
-              <div className='font-semibold'>Ghi chú</div>
-              <p>
-                {updateTrackerTransactionProps.trackerTransaction.description &&
-                updateTrackerTransactionProps.trackerTransaction.description !== ''
-                  ? updateTrackerTransactionProps.trackerTransaction.description
-                  : 'Không có ghi chú'}
-              </p>
-            </div>
-          </>
+        ) : (
+          <div className='flex items-center space-x-4'>
+            <Avatar>
+              <AvatarFallback className='bg-muted'>
+                <Pencil2Icon className='h-5 w-5 bg-muted' />
+              </AvatarFallback>
+            </Avatar>
+            <span className='text-sm text-muted-foreground'>N/A</span>
+          </div>
         )}
       </div>
+
+      {updateTransactionProps.transaction.transactionId && (
+        <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+          <CreditCard className='h-4 w-4' />
+          <span>Mã giao dịch: {updateTransactionProps.transaction.transactionId}</span>
+        </div>
+      )}
+
+      {updateTrackerTransactionProps && (
+        <>
+          <Separator />
+          <div className='space-y-4'>
+            <div className='grid grid-cols-2 gap-4'>
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Người phân loại</p>
+                <div className='flex items-center gap-2'>
+                  <User className='h-4 w-4 text-muted-foreground' />
+                  <p className='font-medium'>
+                    {updateTrackerTransactionProps.trackerTransaction.participant.user.fullName}
+                  </p>
+                </div>
+              </div>
+
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Thời gian phân loại</p>
+                <div className='flex items-center gap-2'>
+                  <Clock className='h-4 w-4 text-muted-foreground' />
+                  <p className='font-medium'>
+                    {formatDateTimeVN(updateTrackerTransactionProps.trackerTransaction.trackerTime, true)}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className='grid grid-cols-2 gap-4'>
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Mô tả</p>
+                <div className='flex items-center gap-2'>
+                  <p className='font-semibold'>
+                    {updateTrackerTransactionProps.trackerTransaction.reasonName || 'N/A'}
+                  </p>
+                </div>
+              </div>
+
+              <div className='space-y-1'>
+                <p className='text-sm text-muted-foreground'>Danh mục</p>
+                <div className='flex items-center gap-2'>
+                  {/* <ChartBarStackedIcon className='h-4 w-4 text-muted-foreground' /> */}
+                  <p className='font-medium'>{updateTrackerTransactionProps.trackerTransaction.TrackerType.name}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className='space-y-1'>
+              <p className='text-sm text-muted-foreground'>Ghi chú</p>
+              <p className='text-muted-foreground'>
+                {updateTrackerTransactionProps.trackerTransaction.description || 'Không có ghi chú'}
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
       <div className='flex justify-end'>
         <Button
           onClick={() => {

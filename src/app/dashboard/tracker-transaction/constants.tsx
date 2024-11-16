@@ -17,6 +17,8 @@ import NoDataPlaceHolder from '@/images/2.png'
 import Image from 'next/image'
 import { initEmptyDetailTransactionData } from '../transaction/constants'
 import { Combobox } from '../../../components/core/Combobox'
+import { EParticipantRole, EParticipantStatus } from '@/core/expenditure-fund/models/expenditure-fund.interface'
+import { initEmptyUser } from '../profile/constants'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -166,7 +168,15 @@ export const initEmptyDetailTrackerTransaction = {
     description: 'N/A',
     ownerIds: []
   },
-  time: new Date().toISOString()
+  participant: {
+    id: 'N/A',
+    role: EParticipantRole.MEMBER,
+    status: EParticipantStatus.PENDING,
+    subEmail: null,
+    user: initEmptyUser
+  },
+  time: new Date().toISOString(),
+  trackerTime: new Date().toISOString()
 }
 
 export const ExtendsJSXTrackerTransaction = ({

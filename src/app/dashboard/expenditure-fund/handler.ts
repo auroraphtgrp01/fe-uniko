@@ -1,7 +1,5 @@
 import {
   IAdvancedExpenditureFundResponse,
-  ICreateExpenditureFundBody,
-  IExpenditureFund,
   IExpenditureFundDataFormat,
   IExpenditureFundDialogOpen,
   IHandleCreateExpenditureFundProps,
@@ -10,7 +8,7 @@ import {
   IHandleUpdateExpenditureFundProps,
   TExpenditureFundActions
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
-import { formatArrayData, getTypes } from '@/libraries/utils'
+import { formatArrayData } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import toast from 'react-hot-toast'
 import { formatExpenditureFundData } from './constants'
@@ -33,7 +31,7 @@ export const handleCreateExpenditureFund = async ({
   hookCreate(data, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        callBackRefetchAPI()
+        callBackRefetchAPI(['getAllExpendingFund', 'getExpenditureFund', 'getStatisticExpenditureFund'])
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
         toast.success('Create expenditure fund successfully!')
@@ -53,7 +51,7 @@ export const handleUpdateExpenditureFund = async ({
   hookUpdate(data, {
     onSuccess: (res: any) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        callBackRefetchAPI()
+        callBackRefetchAPI(['getAllExpendingFund', 'getExpenditureFund', 'getStatisticExpenditureFund'])
         setDetailData((prev) => ({ ...prev, ...res.data }))
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         toast.success('Update expenditure fund successfully!')
@@ -69,8 +67,6 @@ export const initExpenditureFundDataTable = (
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>,
   setTableData: React.Dispatch<React.SetStateAction<IExpenditureFundDataFormat[]>>
 ) => {
-  console.log('getAdvancedData', getAdvancedData)
-
   if (!isGetAdvancedPending && getAdvancedData) {
     const formattedData: IExpenditureFundDataFormat[] = formatArrayData(getAdvancedData.data, formatExpenditureFundData)
 
@@ -87,13 +83,15 @@ export const handleDeleteAnExpenditureFund = async ({
   setDataTableConfig,
   setIsDialogOpen,
   hookDelete,
-  setIdDeletes
+  setIdDeletes,
+  callBackRefetchAPI
 }: IHandleDeleteAnExpenditureFundProps) => {
   hookDelete(
     { id },
     {
       onSuccess: (res: any) => {
         if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackRefetchAPI(['getAllExpendingFund', 'getExpenditureFund', 'getStatisticExpenditureFund'])
           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
           setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
           setIdDeletes([])
@@ -147,4 +145,29 @@ export const handleInviteParticipant = async ({
       setIsDialogOpen((prev) => ({ ...prev, isDialogInviteOpen: false }))
     }
   })
+}
+
+export const handleDeleteParticipant = ({
+  hookDelete,
+  id,
+  callBackOnSuccess,
+  setIsDialogOpen
+}: {
+  hookDelete: any
+  id: string
+  callBackOnSuccess: (actions: TExpenditureFundActions[]) => void
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IExpenditureFundDialogOpen>>
+}) => {
+  hookDelete(
+    { id },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackOnSuccess(['getExpenditureFund'])
+          toast.success('Delete participant successfully')
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteParticipantOpen: false }))
+        }
+      }
+    }
+  )
 }

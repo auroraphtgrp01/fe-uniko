@@ -189,15 +189,7 @@ export default function TrackerTransactionForm() {
       return { ...oldData, data: [...oldData.data, newData] }
     }
   )
-  const { setData: setCacheTrackerTxTypeUpdate } = useUpdateModel<any>(
-    [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
-    (oldData: any, newData: any) => {
-      const updatedData = oldData.data.map((item: any) => {
-        return item.id === newData.id ? { ...item, ...newData } : item
-      })
-      return { ...oldData, data: updatedData }
-    }
-  )
+
   const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY],
