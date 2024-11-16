@@ -258,7 +258,7 @@ export const onRowClick = (
 export const modifiedTrackerTypeForComboBox = (type: any) => {
   return type?.map((item: any) => ({
     value: item.id,
-    label: item.name,
+    label: `${item.name}${item.currentAmount ? ` - ${formatCurrency(item.currentAmount)}` : ''}`,
     ...item
   }))
 }

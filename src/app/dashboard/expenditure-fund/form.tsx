@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
 import FlatList, { IFlatListData } from '@/components/core/FlatList'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -34,7 +34,10 @@ import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/mod
 import { handleCreateTrackerTxType, modifiedTrackerTypeForComboBox } from '../tracker-transaction/handlers'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { useUpdateModel } from '@/hooks/useQueryModel'
-import { GET_ALL_TRACKER_TRANSACTION_TYPE_KEY } from '@/core/tracker-transaction/constants'
+import {
+  GET_ADVANCED_TRACKER_TRANSACTION_KEY,
+  GET_ALL_TRACKER_TRANSACTION_TYPE_KEY
+} from '@/core/tracker-transaction/constants'
 
 export default function ExpenditureFundForm() {
   // states
@@ -86,7 +89,7 @@ export default function ExpenditureFundForm() {
   )
   const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
 
-  const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ALL_TRACKER_TRANSACTION_TYPE_KEY], () => {})
+  const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
 
   const actionMap: Record<TExpenditureFundActions, () => void> = {
     getExpenditureFund: refetchAdvancedExpendingFund,
@@ -120,7 +123,7 @@ export default function ExpenditureFundForm() {
             amount: formatCurrency(item.amount, 'đ', 'vi-VN'),
             accountNo: item.ofAccount?.accountNo || 'N/A',
             direction: item.direction as ETypeOfTrackerTransactionType,
-            transactionDateTime: item.transactionDateTime
+            transactionDateTime: formatDateTimeVN(item.transactionDateTime, true)
           })
         )
       )

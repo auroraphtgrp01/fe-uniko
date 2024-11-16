@@ -74,12 +74,17 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                       </div>
                     </div>
                     <div className='flex flex-col items-end gap-1.5'>
-                      <Badge
-                        variant={item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'default' : 'secondary'}
-                        className='font-sm'
-                      >
-                        {item.direction}
-                      </Badge>
+                      <div className='flex items-center gap-2'>
+                        <Badge className='font-sm' variant={'blueCol'}>
+                          {'test'}
+                        </Badge>
+                        <Badge
+                          variant={item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'default' : 'secondary'}
+                          className='font-sm'
+                        >
+                          {item.direction}
+                        </Badge>
+                      </div>
                       <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
                         <Clock className='h-3 w-3' />
                         <span>{formatDateTimeVN(item.transactionDateTime, true)}</span>

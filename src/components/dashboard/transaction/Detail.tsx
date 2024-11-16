@@ -136,8 +136,20 @@ export function DetailTransactionDialog({
     ),
     title: 'Chi tiết giao dịch',
     footer: (
-      <div className='flex justify-end'>
-        <Button onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: false }))}>
+      <div className='flex justify-end gap-2'>
+        <Button
+          variant={'secondary'}
+          onClick={() => {
+            setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
+          }}
+        >
+          Classtify
+        </Button>
+
+        <Button
+          onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: false }))}
+          variant={'destructive'}
+        >
           Đóng
         </Button>
       </div>

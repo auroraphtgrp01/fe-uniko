@@ -163,7 +163,11 @@ export default function ProfileForm() {
                 <CardFooter className='flex px-0'>
                   <Button
                     type='button'
-                    onClick={() => formUpdatePasswordRef.current?.requestSubmit()}
+                    onClick={() =>
+                      userGetMeData?.data?.provider !== null && userGetMeData?.data?.isChangeNewPassword
+                        ? formUpdatePasswordRef.current?.requestSubmit()
+                        : formUpdatePasswordRef1.current?.requestSubmit()
+                    }
                     isLoading={isPasswordUpdating}
                     className='gap-2'
                   >
