@@ -1,5 +1,6 @@
 import { IChartData } from '@/components/core/charts/DonutChart'
 import { IAccountSource } from '@/core/account-source/models'
+import { IExpenditureFundParticipant } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import {
   IEditTrackerTypeDialogProps,
@@ -44,7 +45,9 @@ export interface ITrackerTransaction {
     description: string | null
     ownerIds: string[]
   }
+  participant: IExpenditureFundParticipant
   time: string
+  trackerTime: string
 }
 
 export interface IUpdateTrackerTransactionBody {

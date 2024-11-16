@@ -23,6 +23,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import CreateTrackerTypeForm from '../../CreateTrackerTypeForm'
 import CustomDialog from '../../Dialog'
 import AccordionEditTrackerType from '../../AccordionEditTrackerType'
+import EditTrackerTypeDialog from '../../EditTrackerType'
 
 export default function CategoryTabsContent({
   detailData,

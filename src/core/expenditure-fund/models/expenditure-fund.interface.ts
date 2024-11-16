@@ -60,24 +60,23 @@ export enum ECurrencyUnit {
   EUR = 'EUR'
 }
 
-enum EParticipantRole {
+export enum EParticipantRole {
   OWNER = 'OWNER',
   ADMIN = 'ADMIN',
   MEMBER = 'MEMBER'
 }
 
+export enum EParticipantStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED'
+}
+
 export interface IExpenditureFundParticipant {
   id: string
   role: EParticipantRole
-  status: 'PENDING' | 'ACCEPTED'
+  status: EParticipantStatus
   subEmail: string | null
-  user: {
-    id: string
-    fullName: string
-    email: string
-    phone_number: string
-    avatar: string | null
-  }
+  user: IUser
 }
 
 enum ICategoryTrackerType {

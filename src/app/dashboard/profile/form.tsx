@@ -29,6 +29,8 @@ import { Separator } from '@/components/ui/separator'
 import AvatarSelector from '../../../components/dashboard/profile/AvatarSelector'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { useSearchParams } from 'next/navigation'
+import UserProfile from '@/components/dashboard/profile/UserProfile'
+import { initEmptyUser } from './constants'
 
 export default function ProfileForm() {
   const searchParams = useSearchParams()
@@ -103,30 +105,7 @@ export default function ProfileForm() {
         <Card className='relative flex-1 overflow-hidden'>
           <div className='absolute inset-0 bg-gradient-to-b from-primary/10 to-background/50 opacity-50' />
           <CardContent className='space-y-6 p-6'>
-            <div className='flex flex-col items-center space-y-4'>
-              <AvatarSelector onSelect={handleUpdateUser} value={userGetMeData?.data?.avatarId} />
-              <div className='text-center'>
-                <h2 className='text-2xl font-bold'>{userGetMeData?.data?.fullName ?? 'Unknown'}</h2>
-                <p className='text-sm text-muted-foreground'>{userGetMeData?.data?.email ?? 'Unknown'}</p>
-              </div>
-            </div>
-            <Separator />
-            <div className='grid gap-4 sm:grid-cols-2'>
-              <div className='space-y-4'>
-                <InfoItem icon={Mail} label='Email' value={userGetMeData?.data?.email} />
-                <InfoItem icon={Phone} label='Phone' value={userGetMeData?.data?.phone_number} />
-                <InfoItem icon={MapPin} label='Location' value={userGetMeData?.data?.address} />
-              </div>
-              <div className='space-y-4'>
-                <InfoItem
-                  icon={Calendar}
-                  label='Date of Birth'
-                  value={formatDateToInput(userGetMeData?.data?.dateOfBirth)}
-                />
-                <InfoItem icon={User2} label='Gender' value={userGetMeData?.data?.gender} />
-                <InfoItem icon={Briefcase} label='Workplace' value={userGetMeData?.data?.workplace} />
-              </div>
-            </div>
+            <UserProfile handleUpdateUser={handleUpdateUser} user={userGetMeData?.data || initEmptyUser} />
           </CardContent>
         </Card>
         <Card className='h-full flex-1 rounded-md pt-4'>
@@ -203,21 +182,3 @@ export default function ProfileForm() {
     </div>
   )
 }
-
-const InfoItem = ({
-  icon: Icon,
-  label,
-  value
-}: {
-  icon: React.ElementType
-  label: string | undefined
-  value: string | undefined
-}) => (
-  <div className='flex items-center space-x-4 rounded-lg border p-3 transition-colors hover:bg-accent'>
-    <Icon className='h-5 w-5 text-muted-foreground' />
-    <div className='space-y-1'>
-      <p className='text-sm font-medium leading-none'>{label}</p>
-      <p className='text-xs text-muted-foreground'>{value || 'Unknown'}</p>
-    </div>
-  </div>
-)

@@ -2,7 +2,7 @@
 
 import { InviteParticipantForm } from '../invite-participant'
 import { Button } from '@/components/ui/button'
-import { CheckIcon, Clock, Loader2Icon, MoreHorizontalIcon, Trash2Icon, UserPlus } from 'lucide-react'
+import { CheckIcon, Clock, Loader2Icon, MoreHorizontalIcon, Trash2Icon, UserCheck2Icon, UserPlus } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/common/tooltip'
@@ -14,6 +14,12 @@ import {
   IParticipantTabsContentProps
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { IDialogConfig } from '@/types/common.i'
+import UserProfile from '../../profile/UserProfile'
+import { IUser } from '@/types/user.i'
+import { useState } from 'react'
+import { initEmptyUser } from '@/app/dashboard/profile/constants'
+import CustomDialog from '../../Dialog'
 
 export default function ParticipantTabsContent({
   detailData,
@@ -21,7 +27,9 @@ export default function ParticipantTabsContent({
   participantProps
 }: IParticipantTabsContentProps) {
   const { user } = useStoreLocal()
+  const [isOpenUserProfileDialog, setIsOpenUserProfileDialog] = useState(false)
   const isOwner = detailData.owner.id === user?.id
+  const [userProfileData, setUserProfileData] = useState<IUser>(initEmptyUser)
   const getRoleBadge = (role: IExpenditureFundParticipant['role']) => {
     switch (role) {
       case 'OWNER':
@@ -54,6 +62,17 @@ export default function ParticipantTabsContent({
     }
   }
 
+  const userProfileDialogConfig: IDialogConfig = {
+    isOpen: isOpenUserProfileDialog,
+    onClose: () => {
+      setIsOpenUserProfileDialog(false)
+    },
+    title: 'Thông tin người tham gia',
+    content: <UserProfile user={userProfileData} />,
+    className: 'sm:max-w-[325px] md:max-w-[650px]',
+    footer: <Button onClick={() => setIsOpenUserProfileDialog(false)}>Đóng</Button>
+  }
+
   return (
     <TooltipProvider>
       {isOwner && (
@@ -74,13 +93,13 @@ export default function ParticipantTabsContent({
         </div>
       )}
       <div className={`flex-1 overflow-hidden ${!isOwner ? 'mt-2' : ''}`}>
-        <ScrollArea className={`h-[${isOwner ? '17rem' : '20rem'}] overflow-y-auto rounded-md border`}>
+        <ScrollArea className={`${isOwner ? 'h-[17rem]' : 'h-[20.5rem]'} overflow-y-auto rounded-md border`}>
           <div className='space-y-2 p-2'>
             {detailData.participants.map((participant) => (
               <div key={participant.id} className='flex items-center justify-between rounded-lg p-2'>
                 <div className='flex items-center space-x-3'>
                   <Avatar>
-                    <AvatarImage src={participant.user?.avatar ?? AvatarDefault.src} />
+                    <AvatarImage src={`/avatars/${participant.user?.avatarId}.png`} />
                     <AvatarFallback>{participant.user?.fullName.charAt(0) ?? 'N/A'}</AvatarFallback>
                   </Avatar>
                   <div>
@@ -132,6 +151,17 @@ export default function ParticipantTabsContent({
                           <span>Remove</span>
                         </DropdownMenuItem>
                       )}
+                      <DropdownMenuItem
+                        style={{ cursor: 'pointer' }}
+                        className='text-muted-foreground'
+                        onClick={() => {
+                          setUserProfileData(participant.user)
+                          setIsOpenUserProfileDialog(true)
+                        }}
+                      >
+                        <UserCheck2Icon className='ml-[2px] mr-2 h-4 w-4' />
+                        <span>Profile</span>
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -140,6 +170,7 @@ export default function ParticipantTabsContent({
           </div>
         </ScrollArea>
       </div>
+      <CustomDialog config={userProfileDialogConfig} />
     </TooltipProvider>
   )
 }
