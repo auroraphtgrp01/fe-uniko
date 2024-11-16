@@ -52,5 +52,3 @@ export interface IDialogAccountSource {
   isDialogDeleteAllOpen: boolean
   isDialogDetailOpen: boolean
 }
-
-export type TAccountSourceActions = 'getAccountSource' | 'getAllAccountSource' | 'getStatistic'

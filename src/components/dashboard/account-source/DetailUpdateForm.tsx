@@ -1,15 +1,14 @@
 import { Button } from '@/components/ui/button'
 import { Separator } from '@radix-ui/react-select'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { IAccountSourceDataFormat, IDialogAccountSource } from '@/core/account-source/models'
 
 export default function DetailUpdateAccountSourceForm({
-  setIsDialogOpen,
-  dataDetail
+  detailUpdateAccountSource
 }: {
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
-  dataDetail: IAccountSourceDataFormat
+  detailUpdateAccountSource: any
 }) {
+  const { detailAccountSourceDialog, sharedDialogElements } = detailUpdateAccountSource
+
   return (
     <div className='py-4'>
       <div className='mb-6'>
@@ -17,12 +16,12 @@ export default function DetailUpdateAccountSourceForm({
           <div className='mb-2 w-full sm:mb-0'>
             <p className='text-sm text-muted-foreground'>Current Amount</p>
             <div className='flex w-full items-center justify-between'>
-              <p className='text-2xl font-bold'>{dataDetail.currentAmount}</p>
+              <p className='text-2xl font-bold'>{detailAccountSourceDialog.dataDetail.currentAmount}</p>
               <Button
                 variant={'destructive'}
                 type='button'
                 onClick={() => {
-                  setIsDialogOpen((prev) => ({
+                  sharedDialogElements.setIsDialogOpen((prev: { isDialogUpdateOpen: boolean }) => ({
                     ...prev,
                     isDialogUpdateOpen: true
                   }))
@@ -42,23 +41,23 @@ export default function DetailUpdateAccountSourceForm({
           <TableBody>
             <TableRow>
               <TableCell className='font-medium text-muted-foreground'>Account Bank</TableCell>
-              <TableCell>{dataDetail.accountBank}</TableCell>
+              <TableCell>{detailAccountSourceDialog.dataDetail.accountBank}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className='font-medium text-muted-foreground'>Check Type</TableCell>
-              <TableCell>{dataDetail.checkType}</TableCell>
+              <TableCell>{detailAccountSourceDialog.dataDetail.checkType}</TableCell>
             </TableRow>
-            {/* <TableRow>
+            <TableRow>
               <TableCell className='font-medium text-muted-foreground'>Currency</TableCell>
-              <TableCell>{dataDetail.currency}</TableCell>
-            </TableRow> */}
+              <TableCell>{detailAccountSourceDialog.dataDetail.data.currency}</TableCell>
+            </TableRow>
             <TableRow>
               <TableCell className='font-medium text-muted-foreground'>Initial Amount</TableCell>
-              <TableCell>{dataDetail.initAmount}</TableCell>
+              <TableCell>{detailAccountSourceDialog.dataDetail.initAmount}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className='font-medium text-muted-foreground'>Name</TableCell>
-              <TableCell>{dataDetail.name}</TableCell>
+              <TableCell>{detailAccountSourceDialog.dataDetail.name}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
