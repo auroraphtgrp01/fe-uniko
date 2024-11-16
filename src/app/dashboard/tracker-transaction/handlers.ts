@@ -229,7 +229,7 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
     checkType: data.Transaction?.direction || '',
     trackerType: data.TrackerType.name || '',
     amount: `${formatCurrency(data.Transaction?.amount || 0, 'đ')}`,
-    transactionDate: data.time ? formatDateTimeVN(data.time, true) : '',
+    transactionDate: data.time ? data.time : '',
     accountSource: data.Transaction?.accountSource?.name || ''
   }
 }
@@ -335,7 +335,7 @@ export const modifyFlatListData = (data: ITransaction[]): IFlatListData[] => {
     amount: formatCurrency(item.amount, 'đ'),
     accountNo: item.ofAccount?.accountNo || '',
     direction: item.direction as ETypeOfTrackerTransactionType,
-    transactionDateTime: formatDateTimeVN(item.transactionDateTime, true)
+    transactionDateTime: item.transactionDateTime
   }))
 }
 

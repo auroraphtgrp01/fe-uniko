@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
+import { formatCurrency } from '@/libraries/utils'
 import FlatList, { IFlatListData } from '@/components/core/FlatList'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -31,7 +31,11 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import { IQueryOptions } from '@/types/query.interface'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import { ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import { handleCreateTrackerTxType, modifiedTrackerTypeForComboBox } from '../tracker-transaction/handlers'
+import {
+  handleCreateTrackerTxType,
+  handleUpdateTrackerTxType,
+  modifiedTrackerTypeForComboBox
+} from '../tracker-transaction/handlers'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import {
@@ -123,7 +127,7 @@ export default function ExpenditureFundForm() {
             amount: formatCurrency(item.amount, 'đ', 'vi-VN'),
             accountNo: item.ofAccount?.accountNo || 'N/A',
             direction: item.direction as ETypeOfTrackerTransactionType,
-            transactionDateTime: formatDateTimeVN(item.transactionDateTime, true)
+            transactionDateTime: item.transactionDateTime
           })
         )
       )
@@ -356,12 +360,11 @@ export default function ExpenditureFundForm() {
             })
           },
           handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {
-            // handleUpdateTrackerTxType({
-            //   payload: data,
-            //   hookUpdate: updateTrackerTxType,
-            //   callBackOnSuccess: callBackRefetchExpenditureFundPage
-            // })
-            console.log('Ổn')
+            handleUpdateTrackerTxType({
+              payload: data,
+              hookUpdate: updateTrackerTxType,
+              callBackOnSuccess: callBackRefetchExpenditureFundPage
+            })
           },
           expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
         }}

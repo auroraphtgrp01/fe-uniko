@@ -152,6 +152,7 @@ export default function ParticipantTabsContent({
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem
+                        disabled={!participant.user}
                         style={{ cursor: 'pointer' }}
                         className='text-muted-foreground'
                         onClick={() => {

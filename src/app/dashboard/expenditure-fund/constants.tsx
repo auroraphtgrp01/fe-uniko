@@ -8,7 +8,7 @@ import {
   IInitButtonInHeaderProps,
   IUpdateExpenditureFundBody
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
-import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
+import { formatCurrency } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { PlusIcon } from 'lucide-react'
 import React from 'react'
