@@ -42,7 +42,7 @@ export default function HeroSection() {
         transition={{ duration: 0.3 }}
         className='max-w-4xl space-y-6'
       >
-        <h2 className='text-4xl font-bold leading-tight text-gray-800 dark:text-gray-300 sm:text-6xl'>
+        <h2 className='text-2xl font-bold leading-tight text-gray-800 dark:text-gray-300 sm:text-4xl sm:text-6xl'>
           <span className='inline-block bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 bg-clip-text text-transparent dark:from-gray-300 dark:via-gray-100 dark:to-gray-50'>
             Giải pháp tối ưu về quản lý tài chính
           </span>
@@ -55,7 +55,7 @@ export default function HeroSection() {
           ></FlipWords>
         </h2>
 
-        <p className='mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-400'>
+        <p className='mx-auto max-w-2xl text-base text-gray-600 dark:text-gray-400 sm:text-lg'>
           UNIKO - Phần mềm quản lý tài chính mã nguồn mở giúp bạn theo dõi, quản lý và tối ưu hóa tài chính một cách dễ
           dàng và hiệu quả.
         </p>
@@ -77,11 +77,11 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className='mt-8 flex flex-wrap items-center justify-center gap-4'
+        className='mt-8 flex w-full max-w-md flex-col items-center justify-center gap-4 sm:flex-row'
       >
         {isLoginUser !== null ? (
-          <Link className='relative z-10 no-underline' href='/dashboard/tracker-transaction'>
-            <Button size='lg' className='group relative overflow-hidden bg-red-500 text-white hover:bg-red-600'>
+          <Link className='relative z-10 w-full no-underline sm:w-auto' href='/dashboard/tracker-transaction'>
+            <Button className='group relative w-full overflow-hidden bg-red-500 text-white hover:bg-red-600'>
               <span>Go to Dashboard</span>
               <motion.div
                 className='absolute inset-0 z-0 bg-gradient-to-r from-rose-500 to-red-500'
@@ -93,8 +93,8 @@ export default function HeroSection() {
             </Button>
           </Link>
         ) : (
-          <Link className='no-underline' href='/sign-in'>
-            <Button size='lg' className='group relative overflow-hidden bg-red-500 text-white hover:bg-red-600'>
+          <Link className='w-full no-underline sm:w-auto' href='/sign-in'>
+            <Button className='group relative w-full overflow-hidden bg-red-500 text-white hover:bg-red-600'>
               <span>Get Started</span>
               <motion.div
                 className='absolute inset-0 z-0 bg-gradient-to-r from-red-500 to-red-600'
@@ -107,14 +107,15 @@ export default function HeroSection() {
           </Link>
         )}
 
-        <Button
-          size='lg'
-          variant='outline'
-          className='group border-red-500/20 text-red-500 hover:border-red-500/40 hover:bg-red-500/10'
-        >
-          <Github className='mr-2 h-4 w-4' />
-          <a href='https://github.com/auroraphtgrp01/fe-uniko'>View on GitHub</a>
-        </Button>
+        <a href='https://github.com/auroraphtgrp01/fe-uniko' className='w-full sm:w-auto'>
+          <Button
+            variant='outline'
+            className='group w-full border-red-500/20 text-red-500 hover:border-red-500/40 hover:bg-red-500/10'
+          >
+            <Github className='mr-2 h-4 w-4' />
+            View on GitHub
+          </Button>
+        </a>
       </motion.div>
 
       {/* Features - SEO Optimized */}

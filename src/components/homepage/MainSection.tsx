@@ -11,7 +11,6 @@ import AvatarKhanh from '@/images/contributors/Khanh.jpg'
 import AvatarHuy from '@/images/contributors/Huy.jpg'
 import AvatarThanh from '@/images/contributors/Thanh.jpg'
 import AvatarTrong from '@/images/contributors/Trong.jpg'
-import { FeatureTabs } from '@/components/homepage/FeatureTabs'
 import { BentoGridThird } from '@/components/homepage/Grid'
 import { MarqueeReview } from '@/components/homepage/Marquee'
 
@@ -91,9 +90,9 @@ export default function MainSection() {
           <div className='absolute -mt-32 opacity-0' id='overview'></div>
           <BentoGridThird />
         </div>
-        <div className='mt-32'>
-          <div className='absolute -mt-32 scroll-mt-32 opacity-0' id='features'></div>
-          <FeatureTabs />
+        <div className=''>
+          {/* <div className='absolute -mt-32 scroll-mt-32 opacity-0' id='features'></div> */}
+          {/* <FeatureTabs /> */}
           <MarqueeReview />
         </div>
         <div id='contributors'>

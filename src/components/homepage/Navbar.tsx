@@ -38,7 +38,15 @@ export default function Navbar() {
   return (
     <motion.nav
       animate={{
-        width: isMenuOpen ? '100%' : !isMobile ? (isScrolled ? '33.333333%' : '91.666667%') : '100%',
+        width: isMenuOpen
+          ? '100%'
+          : !isMobile
+            ? isScrolled
+              ? windowWidth <= 1280
+                ? '80%'
+                : '45%'
+              : '91.666667%'
+            : '100%',
         marginTop: !isMobile ? (isScrolled ? '1rem' : '0') : '0',
         boxShadow: !isMobile
           ? isScrolled
@@ -76,36 +84,45 @@ export default function Navbar() {
               height={30}
               priority
               style={{ objectFit: 'cover' }}
-              className='h-full w-full'
+              className='h-full w-full pl-2'
             />
-            <span className='ms-1 mt-1 text-[1.2rem] font-semibold text-[#e4355e]'>UNIKO</span>
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{
+                opacity: isScrolled ? 0 : 1,
+                scale: isScrolled ? 0.8 : 1
+              }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{
+                duration: 0.6,
+                ease: 'easeOut'
+              }}
+              className='ms-1 mt-1 text-[1.2rem] font-semibold text-[#e4355e]'
+            >
+              UNIKO
+            </motion.span>
           </div>
         </a>
         <ul className='hidden space-x-10 md:flex'>
-          <li>
-            <a
-              href='#overview'
-              className='font-semibold text-gray-700 transition-colors hover:text-primary dark:text-foreground'
+          {['overview', 'features', 'contributors'].map((item, index) => (
+            <motion.li
+              key={item}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: 'easeOut'
+              }}
             >
-              Tổng quan
-            </a>
-          </li>
-          <li>
-            <a
-              href='#features'
-              className='font-semibold text-gray-700 transition-colors hover:text-primary dark:text-foreground'
-            >
-              Tính năng
-            </a>
-          </li>
-          <li>
-            <a
-              href='#contributors'
-              className='font-semibold text-gray-700 transition-colors hover:text-primary dark:text-foreground'
-            >
-              Đóng góp
-            </a>
-          </li>
+              <a
+                href={`#${item}`}
+                className='font-semibold text-gray-700 transition-colors hover:text-primary dark:text-gray-200 dark:hover:text-primary'
+              >
+                {item === 'overview' ? 'Tổng quan' : item === 'features' ? 'Tính năng' : 'Đóng góp'}
+              </a>
+            </motion.li>
+          ))}
         </ul>
         <div className='flex items-center space-x-2'>
           <ModeToggle />
