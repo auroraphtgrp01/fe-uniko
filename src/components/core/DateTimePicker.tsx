@@ -221,7 +221,7 @@ export const DateTimePicker = React.forwardRef<HTMLDivElement, DateTimePickerPro
                   day: 'h-10 w-10 mx-1 text-center text-sm relative flex items-center justify-center',
                   day_button: cn(
                     buttonVariants({ variant: 'ghost' }),
-                    'rounded-md font-normal transition-all hover:bg-primary dark:text-white hover:text-primary-foreground'
+                    'rounded-md font-normal transition-all hover:bg-transparent dark:text-white hover:text-primary-foreground'
                   ),
                   selected:
                     'bg-primary h-10 w-10 text-primary-foreground dark:text-white hover:bg-primary focus:bg-primary focus:text-primary-foreground rounded-md border border-primary-light shadow-md',

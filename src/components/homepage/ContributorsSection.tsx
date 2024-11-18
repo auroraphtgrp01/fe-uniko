@@ -24,7 +24,9 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
         transition={{ delay: 1 }}
         className='container mx-auto px-4 py-16 md:py-24'
       >
-        <h2 className='mb-16 text-center text-2xl font-bold text-white md:text-3xl'>Contributors 🌟</h2>
+        <h2 className='mb-16 text-center text-2xl font-bold text-gray-700 dark:text-white md:text-3xl'>
+          Contributors 🌟
+        </h2>
 
         {/* Lead Contributor Section */}
         <div className='mb-16'>
@@ -40,15 +42,19 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
               size='lg'
             />
             <div className='mt-4 text-center'>
-              <h3 className='text-xl font-semibold text-white md:text-2xl'>{contributors[0].name}</h3>
-              <p className='text-sm text-gray-400 md:text-base'>Software Engineer</p>
+              <h3 className='text-xl font-semibold text-gray-700 dark:text-white md:text-2xl'>
+                {contributors[0].name}
+              </h3>
+              <p className='text-sm text-gray-600 dark:text-gray-400 md:text-base'>Software Engineer</p>
             </div>
           </motion.div>
         </div>
 
         {/* Other Contributors Section */}
         <div className='mx-auto max-w-6xl'>
-          <h4 className='mb-8 text-center text-lg font-semibold text-white md:text-xl'>Brilliant Contributors 🚀</h4>
+          <h4 className='mb-8 text-center text-lg font-semibold text-gray-700 dark:text-white md:text-xl'>
+            Brilliant Contributors 🚀
+          </h4>
           <div className='grid grid-cols-2 justify-items-center gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4'>
             {contributors.slice(1).map((contributor, index) => (
               <motion.div
@@ -64,8 +70,8 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
                   size='md'
                 />
                 <div className='mt-3 text-center'>
-                  <p className='text-sm font-semibold text-white md:text-base'>{contributor.name}</p>
-                  <p className='text-xs text-gray-400 md:text-sm'>{contributor.role}</p>
+                  <p className='text-sm font-semibold text-gray-700 dark:text-white md:text-base'>{contributor.name}</p>
+                  <p className='text-xs text-gray-600 dark:text-gray-400 md:text-sm'>{contributor.role}</p>
                 </div>
               </motion.div>
             ))}

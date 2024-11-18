@@ -72,9 +72,14 @@ export function UserNav() {
                   height={25}
                 />
               ) : (
-                <AvatarFallback className='animate-pulse'>
-                  <div className='h-full w-full bg-muted' />
-                </AvatarFallback>
+                <Image
+                  alt='User avatar'
+                  loading='lazy'
+                  className='h-full w-full rounded-full object-cover'
+                  src={AvatarDefault}
+                  width={25}
+                  height={25}
+                />
               )}
             </Avatar>
           </motion.button>
