@@ -22,7 +22,7 @@ interface StoreState {
 }
 
 // Add constant for localStorage key
-const FUND_ID_STORAGE_KEY = 'fundId'
+export const FUND_ID_STORAGE_KEY = 'fundId'
 
 export const useStoreLocal = create<StoreState>((set) => ({
   // account source store

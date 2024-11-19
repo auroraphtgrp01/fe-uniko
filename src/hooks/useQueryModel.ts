@@ -74,18 +74,33 @@ export const useModelQuery = <TResponse>(modelName: string, pathUrl: string, opt
 export const useUpdateModel = <T>(queryKey: string | string[], dataUpdater: (oldData: T, newData: Updater<T>) => T) => {
   const queryClient = useQueryClient()
   const key = Array.isArray(queryKey) ? queryKey : [queryKey]
-
   const setData = (newData: Updater<T> | any) => {
     queryClient.setQueryData(key, (oldData: T | undefined) => {
       if (!oldData) return newData as T
       return dataUpdater(oldData, newData)
     })
   }
-
   const resetData = () => {
-    // queryClient.invalidateQueries({ queryKey: key })
     queryClient.refetchQueries({ queryKey: key })
   }
+  const removeAllRelatedQueries = (baseKey: string) => {
+    const queries = queryClient.getQueryCache().findAll()
+    queries.forEach((query) => {
+      const queryKey = query.queryKey
+      if (Array.isArray(queryKey) && typeof queryKey[0] === 'string' && queryKey[0].startsWith(baseKey)) {
+        queryClient.removeQueries({ queryKey: queryKey })
+      }
+    })
+  }
+  const refetchAllRelatedQueries = (baseKey: string) => {
+    const queries = queryClient.getQueryCache().findAll()
+    queries.forEach((query) => {
+      const queryKey = query.queryKey
+      if (Array.isArray(queryKey) && typeof queryKey[0] === 'string' && queryKey[0].startsWith(baseKey)) {
+        queryClient.refetchQueries({ queryKey: queryKey })
+      }
+    })
+  }
 
-  return { setData, resetData }
+  return { setData, resetData, removeAllRelatedQueries, refetchAllRelatedQueries }
 }

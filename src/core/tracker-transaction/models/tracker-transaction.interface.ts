@@ -61,11 +61,11 @@ export interface ICustomTrackerTransaction {
   id: string
   reasonName: string
   trackerType: string | JSX.Element
-  type: string
+  // type: string
   amount: string
   transactionDate: string
   accountSource: string
-  checkType: string
+  // checkType: string
 }
 
 export type ITrackerTransactionResponse = IBaseResponseData<ITrackerTransaction>

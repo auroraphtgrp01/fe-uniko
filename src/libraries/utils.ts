@@ -31,13 +31,21 @@ export const formatCurrency = (amount: number, currency = 'USD', locale = 'en-US
 }
 
 export const formatDateTimeVN = (date: string, hasTime: boolean) => {
-  return new Intl.DateTimeFormat('vi-VN', {
+  const formattedDate = new Intl.DateTimeFormat('vi-VN', {
     day: '2-digit',
     month: '2-digit',
-    year: 'numeric',
-    hour: hasTime ? '2-digit' : undefined,
-    minute: hasTime ? '2-digit' : undefined
+    year: 'numeric'
   }).format(new Date(date))
+
+  if (hasTime) {
+    const formattedTime = new Intl.DateTimeFormat('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(date))
+    return `${formattedTime} - ${formattedDate}`
+  }
+
+  return formattedDate
 }
 const getPropertyByPath = (data: any, propertyPath: string): any => {
   const properties = propertyPath.split('.')

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter as FontSans } from 'next/font/google'
+import { Inter as FontSans, Inter } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/libraries/utils'
 import configProject from '../config/configService'
@@ -16,6 +16,11 @@ import Script from 'next/script'
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans'
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap'
 })
 
 export const metadata: Metadata = {
@@ -52,7 +57,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning className={inter.className}>
       <head>
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
         <Script
@@ -72,7 +77,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={cn('min-h-screen font-sans antialiased', fontSans.variable)}>
+      <body className={cn('min-h-screen font-sans antialiased')}>
         <Toaster
           toastOptions={{
             duration: 1000,

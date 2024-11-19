@@ -27,6 +27,7 @@ export interface IChartData {
 
 const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) => {
   const chartRef = useRef(null)
+  const fontFamily = 'var(--font-sans)'
   const chartConfig = JSON.parse(JSON.stringify(ChartConfig))
   const [configTheme, setConfigTheme] = useState<{
     borderColor: string
@@ -50,7 +51,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
       legend: {
         bottom: '5%',
         left: 'center',
-        textStyle: { color: configTheme.textColor, fontFamily: 'latin' },
+        textStyle: { color: configTheme.textColor, fontFamily: fontFamily },
         orient: 'horizontal',
         type: 'scroll',
         color: configTheme.textColor,
@@ -85,7 +86,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             color: configTheme.textColor,
             position: 'outside',
             alignTo: 'none',
-            fontFamily: 'latin'
+            fontFamily: fontFamily
           },
           emphasis: {
             focus: 'series',
@@ -104,7 +105,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
       ]
     },
     nightingale: {
-      legend: { top: 'bottom', textStyle: { color: configTheme.textColor } },
+      legend: { top: 'bottom', textStyle: { color: configTheme.textColor, fontFamily: fontFamily } },
       toolbox: {
         show: true,
         feature: {
@@ -126,7 +127,8 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           },
           label: {
             fontSize: '10',
-            color: configTheme.textColor
+            color: configTheme.textColor,
+            fontFamily: fontFamily
           },
           emphasis: {
             focus: 'series',
@@ -149,7 +151,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
       legend: {
         orient: 'vertical',
         left: 'bottom',
-        textStyle: { color: configTheme.textColor }
+        textStyle: { color: configTheme.textColor, fontFamily: fontFamily }
       },
       series: [
         {
@@ -159,7 +161,8 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           center: ['50%', '45%'],
           label: {
             fontSize: '10',
-            color: configTheme.textColor
+            color: configTheme.textColor,
+            fontFamily: fontFamily
           },
           emphasis: {
             focus: 'series',

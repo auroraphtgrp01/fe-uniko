@@ -125,11 +125,11 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
     tabContents: [
       {
         content: (
-          <div>
+          <div className='flex w-full items-center justify-center'>
             {data && data.expenseTransactionTypeStats?.length > 0 ? (
               <DonutChart data={data.expenseTransactionTypeStats} className='h-[18rem] w-full' types='donut' />
             ) : (
-              <div className='flex flex-col items-center justify-center'>
+              <div className='mt-10 flex flex-col items-center justify-center'>
                 <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
                 <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
               </div>
@@ -141,11 +141,11 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
       },
       {
         content: (
-          <div>
+          <div className='flex w-full items-center justify-center'>
             {data && data.incomingTransactionTypeStats?.length > 0 ? (
               <DonutChart data={data.incomingTransactionTypeStats} className='h-[18rem] w-full' types='donut' />
             ) : (
-              <div className='flex flex-col items-center justify-center'>
+              <div className='mt-10 flex flex-col items-center justify-center'>
                 <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
                 <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
               </div>
@@ -219,20 +219,28 @@ export const ExtendsJSXTrackerTransaction = ({
 
 export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustomTrackerTransaction => {
   return {
-    id: data.id || '',
-    reasonName: data.reasonName || '',
-    type: data.Transaction?.direction || '',
-    checkType: data.Transaction?.direction || '',
-    trackerType: (
-      <Badge
-        variant={'destructive'}
-        className='block w-[80px] items-center overflow-hidden text-ellipsis whitespace-nowrap sm:w-[90px] md:w-[100px]'
-      >
-        {data.TrackerType.name || ''}
-      </Badge>
-    ),
+    id: data.id || 'N/A',
+    reasonName: data.reasonName || 'N/A',
+    // type: data.Transaction?.direction === 'INCOMING' ? 'Incoming' : 'Expense',
+    // checkType: data.Transaction?.direction || '',
+    trackerType:
+      data.Transaction?.direction === 'INCOMING' ? (
+        <span className='rounded-full bg-green-300 px-2 py-1 text-xs font-semibold text-green-900'>
+          {data.TrackerType.name || 'N/A'}
+        </span>
+      ) : (
+        <span className='rounded-full bg-rose-300 px-2 py-1 text-xs font-semibold text-rose-900'>
+          {data.TrackerType.name || 'N/A'}
+        </span>
+      ),
     amount: `${formatCurrency(data.Transaction?.amount || 0, 'đ')}`,
-    transactionDate: data.time ? data.time : '',
-    accountSource: data.Transaction?.accountSource?.name || ''
+    transactionDate: data.time ? data.time : 'N/A',
+    accountSource: data.Transaction?.accountSource?.name || 'N/A'
   }
+}
+
+export enum EPaymentEvents {
+  REFETCH_COMPLETE = 'refetchComplete',
+  REFETCH_FAILED = 'refetchFailed',
+  REFETCH_STARTED = 'refetchStarted'
 }

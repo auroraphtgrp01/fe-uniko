@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useMemo, useState, useCallback } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
@@ -30,8 +30,8 @@ import {
   initButtonInDataTableHeader,
   initDialogFlag,
   initEmptyDetailTrackerTransaction,
-  ExtendsJSXTrackerTransaction,
-  initTrackerTransactionTab
+  initTrackerTransactionTab,
+  EPaymentEvents
 } from './constants'
 import TrackerTransactionDialog from './dialog'
 import { initTableConfig } from '@/constants/data-table'
@@ -66,7 +66,6 @@ import {
   handleCreateTrackerTransaction,
   handleUpdateTrackerTxType,
   handleUpdateTrackerTransaction,
-  updateCacheDataDeleteFeat,
   modifyFlatListData,
   handleDeleteTrackerTransaction,
   handleDeleteMultipleTrackerTransaction,
@@ -155,29 +154,25 @@ export default function TrackerTransactionForm() {
   const { getAllExpenditureFund } = useExpenditureFund()
 
   // fetch data
-  const { dataUnclassifiedTxs, refetchGetUnclassifiedTxs } = getUnclassifiedTransactions({
+  const { dataUnclassifiedTxs } = getUnclassifiedTransactions({
     query: uncTableQueryOptions,
     fundId
   })
   const { getAllData: getAllAccountSourceData, refetchAllData: refetchAllAccountSourceData } =
     getAllAccountSource(fundId)
-  const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
+  const { getAllExpenditureFundData } = getAllExpenditureFund()
   // custom hooks
   const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => {})
   const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
     [GET_STATISTIC_EXPENDITURE_FUND_KEY],
     () => {}
   )
-  const { setData: setCacheTrackerTxCreateClassify, resetData: resetCacheTrackerTx } =
-    useUpdateModel<IAdvancedTrackerTransactionResponse>(
-      [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
-      updateCacheDataCreateClassify
-    )
-  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel(
-    [GET_UNCLASSIFIED_TRANSACTION_KEY, mergeQueryParams(uncTableQueryOptions)],
-    () => {}
+  const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
+    [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataCreateClassify
   )
+  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
+  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheTodayTxs } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
     () => {}
@@ -215,7 +210,7 @@ export default function TrackerTransactionForm() {
     })
   }
 
-  const titles = ['Reason Name', 'Type', 'Category', 'Amount', 'Transaction Date', 'Account Source']
+  const titles = ['Reason Name', 'Category', 'Amount', 'Transaction Date', 'Account Source']
   // memos
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
@@ -275,7 +270,7 @@ export default function TrackerTransactionForm() {
               : new Date().toISOString()
           return {
             ...item,
-            transactionDate: formatDateTimeVN(transactionDate, false)
+            transactionDate: formatDateTimeVN(transactionDate, true)
           }
         })
       )
@@ -290,15 +285,6 @@ export default function TrackerTransactionForm() {
 
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
-
-  // const handleFundIdChange = useCallback((value: string) => {
-  //   setFundId(value)
-  // }, [])
-
-  // const extendsJSX = useMemo(
-  //   () => <ExtendsJSXTrackerTransaction data={fundArr || []} setFundId={handleFundIdChange} fundId={fundId} />,
-  //   [fundArr, handleFundIdChange]
-  // )
 
   const refetchTransactionBySocket = () => {
     const lastCalled = getTimeCountRefetchLimit()
@@ -318,7 +304,7 @@ export default function TrackerTransactionForm() {
           setTimeCountRefetchLimit()
           setIsPendingRefetch(true)
           toast.loading('Sending request... Please wait until it is completed!')
-          socket.emit('refetchTransaction', {
+          socket.emit(EPaymentEvents.REFETCH_STARTED, {
             user: userPayload
           })
         }
@@ -330,40 +316,53 @@ export default function TrackerTransactionForm() {
   }
 
   useEffect(() => {
-    if (socket) {
-      socket.off('refetchComplete')
-      socket.on('refetchComplete', (data: { message: string; status: string }) => {
-        if (data.status === 'NO_NEW_TRANSACTION') {
-          toast.success('No new transaction to fetch!', {
+    if (!socket) return
+
+    const handleRefetchComplete = (data: { messages: string; status: string }) => {
+      setIsPendingRefetch(false)
+      switch (data.status) {
+        case 'NO_NEW_TRANSACTION':
+          toast.success(`${data.messages}`, {
             duration: 2000,
             id: 'no-new-transaction'
           })
-        } else if (data.status === 'NEW_TRANSACTION') {
+          break
+
+        case 'NEW_TRANSACTION':
           resetCacheUnclassifiedTxs()
           resetCacheStatistic()
           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-          toast.success('Refetch transaction successfully - Found new transaction!', {
+          toast.success(`${data.messages}`, {
             duration: 2000,
             id: 'new-transaction-success'
           })
-        } else if (data.status === 'UNAUTHORIZE') {
-          // toast.error('You are not authorized to perform this action!', {
-          //   duration: 2000,
-          //   id: 'unauthorize'
-          // })
-        } else {
-          toast.error('Refetch transaction failed - Please try again!', {
+          break
+
+        default:
+          toast.error(`${data.messages}`, {
             duration: 2000,
             id: 'refetch-failed'
           })
-        }
-
-        setIsPendingRefetch(false)
-      })
-
-      return () => {
-        socket?.off('refetchComplete')
       }
+    }
+
+    const handleRefetchFailed = (message: string) => {
+      setIsPendingRefetch(false)
+      toast.error(message, {
+        id: 'refetch-failed',
+        duration: 2000
+      })
+    }
+
+    socket.off(EPaymentEvents.REFETCH_COMPLETE)
+    socket.off(EPaymentEvents.REFETCH_FAILED)
+
+    socket.on(EPaymentEvents.REFETCH_COMPLETE, handleRefetchComplete)
+    socket.on(EPaymentEvents.REFETCH_FAILED, handleRefetchFailed)
+
+    return () => {
+      socket.off(EPaymentEvents.REFETCH_COMPLETE, handleRefetchComplete)
+      socket.off(EPaymentEvents.REFETCH_FAILED, handleRefetchFailed)
     }
   }, [socket])
 

@@ -42,7 +42,7 @@ export default function HeroSection() {
         transition={{ duration: 0.3 }}
         className='max-w-4xl space-y-6'
       >
-        <h2 className='text-2xl font-bold leading-tight text-gray-800 dark:text-gray-300 sm:text-4xl sm:text-6xl'>
+        <h2 className='text-2xl font-bold leading-tight text-gray-800 dark:text-gray-300 sm:text-4xl'>
           <span className='inline-block bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 bg-clip-text text-transparent dark:from-gray-300 dark:via-gray-100 dark:to-gray-50'>
             Giải pháp tối ưu về quản lý tài chính
           </span>
