@@ -51,7 +51,7 @@ export const handleCreateAccountSource = ({
     onSuccess: (res: IAccountSourceResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-        setDataCreate(res.data)
+        // setDataCreate(res.data)
         hookResetCacheStatistic()
         hookResetCacheGetAllAccount()
         onSuccessCallback()

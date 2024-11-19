@@ -282,6 +282,12 @@ export default function TrackerTransactionForm() {
     }
   }, [advancedTrackerTxData, statisticData])
 
+  useEffect(() => {
+    if (statisticData) {
+      setChartData(statisticData.data)
+    }
+  }, [statisticData])
+
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 

@@ -223,7 +223,14 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
     reasonName: data.reasonName || '',
     type: data.Transaction?.direction || '',
     checkType: data.Transaction?.direction || '',
-    trackerType: <Badge variant={'destructive'}> {data.TrackerType.name || ''}</Badge>,
+    trackerType: (
+      <Badge
+        variant={'destructive'}
+        className='block w-[80px] items-center overflow-hidden text-ellipsis whitespace-nowrap sm:w-[90px] md:w-[100px]'
+      >
+        {data.TrackerType.name || ''}
+      </Badge>
+    ),
     amount: `${formatCurrency(data.Transaction?.amount || 0, 'đ')}`,
     transactionDate: data.time ? data.time : '',
     accountSource: data.Transaction?.accountSource?.name || ''
