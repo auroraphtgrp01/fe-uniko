@@ -4,10 +4,12 @@ import transaction from './transaction.json'
 import profile from './profile.json'
 import accountSource from './account-source.json'
 
-export default {
+const vietnameseTranslations = {
   common,
   trackerTransaction,
   transaction,
   profile,
   accountSource
 }
+
+export default vietnameseTranslations

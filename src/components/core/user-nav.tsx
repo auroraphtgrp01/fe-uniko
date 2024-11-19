@@ -53,7 +53,7 @@ export function UserNav() {
     }
   }, [user, userGetMeData, executeGetMe, setUser])
   return (
-    <div className='ms-1 mt-1 select-none pr-4'>
+    <div className='ms-1 mt-0.5 select-none pr-4'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <motion.button
@@ -72,9 +72,14 @@ export function UserNav() {
                   height={25}
                 />
               ) : (
-                <AvatarFallback className='animate-pulse'>
-                  <div className='h-full w-full bg-muted' />
-                </AvatarFallback>
+                <Image
+                  alt='User avatar'
+                  loading='lazy'
+                  className='h-full w-full rounded-full object-cover'
+                  src={AvatarDefault}
+                  width={25}
+                  height={25}
+                />
               )}
             </Avatar>
           </motion.button>

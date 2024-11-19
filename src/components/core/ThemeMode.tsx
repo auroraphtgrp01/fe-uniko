@@ -11,7 +11,7 @@ import { Palette } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 
-const THEMES = ['default', 'modern', 'purple', 'blue']
+const THEMES = ['default', 'modern', 'blue', 'amber']
 
 export default function ThemeMode() {
   useEffect(() => {

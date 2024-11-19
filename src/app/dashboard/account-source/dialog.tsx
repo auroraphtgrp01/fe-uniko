@@ -3,48 +3,89 @@ import { handleCreateAccountSource, handleUpdateAccountSource } from '@/app/dash
 import CreateAndUpdateAccountSourceForm from '@/components/dashboard/account-source/Create&UpdateForm'
 import DetailUpdateAccountSourceForm from '@/components/dashboard/account-source/DetailUpdateForm'
 import CustomDialog from '@/components/dashboard/Dialog'
-import { IAccountSourceBody, IAccountSourceDataFormat, IDialogAccountSource } from '@/core/account-source/models'
+import { IDialogAccountSource } from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface IAccountSourceDialogProps {
   fundId: string
-  isDialogOpen: IDialogAccountSource
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
-  setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
-  handleCreate: (payload: IAccountSourceBody) => void
-  handleUpdate: (payload: IAccountSourceBody) => void
-  dataDetail: IAccountSourceDataFormat
+  sharedDialogElements: {
+    isDialogOpen: IDialogAccountSource
+    setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+    hookResetCacheStatistic: any
+    hookResetCacheGetAllAccount: any
+  }
+  createAccountSourceDialog: {
+    createAccountSource: any
+    setDataCreate: any
+  }
+  UpdateAccountSourceDialog: {
+    setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
+    setDataUpdate: any
+    updateAccountSource: any
+    tableData?: any
+    dataDetail?: any
+  }
+  detailAccountSourceDialog: {
+    dataDetail: any
+    setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
+  }
+  onSuccessCallback: () => void
 }
 
 export default function AccountSourceDialog({
+  sharedDialogElements,
+  createAccountSourceDialog,
+  UpdateAccountSourceDialog,
+  detailAccountSourceDialog,
   fundId,
-  isDialogOpen,
-  setIsDialogOpen,
-  setIdRowClicked,
-  handleCreate,
-  handleUpdate,
-  dataDetail
+  onSuccessCallback
 }: IAccountSourceDialogProps) {
   const { t } = useTranslation(['accountSource', 'common'])
-  const handleSubmitAccountSource = (payload: IAccountSourceBody) => {
-    if (isDialogOpen.isDialogUpdateOpen) handleUpdate(payload)
-    if (isDialogOpen.isDialogCreateOpen) handleCreate(payload)
+  const handleSubmitAccountSource = (payload: any) => {
+    if (sharedDialogElements.isDialogOpen.isDialogUpdateOpen) {
+      handleUpdateAccountSource({
+        payload,
+        setIsDialogOpen: sharedDialogElements.setIsDialogOpen,
+        updateAccountSource: UpdateAccountSourceDialog.updateAccountSource,
+        setDataUpdate: UpdateAccountSourceDialog.setDataUpdate,
+        setIdRowClicked: UpdateAccountSourceDialog.setIdRowClicked,
+        hookResetCacheStatistic: sharedDialogElements.hookResetCacheStatistic,
+        hookResetCacheGetAllAccount: sharedDialogElements.hookResetCacheGetAllAccount,
+        onSuccessCallback
+      })
+    }
+    if (sharedDialogElements.isDialogOpen.isDialogCreateOpen) {
+      handleCreateAccountSource({
+        payload: {
+          ...payload,
+          fundId
+        },
+        setIsDialogOpen: sharedDialogElements.setIsDialogOpen,
+        createAccountSource: createAccountSourceDialog.createAccountSource,
+        setDataCreate: createAccountSourceDialog.setDataCreate,
+        hookResetCacheStatistic: sharedDialogElements.hookResetCacheStatistic,
+        hookResetCacheGetAllAccount: sharedDialogElements.hookResetCacheGetAllAccount,
+        onSuccessCallback
+      })
+    }
   }
 
   const updateConfigDialog: IDialogConfig = {
     content: CreateAndUpdateAccountSourceForm({
       fundId,
       callBack: handleSubmitAccountSource,
-      defaultValue: isDialogOpen.isDialogUpdateOpen ? dataDetail : initEmptyDetailAccountSourceType
+      defaultValue: sharedDialogElements.isDialogOpen.isDialogUpdateOpen
+        ? UpdateAccountSourceDialog.dataDetail
+        : initEmptyDetailAccountSourceType
     }),
     description: t('AccountSourceDialog.updateDialog.description'),
     title: t('AccountSourceDialog.updateDialog.title'),
-    isOpen: isDialogOpen.isDialogUpdateOpen,
+    isOpen: sharedDialogElements.isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
-      setIdRowClicked('')
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
+      UpdateAccountSourceDialog.setIdRowClicked('')
     }
   }
 
@@ -55,19 +96,26 @@ export default function AccountSourceDialog({
     }),
     description: t('AccountSourceDialog.createDialog.description'),
     title: t('AccountSourceDialog.createDialog.title'),
-    isOpen: isDialogOpen.isDialogCreateOpen,
+    isOpen: sharedDialogElements.isDialogOpen.isDialogCreateOpen,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
     }
   }
 
   const detailsConfigDialog: IDialogConfig = {
-    content: <DetailUpdateAccountSourceForm dataDetail={dataDetail} setIsDialogOpen={setIsDialogOpen} />,
+    content: (
+      <DetailUpdateAccountSourceForm
+        detailUpdateAccountSource={{
+          detailAccountSourceDialog,
+          sharedDialogElements
+        }}
+      />
+    ),
     description: 'Thông tin chi tiết về account source',
     title: 'Chi tiết giao dịch account source',
-    isOpen: isDialogOpen.isDialogDetailOpen,
+    isOpen: sharedDialogElements.isDialogOpen.isDialogDetailOpen,
     onClose: () => {
-      setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
+      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
     }
   }
 

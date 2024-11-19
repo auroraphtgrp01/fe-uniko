@@ -154,17 +154,17 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div className='h-full w-full p-1'>
-      <div className='flex items-center justify-between py-4'>
-        <div className='flex items-center space-x-2'>
-          <div className='min-w-0'>
+    <div className='flex h-full flex-col overflow-hidden p-1'>
+      <div className='flex flex-col items-center justify-between gap-4 py-4 md:flex-row'>
+        <div className='flex w-full items-center space-x-2 md:w-auto'>
+          <div className='min-w-0 flex-1 md:flex-none'>
             <Input
               placeholder={t('table.filterPlaceholder')}
               defaultValue={''}
               onChange={(event) => {
                 table.setGlobalFilter(event.target.value)
               }}
-              className='w-[200px]'
+              className='w-full md:w-[200px]'
             />
           </div>
           {isVisibleSortType && (
@@ -194,7 +194,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenu>
           )}
         </div>
-        <div className='flex items-center space-x-2'>
+        <div className='flex w-full items-center justify-end space-x-2 md:w-auto'>
           {onOpenDeleteAll && Object.values(table.getSelectedRowModel().rowsById).length > 0 && (
             <Button
               variant='default'
@@ -204,7 +204,6 @@ export function DataTable<TData, TValue>({
                 onOpenDeleteAll(
                   Object.values(table.getSelectedRowModel().rowsById).map((item) => (item.original as any).id)
                 )
-                // deleteAllProps?.onOpen()
               }}
             >
               <Trash2Icon className='h-5 w-5' />
@@ -264,136 +263,138 @@ export function DataTable<TData, TValue>({
           {}
         </div>
       </div>
-      <div className='rounded-md border'>
-        <Table classNameOfScroll={classNameOfScroll}>
-          <TableHeader style={{ cursor: data?.length ? 'pointer' : 'default' }}>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
+      <div className='flex flex-1 flex-col overflow-hidden rounded-md border'>
+        <div className='flex-1 overflow-hidden' style={{ height: classNameOfScroll }}>
+          <Table classNameOfScroll={classNameOfScroll}>
+            <TableHeader style={{ cursor: data?.length ? 'pointer' : 'default' }}>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''}`}
+                        key={header.id}
+                        onMouseDown={(event) => {
+                          if (event.detail > 1) {
+                            event.preventDefault()
+                          }
+                        }}
+                      >
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    )
+                  })}
+                  {onOpenDelete && (
                     <TableHead
                       className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''}`}
-                      key={header.id}
+                      key={'deleteIcon'}
                       onMouseDown={(event) => {
                         if (event.detail > 1) {
                           event.preventDefault()
                         }
                       }}
-                    >
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  )
-                })}
-                {onOpenDelete && (
-                  <TableHead
-                    className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''}`}
-                    key={'deleteIcon'}
-                    onMouseDown={(event) => {
-                      if (event.detail > 1) {
-                        event.preventDefault()
+                    />
+                  )}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {!data?.length ? (
+                <TableRow className='hover:bg-transparent'>
+                  <TableCell colSpan={columns.length + (onOpenDelete ? 1 : 0)} className='h-24 text-center'>
+                    {isLoading ? (
+                      <motion.div
+                        initial='hidden'
+                        animate='visible'
+                        variants={emptyStateVariants}
+                        className='flex flex-col items-center justify-center gap-2'
+                      >
+                        <motion.div variants={emptyStateItemVariants}>
+                          <Atom color='#be123c' size='small' textColor='#be123c' />
+                        </motion.div>
+                        <motion.span variants={emptyStateItemVariants} className='font-semibold'>
+                          Loading
+                        </motion.span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        initial='hidden'
+                        animate='visible'
+                        variants={emptyStateVariants}
+                        className='mt-20 flex select-none flex-col items-center justify-center gap-2'
+                      >
+                        <motion.div variants={emptyStateItemVariants}>
+                          <Image priority src={EmptyBox} alt='' height={50} width={50} />
+                        </motion.div>
+                        <motion.span variants={emptyStateItemVariants} className='font-semibold text-foreground'>
+                          {t('table.noDataText')}
+                        </motion.span>
+                      </motion.div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                table.getRowModel().rows.map((row, index) => (
+                  <motion.tr
+                    initial='hidden'
+                    animate='visible'
+                    custom={index}
+                    variants={tableRowVariants}
+                    onMouseEnter={() => setHoveredRow(index)}
+                    onMouseLeave={() => setHoveredRow(null)}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                    className={`${getRowClassName ? getRowClassName(row.original) : ''} border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted`}
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={(event: any) => {
+                      if (
+                        (event.target.getAttribute('role') === null ||
+                          event.target.getAttribute('role') !== 'checkbox') &&
+                        onRowClick
+                      ) {
+                        onRowClick(row.original)
                       }
                     }}
-                  />
-                )}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {!data?.length ? (
-              <TableRow className='hover:bg-transparent'>
-                <TableCell colSpan={columns.length + (onOpenDelete ? 1 : 0)} className='h-24 text-center'>
-                  {isLoading ? (
-                    <motion.div
-                      initial='hidden'
-                      animate='visible'
-                      variants={emptyStateVariants}
-                      className='flex flex-col items-center justify-center gap-2'
-                    >
-                      <motion.div variants={emptyStateItemVariants}>
-                        <Atom color='#be123c' size='small' textColor='#be123c' />
-                      </motion.div>
-                      <motion.span variants={emptyStateItemVariants} className='font-semibold'>
-                        Loading
-                      </motion.span>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      initial='hidden'
-                      animate='visible'
-                      variants={emptyStateVariants}
-                      className='flex select-none flex-col items-center justify-center gap-2'
-                    >
-                      <motion.div variants={emptyStateItemVariants}>
-                        <Image priority src={EmptyBox} alt='' height={50} width={50} />
-                      </motion.div>
-                      <motion.span variants={emptyStateItemVariants} className='font-semibold text-foreground'>
-                        {t('table.noDataText')}
-                      </motion.span>
-                    </motion.div>
-                  )}
-                </TableCell>
-              </TableRow>
-            ) : (
-              table.getRowModel().rows.map((row, index) => (
-                <motion.tr
-                  initial='hidden'
-                  animate='visible'
-                  custom={index}
-                  variants={tableRowVariants}
-                  onMouseEnter={() => setHoveredRow(index)}
-                  onMouseLeave={() => setHoveredRow(null)}
-                  style={{ cursor: 'pointer', userSelect: 'none' }}
-                  className={`${getRowClassName ? getRowClassName(row.original) : ''} border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted`}
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  onClick={(event: any) => {
-                    if (
-                      (event.target.getAttribute('role') === null ||
-                        event.target.getAttribute('role') !== 'checkbox') &&
-                      onRowClick
-                    ) {
-                      onRowClick(row.original)
-                    }
-                  }}
-                  onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                  ))}
-                  {onOpenDelete && (
-                    <TableCell className='w-[50px] p-2'>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onOpenDelete((row.original as any).id)
-                        }}
-                        className={`h-8 w-8 transition-opacity duration-200 ${
-                          hoveredRow === index ? 'opacity-100' : 'opacity-0'
-                        }`}
-                      >
-                        <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
-                        <span className='sr-only'>Delete row</span>
-                      </Button>
-                    </TableCell>
-                  )}
-                </motion.tr>
-              ))
-            )}
-          </TableBody>
-        </Table>
+                    onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(row.original)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                    {onOpenDelete && (
+                      <TableCell className='w-[50px] p-2'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenDelete((row.original as any).id)
+                          }}
+                          className={`h-8 w-8 transition-opacity duration-200 ${
+                            hoveredRow === index ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        >
+                          <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
+                          <span className='sr-only'>Delete row</span>
+                        </Button>
+                      </TableCell>
+                    )}
+                  </motion.tr>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-        <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 sm:flex-row sm:space-y-0'>
-          <p className='text-xs text-gray-500 sm:text-sm'>
+        <div className='flex flex-col items-center justify-between space-y-4 border-t px-3 py-2 md:grid md:grid-cols-[repeat(auto-fit,minmax(10px,1fr))] md:gap-4 md:space-y-0'>
+          <p className='text-xs text-gray-500 max-md:mt-2 sm:text-sm'>
             {t('table.selectedRowsText', {
               selected: table?.getFilteredSelectedRowModel().rows.length,
               total: table.getFilteredRowModel().rows.length
             })}
           </p>
-          {isPaginate ? (
-            <div className='flex flex-col items-center sm:flex-row sm:items-center sm:space-x-4'>
-              <div className='flex flex-col items-center sm:flex-row sm:space-x-4'>
+          {isPaginate && (
+            <div className='flex flex-col items-center md:flex-row md:items-center md:justify-end md:space-x-4'>
+              <div className='flex flex-col items-center md:flex-row md:space-x-4'>
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>{t('table.rowsPerPageLabel')}</p>
                   <Input
@@ -419,7 +420,7 @@ export function DataTable<TData, TValue>({
                       totalPage
                     })}
                   </p>
-                  <div className='flex space-x-1'>
+                  <div className='flex space-x-1 max-md:py-2'>
                     <Button
                       className='px-2'
                       variant='outline'
@@ -452,7 +453,7 @@ export function DataTable<TData, TValue>({
                 </div>
               </div>
             </div>
-          ) : null}
+          )}
         </div>
         {deleteProps && <DeleteDialog {...deleteProps} />}
       </div>

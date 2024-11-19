@@ -78,7 +78,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             borderRadius: 10,
             borderColor: 'transparent',
             borderWidth: 5,
-            padding: 12
+            padding: 5
           },
           label: {
             fontSize: '10',
@@ -90,17 +90,13 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           emphasis: {
             focus: 'series',
             scale: true,
-            scaleSize: 10,
+            scaleSize: 5,
             itemStyle: {
-              shadowBlur: 10,
+              shadowBlur: 8,
               shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-              borderColor: 'transparent'
-            }
-          },
-          blur: {
-            itemStyle: {
-              opacity: 0.3
+              shadowColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: configTheme.borderColor,
+              borderWidth: 2
             }
           },
           data
@@ -126,7 +122,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           itemStyle: {
             borderRadius: 10,
             borderColor: 'transparent',
-            padding: 12
+            padding: 5
           },
           label: {
             fontSize: '10',
@@ -135,17 +131,13 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           emphasis: {
             focus: 'series',
             scale: true,
-            scaleSize: 10,
+            scaleSize: 5,
             itemStyle: {
-              shadowBlur: 10,
+              shadowBlur: 8,
               shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-              borderColor: 'transparent'
-            }
-          },
-          blur: {
-            itemStyle: {
-              opacity: 0.3
+              shadowColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: configTheme.borderColor,
+              borderWidth: 2
             }
           },
           data
@@ -165,7 +157,6 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           type: 'pie',
           radius: ['35%', '70%'],
           center: ['50%', '45%'],
-          data,
           label: {
             fontSize: '10',
             color: configTheme.textColor
@@ -173,24 +164,16 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           emphasis: {
             focus: 'series',
             scale: true,
-            scaleSize: 10,
+            scaleSize: 5,
             itemStyle: {
-              shadowBlur: 10,
+              shadowBlur: 8,
               shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-              borderColor: 'transparent'
+              shadowColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: configTheme.borderColor,
+              borderWidth: 2
             }
           },
-          blur: {
-            itemStyle: {
-              opacity: 0.3
-            }
-          },
-          padAngle: 2,
-          itemStyle: {
-            borderColor: 'transparent',
-            padding: 12
-          }
+          data
         }
       ]
     },
@@ -209,23 +192,19 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           itemStyle: {
             borderRadius: 10,
             borderColor: 'transparent',
-            padding: 12
+            padding: 5
           },
           endAngle: 360,
           emphasis: {
             focus: 'series',
             scale: true,
-            scaleSize: 10,
+            scaleSize: 5,
             itemStyle: {
-              shadowBlur: 10,
+              shadowBlur: 8,
               shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-              borderColor: 'transparent'
-            }
-          },
-          blur: {
-            itemStyle: {
-              opacity: 0.3
+              shadowColor: 'rgba(0, 0, 0, 0.2)',
+              borderColor: configTheme.borderColor,
+              borderWidth: 2
             }
           },
           data

@@ -84,17 +84,19 @@ export default function SignInForm() {
               transition={{ duration: 0.2, delay: 0.4 }}
               className='flex items-center justify-center p-4'
             >
-              <div className='h-32 w-32'>
-                <Image
-                  src={Logo2}
-                  alt='Logo'
-                  width={500}
-                  height={500}
-                  priority
-                  style={{ objectFit: 'cover' }}
-                  className='h-full w-full'
-                />
-              </div>
+              <Link href='/'>
+                <div className='flex items-center justify-center'>
+                  <Image
+                    src={Logo2}
+                    alt='Logo'
+                    width={300}
+                    height={300}
+                    priority
+                    style={{ objectFit: 'cover' }}
+                    className='h-32 w-32'
+                  />
+                </div>
+              </Link>
             </motion.div>
 
             <CardContent className=''>

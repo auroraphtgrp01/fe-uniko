@@ -69,17 +69,19 @@ export default function SignUpForm() {
               transition={{ duration: 0.15, delay: 0.4 }}
               className='flex items-center justify-center p-4'
             >
-              <div className='h-32 w-32'>
-                <Image
-                  src={Logo2}
-                  alt='Logo'
-                  priority
-                  width={400}
-                  height={400}
-                  style={{ objectFit: 'cover' }}
-                  className='h-full w-full'
-                />
-              </div>
+              <Link href='/'>
+                <div className='flex items-center justify-center'>
+                  <Image
+                    src={Logo2}
+                    alt='Logo'
+                    width={300}
+                    height={300}
+                    priority
+                    style={{ objectFit: 'cover' }}
+                    className='h-32 w-32'
+                  />
+                </div>
+              </Link>
             </motion.div>
 
             <CardContent>
