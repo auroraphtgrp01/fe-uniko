@@ -14,7 +14,7 @@ import {
   PcCase,
   Layers2Icon
 } from 'lucide-react'
-import { formatArrayData, formatCurrency, getCurrentMonthDateRange, mergeQueryParams } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN, getCurrentMonthDateRange, mergeQueryParams } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
@@ -58,7 +58,6 @@ import {
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import {
   filterTrackerTransactionWithType,
-  formatTrackerTransactionData,
   initTrackerTransactionDataTable,
   initTrackerTypeData,
   updateCacheDataCreateClassify,
@@ -160,9 +159,9 @@ export default function TrackerTransactionForm() {
     query: uncTableQueryOptions,
     fundId
   })
-  const { getAllData: getAllAccountSourceData } = getAllAccountSource(fundId)
+  const { getAllData: getAllAccountSourceData, refetchAllData: refetchAllAccountSourceData } =
+    getAllAccountSource(fundId)
   const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
-
   // custom hooks
   const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => {})
   const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
@@ -265,20 +264,23 @@ export default function TrackerTransactionForm() {
       }))
     }
   }, [dataUnclassifiedTxs])
+
   useEffect(() => {
-    if (advancedTrackerTxData && statisticData?.data)
-      setTableData(
-        formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(
-          advancedTrackerTxData.data,
-          formatTrackerTransactionData
-        )
+    if (advancedTrackerTxData && statisticData?.data) {
+      setTableData((prev) =>
+        prev.map((item) => {
+          const transactionDate =
+            item?.transactionDate && !isNaN(new Date(item.transactionDate).getTime())
+              ? item.transactionDate
+              : new Date().toISOString()
+          return {
+            ...item,
+            transactionDate: formatDateTimeVN(transactionDate, false)
+          }
+        })
       )
-  }, [advancedTrackerTxData, statisticData])
-  useEffect(() => {
-    if (statisticData) {
-      setChartData(statisticData.data)
     }
-  }, [statisticData])
+  }, [advancedTrackerTxData, statisticData])
 
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
@@ -510,14 +512,14 @@ export default function TrackerTransactionForm() {
               <div className='flex items-center justify-between'>
                 <CardTitle>Unclassified</CardTitle>
                 <div className='flex gap-2'>
-                  <Button
+                  {/* <Button
                     variant={'secondary'}
                     onClick={() => {
                       setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
                     }}
                   >
                     {t('common:button.classify')} <Layers2Icon className='ml-2 h-4 w-4' />
-                  </Button>
+                  </Button> */}
                   <Button
                     variant={'default'}
                     className='flex items-center gap-1'
@@ -567,7 +569,8 @@ export default function TrackerTransactionForm() {
               hookUpdate: updateTrackerTransaction,
               callBackOnSuccess: callBackRefetchTrackerTransactionPage,
               setDataTableConfig,
-              setIsDialogOpen
+              setIsDialogOpen,
+              refetchAllAccountSourceData
             }),
           statusUpdateTrackerTransaction
         }}
@@ -598,10 +601,12 @@ export default function TrackerTransactionForm() {
               hookCreate: createTrackerTransaction,
               setIsDialogOpen: setIsDialogOpen,
               setUncDataTableConfig: setDataTableUnclassifiedConfig,
-              setDataTableConfig: setDataTableConfig
+              setDataTableConfig: setDataTableConfig,
+              refetchAllAccountSourceData
             })
         }}
         sharedDialogElements={{
+          transactionId: dataDetailTransaction.id,
           isDialogOpen,
           setIsDialogOpen,
           incomeTrackerType: incomingTrackerType,

@@ -1,5 +1,5 @@
 import { IChartData } from '@/components/core/charts/DonutChart'
-import { IAccountSource } from '@/core/account-source/models'
+import { IAccountSource, IAdvancedAccountSourceResponse } from '@/core/account-source/models'
 import { IExpenditureFundParticipant } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import {
@@ -60,7 +60,7 @@ export interface IUpdateTrackerTransactionBody {
 export interface ICustomTrackerTransaction {
   id: string
   reasonName: string
-  trackerType: string
+  trackerType: string | JSX.Element
   type: string
   amount: string
   transactionDate: string
@@ -114,6 +114,7 @@ export interface ICreateTrackerTransactionTypeDialog {
 }
 
 export interface ISharedDialogElements {
+  transactionId: string
   incomeTrackerType: ITrackerTransactionType[]
   expenseTrackerType: ITrackerTransactionType[]
   isDialogOpen: IDialogTrackerTransaction

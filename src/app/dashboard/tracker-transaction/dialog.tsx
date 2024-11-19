@@ -24,12 +24,13 @@ export default function TrackerTransactionDialog({
   // states
   const [transactionIdClassifying, setTransactionIdClassifying] = useState<string>()
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
+  const { transactionId } = sharedDialogElements
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: ClassifyForm({
-      transactionId: transactionIdClassifying as string,
+      transactionId: transactionId as string,
       incomeTrackerType: sharedDialogElements.incomeTrackerType,
       expenseTrackerType: sharedDialogElements.expenseTrackerType,
       editTrackerTypeDialogProps: {
@@ -50,7 +51,11 @@ export default function TrackerTransactionDialog({
     title: t('trackerTransaction:trackerTransactionType.classifyDialog.title'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogClassifyTransactionOpen,
     onClose: () => {
-      sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: false }))
+      sharedDialogElements.setIsDialogOpen((prev) => ({
+        ...prev,
+        isDialogClassifyTransactionOpen: false,
+        isDialogDetailTransactionOpen: false
+      }))
       sharedDialogElements.setTypeOfTrackerType(ETypeOfTrackerTransactionType.INCOMING)
     }
   }

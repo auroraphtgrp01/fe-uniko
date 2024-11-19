@@ -1,5 +1,10 @@
 'use client'
-import { IDialogTrackerTransaction, IFundOfUser } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import {
+  ICustomTrackerTransaction,
+  IDialogTrackerTransaction,
+  IFundOfUser,
+  ITrackerTransaction
+} from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { PlusIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -11,7 +16,7 @@ import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 import DonutChart, { IChartData } from '@/components/core/charts/DonutChart'
 import { EmojiPicker } from '../../../components/common/EmojiPicker'
 import React from 'react'
-import { translate } from '@/libraries/utils'
+import { formatCurrency, translate } from '@/libraries/utils'
 import { TFunction } from 'i18next'
 import NoDataPlaceHolder from '@/images/2.png'
 import Image from 'next/image'
@@ -19,6 +24,7 @@ import { initEmptyDetailTransactionData } from '../transaction/constants'
 import { Combobox } from '../../../components/core/Combobox'
 import { EParticipantRole, EParticipantStatus } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { initEmptyUser } from '../profile/constants'
+import { Badge } from '@/components/ui/badge'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -209,4 +215,17 @@ export const ExtendsJSXTrackerTransaction = ({
       />
     </div>
   )
+}
+
+export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustomTrackerTransaction => {
+  return {
+    id: data.id || '',
+    reasonName: data.reasonName || '',
+    type: data.Transaction?.direction || '',
+    checkType: data.Transaction?.direction || '',
+    trackerType: <Badge variant={'destructive'}> {data.TrackerType.name || ''}</Badge>,
+    amount: `${formatCurrency(data.Transaction?.amount || 0, 'đ')}`,
+    transactionDate: data.time ? data.time : '',
+    accountSource: data.Transaction?.accountSource?.name || ''
+  }
 }

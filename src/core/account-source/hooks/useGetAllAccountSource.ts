@@ -4,19 +4,20 @@ import { IAdvancedAccountSourceResponse } from '@/core/account-source/models'
 import { useModelQuery } from '@/hooks/useQueryModel'
 
 export const useGetAllAccountSource = (fundId: string) => {
-  const { isPending: isGetAllPending, data: getAllData } = useModelQuery<IAdvancedAccountSourceResponse>(
-    GET_ALL_ACCOUNT_SOURCE_KEY,
-    accountSourceRoutes.getAll,
-    {
-      enable: !!fundId,
-      retry: ACCOUNT_SOURCE_RETRY_QUERY,
-      params: {
-        fundId
-      }
+  const {
+    isPending: isGetAllPending,
+    data: getAllData,
+    refetch: refetchAllData
+  } = useModelQuery<IAdvancedAccountSourceResponse>(GET_ALL_ACCOUNT_SOURCE_KEY, accountSourceRoutes.getAll, {
+    enable: !!fundId,
+    retry: ACCOUNT_SOURCE_RETRY_QUERY,
+    params: {
+      fundId
     }
-  )
+  })
   return {
     isGetAllPending,
-    getAllData
+    getAllData,
+    refetchAllData
   }
 }

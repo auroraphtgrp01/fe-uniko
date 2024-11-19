@@ -8,32 +8,35 @@ import parse from 'html-react-parser'
 import { Checkbox } from '../ui/checkbox'
 
 export function getColumns<T>({ headers, isSort }: { headers: string[]; isSort: boolean }): ColumnDef<T>[] {
-  const columnsFromHeaders = headers.map((header) => ({
-    accessorKey: `${convertToCamelCase(header)}`,
-    header: ({ column }: { column: any }) =>
-      header === 'Id' || header === 'Check Type' ? (
-        ''
-      ) : isSort ? (
-        <div
-          className='flex'
-          onClick={() => {
-            column.toggleSorting(column.getIsSorted() === 'asc')
-          }}
-        >
-          {header}
-          <ArrowUpDown className='ml-2 mt-1 h-3 w-3' />
-        </div>
-      ) : (
-        <div>{header}</div>
-      ),
-    cell: ({ row }: { row: any }) => {
-      return header === 'Id' || header === 'Check Type' ? (
-        ''
-      ) : (
-        <div>{parse(renderToString(row.getValue(convertToCamelCase(header))))}</div>
-      )
+  const columnsFromHeaders = headers.map((header) => {
+    const accessorKey = header === 'Category' ? 'trackerType' : convertToCamelCase(header)
+    return {
+      accessorKey,
+      header: ({ column }: { column: any }) =>
+        header === 'Id' || header === 'Check Type' ? (
+          ''
+        ) : isSort && column.toggleSorting ? (
+          <div
+            className='flex'
+            onClick={() => {
+              column.toggleSorting(column.getIsSorted() === 'asc')
+            }}
+          >
+            {header}
+            <ArrowUpDown className='ml-2 mt-1 h-3 w-3' />
+          </div>
+        ) : (
+          <div>{header}</div>
+        ),
+      cell: ({ row }: { row: any }) => {
+        return header === 'Id' || header === 'Check Type' ? (
+          ''
+        ) : (
+          <div>{parse(renderToString(row.getValue(accessorKey)))}</div>
+        )
+      }
     }
-  }))
+  })
 
   const defaultColumn = [
     {

@@ -18,6 +18,9 @@ import {
 import { formatArrayData, formatCurrency, formatDateTimeVN, getTypes } from '@/libraries/utils'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { IFlatListData } from '@/components/core/FlatList'
+import { formatTrackerTransactionData } from '@/app/dashboard/tracker-transaction/constants'
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
+import { IAdvancedAccountSourceResponse } from '@/core/account-source/models'
 
 export const handleCreateTrackerTransaction = async ({
   payload,
@@ -25,7 +28,8 @@ export const handleCreateTrackerTransaction = async ({
   setIsDialogOpen,
   setDataTableConfig,
   setUncDataTableConfig,
-  callbackOnSuccess
+  callbackOnSuccess,
+  refetchAllAccountSourceData
 }: {
   payload: ICreateTrackerTransactionBody
   hookCreate: any
@@ -33,6 +37,9 @@ export const handleCreateTrackerTransaction = async ({
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   callbackOnSuccess: (actions: TTrackerTransactionActions[]) => void
+  refetchAllAccountSourceData: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<IAdvancedAccountSourceResponse, Error>>
 }) => {
   hookCreate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
@@ -45,11 +52,13 @@ export const handleCreateTrackerTransaction = async ({
           'getAllAccountSource',
           'getStatisticExpenditureFund',
           'getStatisticExpenditureFund',
-          'getExpenditureFund'
+          'getExpenditureFund',
+          'getAllAccountSource'
         ])
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
+        refetchAllAccountSourceData()
         toast.success('Create tracker transaction successfully!')
       }
     }
@@ -99,7 +108,11 @@ export const handleClassifyTransaction = async ({
         if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setDataTableConfig) setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setIsEditing) setIsEditing(false)
-        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
+        setIsDialogOpen((prev: any) => ({
+          ...prev,
+          isDialogClassifyTransactionOpen: false,
+          isDialogDetailTransactionOpen: false
+        }))
         toast.success('Classify transaction successfully!')
       }
     }
@@ -221,19 +234,6 @@ export const initTrackerTransactionDataTable = (
   }
 }
 
-export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustomTrackerTransaction => {
-  return {
-    id: data.id || '',
-    reasonName: data.reasonName || '',
-    type: data.Transaction?.direction || '',
-    checkType: data.Transaction?.direction || '',
-    trackerType: data.TrackerType.name || '',
-    amount: `${formatCurrency(data.Transaction?.amount || 0, 'đ')}`,
-    transactionDate: data.time ? data.time : '',
-    accountSource: data.Transaction?.accountSource?.name || ''
-  }
-}
-
 export const filterTrackerTransactionWithType = (selectedTypes: string[], data: ITrackerTransaction[]) => {
   if (selectedTypes.length === 0)
     return formatArrayData<ITrackerTransaction, ICustomTrackerTransaction>(data, formatTrackerTransactionData)
@@ -258,7 +258,7 @@ export const onRowClick = (
 export const modifiedTrackerTypeForComboBox = (type: any) => {
   return type?.map((item: any) => ({
     value: item.id,
-    label: `${item.name}${item.currentAmount ? ` - ${formatCurrency(item.currentAmount)}` : ''}`,
+    label: `${item.name}${item.currentAmount ? ` - ${formatCurrency(item.currentAmount, 'VND').split(',').join('.')}` : ''}`,
     ...item
   }))
 }
@@ -300,7 +300,8 @@ export const handleUpdateTrackerTransaction = async ({
   setDataTableConfig,
   setIsEditing,
   setIsDialogOpen,
-  callBackOnSuccess
+  callBackOnSuccess,
+  refetchAllAccountSourceData
 }: {
   data: IUpdateTrackerTransactionBody
   hookUpdate: any
@@ -308,6 +309,9 @@ export const handleUpdateTrackerTransaction = async ({
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
   callBackOnSuccess: (actions: TTrackerTransactionActions[]) => void
+  refetchAllAccountSourceData: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<IAdvancedAccountSourceResponse, Error>>
 }) => {
   hookUpdate(data, {
     onSuccess: (res: any) => {
@@ -323,6 +327,7 @@ export const handleUpdateTrackerTransaction = async ({
         setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))
         setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
         setIsEditing(false)
+        refetchAllAccountSourceData()
         toast.success('Update transaction successfully!')
       }
     }
