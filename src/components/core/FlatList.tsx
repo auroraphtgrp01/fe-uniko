@@ -108,7 +108,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
           </motion.span>
         </motion.div>
       ) : (
-        <div className='flex h-full items-center justify-center'>
+        <div className='flex h-full flex-col items-center justify-center py-20'>
           <div className='relative'>
             <Image
               priority

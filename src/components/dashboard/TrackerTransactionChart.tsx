@@ -55,7 +55,7 @@ export default function TrackerTransactionChart({ tabConfig, statisticDateRange 
           {tabConfig.tabContents.length > 0
             ? tabConfig.tabContents.map((tabContent: ITabContent) => (
                 <React.Fragment key={tabContent.value}>
-                  <TabsContent value={tabContent.value} className='h-fit'>
+                  <TabsContent value={tabContent.value} className='mt-5 h-fit py-0 max-sm:-mt-5 max-sm:py-10'>
                     {tabContent.content}
                   </TabsContent>
                 </React.Fragment>

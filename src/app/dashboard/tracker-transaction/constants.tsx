@@ -121,9 +121,9 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div>
             {data && data.expenseTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.expenseTransactionTypeStats} className='h-[20rem] w-full' types='donut' />
+              <DonutChart data={data.expenseTransactionTypeStats} className='h-[18rem] w-full' types='donut' />
             ) : (
-              <div className='mt-12 flex flex-col items-center justify-center'>
+              <div className='flex flex-col items-center justify-center'>
                 <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
                 <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
               </div>
@@ -137,9 +137,9 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div>
             {data && data.incomingTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.incomingTransactionTypeStats} className='h-[20rem] w-full' types='donut' />
+              <DonutChart data={data.incomingTransactionTypeStats} className='h-[18rem] w-full' types='donut' />
             ) : (
-              <div className='mt-12 flex flex-col items-center justify-center'>
+              <div className='flex flex-col items-center justify-center'>
                 <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
                 <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
               </div>

@@ -501,10 +501,10 @@ export default function TrackerTransactionForm() {
 
       {/* Right Section */}
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 lg:col-span-1'>
-        <div className='h-[60%]'>
+        <div className='h-[55%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
-        <div className='h-[calc(40%-1rem)]'>
+        <div className='h-[calc(45%)]'>
           <Card className='flex h-full flex-col'>
             <CardHeader className='flex-none py-4'>
               <div className='flex flex-row items-center justify-between gap-3'>

@@ -53,7 +53,7 @@ export function UserNav() {
     }
   }, [user, userGetMeData, executeGetMe, setUser])
   return (
-    <div className='ms-1 mt-1 select-none pr-4'>
+    <div className='ms-1 mt-0.5 select-none pr-4'>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <motion.button

@@ -1,8 +1,8 @@
 {
     "title": "Profile",
     "tabs": {
-        "account": "Common Information",
-        "password": "Credential Information"
+        "account": "Common",
+        "password": "Credential"
     },
     "userProfileTitle": "User Profile",
     "form": {

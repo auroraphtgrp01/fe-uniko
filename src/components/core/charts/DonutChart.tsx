@@ -78,7 +78,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             borderRadius: 10,
             borderColor: 'transparent',
             borderWidth: 5,
-            padding: 12
+            padding: 5
           },
           label: {
             fontSize: '10',
@@ -122,7 +122,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           itemStyle: {
             borderRadius: 10,
             borderColor: 'transparent',
-            padding: 12
+            padding: 5
           },
           label: {
             fontSize: '10',
@@ -192,7 +192,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           itemStyle: {
             borderRadius: 10,
             borderColor: 'transparent',
-            padding: 12
+            padding: 5
           },
           endAngle: 360,
           emphasis: {
