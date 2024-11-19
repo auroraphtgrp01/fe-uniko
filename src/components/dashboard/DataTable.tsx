@@ -155,16 +155,16 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className='h-full w-full p-1'>
-      <div className='flex items-center justify-between py-4'>
-        <div className='flex items-center space-x-2'>
-          <div className='min-w-0'>
+      <div className='flex flex-col items-center justify-between gap-4 py-4 md:flex-row'>
+        <div className='flex w-full items-center space-x-2 md:w-auto'>
+          <div className='min-w-0 flex-1 md:flex-none'>
             <Input
               placeholder={t('table.filterPlaceholder')}
               defaultValue={''}
               onChange={(event) => {
                 table.setGlobalFilter(event.target.value)
               }}
-              className='w-[200px]'
+              className='w-full md:w-[200px]'
             />
           </div>
           {isVisibleSortType && (
@@ -194,7 +194,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenu>
           )}
         </div>
-        <div className='flex items-center space-x-2'>
+        <div className='flex w-full items-center justify-end space-x-2 md:w-auto'>
           {onOpenDeleteAll && Object.values(table.getSelectedRowModel().rowsById).length > 0 && (
             <Button
               variant='default'
@@ -204,7 +204,6 @@ export function DataTable<TData, TValue>({
                 onOpenDeleteAll(
                   Object.values(table.getSelectedRowModel().rowsById).map((item) => (item.original as any).id)
                 )
-                // deleteAllProps?.onOpen()
               }}
             >
               <Trash2Icon className='h-5 w-5' />
@@ -384,16 +383,16 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
 
-        <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 sm:flex-row sm:space-y-0'>
+        <div className='flex flex-col items-center justify-between space-y-4 px-3 py-2 md:grid md:grid-cols-[repeat(auto-fit,minmax(10px,1fr))] md:gap-4 md:space-y-0'>
           <p className='text-xs text-gray-500 sm:text-sm'>
             {t('table.selectedRowsText', {
               selected: table?.getFilteredSelectedRowModel().rows.length,
               total: table.getFilteredRowModel().rows.length
             })}
           </p>
-          {isPaginate ? (
-            <div className='flex flex-col items-center sm:flex-row sm:items-center sm:space-x-4'>
-              <div className='flex flex-col items-center sm:flex-row sm:space-x-4'>
+          {isPaginate && (
+            <div className='flex flex-col items-center md:flex-row md:items-center md:justify-end md:space-x-4'>
+              <div className='flex flex-col items-center md:flex-row md:space-x-4'>
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>{t('table.rowsPerPageLabel')}</p>
                   <Input
@@ -419,7 +418,7 @@ export function DataTable<TData, TValue>({
                       totalPage
                     })}
                   </p>
-                  <div className='flex space-x-1'>
+                  <div className='flex space-x-1 max-md:py-3'>
                     <Button
                       className='px-2'
                       variant='outline'
@@ -452,7 +451,7 @@ export function DataTable<TData, TValue>({
                 </div>
               </div>
             </div>
-          ) : null}
+          )}
         </div>
         {deleteProps && <DeleteDialog {...deleteProps} />}
       </div>

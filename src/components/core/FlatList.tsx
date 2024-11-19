@@ -29,9 +29,9 @@ interface IFlatListProps {
 
 export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
   return (
-    <Card className='mx-auto w-full to-muted/20'>
+    <Card className='h-full w-full to-muted/20'>
       {data?.length > 0 ? (
-        <ScrollArea className='h-[200px] w-full rounded-md p-4'>
+        <ScrollArea className='h-full w-full rounded-md p-4'>
           {data.map((item) => (
             <motion.div
               key={item.id}
@@ -63,11 +63,11 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                         {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '↓' : '↑'}
                       </div>
                       <div className='flex flex-col'>
-                        <CardTitle className='text-xl font-bold tracking-tight'>
+                        <CardTitle className='text-xl font-bold tracking-tight max-sm:text-sm'>
                           {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '- ' : '+ '}
                           {item.amount}
                         </CardTitle>
-                        <span className='text-xs text-muted-foreground'>
+                        <span className='text-xs text-muted-foreground max-sm:hidden'>
                           {item.direction === ETypeOfTrackerTransactionType.INCOMING ? 'To' : 'From'}:{' '}
                           {item.accountNo ? item.accountNo : 'N/A'}{' '}
                         </span>
@@ -75,9 +75,6 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                     </div>
                     <div className='flex flex-col items-end gap-1.5'>
                       <div className='flex items-center gap-2'>
-                        <Badge className='font-sm' variant={'blueCol'}>
-                          {'test'}
-                        </Badge>
                         <Badge
                           variant={item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'default' : 'secondary'}
                           className='font-sm'
@@ -85,7 +82,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                           {item.direction}
                         </Badge>
                       </div>
-                      <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
+                      <div className='flex items-center gap-1.5 text-xs text-muted-foreground max-sm:hidden'>
                         <Clock className='h-3 w-3' />
                         <span>{formatDateTimeVN(item.transactionDateTime, true)}</span>
                       </div>
@@ -101,7 +98,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
           initial='hidden'
           animate='visible'
           variants={emptyStateVariants}
-          className='flex flex-col items-center justify-center gap-2'
+          className='flex h-full items-center justify-center'
         >
           <motion.div variants={emptyStateItemVariants}>
             <Atom color='#be123c' size='small' textColor='#be123c' />
@@ -111,7 +108,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
           </motion.span>
         </motion.div>
       ) : (
-        <div className='flex h-[200px] flex-col items-center justify-center space-y-4'>
+        <div className='flex h-full items-center justify-center'>
           <div className='relative'>
             <Image
               priority

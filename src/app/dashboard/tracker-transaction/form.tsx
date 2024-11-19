@@ -360,29 +360,29 @@ export default function TrackerTransactionForm() {
   }, [socket])
 
   return (
-    <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+    <div className='grid h-full grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
+        <div className='grid grid-cols-1 gap-3 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
           {/* Total Balance Card */}
           <Card className='bg-gradient-to-br from-indigo-500 to-blue-700 shadow-md'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='flex items-center text-lg font-medium text-white'>
-                <PcCase className='mr-2 h-5 w-5' />
+            <CardHeader className='pb-1 lg:pb-2'>
+              <CardTitle className='flex items-center text-base font-medium text-white lg:text-lg'>
+                <PcCase className='mr-1.5 h-4 w-4 lg:h-5 lg:w-5' />
                 {t('totalBalance')}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className='py-2 lg:py-3'>
               <div className='flex items-center justify-between'>
-                <div className='rounded-lg bg-white/10 p-3'>
-                  <Layers2Icon className='h-8 w-8 text-white' />
+                <div className='rounded-lg bg-white/10 p-2 lg:p-3'>
+                  <Layers2Icon className='h-6 w-6 text-white lg:h-8 lg:w-8' />
                 </div>
                 <div className='text-right'>
-                  <p className='text-2xl font-bold text-white'>
+                  <p className='text-xl font-bold text-white lg:text-2xl'>
                     {formatCurrency(statisticData?.data?.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='flex items-center text-sm text-blue-100'>
-                    <ArrowUpIcon className='mr-1 h-4 w-4' />
+                  <p className='flex items-center text-xs text-blue-100 lg:text-sm'>
+                    <ArrowUpIcon className='mr-1 h-3 w-3 lg:h-4 lg:w-4' />
                     <span>{t('increaseFromLastMonth', { percentage: 2.5 })}</span>
                   </p>
                 </div>
@@ -392,23 +392,23 @@ export default function TrackerTransactionForm() {
 
           {/* Income Card */}
           <Card className='bg-gradient-to-br from-teal-500 to-green-700 shadow-md'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='flex items-center text-lg font-medium text-white'>
-                <ArrowDownToLineIcon className='mr-2 h-5 w-5' />
+            <CardHeader className='pb-1 lg:pb-2'>
+              <CardTitle className='flex items-center text-base font-medium text-white lg:text-lg'>
+                <ArrowDownToLineIcon className='mr-1.5 h-4 w-4 lg:h-5 lg:w-5' />
                 {t('incomingTransaction')}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className='py-2 lg:py-3'>
               <div className='flex items-center justify-between'>
-                <div className='rounded-lg bg-white/10 p-3'>
-                  <HandCoins className='h-8 w-8 text-white' />
+                <div className='rounded-lg bg-white/10 p-2 lg:p-3'>
+                  <HandCoins className='h-6 w-6 text-white lg:h-8 lg:w-8' />
                 </div>
                 <div className='text-right'>
-                  <p className='text-2xl font-bold text-white'>
+                  <p className='text-xl font-bold text-white lg:text-2xl'>
                     {formatCurrency(statisticData?.data?.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='flex items-center text-sm text-emerald-100'>
-                    <ArrowDownIcon className='mr-1 h-4 w-4' />
+                  <p className='flex items-center text-xs text-emerald-100 lg:text-sm'>
+                    <ArrowDownIcon className='mr-1 h-3 w-3 lg:h-4 lg:w-4' />
                     <span>{t('noChangeFromYesterday')}</span>
                   </p>
                 </div>
@@ -418,23 +418,23 @@ export default function TrackerTransactionForm() {
 
           {/* Expense Card */}
           <Card className='bg-gradient-to-br from-rose-500 to-red-700 shadow-md'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='flex items-center text-lg font-medium text-white'>
-                <CloudDownload className='mr-2 h-5 w-5' />
+            <CardHeader className='pb-1 lg:pb-2'>
+              <CardTitle className='flex items-center text-base font-medium text-white lg:text-lg'>
+                <CloudDownload className='mr-1.5 h-4 w-4 lg:h-5 lg:w-5' />
                 {t('expenseTransaction')}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className='py-2 lg:py-3'>
               <div className='flex items-center justify-between'>
-                <div className='rounded-lg bg-white/10 p-3'>
-                  <ArrowUpIcon className='h-8 w-8 text-white' />
+                <div className='rounded-lg bg-white/10 p-2 lg:p-3'>
+                  <ArrowUpIcon className='h-6 w-6 text-white lg:h-8 lg:w-8' />
                 </div>
                 <div className='text-right'>
-                  <p className='text-2xl font-bold text-white'>
+                  <p className='text-xl font-bold text-white lg:text-2xl'>
                     {formatCurrency(statisticData?.data?.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='flex items-center text-sm text-red-100'>
-                    <ArrowUpIcon className='mr-1 h-4 w-4' />
+                  <p className='flex items-center text-xs text-red-100 lg:text-sm'>
+                    <ArrowUpIcon className='mr-1 h-3 w-3 lg:h-4 lg:w-4' />
                     <span>{t('increaseFromLastMonth', { percentage: 15 })}</span>
                   </p>
                 </div>
@@ -506,41 +506,44 @@ export default function TrackerTransactionForm() {
         </div>
         <div className='h-[calc(40%-1rem)]'>
           <Card className='flex h-full flex-col'>
-            <CardHeader className='py-4'>
-              <div className='flex items-center justify-between'>
+            <CardHeader className='flex-none py-4'>
+              <div className='flex flex-row items-center justify-between gap-3'>
                 <CardTitle>Unclassified</CardTitle>
-                <div className='flex gap-2'>
+                <div className='flex flex-wrap items-center gap-2'>
                   <Button
                     variant={'secondary'}
+                    className='w-full flex-1 items-center justify-center whitespace-nowrap sm:w-auto sm:flex-none'
                     onClick={() => {
                       setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
                     }}
                   >
-                    {t('common:button.classify')} <Layers2Icon className='ml-2 h-4 w-4' />
+                    <span className='mr-2 truncate max-[1280px]:hidden max-[420px]:hidden'>
+                      {t('common:button.classify')}
+                    </span>
+                    <Layers2Icon className='h-4 w-4' />
                   </Button>
                   <Button
                     variant={'default'}
-                    className='flex items-center gap-1'
+                    className='flex w-full flex-1 items-center justify-center gap-1 whitespace-nowrap sm:w-auto sm:flex-none'
                     isLoading={isPendingRefetch}
                     onClick={refetchTransactionBySocket}
                   >
-                    Refetch in bank {!isPendingRefetch && <HardDriveDownload className='ml-1 h-4 w-4' />}
+                    <span className='mr-1 truncate max-[1580px]:hidden'>Refetch in bank</span>
+                    {!isPendingRefetch && <HardDriveDownload className='h-4 w-4 shrink-0' />}
                   </Button>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className='flex-1'>
-              <div className='h-full w-full pb-2'>
-                <FlatList
-                  data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
-                  onClick={(data: IFlatListData) => {
-                    setDataDetailTransaction(
-                      dataUnclassifiedTxs?.data.find((item) => item.id === data.id) || initEmptyDetailTransactionData
-                    )
-                    setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: true }))
-                  }}
-                />
-              </div>
+            <CardContent className='flex-1 overflow-hidden'>
+              <FlatList
+                data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
+                onClick={(data: IFlatListData) => {
+                  setDataDetailTransaction(
+                    dataUnclassifiedTxs?.data.find((item) => item.id === data.id) || initEmptyDetailTransactionData
+                  )
+                  setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: true }))
+                }}
+              />
             </CardContent>
           </Card>
         </div>

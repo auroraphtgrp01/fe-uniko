@@ -332,7 +332,7 @@ export function DateRangePicker({
                         'rounded-md font-semibold transition-all  hover:font-semibold hover:text-secondary dark:text-white dark:hover:text-white hover:bg-transparent'
                       ),
                       selected:
-                        'bg-accent/20 h-10 w-10 text-primary-foreground dark:text-white hover:bg-primary focus:bg-primary  rounded-md border border-primary-light',
+                        'bg-accent/20 h-10 w-10 text-primary-foreground dark:text-white hover:bg-primary focus:bg-primary rounded-md border border-primary-light',
                       today: 'bg-accent/20 font-medium rounded-md',
                       outside:
                         'text-muted-foreground/50 opacity-50 aria-selected:bg-accent/30 aria-selected:opacity-30',
@@ -341,7 +341,7 @@ export function DateRangePicker({
                         'bg-primary text-primary-foreground hover:bg-primary/90  focus:bg-primary rounded-md shadow-sm',
                       range_end:
                         'bg-primary text-primary-foreground hover:bg-primary/90  focus:bg-primary rounded-md shadow-sm',
-                      range_middle: 'bg-accent/20 rounded-md',
+                      range_middle: 'bg-accent/20 rounded-md !text-gray-700',
                       hidden: 'invisible'
                     }}
                     showOutsideDays={true}
