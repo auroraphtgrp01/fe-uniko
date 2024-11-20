@@ -106,6 +106,7 @@ export interface IExpenditureFund {
   time: string
   transactions: ITransaction[]
   countParticipants: number
+  currency: string
 }
 
 export interface IExpenditureFundDataFormat {

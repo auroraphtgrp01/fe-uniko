@@ -221,15 +221,13 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
   return {
     id: data.id || 'N/A',
     reasonName: data.reasonName || 'N/A',
-    // type: data.Transaction?.direction === 'INCOMING' ? 'Incoming' : 'Expense',
-    // checkType: data.Transaction?.direction || '',
     trackerType:
       data.Transaction?.direction === 'INCOMING' ? (
-        <span className='rounded-full bg-green-300 px-2 py-1 text-xs font-semibold text-green-900'>
+        <span className='block w-[80px] items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-green-300 px-2 py-1 text-xs font-semibold text-green-900 sm:w-[90px] md:w-[100px]'>
           {data.TrackerType.name || 'N/A'}
         </span>
       ) : (
-        <span className='rounded-full bg-rose-300 px-2 py-1 text-xs font-semibold text-rose-900'>
+        <span className='block w-[80px] items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-rose-300 px-2 py-1 text-xs font-semibold text-rose-900 sm:w-[90px] md:w-[100px]'>
           {data.TrackerType.name || 'N/A'}
         </span>
       ),

@@ -42,6 +42,8 @@ import {
   GET_ADVANCED_TRACKER_TRANSACTION_KEY,
   GET_ALL_TRACKER_TRANSACTION_TYPE_KEY
 } from '@/core/tracker-transaction/constants'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { IFundOfUser } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 
 export default function ExpenditureFundForm() {
   // states
@@ -92,6 +94,24 @@ export default function ExpenditureFundForm() {
     dateRange
   )
   const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
+  const { setFundArr } = useStoreLocal()
+
+  useEffect(() => {
+    if (getAllExpenditureFundData && getAllExpenditureFundData.data) {
+      setFundArr(
+        getAllExpenditureFundData.data.map(
+          (fund): IFundOfUser => ({
+            id: fund.id,
+            name: fund.name,
+            description: fund.description,
+            status: fund.status,
+            currentAmount: fund.currentAmount.toString(),
+            currency: fund.currency
+          })
+        )
+      )
+    }
+  }, [getAllExpenditureFundData])
 
   const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
 
@@ -158,7 +178,7 @@ export default function ExpenditureFundForm() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className='h-auto'>
+              <div className='h-72 overflow-auto'>
                 <FlatList
                   data={summaryRecentTransactions}
                   onClick={(data) => {
@@ -171,7 +191,7 @@ export default function ExpenditureFundForm() {
           </Card>
 
           <Card className='flex-1'>
-            <CardHeader className='py-4'>
+            <CardHeader className='mb-5 py-4'>
               <CardTitle>Balance Summary</CardTitle>
             </CardHeader>
             <CardContent>
@@ -181,7 +201,7 @@ export default function ExpenditureFundForm() {
             </CardContent>
           </Card>
         </div>
-        <div className='flex w-full flex-col md:col-span-2'>
+        <div className='flex h-full w-full flex-col md:col-span-2'>
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
             <Card className='bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
@@ -244,9 +264,9 @@ export default function ExpenditureFundForm() {
           </div>
 
           {/* DataTable moved here */}
-          <div className='mt-4'>
-            <Card>
-              <CardContent>
+          <div className='mt-4 flex h-full flex-1'>
+            <Card className='h-full w-full'>
+              <CardContent className='h-full'>
                 <DataTable
                   buttons={buttons}
                   columns={columns}
