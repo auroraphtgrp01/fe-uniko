@@ -179,13 +179,7 @@ export default function ExpenditureFundForm() {
             </CardHeader>
             <CardContent>
               <div className='h-72 overflow-auto'>
-                <FlatList
-                  data={summaryRecentTransactions}
-                  onClick={(data) => {
-                    console.log('Clicked transaction:', data)
-                  }}
-                  isLoading={isGetStatisticPending}
-                />
+                <FlatList data={summaryRecentTransactions} onClick={(data) => {}} isLoading={isGetStatisticPending} />
               </div>
             </CardContent>
           </Card>

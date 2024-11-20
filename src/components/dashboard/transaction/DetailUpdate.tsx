@@ -62,7 +62,7 @@ export default function DetailUpdateTransaction({
   }
 
   const TransactionDetails = () => (
-    <div className='space-y-6'>
+    <div className='select-none space-y-6'>
       <div className='space-y-2'>
         <div className='flex items-center justify-between'>
           <h3 className='text-2xl font-bold'>{formatCurrency(updateTransactionProps.transaction.amount, 'đ')}</h3>
@@ -102,10 +102,10 @@ export default function DetailUpdateTransaction({
         <div className='space-y-1'>
           <p className='text-sm text-muted-foreground'>Ví gửi</p>
           {updateTransactionProps.transaction.ofAccount ? (
-            <div className='flex items-start gap-3'>
+            <div className='mt-1 flex items-start gap-3'>
               <Avatar>
                 <AvatarFallback className='bg-muted'>
-                  <WalletCardsIcon />
+                  <WalletCardsIcon className='h-4 w-4 text-muted-foreground' />
                 </AvatarFallback>
               </Avatar>
               <div className='flex flex-col'>
@@ -121,7 +121,7 @@ export default function DetailUpdateTransaction({
             <div className='flex items-center gap-3'>
               <Avatar>
                 <AvatarFallback>
-                  <WalletCardsIcon className='text-muted-foreground' />
+                  <WalletCardsIcon className='h-4 w-4 text-muted-foreground' />
                 </AvatarFallback>
               </Avatar>
               <span className='font-medium'>{updateTransactionProps.transaction.accountSource?.name}</span>
@@ -135,7 +135,7 @@ export default function DetailUpdateTransaction({
             <div className='flex items-start gap-3'>
               <Avatar>
                 <AvatarFallback className='bg-muted'>
-                  <BookUserIcon />
+                  <BookUserIcon className='h-4 w-4 text-muted-foreground' />
                 </AvatarFallback>
               </Avatar>
               <div className='flex flex-col'>
@@ -155,7 +155,7 @@ export default function DetailUpdateTransaction({
           <div className='flex items-start gap-3'>
             <Avatar>
               <AvatarFallback className='bg-muted'>
-                <Pencil2Icon className='h-5 w-5 bg-muted' />
+                <Pencil2Icon className='h-4 w-4 text-muted-foreground' />
               </AvatarFallback>
             </Avatar>
             <div className='flex flex-col'>
@@ -350,6 +350,5 @@ export default function DetailUpdateTransaction({
     </div>
   )
 
-  // return <div>{isEditing ? <UpdateForm /> : <TransactionDetails />}</div>
   return <div>{updateTransactionProps.isEditing ? <UpdateForm /> : <TransactionDetails />}</div>
 }

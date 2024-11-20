@@ -49,7 +49,7 @@ export default function MainSection() {
   return (
     <div
       ref={containerRef}
-      className='relative w-full bg-white bg-gradient-to-r from-rose-50/80 via-white to-rose-50/80 dark:bg-black dark:from-rose-950/50 dark:via-slate-900 dark:to-rose-950/50 dark:bg-grid-white/[0.05]'
+      className='relative w-full select-none bg-white bg-gradient-to-r from-rose-50/80 via-white to-rose-50/80 dark:bg-black dark:from-rose-950/50 dark:via-slate-900 dark:to-rose-950/50 dark:bg-grid-white/[0.05]'
     >
       <Navbar />
       <div className='fixed inset-0 overflow-hidden'>

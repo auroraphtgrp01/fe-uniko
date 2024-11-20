@@ -367,29 +367,31 @@ export default function TrackerTransactionForm() {
   }, [socket])
 
   return (
-    <div className='grid h-full grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
+    <div className='grid h-full select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
-        <div className='grid grid-cols-1 gap-3 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
+        <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
           {/* Total Balance Card */}
-          <Card className='bg-gradient-to-br from-indigo-500 to-blue-700 shadow-md'>
-            <CardHeader className='pb-1 lg:pb-2'>
-              <CardTitle className='flex items-center text-base font-medium text-white lg:text-lg'>
-                <PcCase className='mr-1.5 h-4 w-4 lg:h-5 lg:w-5' />
+          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+            <div className='absolute inset-0 bg-gradient-to-br from-violet-500 via-indigo-500 to-blue-600 opacity-95'></div>
+            <div className='absolute inset-0 bg-[url("/patterns/circuit-board.svg")] opacity-20'></div>
+            <CardHeader className='relative pb-1'>
+              <CardTitle className='flex items-center text-base font-medium text-white'>
+                <PcCase className='mr-2 h-5 w-5 animate-pulse' />
                 {t('totalBalance')}
               </CardTitle>
             </CardHeader>
-            <CardContent className='py-2 lg:py-3'>
+            <CardContent className='relative pt-1'>
               <div className='flex items-center justify-between'>
-                <div className='rounded-lg bg-white/10 p-2 lg:p-3'>
-                  <Layers2Icon className='h-6 w-6 text-white lg:h-8 lg:w-8' />
+                <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
+                  <Layers2Icon className='h-7 w-7 text-white' />
                 </div>
                 <div className='text-right'>
-                  <p className='text-xl font-bold text-white lg:text-2xl'>
+                  <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
                     {formatCurrency(statisticData?.data?.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='flex items-center text-xs text-blue-100 lg:text-sm'>
-                    <ArrowUpIcon className='mr-1 h-3 w-3 lg:h-4 lg:w-4' />
+                  <p className='mt-1 flex items-center text-sm text-blue-100'>
+                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
                     <span>{t('increaseFromLastMonth', { percentage: 2.5 })}</span>
                   </p>
                 </div>
@@ -398,24 +400,26 @@ export default function TrackerTransactionForm() {
           </Card>
 
           {/* Income Card */}
-          <Card className='bg-gradient-to-br from-teal-500 to-green-700 shadow-md'>
-            <CardHeader className='pb-1 lg:pb-2'>
-              <CardTitle className='flex items-center text-base font-medium text-white lg:text-lg'>
-                <ArrowDownToLineIcon className='mr-1.5 h-4 w-4 lg:h-5 lg:w-5' />
+          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+            <div className='absolute inset-0 bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 opacity-95'></div>
+            <div className='absolute inset-0 bg-[url("/patterns/plus.svg")] opacity-20'></div>
+            <CardHeader className='relative pb-1'>
+              <CardTitle className='flex items-center text-base font-medium text-white'>
+                <ArrowDownToLineIcon className='mr-2 h-5 w-5 animate-pulse' />
                 {t('incomingTransaction')}
               </CardTitle>
             </CardHeader>
-            <CardContent className='py-2 lg:py-3'>
+            <CardContent className='relative pt-1'>
               <div className='flex items-center justify-between'>
-                <div className='rounded-lg bg-white/10 p-2 lg:p-3'>
-                  <HandCoins className='h-6 w-6 text-white lg:h-8 lg:w-8' />
+                <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
+                  <HandCoins className='h-7 w-7 text-white' />
                 </div>
                 <div className='text-right'>
-                  <p className='text-xl font-bold text-white lg:text-2xl'>
+                  <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
                     {formatCurrency(statisticData?.data?.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='flex items-center text-xs text-emerald-100 lg:text-sm'>
-                    <ArrowDownIcon className='mr-1 h-3 w-3 lg:h-4 lg:w-4' />
+                  <p className='mt-1 flex items-center text-sm text-emerald-100'>
+                    <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
                     <span>{t('noChangeFromYesterday')}</span>
                   </p>
                 </div>
@@ -424,24 +428,26 @@ export default function TrackerTransactionForm() {
           </Card>
 
           {/* Expense Card */}
-          <Card className='bg-gradient-to-br from-rose-500 to-red-700 shadow-md'>
-            <CardHeader className='pb-1 lg:pb-2'>
-              <CardTitle className='flex items-center text-base font-medium text-white lg:text-lg'>
-                <CloudDownload className='mr-1.5 h-4 w-4 lg:h-5 lg:w-5' />
+          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+            <div className='absolute inset-0 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 opacity-95'></div>
+            <div className='absolute inset-0 bg-[url("/patterns/minus.svg")] opacity-20'></div>
+            <CardHeader className='relative pb-1'>
+              <CardTitle className='flex items-center text-base font-medium text-white'>
+                <CloudDownload className='mr-2 h-5 w-5 animate-pulse' />
                 {t('expenseTransaction')}
               </CardTitle>
             </CardHeader>
-            <CardContent className='py-2 lg:py-3'>
+            <CardContent className='relative pt-1'>
               <div className='flex items-center justify-between'>
-                <div className='rounded-lg bg-white/10 p-2 lg:p-3'>
-                  <ArrowUpIcon className='h-6 w-6 text-white lg:h-8 lg:w-8' />
+                <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
+                  <ArrowUpIcon className='h-7 w-7 text-white' />
                 </div>
                 <div className='text-right'>
-                  <p className='text-xl font-bold text-white lg:text-2xl'>
+                  <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
                     {formatCurrency(statisticData?.data?.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='flex items-center text-xs text-red-100 lg:text-sm'>
-                    <ArrowUpIcon className='mr-1 h-3 w-3 lg:h-4 lg:w-4' />
+                  <p className='mt-1 flex items-center text-sm text-red-100'>
+                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
                     <span>{t('increaseFromLastMonth', { percentage: 15 })}</span>
                   </p>
                 </div>
@@ -505,9 +511,8 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
-
-      {/* Right Section */}
-      <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 lg:col-span-1'>
+      {/* Right Section */}{' '}
+      <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
         <div className='h-[55%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
@@ -555,7 +560,6 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
-
       <TrackerTransactionDialog
         detailUpdateTrackerTransactionDialog={{
           handleUpdateTransaction: (

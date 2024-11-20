@@ -127,7 +127,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div className='flex w-full items-center justify-center'>
             {data && data.expenseTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.expenseTransactionTypeStats} className='h-[18rem] w-full' types='donut' />
+              <DonutChart data={data.expenseTransactionTypeStats} className='h-[17rem] w-full' types='donut' />
             ) : (
               <div className='mt-10 flex flex-col items-center justify-center'>
                 <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
@@ -143,7 +143,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div className='flex w-full items-center justify-center'>
             {data && data.incomingTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.incomingTransactionTypeStats} className='h-[18rem] w-full' types='donut' />
+              <DonutChart data={data.incomingTransactionTypeStats} className='h-[17rem] w-full' types='donut' />
             ) : (
               <div className='mt-10 flex flex-col items-center justify-center'>
                 <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
@@ -223,13 +223,13 @@ export const formatTrackerTransactionData = (data: ITrackerTransaction): ICustom
     reasonName: data.reasonName || 'N/A',
     trackerType:
       data.Transaction?.direction === 'INCOMING' ? (
-        <span className='block w-[80px] items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-green-300 px-2 py-1 text-xs font-semibold text-green-900 sm:w-[90px] md:w-[100px]'>
-          {data.TrackerType.name || 'N/A'}
-        </span>
+        <Badge className='flex min-w-[140px] max-w-[150px] items-center justify-center truncate rounded-xl bg-[#047858] px-2 py-1 font-semibold text-green-100 hover:bg-[#047858]/90'>
+          <span className='flex items-center gap-1.5'>{data.TrackerType.name || 'N/A'}</span>
+        </Badge>
       ) : (
-        <span className='block w-[80px] items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-rose-300 px-2 py-1 text-xs font-semibold text-rose-900 sm:w-[90px] md:w-[100px]'>
-          {data.TrackerType.name || 'N/A'}
-        </span>
+        <Badge className='flex min-w-[140px] max-w-[150px] items-center justify-center truncate rounded-xl bg-[#be123c] px-2 py-1 font-semibold text-red-100 hover:bg-[#be123c]/90'>
+          <span className='flex items-center gap-1.5'>{data.TrackerType.name || 'N/A'}</span>
+        </Badge>
       ),
     amount: `${formatCurrency(data.Transaction?.amount || 0, 'đ')}`,
     transactionDate: data.time ? data.time : 'N/A',
