@@ -1,8 +1,8 @@
 export const authenticationRoutes = {
   signIn: 'auth/login',
   signUp: 'auth/register',
-  forgotPassword: 'users/get-forgot-password-token/:email',
-  resetPassword: 'users/reset-password/:token',
+  forgotPassword: 'auth/get-forgot-password-token/:email',
+  resetPassword: 'auth/reset-password/:token',
   verifyEmail: 'auth/verify-email/:token',
   loginGoogle: 'auth/login/google',
   verifyToken: 'auth/verify-token/:refreshToken',
