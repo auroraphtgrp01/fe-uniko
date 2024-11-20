@@ -14,8 +14,16 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import React, { useEffect, useState } from 'react'
-import { ChevronDown, ChevronLeft, ChevronRight, Trash2Icon } from 'lucide-react'
+import React, { useEffect } from 'react'
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Settings2,
+  Trash2Icon
+} from 'lucide-react'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Input } from '../ui/input'
 import { IDataTableConfig } from '@/types/common.i'
@@ -26,6 +34,7 @@ import { Atom } from 'react-loading-indicators'
 import Image from 'next/image'
 import DeleteDialog, { IDeleteDialogProps } from './DeleteDialog'
 import { motion } from 'framer-motion'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
 export interface IDeleteProps extends IDeleteDialogProps {
   onOpen: (rowData?: any) => void
@@ -101,7 +110,6 @@ export function DataTable<TData, TValue>({
   getRowClassName,
   onRowClick,
   onRowDoubleClick,
-  buttonInContextMenu,
   isLoading,
   buttons,
   onOpenDeleteAll,
@@ -214,8 +222,7 @@ export function DataTable<TData, TValue>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
-                {t('table.columnsLabel')}
-                <ChevronDown className='ml-2 h-4 w-4' />
+                View <Settings2 className='ml-2 h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[200px]'>
@@ -393,25 +400,31 @@ export function DataTable<TData, TValue>({
             })}
           </p>
           {isPaginate && (
-            <div className='flex flex-col items-center md:flex-row md:items-center md:justify-end md:space-x-4'>
+            <div className='flex select-none flex-col items-center md:flex-row md:items-center md:justify-end md:space-x-4'>
               <div className='flex flex-col items-center md:flex-row md:space-x-4'>
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>{t('table.rowsPerPageLabel')}</p>
-                  <Input
-                    defaultValue={limit}
-                    onChange={(event) =>
+                  <Select
+                    value={limit.toString()}
+                    onValueChange={(value) =>
                       setConfig((prev) => ({
                         ...prev,
-                        limit: Number(event.target.value)
+                        limit: Number(value)
                       }))
                     }
-                    className='w-12 px-1 pl-3 text-center'
-                    type='number'
-                    min={1}
-                    max={20}
-                    inputMode='numeric'
-                    pattern='[0-9]*'
-                  />
+                  >
+                    <SelectTrigger className='w-14 px-2 text-center'>
+                      <SelectValue placeholder='Select rows per page' />
+                    </SelectTrigger>
+                    <SelectContent className='w-full'>
+                      <SelectItem value='5'>5</SelectItem>
+                      <SelectItem value='10'>10</SelectItem>
+                      <SelectItem value='15'>15</SelectItem>
+                      <SelectItem value='20'>20</SelectItem>
+                      <SelectItem value='25'>25</SelectItem>
+                      <SelectItem value='30'>30</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className='flex items-center space-x-2'>
                   <p className='whitespace-nowrap text-sm'>
@@ -421,6 +434,20 @@ export function DataTable<TData, TValue>({
                     })}
                   </p>
                   <div className='flex space-x-1 max-md:py-2'>
+                    <Button
+                      className='px-2'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => {
+                        setConfig((prev) => ({
+                          ...prev,
+                          currentPage: 1
+                        }))
+                      }}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronsLeft size={15} />
+                    </Button>
                     <Button
                       className='px-2'
                       variant='outline'
@@ -448,6 +475,20 @@ export function DataTable<TData, TValue>({
                       disabled={currentPage === totalPage || totalPage === 0}
                     >
                       <ChevronRight size={15} />
+                    </Button>
+                    <Button
+                      className='px-2'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => {
+                        setConfig((prev) => ({
+                          ...prev,
+                          currentPage: totalPage
+                        }))
+                      }}
+                      disabled={currentPage === totalPage || totalPage === 0}
+                    >
+                      <ChevronsRight size={15} />
                     </Button>
                   </div>
                 </div>
