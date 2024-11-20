@@ -14,7 +14,6 @@ import {
 import { navItems } from '@/constants/routes'
 import { NavItem } from '@/types/core.i'
 
-// Recursive function to find the corresponding navigation item based on path
 function findNavItem(path: string, items = navItems): NavItem | undefined {
   for (const item of items) {
     if (item.href === path) {
@@ -48,11 +47,11 @@ export default function BreadcrumbHeader() {
   }, [path])
 
   return (
-    <div>
+    <div className='select-none'>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
+            <BreadcrumbLink asChild className='font-semibold text-foreground hover:text-foreground'>
               <Link href='/'>Home</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -61,9 +60,9 @@ export default function BreadcrumbHeader() {
             <React.Fragment key={item.href}>
               <BreadcrumbItem>
                 {item.isLast ? (
-                  <BreadcrumbPage>{item.title}</BreadcrumbPage>
+                  <BreadcrumbPage className='font-semibold text-foreground'>{item.title}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink asChild>
+                  <BreadcrumbLink asChild className='font-semibold text-foreground hover:text-foreground'>
                     <Link href={item.href}>{item.title}</Link>
                   </BreadcrumbLink>
                 )}

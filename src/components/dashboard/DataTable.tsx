@@ -179,8 +179,8 @@ export function DataTable<TData, TValue>({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant='outline' className='whitespace-nowrap'>
-                  {t('table.typesLabel')}
-                  <ChevronDown className='ml-2 h-4 w-4' />
+                  <span className='text-sm'>{t('table.typesLabel')}</span>
+                  <ChevronDown className='ml-2 h-3 w-3' />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='start' className='w-[200px]'>
@@ -276,10 +276,15 @@ export function DataTable<TData, TValue>({
             <TableHeader style={{ cursor: data?.length ? 'pointer' : 'default' }}>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
+                  {headerGroup.headers.map((header, index) => {
+                    const isFirstColumn = index === 0
+                    const isLastColumn = index === headerGroup.headers.length - 1
+
                     return (
                       <TableHead
-                        className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''}`}
+                        className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''} ${
+                          !isFirstColumn && !isLastColumn ? 'text-center' : ''
+                        } ${isFirstColumn ? 'text-left' : ''} ${isLastColumn ? 'text-right' : ''}`}
                         key={header.id}
                         onMouseDown={(event) => {
                           if (event.detail > 1) {

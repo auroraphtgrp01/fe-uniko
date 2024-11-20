@@ -49,7 +49,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
     donut: {
       tooltip: { trigger: 'item' },
       legend: {
-        bottom: '-2%',
+        bottom: '-1%',
         left: 'center',
         textStyle: { color: configTheme.textColor, fontFamily: fontFamily },
         orient: 'horizontal',
@@ -61,9 +61,9 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             'path://M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM10 8L14 12L10 16'
           ]
         },
-        pageIconColor: configTheme.textColor,
+        pageIconColor: '#e11c48',
         pageIconSize: 14,
-        pageIconInactiveColor: 'rgba(255, 255, 255, 0.3)',
+        pageIconInactiveColor: 'rgba(225, 28, 72, 0.3)',
         pageTextStyle: {
           color: configTheme.textColor
         }
@@ -273,15 +273,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
       }
     })
 
-    chartInstance.on('click', function (params: any) {
-      console.log('Clicked data:', {
-        name: params.data.name,
-        value: params.data.value,
-        dataIndex: params.dataIndex,
-        seriesIndex: params.seriesIndex,
-        seriesName: params.seriesName
-      })
-    })
+    chartInstance.on('click', function (params: any) {})
 
     const resizeChart = () => {
       chartInstance.resize()

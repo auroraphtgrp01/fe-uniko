@@ -25,13 +25,14 @@ interface IFlatListProps {
   data: IFlatListData[]
   onClick?: (item: IFlatListData) => void
   isLoading?: boolean
+  className?: string
 }
 
-export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
+export default function FlatList({ data, onClick, isLoading, className }: IFlatListProps) {
   return (
     <Card className='h-full w-full to-muted/20'>
       {data?.length > 0 ? (
-        <ScrollArea className='h-[260px] max-h-[260px] w-full rounded-md p-4'>
+        <ScrollArea className={cn('h-[220px] max-h-[220px] w-full rounded-md p-3', className)}>
           {data.map((item) => (
             <motion.div
               key={item.id}
@@ -46,13 +47,13 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                   if (onClick) onClick(item)
                 }}
                 className={cn(
-                  'mb-4 cursor-pointer border-l-4 bg-card/50 bg-gradient-to-b from-background transition-all duration-300 hover:scale-[1.01]',
+                  'mb-2 cursor-pointer border-l-4 bg-card/50 bg-gradient-to-b from-background transition-all duration-300 hover:scale-[1.01]',
                   `${item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'border-l-rose-600 dark:border-l-rose-800' : 'border-l-[#047858]'}`
                 )}
               >
-                <CardHeader className='py-3'>
+                <CardHeader className='py-2'>
                   <div className='flex items-center justify-between'>
-                    <div className='flex items-center gap-3'>
+                    <div className='flex items-center gap-2'>
                       <div
                         className={`${
                           item.direction === ETypeOfTrackerTransactionType.EXPENSE
@@ -63,18 +64,18 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                         {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '↓' : '↑'}
                       </div>
                       <div className='flex flex-col'>
-                        <CardTitle className='text-xl font-bold tracking-tight max-sm:text-sm'>
+                        <CardTitle className='text-base font-bold tracking-tight max-sm:text-sm'>
                           {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '- ' : '+ '}
                           {item.amount}
                         </CardTitle>
-                        <span className='text-xs text-muted-foreground max-sm:hidden'>
+                        <span className='text-[11px] text-muted-foreground max-sm:hidden'>
                           {item.direction === ETypeOfTrackerTransactionType.INCOMING ? 'To' : 'From'}:{' '}
                           {item.accountNo ? item.accountNo : 'N/A'}{' '}
                         </span>
                       </div>
                     </div>
-                    <div className='flex flex-col items-end gap-1.5'>
-                      <div className='flex items-center gap-2'>
+                    <div className='flex flex-col items-end gap-1'>
+                      <div className='flex items-center gap-1'>
                         <Badge
                           variant={item.direction === ETypeOfTrackerTransactionType.EXPENSE ? 'default' : 'secondary'}
                           className='font-sm'
@@ -82,7 +83,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
                           {item.direction}
                         </Badge>
                       </div>
-                      <div className='flex items-center gap-1.5 text-xs text-muted-foreground max-sm:hidden'>
+                      <div className='flex items-center gap-1 text-[11px] text-muted-foreground max-sm:hidden'>
                         <Clock className='h-3 w-3' />
                         <span>{formatDateTimeVN(item.transactionDateTime, true)}</span>
                       </div>
@@ -108,18 +109,18 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
           </motion.span>
         </motion.div>
       ) : (
-        <div className='py-15 flex h-[260px] h-full flex-col items-center justify-center'>
+        <div className='flex h-[200px] flex-col items-center justify-center py-10'>
           <div className='relative'>
             <Image
               priority
               src={NoDataPlaceHolder}
               alt='No data available'
-              width={120}
-              height={120}
+              width={100}
+              height={100}
               className='opacity-80'
             />
           </div>
-          <p className='text-sm text-muted-foreground'>No transactions available at the moment</p>
+          <p className='text-xs text-muted-foreground'>No transactions available at the moment</p>
         </div>
       )}
     </Card>

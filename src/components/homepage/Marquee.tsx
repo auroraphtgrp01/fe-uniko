@@ -116,7 +116,7 @@ const ReviewCard = ({ img, name, username, body }: { img: string; name: string; 
 
 export function MarqueeReview() {
   return (
-    <div className='relative mt-12 flex w-full justify-center'>
+    <div className='relative mt-12 flex w-full select-none justify-center'>
       <div className='absolute inset-x-0 h-full w-full bg-gradient-to-r from-white via-transparent to-white opacity-20 dark:from-black dark:to-black' />
       <div className='relative mx-auto mt-32 flex max-w-4xl flex-col items-center overflow-hidden rounded-lg border md:shadow-xl'>
         <div className='absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent dark:from-black' />
