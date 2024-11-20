@@ -49,7 +49,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
     donut: {
       tooltip: { trigger: 'item' },
       legend: {
-        bottom: '5%',
+        bottom: '-2%',
         left: 'center',
         textStyle: { color: configTheme.textColor, fontFamily: fontFamily },
         orient: 'horizontal',
@@ -62,7 +62,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           ]
         },
         pageIconColor: configTheme.textColor,
-        pageIconSize: 16,
+        pageIconSize: 14,
         pageIconInactiveColor: 'rgba(255, 255, 255, 0.3)',
         pageTextStyle: {
           color: configTheme.textColor
@@ -79,14 +79,15 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
             borderRadius: 10,
             borderColor: 'transparent',
             borderWidth: 5,
-            padding: 5
+            padding: 10
           },
           label: {
             fontSize: '10',
             color: configTheme.textColor,
             position: 'outside',
             alignTo: 'none',
-            fontFamily: fontFamily
+            fontFamily: fontFamily,
+            padding: [10, 0, 0, 0]
           },
           emphasis: {
             focus: 'series',
@@ -128,7 +129,8 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           label: {
             fontSize: '10',
             color: configTheme.textColor,
-            fontFamily: fontFamily
+            fontFamily: fontFamily,
+            padding: [20, 0, 0, 0]
           },
           emphasis: {
             focus: 'series',
@@ -162,7 +164,8 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
           label: {
             fontSize: '10',
             color: configTheme.textColor,
-            fontFamily: fontFamily
+            fontFamily: fontFamily,
+            padding: [20, 0, 0, 0]
           },
           emphasis: {
             focus: 'series',

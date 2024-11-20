@@ -505,9 +505,8 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
-
-      {/* Right Section */}
-      <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 lg:col-span-1'>
+      {/* Right Section */}{' '}
+      <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
         <div className='h-[55%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
@@ -555,7 +554,6 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
-
       <TrackerTransactionDialog
         detailUpdateTrackerTransactionDialog={{
           handleUpdateTransaction: (
