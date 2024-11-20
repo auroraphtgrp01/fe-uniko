@@ -3,6 +3,7 @@ import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { IAccountSource } from '@/core/account-source/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
+import { t } from 'i18next'
 import React from 'react'
 import { z } from 'zod'
 
@@ -27,12 +28,10 @@ export const defineUpdateTransactionFormBody = ({
     },
     {
       name: 'accountSourceId',
-      type: EFieldType.Combobox,
+      type: EFieldType.Select,
       label: 'Account Source',
       placeHolder: 'Select account source',
-      props: {
-        dataArr: modifiedTrackerTypeForComboBox(accountSourceData)
-      }
+      dataSelector: modifiedTrackerTypeForComboBox(accountSourceData)
     },
     {
       name: 'direction',
