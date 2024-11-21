@@ -1,11 +1,12 @@
 'use client'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import CardInHeader from '@/components/dashboard/CardInHeader'
 import React, { useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
+  gradientClasses,
   initAccountSourceFormData,
   initButtonInDataTableHeader,
   initDialogFlag,
@@ -21,7 +22,7 @@ import {
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
-import { getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
+import { formatCurrency, getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
   IAccountSourceBody,
@@ -39,6 +40,22 @@ import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/co
 import toast from 'react-hot-toast'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
+import {
+  ArrowUpRight,
+  BadgeCent,
+  ChevronRight,
+  CreditCard,
+  Landmark,
+  PiggyBank,
+  Plus,
+  TrendingUp,
+  Wallet,
+  WalletMinimal
+} from 'lucide-react'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@radix-ui/react-progress'
 
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
@@ -120,14 +137,118 @@ export default function AccountSourceForm() {
 
   // Other components
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
+  const totalBalance = tableData.reduce(
+    (sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')),
+    0
+  )
+  const totalWallet = tableData
+    .filter((account) => account.checkType === 'WALLET')
+    .reduce((sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')), 0)
+
+  const totalBanking = tableData
+    .filter((account) => account.checkType === 'BANKING')
+    .reduce((sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')), 0)
 
   return (
-    <div className='w-full'>
-      <div className='flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'>
-        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
-        <CardInHeader className='flex-grow sm:w-1/2 lg:w-1/2' />
+    <div className='w-full space-y-8 rounded-lg bg-gradient-to-br shadow-xl'>
+      <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
+        <Card className='transition-shadow duration-300 hover:shadow-xl'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Total Accounts</CardTitle>
+            <Wallet className='h-4 w-4 text-blue-600' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>{tableData.length}</div>
+            <Progress value={(tableData.length / 100) * 100} className='mt-2' />
+            <p className='mt-2 text-xs text-gray-500'>Total number of accounts being tracked</p>
+          </CardContent>
+        </Card>
+        <Card className='transition-shadow duration-300 hover:shadow-xl'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Total Banking</CardTitle>
+            <Landmark className='h-4 w-4 text-red-400' />
+          </CardHeader>
+          <CardContent>
+            <div className='block w-[300px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold'>
+              {formatCurrency(totalBanking, 'VND')}
+            </div>
+            <Progress value={(totalBalance / 1000000) * 100} className='mt-2' />
+            <p className='mt-2 text-xs text-gray-500'>Total balance from all banking accounts</p>
+          </CardContent>
+        </Card>
+        <Card className='transition-shadow duration-300 hover:shadow-xl'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Total Wallet</CardTitle>
+            <WalletMinimal className='h-4 w-4 text-amber-800' />
+          </CardHeader>
+          <CardContent>
+            <div className='block w-[300px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold'>
+              {formatCurrency(totalWallet, 'VND')}
+            </div>
+            <Progress value={(totalBalance / 1000000) * 100} className='mt-2' />
+            <p className='mt-2 text-xs text-gray-500'> Total balance from all wallet accounts</p>
+          </CardContent>
+        </Card>
+        <Card className='transition-shadow duration-300 hover:shadow-xl'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Total Balance</CardTitle>
+            <BadgeCent className='h-4 w-4 text-green-600' />
+          </CardHeader>
+          <CardContent>
+            <div className='block w-[300px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold'>
+              {formatCurrency(totalBalance, 'VND ')}
+            </div>
+            <Progress value={(totalBalance / 1000000) * 100} className='mt-2' />
+            <p className='mt-2 text-xs text-gray-500'> Combined balance across all accounts and wallets</p>
+          </CardContent>
+        </Card>
       </div>
-      <Card className='mt-5'>
+      <Carousel
+        opts={{
+          align: 'start',
+          loop: true
+        }}
+        className='grid'
+      >
+        <CarouselContent>
+          {tableData.map((data, index) => (
+            <CarouselItem key={data.id} className='md:basis-1/2 lg:basis-1/3'>
+              <Card
+                className={`${gradientClasses[index % gradientClasses.length]} transition-all duration-300 hover:shadow-lg`}
+              >
+                <CardHeader className=''>
+                  <CardTitle className='flex items-center justify-between text-lg font-medium text-white'>
+                    <div>{data.name}</div>
+                    <div>{data.type}</div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='flex items-center justify-between'>
+                    <PiggyBank className='h-12 w-12 text-white opacity-75' />
+                    <div className='text-right'>
+                      <p className='text-2xl font-bold text-white'>{data.accountBank}</p>
+                      <p className='text-sm text-blue-100'>Current Amount: {data.currentAmount}</p>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      const selectedData = tableData.find((item) => item.id === data.id)
+                      if (selectedData) {
+                        onRowClick(selectedData, getAdvancedData, setIsDialogOpen, setDataDetail)
+                      }
+                    }}
+                    variant='secondary'
+                    className='mt-4 w-full bg-white/10 text-white hover:bg-white/20'
+                  >
+                    View Details <ChevronRight className='ml-2 h-4 w-4' />
+                  </Button>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+      <Card>
         <CardContent>
           <DataTable
             data={tableData}
@@ -176,6 +297,7 @@ export default function AccountSourceForm() {
           />
         </CardContent>
       </Card>
+
       <AccountSourceDialog
         onSuccessCallback={refetchPage}
         fundId={fundId}
@@ -197,8 +319,9 @@ export default function AccountSourceForm() {
           setIdRowClicked
         }}
       />
+
       <DeleteDialog
-        customDescription='Bạn chắc chắn muốn xóa tất cả dữ liệu này?'
+        customDescription='Are you sure you want to delete all selected data?'
         onDelete={() => {
           if (idDeletes.length > 0)
             deleteMultipleAccountSource(
@@ -212,7 +335,7 @@ export default function AccountSourceForm() {
                     setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
                     setIdDeletes([])
                     setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
-                    toast.success('Delete all account source successfully')
+                    toast.success('Delete all account sources successfully')
                   }
                 }
               }

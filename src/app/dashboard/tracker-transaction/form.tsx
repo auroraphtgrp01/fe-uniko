@@ -108,7 +108,10 @@ export default function TrackerTransactionForm() {
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
     useState<ITrackerTransactionTypeBody>(initTrackerTypeForm)
-  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    classNameOfScroll: 'h-[calc(100vh-6rem)]'
+  })
   const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
@@ -369,7 +372,7 @@ export default function TrackerTransactionForm() {
   return (
     <div className='grid h-full grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
-      <div className='flex w-full flex-col md:col-span-2'>
+      <div className='flex w-full flex-1 flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-3 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
           {/* Total Balance Card */}
           <Card className='bg-gradient-to-br from-indigo-500 to-blue-700 shadow-md'>
@@ -508,11 +511,11 @@ export default function TrackerTransactionForm() {
 
       {/* Right Section */}
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 lg:col-span-1'>
-        <div className='h-[55%]'>
+        <div>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
-        <div className='h-[calc(45%)]'>
-          <Card className='flex h-full flex-col'>
+        <div>
+          <Card className='flex flex-col'>
             <CardHeader className='flex-none py-4'>
               <div className='flex flex-row items-center justify-between gap-3'>
                 <CardTitle>Unclassified</CardTitle>
@@ -524,9 +527,6 @@ export default function TrackerTransactionForm() {
                       setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
                     }}
                   >
-                    <span className='mr-2 truncate max-[1280px]:hidden max-[420px]:hidden'>
-                      {t('common:button.classify')}
-                    </span>
                     <Layers2Icon className='h-4 w-4' />
                   </Button>
                   <Button
@@ -541,7 +541,7 @@ export default function TrackerTransactionForm() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className='flex-1 overflow-hidden'>
+            <CardContent className='h-[400px] overflow-auto'>
               <FlatList
                 data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
                 onClick={(data: IFlatListData) => {

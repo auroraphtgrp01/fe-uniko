@@ -18,6 +18,7 @@ export const defineUpdateTrackerTransactionFormBody = ({
   openEditDialog
 }: IUpdateTrackerTransactionFormBody) => {
   const t = translate(['accountSource'])
+
   return [
     {
       name: 'reasonName',
@@ -37,9 +38,7 @@ export const defineUpdateTrackerTransactionFormBody = ({
         autoComplete: 'trackerTypeId',
         setOpenEditDialog,
         dataArr: modifiedTrackerTypeForComboBox(
-          editTrackerTypeDialogProps.typeDefault === ETypeOfTrackerTransactionType.INCOMING
-            ? incomeTrackerType
-            : expenseTrackerType
+          typeOfEditTrackerType === ETypeOfTrackerTransactionType.INCOMING ? incomeTrackerType : expenseTrackerType
         ),
         dialogEdit: EditTrackerTypeDialog({
           ...editTrackerTypeDialogProps,

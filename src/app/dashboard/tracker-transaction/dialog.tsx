@@ -25,7 +25,6 @@ export default function TrackerTransactionDialog({
   const [transactionIdClassifying, setTransactionIdClassifying] = useState<string>()
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
   const { transactionId } = sharedDialogElements
-
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const classifyingTransactionConfigDialog: IDialogConfig = {

@@ -44,11 +44,16 @@ import {
 } from '@/core/tracker-transaction/constants'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { IFundOfUser } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { IDataTableConfig } from '@/types/common.i'
 
 export default function ExpenditureFundForm() {
   // states
   const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
-  const [dataTableConfig, setDataTableConfig] = useState({ ...initTableConfig, isVisibleSortType: false })
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    classNameOfScroll: 'h-[calc(100vh-17rem)]',
+    isVisibleSortType: false
+  })
   const [dataTable, setDataTable] = useState<IExpenditureFundDataFormat[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [detailData, setDetailData] = useState<IExpenditureFund>(initEmptyDetailExpenditureFund)
@@ -179,13 +184,7 @@ export default function ExpenditureFundForm() {
             </CardHeader>
             <CardContent>
               <div className='h-72 overflow-auto'>
-                <FlatList
-                  data={summaryRecentTransactions}
-                  onClick={(data) => {
-                    console.log('Clicked transaction:', data)
-                  }}
-                  isLoading={isGetStatisticPending}
-                />
+                <FlatList data={summaryRecentTransactions} onClick={(data) => {}} isLoading={isGetStatisticPending} />
               </div>
             </CardContent>
           </Card>
