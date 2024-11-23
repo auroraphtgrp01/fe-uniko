@@ -232,10 +232,12 @@ export default function TrackerTransactionForm() {
       limit: dataTableUnclassifiedConfig.limit
     }))
   }, [dataTableUnclassifiedConfig])
+
   useEffect(() => {
     if (dataTrackerTransactionType)
       initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
   }, [dataTrackerTransactionType])
+
   useEffect(() => {
     setTableData(
       filterTrackerTransactionWithType(dataTableConfig.selectedTypes || [], advancedTrackerTxData?.data || [])
@@ -550,9 +552,10 @@ export default function TrackerTransactionForm() {
               <FlatList
                 data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
                 onClick={(data: IFlatListData) => {
-                  setDataDetailTransaction(
+                  const item =
                     dataUnclassifiedTxs?.data.find((item) => item.id === data.id) || initEmptyDetailTransactionData
-                  )
+                  setDataDetailTransaction(item)
+                  setTypeOfTrackerType(item.direction as ETypeOfTrackerTransactionType)
                   setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: true }))
                 }}
               />
