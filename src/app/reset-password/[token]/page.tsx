@@ -1,10 +1,10 @@
-import ForgotPasswordDetail from '@/app/forgot-password/[token]/form'
 import React from 'react'
+import ResetPasswordForm from './form'
 
 export default function page({ params }: { params: { token: string } }) {
   return (
     <div>
-      <ForgotPasswordDetail params={params} />
+      <ResetPasswordForm params={params} />
     </div>
   )
 }

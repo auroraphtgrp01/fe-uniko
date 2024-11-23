@@ -16,7 +16,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
   const [countLogin, setCountLogin] = useState<number>(0)
   const params = useSearchParams()
   const redirect = params.get('redirect')
-  const redirectUrl = redirect || '/dashboard?loggedIn=true'
+  const redirectUrl = redirect || '/dashboard/tracker-transaction?loggedIn=true'
   const mutation = useMutationCustom<ISignInBody, ISignInResponse>({
     pathUrl: authServices.signIn,
     mutateOption: {
@@ -32,7 +32,7 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
           })
           setAccessTokenToLocalStorage(data.data.accessToken)
           setRefreshTokenToLocalStorage(data.data.refreshToken)
-          if (redirectUrl === '/dashboard?loggedIn=true') setExecuteGetMe(true)
+          if (redirectUrl === '/dashboard/tracker-transaction?loggedIn=true') setExecuteGetMe(true)
           toast.success('Login successfully 🚀 ')
           router.push(redirectUrl)
         }
@@ -41,8 +41,10 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
         }
       },
       onError: (error) => {
-        const errorMessage = (error as any)?.payload?.message || 'Login failed, please try again!'
-        toast.error(errorMessage)
+        const errorMessage =
+          (error as any)?.payload?.message + '!\n\n' + (error as any)?.payload?.details[0] ||
+          'Login failed, please try again!'
+        toast.error(errorMessage, { duration: 1500 })
         opts?.callBackOnError?.()
       }
     }

@@ -41,13 +41,15 @@ export const defineCreateTrackerTransactionFormBody = ({
     },
     {
       name: 'accountSourceId',
-      type: EFieldType.Combobox,
+      type: EFieldType.Select,
       label: t('form.defineCreateAccountSourceFormBody.accountSourceId.label'),
       placeHolder: t('form.defineCreateAccountSourceFormBody.accountSourceId.placeholder'),
       props: {
-        autoComplete: 'accountSourceId',
-        dataArr: modifiedTrackerTypeForComboBox(accountSourceData)
-      }
+        onchange: (value: any) => {
+          setCurrentDirection(value as ETypeOfTrackerTransactionType)
+        }
+      },
+      dataSelector: modifiedTrackerTypeForComboBox(accountSourceData)
     },
     {
       name: 'direction',
