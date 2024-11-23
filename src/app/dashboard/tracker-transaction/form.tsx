@@ -559,7 +559,6 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
-
       <TrackerTransactionDialog
         detailUpdateTrackerTransactionDialog={{
           handleUpdateTransaction: (

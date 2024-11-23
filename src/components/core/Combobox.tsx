@@ -66,6 +66,7 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
               role='combobox'
               aria-expanded={open}
               className={cn(className, 'w-full justify-between')}
+              style={{ width: '100%' }}
             >
               {contentTrigger ? (
                 contentTrigger
@@ -74,12 +75,12 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
                   {controlledValue
                     ? dataArr.find((data) => data.value === controlledValue)?.label
                     : `Select ${label ?? 'item'}`}
-                  <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                  <ChevronsUpDown className='ml-2 h-3 w-3 shrink-0 opacity-50' />
                 </>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className='w-full min-w-[300px] p-3'>
+          <PopoverContent className='w-full min-w-[300px] p-3' style={{ width: '100%' }}>
             <Command shouldFilter={false}>
               <CommandInput
                 value={searchValue}

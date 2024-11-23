@@ -31,7 +31,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
   return (
     <Card className='h-full w-full to-muted/20'>
       {data?.length > 0 ? (
-        <ScrollArea className='h-full w-full rounded-md p-4'>
+        <ScrollArea className='h-[260px] max-h-[260px] w-full rounded-md p-4'>
           {data.map((item) => (
             <motion.div
               key={item.id}
@@ -108,7 +108,7 @@ export default function FlatList({ data, onClick, isLoading }: IFlatListProps) {
           </motion.span>
         </motion.div>
       ) : (
-        <div className='flex h-full flex-col items-center justify-center py-20'>
+        <div className='py-15 flex h-[260px] h-full flex-col items-center justify-center'>
           <div className='relative'>
             <Image
               priority
