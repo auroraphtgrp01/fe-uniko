@@ -52,6 +52,7 @@ export default function DetailUpdateTrackerTransaction({
   const [typeOfEditTrackerType, setTypeOfEditTrackerType] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )
+
   return (
     <DetailUpdateTransaction
       commonProps={{ accountSourceData: commonProps.accountSourceData }}

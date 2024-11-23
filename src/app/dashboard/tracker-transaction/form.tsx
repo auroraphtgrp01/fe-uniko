@@ -229,6 +229,10 @@ export default function TrackerTransactionForm() {
 
   // effects
   useEffect(() => {
+    refetchAllAccountSourceData()
+  }, [])
+
+  useEffect(() => {
     setUncTableQueryOptions((prev) => ({
       ...prev,
       page: dataTableUnclassifiedConfig.currentPage,
@@ -638,7 +642,7 @@ export default function TrackerTransactionForm() {
               callBackOnSuccess: callBackRefetchTrackerTransactionPage
             })
           },
-          accountSourceData: getAllAccountSourceData?.data || [],
+          accountSourceData: getAllAccountSourceData?.data || [], //sss
           typeOfTrackerType,
           setTypeOfTrackerType,
           expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
