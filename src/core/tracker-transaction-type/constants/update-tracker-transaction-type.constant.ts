@@ -44,6 +44,6 @@ export const editTrackerTypeSchema = z
   .object({
     name: z.string().trim().min(2).max(256),
     type: z.nativeEnum(ETypeOfTrackerTransactionType),
-    description: z.string().min(10).max(256).nullable()
+    description: z.string()
   })
   .strict()

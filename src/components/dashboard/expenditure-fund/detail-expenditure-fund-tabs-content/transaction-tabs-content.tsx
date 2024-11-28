@@ -18,9 +18,9 @@ export default function TransactionTabsContent({ detailData }: ITransactionTabsC
             <div
               style={{ userSelect: 'none' }}
               key={transaction.id}
-              className='grid grid-cols-5 grid-rows-1 items-center gap-4 rounded bg-muted p-2 text-sm'
+              className='grid grid-cols-4 grid-rows-1 items-center gap-4 rounded bg-muted p-2 text-sm'
             >
-              <div className='col-span-2 flex items-center gap-2'>
+              <div className='col-start-1 flex items-center gap-2'>
                 {transaction.direction === ETypeOfTrackerTransactionType.INCOMING ? (
                   <ArrowUpIcon className='h-4 w-4 text-green-500' />
                 ) : (
@@ -28,7 +28,7 @@ export default function TransactionTabsContent({ detailData }: ITransactionTabsC
                 )}
                 <span>{transaction.TrackerTransaction ? transaction.TrackerTransaction.reasonName : 'N/A'}</span>
               </div>
-              <div className='col-start-3 flex justify-center gap-2'>
+              <div className='col-start-2 flex justify-center gap-2'>
                 <div className='flex justify-center'>
                   <span
                     className={
@@ -42,7 +42,7 @@ export default function TransactionTabsContent({ detailData }: ITransactionTabsC
                   </span>
                 </div>
               </div>
-              <div className='col-start-4 flex justify-end'>
+              <div className='col-start-3 flex justify-end'>
                 <div className='flex justify-end'>
                   <Badge
                     style={{ userSelect: 'none', pointerEvents: 'none', cursor: 'none' }}
@@ -54,7 +54,7 @@ export default function TransactionTabsContent({ detailData }: ITransactionTabsC
                 </div>
               </div>
 
-              <div className='col-start-5 flex justify-start gap-2'>
+              <div className='col-start-4 flex justify-start gap-2'>
                 <div className='flex justify-start'>
                   <span className='text-nowrap text-muted-foreground'>
                     {formatDateTimeVN(transaction.transactionDateTime, true)}

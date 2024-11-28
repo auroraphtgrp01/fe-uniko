@@ -39,3 +39,9 @@ export interface IEditTrackerTypeDialogProps {
   handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
   expenditureFund: { label: string; value: string | number }[]
 }
+
+export interface ITrackerTranSactionEditType {
+  isUpdateTrackerTransaction: ETypeOfTrackerTransactionType
+  direction: ETypeOfTrackerTransactionType
+  trackerTypeId: string
+}

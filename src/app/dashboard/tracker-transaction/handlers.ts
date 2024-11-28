@@ -201,12 +201,12 @@ export const handleUpdateTrackerTxType = ({
 }: {
   payload: ITrackerTransactionTypeBody
   hookUpdate: any
-  callBackOnSuccess: (actions: 'getAllTrackerTransactionType'[]) => void
+  callBackOnSuccess: (actions: ('getAllTrackerTransactionType' | 'getExpenditureFund')[]) => void
 }) => {
   hookUpdate(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        callBackOnSuccess(['getAllTrackerTransactionType'])
+        callBackOnSuccess(['getAllTrackerTransactionType', 'getExpenditureFund'])
         toast.success('Update tracker transaction type successfully!')
       }
     }

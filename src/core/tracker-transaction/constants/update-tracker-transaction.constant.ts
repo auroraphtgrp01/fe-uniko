@@ -4,9 +4,12 @@ import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/m
 import { IClassifyTransactionFormProps } from '@/core/transaction/models'
 import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
+import { useEffect } from 'react'
 import { z } from 'zod'
 
-interface IUpdateTrackerTransactionFormBody extends IClassifyTransactionFormProps {}
+interface IUpdateTrackerTransactionFormBody extends IClassifyTransactionFormProps {
+  trackerTypeData: any
+}
 
 export const defineUpdateTrackerTransactionFormBody = ({
   editTrackerTypeDialogProps,
@@ -15,9 +18,11 @@ export const defineUpdateTrackerTransactionFormBody = ({
   typeOfEditTrackerType,
   setTypeOfEditTrackerType,
   setOpenEditDialog,
-  openEditDialog
+  openEditDialog,
+  trackerTypeData
 }: IUpdateTrackerTransactionFormBody) => {
   const t = translate(['accountSource'])
+
   return [
     {
       name: 'reasonName',
@@ -36,11 +41,7 @@ export const defineUpdateTrackerTransactionFormBody = ({
       props: {
         autoComplete: 'trackerTypeId',
         setOpenEditDialog,
-        dataArr: modifiedTrackerTypeForComboBox(
-          editTrackerTypeDialogProps.typeDefault === ETypeOfTrackerTransactionType.INCOMING
-            ? incomeTrackerType
-            : expenseTrackerType
-        ),
+        dataArr: trackerTypeData,
         dialogEdit: EditTrackerTypeDialog({
           ...editTrackerTypeDialogProps,
           dataArr: modifiedTrackerTypeForComboBox(

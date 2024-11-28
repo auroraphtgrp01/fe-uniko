@@ -159,7 +159,8 @@ export const handleUpdateTransaction = ({
   hookUpdate,
   setDataTableConfig,
   setDetailDialog,
-  callBackOnSuccess
+  callBackOnSuccess,
+  refetchAllAccountSourceData
 }: {
   data: IUpdateTransactionBody
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
@@ -167,6 +168,7 @@ export const handleUpdateTransaction = ({
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDetailDialog: React.Dispatch<React.SetStateAction<ITransaction>>
   callBackOnSuccess: (actions: TTransactionActions[]) => void
+  refetchAllAccountSourceData: () => void
 }) => {
   hookUpdate(data, {
     onSuccess: (res: any) => {
@@ -180,6 +182,7 @@ export const handleUpdateTransaction = ({
         ])
         toast.success('Update transaction successfully!')
         setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
+        refetchAllAccountSourceData()
         setDetailDialog(res.data)
         setIsEditing(false)
       }

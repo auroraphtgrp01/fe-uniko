@@ -86,7 +86,7 @@ export default function CategoryTabsContent({
         dataArr={filteredDataArr || []}
         handleDeleteTrackerType={(id: string) => {}}
         handleUpdateTrackerType={categoryTabProps.handleUpdate}
-        className='h-52 overflow-y-auto rounded-md border p-4'
+        className='h-52 rounded-md border p-4'
       />
       <CustomDialog config={createTrackerTypeDialog} />
     </div>

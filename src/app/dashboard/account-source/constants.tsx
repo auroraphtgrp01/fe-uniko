@@ -93,3 +93,16 @@ export const initEmptyDetailAccountSourceType = {
     }
   }
 }
+
+export const gradientClasses = [
+  'bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600',
+  'bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600',
+  'bg-gradient-to-br from-orange-400 via-pink-500 to-rose-600',
+  'bg-gradient-to-br from-purple-500 via-pink-600 to-red-500',
+  'bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-600',
+  'bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500',
+  'bg-gradient-to-br from-green-400 via-lime-500 to-yellow-500',
+  'bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400',
+  'bg-gradient-to-br from-gray-700 via-gray-900 to-black',
+  'bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-700'
+]

@@ -145,6 +145,7 @@ export default function TransactionForm() {
   const { isGetMeUserPending } = getMe(true)
   const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
   const { refetchAdvancedExpendingFund } = getAdvancedExpenditureFund({})
+  const { refetchAllData: refetchAllAccountSourceData } = getAllAccountSource(fundId)
 
   // custom hooks
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
@@ -501,7 +502,8 @@ export default function TransactionForm() {
                 hookUpdate: updateTransaction,
                 setDataTableConfig: setDataTableConfig,
                 setDetailDialog: setDataDetail,
-                callBackOnSuccess: callBackRefetchTransactionPage
+                callBackOnSuccess: callBackRefetchTransactionPage,
+                refetchAllAccountSourceData
               }),
             statusUpdateTransaction: statusUpdate
           }}

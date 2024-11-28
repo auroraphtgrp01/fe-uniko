@@ -108,7 +108,10 @@ export default function TrackerTransactionForm() {
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
     useState<ITrackerTransactionTypeBody>(initTrackerTypeForm)
-  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    classNameOfScroll: 'h-[calc(100vh-15rem)]'
+  })
   const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
@@ -515,7 +518,7 @@ export default function TrackerTransactionForm() {
       </div>
       {/* Right Section */}{' '}
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
-        <div className='h-[55%]'>
+        <div className='flex h-auto w-full justify-center'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
         <div className='h-[calc(45%)]'>
@@ -531,9 +534,6 @@ export default function TrackerTransactionForm() {
                       setIsDialogOpen((prev) => ({ ...prev, isDialogUnclassifiedOpen: true }))
                     }}
                   >
-                    <span className='mr-2 truncate max-[1280px]:hidden max-[420px]:hidden'>
-                      {t('common:button.classify')}
-                    </span>
                     <Layers2Icon className='h-4 w-4' />
                   </Button>
                   <Button

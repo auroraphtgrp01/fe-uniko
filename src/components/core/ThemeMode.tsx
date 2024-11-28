@@ -36,7 +36,7 @@ export default function ThemeMode() {
           </motion.div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='mt-5 w-56 select-none' align='center' sideOffset={5}>
+      <DropdownMenuContent className='w-56 select-none' align='center' sideOffset={5}>
         <DropdownMenuGroup>
           <div className='px-2 py-1.5 text-center text-sm font-semibold text-muted-foreground'>
             <span>Select Theme</span>

@@ -44,11 +44,16 @@ import {
 } from '@/core/tracker-transaction/constants'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { IFundOfUser } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { IDataTableConfig } from '@/types/common.i'
 
 export default function ExpenditureFundForm() {
   // states
   const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
-  const [dataTableConfig, setDataTableConfig] = useState({ ...initTableConfig, isVisibleSortType: false })
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    classNameOfScroll: 'h-[calc(100vh-19rem)]',
+    isVisibleSortType: false
+  })
   const [dataTable, setDataTable] = useState<IExpenditureFundDataFormat[]>([])
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [detailData, setDetailData] = useState<IExpenditureFund>(initEmptyDetailExpenditureFund)
@@ -170,7 +175,7 @@ export default function ExpenditureFundForm() {
   return (
     <div className='grid h-full grid-cols-1 gap-4'>
       <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        <div className='flex h-full w-full flex-col space-y-4'>
+        <div className='flex h-full w-full flex-1 flex-col space-y-4'>
           <Card className='flex-shrink-0'>
             <CardHeader className='py-4'>
               <div className='flex items-center justify-between'>
@@ -178,8 +183,8 @@ export default function ExpenditureFundForm() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className='h-72 overflow-auto'>
-                <FlatList data={summaryRecentTransactions} onClick={(data) => {}} isLoading={isGetStatisticPending} />
+              <div className='overflow-auto'>
+                <FlatList data={summaryRecentTransactions} isLoading={isGetStatisticPending} />
               </div>
             </CardContent>
           </Card>
@@ -189,13 +194,13 @@ export default function ExpenditureFundForm() {
               <CardTitle>Balance Summary</CardTitle>
             </CardHeader>
             <CardContent>
-              <div>
-                <DonutChart data={chartData} className='mt-[-2rem] h-[20rem] w-full' types='donut' />
+              <div className='flex h-auto w-full justify-center'>
+                <DonutChart data={chartData} className='h-[20rem] w-full max-w-[50rem]' types='donut' />
               </div>
             </CardContent>
           </Card>
         </div>
-        <div className='flex h-full w-full flex-col md:col-span-2'>
+        <div className='flex h-full w-full flex-1 flex-col md:col-span-2'>
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
             <Card className='bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
