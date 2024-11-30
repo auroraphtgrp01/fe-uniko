@@ -173,12 +173,12 @@ export default function ExpenditureFundForm() {
 
   const buttons = initButtonInHeaders({ setIsDialogOpen })
   return (
-    <div className='grid h-full grid-cols-1 gap-4'>
-      <div className='grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+    <div className='grid h-full w-full grid-cols-1 gap-4'>
+      <div className='grid h-full grid-cols-1 gap-4 md:col-span-2 md:w-full md:flex-1 md:flex-col lg:grid-cols-3'>
         <div className='flex h-full w-full flex-1 flex-col space-y-4'>
           <Card className='flex-shrink-0'>
             <CardHeader className='py-4'>
-              <div className='flex items-center justify-between'>
+              <div className='flex w-full items-center justify-between'>
                 <CardTitle>Summary Recent Transactions</CardTitle>
               </div>
             </CardHeader>
@@ -200,9 +200,9 @@ export default function ExpenditureFundForm() {
             </CardContent>
           </Card>
         </div>
-        <div className='flex h-full w-full flex-1 flex-col md:col-span-2'>
-          <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
-            <Card className='bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg'>
+        <div className='flex h-full w-full flex-1 flex-col lg:col-span-2'>
+          <div className='grid w-full grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
+            <Card className='group relative overflow-hidden bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-lg font-medium text-white'>Total Balance Summary</CardTitle>
               </CardHeader>
@@ -219,7 +219,7 @@ export default function ExpenditureFundForm() {
               </CardContent>
             </Card>
 
-            <Card className='bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 transition-all duration-300 hover:shadow-lg'>
+            <Card className='group relative overflow-hidden bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-lg font-medium text-white'>Incoming Transaction Summary</CardTitle>
               </CardHeader>
@@ -240,7 +240,7 @@ export default function ExpenditureFundForm() {
               </CardContent>
             </Card>
 
-            <Card className='bg-gradient-to-br from-orange-400 via-pink-500 to-rose-600 transition-all duration-300 hover:shadow-lg'>
+            <Card className='group relative overflow-hidden bg-gradient-to-br from-orange-400 via-pink-500 to-rose-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-lg font-medium text-white'>Expense Transaction Summary</CardTitle>
               </CardHeader>

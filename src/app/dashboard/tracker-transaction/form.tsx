@@ -14,7 +14,13 @@ import {
   PcCase,
   Layers2Icon
 } from 'lucide-react'
-import { formatCurrency, formatDateTimeVN, getCurrentMonthDateRange, mergeQueryParams } from '@/libraries/utils'
+import {
+  formatCurrency,
+  formatDateTimeVN,
+  getCurrentMonthDateRange,
+  mergeQueryParams,
+  translate
+} from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {

@@ -67,7 +67,6 @@ export default function AccountSourceForm() {
   const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
-  console.log('🚀 ~ AccountSourceForm ~ tableData:', tableData)
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
 

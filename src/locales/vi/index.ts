@@ -10,6 +10,7 @@ const vietnameseTranslations = {
   transaction,
   profile,
   accountSource
+  // exfundid// viết chỗ này chưa ?
 }
 
 export default vietnameseTranslations
