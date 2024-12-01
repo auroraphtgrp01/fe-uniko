@@ -10,6 +10,6 @@ const englishTranslations = {
   transaction,
   profile,
   accountSource
-}
+} as const
 
 export default englishTranslations
