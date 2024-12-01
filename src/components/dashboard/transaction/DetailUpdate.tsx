@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   CalendarIcon,
   CreditCard,
@@ -35,6 +35,11 @@ import {
 } from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
 import { Pencil2Icon } from '@radix-ui/react-icons'
 import { Separator } from '@/components/ui/separator'
+import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
+import {
+  ITrackerTranSactionEditType,
+  ITrackerTransactionType
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export default function DetailUpdateTransaction({
   updateTransactionProps,
@@ -45,7 +50,14 @@ export default function DetailUpdateTransaction({
   const submitUpdateTransactionRef = useRef<HTMLFormElement>(null)
   const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
   const formUpdateTrackerTransactionRef = useRef<any>()
-
+  const [trackerTypeData, setTrackerTypeData] = useState<ITrackerTransactionType[]>([])
+  const [transactionState, setTransactionState] = useState<ITrackerTranSactionEditType>({
+    isUpdateTrackerTransaction:
+      (updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType) ||
+      ETypeOfTrackerTransactionType.INCOMING,
+    direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType,
+    trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || ''
+  })
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
       if (
@@ -60,6 +72,16 @@ export default function DetailUpdateTransaction({
     }
     if (updateTrackerTransactionProps?.isEditing) submitUpdateTrackerTransactionRef.current?.requestSubmit()
   }
+
+  useEffect(() => {
+    setTrackerTypeData(
+      modifiedTrackerTypeForComboBox(
+        transactionState.isUpdateTrackerTransaction === ETypeOfTrackerTransactionType.INCOMING
+          ? updateTrackerTransactionProps?.editTrackerTransactionTypeProps.incomeTrackerType
+          : updateTrackerTransactionProps?.editTrackerTransactionTypeProps.expenseTrackerType
+      )
+    )
+  }, [transactionState.isUpdateTrackerTransaction])
 
   const TransactionDetails = () => (
     <div className='select-none space-y-6'>
@@ -271,9 +293,15 @@ export default function DetailUpdateTransaction({
               formFieldBody={defineUpdateTransactionFormBody({
                 accountSourceData: commonProps.accountSourceData,
                 handleSetTrackerTypeDefault: (value: string) => {
-                  if (value !== updateTransactionProps.transaction.direction) {
-                    formUpdateTrackerTransactionRef.current?.setValue('trackerTypeId', '')
-                  }
+                  setTransactionState((prevState) => ({
+                    ...prevState,
+                    isUpdateTrackerTransaction: value as ETypeOfTrackerTransactionType,
+                    direction: value as ETypeOfTrackerTransactionType,
+                    trackerTypeId:
+                      value === updateTransactionProps.transaction.direction
+                        ? updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || ''
+                        : ''
+                  }))
                 }
               })}
               formSchema={updateTransactionSchema}
@@ -289,7 +317,7 @@ export default function DetailUpdateTransaction({
               defaultValues={{
                 amount: String(updateTransactionProps.transaction.amount),
                 accountSourceId: updateTransactionProps.transaction.accountSource.id,
-                direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType
+                direction: transactionState.direction
               }}
             />
           )}
@@ -300,11 +328,12 @@ export default function DetailUpdateTransaction({
               formRef={formUpdateTrackerTransactionRef}
               submitRef={submitUpdateTrackerTransactionRef}
               formFieldBody={defineUpdateTrackerTransactionFormBody({
+                trackerTypeData,
                 editTrackerTypeDialogProps:
                   updateTrackerTransactionProps.editTrackerTransactionTypeProps.editTrackerTypeDialogProps,
                 expenseTrackerType: updateTrackerTransactionProps.editTrackerTransactionTypeProps.expenseTrackerType,
                 incomeTrackerType: updateTrackerTransactionProps.editTrackerTransactionTypeProps.incomeTrackerType,
-                typeOfEditTrackerType: updateTrackerTransactionProps.typeOfEditTrackerType,
+                typeOfEditTrackerType: transactionState.isUpdateTrackerTransaction as ETypeOfTrackerTransactionType,
                 setTypeOfEditTrackerType: updateTrackerTransactionProps.setTypeOfEditTrackerType,
                 setOpenEditDialog: updateTrackerTransactionProps.setOpenEditDialog,
                 openEditDialog: updateTrackerTransactionProps.openEditDialog
@@ -323,7 +352,7 @@ export default function DetailUpdateTransaction({
               }}
               defaultValues={{
                 reasonName: updateTrackerTransactionProps?.trackerTransaction.reasonName || '',
-                trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || '',
+                trackerTypeId: transactionState.trackerTypeId || '',
                 description: updateTrackerTransactionProps?.trackerTransaction.description
               }}
             />
