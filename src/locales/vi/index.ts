@@ -10,6 +10,6 @@ const vietnameseTranslations = {
   transaction,
   profile,
   accountSource
-}
+} as const
 
 export default vietnameseTranslations
