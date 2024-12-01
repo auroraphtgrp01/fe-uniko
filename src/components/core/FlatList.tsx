@@ -32,7 +32,7 @@ export default function FlatList({ data, onClick, isLoading, className }: IFlatL
   return (
     <Card className='h-full w-full to-muted/20'>
       {data?.length > 0 ? (
-        <ScrollArea className={cn('h-[220px] max-h-[220px] w-full rounded-md p-3', className)}>
+        <ScrollArea className={cn('h-full max-h-[220px] w-full rounded-md p-3', className)}>
           {data.map((item) => (
             <motion.div
               key={item.id}
