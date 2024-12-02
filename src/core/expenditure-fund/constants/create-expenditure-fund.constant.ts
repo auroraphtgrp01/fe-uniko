@@ -6,13 +6,13 @@ interface IDefineCreateExpenditureFundFormBodyProps {}
 
 export const defineCreateExpenditureFundFormBody =
   ({}: IDefineCreateExpenditureFundFormBodyProps): IBodyFormField[] => {
-    const t = translate(['transaction', 'common'])
+    const t = translate(['expenditureFund', 'common'])
     return [
       {
         name: 'name',
         type: EFieldType.Input,
-        label: 'Name',
-        placeHolder: 'Enter name *',
+        label: t('form.name.label'),
+        placeHolder: t('form.name.placeholder'),
         props: {
           autoComplete: 'name'
         }
@@ -40,8 +40,8 @@ export const defineCreateExpenditureFundFormBody =
       {
         name: 'description',
         type: EFieldType.Textarea,
-        label: 'Description',
-        placeHolder: 'Enter description'
+        label: t('form.direction.label'),
+        placeHolder: t('form.direction.placeholder')
       }
     ]
   }

@@ -1,0 +1,39 @@
+{
+  "ExpenditureFundDetails": "Chi tiết quỹ chi tiêu",
+  "detailInformationOfTheExpenditureFund": "Thông tin chi tiết của quỹ chi tiêu.",
+  "personal": "Cá nhân",
+  "tabs": {
+    "overview": "Tổng quan",
+    "participants": "Thành viên",
+    "categories": "Danh mục",
+    "transactions": "Giao dịch",
+    "statistics": "Thống kê"
+  },
+  "overview": {
+    "currentBalance": "Số dư hiện tại",
+    "description": "Mô tả",
+    "categories": "Danh mục",
+    "participants": "Thành viên"
+  },
+  "participants": {
+    "placeholder": "Nhập địa chỉ email hoặc số điện thoại"
+  },
+  "categories": {
+    "placeholder": "Tìm kiếm loại giao dịch được theo dõi"
+  },
+  "transactions": {},
+  "statistics": {},
+  "update": {
+    "title": "Cập nhật Quỹ Chi Tiêu",
+    "description": "Cập nhật quỹ chi tiêu mới",
+    "form": {
+      "selectActive": {
+        "active": "ĐANG HOẠT ĐỘNG",
+        "closed": "ĐÃ ĐÓNG",
+        "pending": "ĐANG CHỜ",
+        "label": "Mô tả",
+        "description": "Nhập mô tả"
+      }
+    }
+  }
+}
