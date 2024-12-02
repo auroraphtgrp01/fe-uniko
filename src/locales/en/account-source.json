@@ -56,10 +56,44 @@
       "initAmount": {
         "label": "Initial Amount",
         "placeholder": "Enter your initial amount"
+      },
+      "bankType": {
+        "label": "Bank Type",
+        "placeholder": "Select Bank Type"
+      },
+      "loginId": {
+        "label": "Login Id",
+        "placeholder": "Enter your login id"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your login password"
+      },
+      "accounts": {
+        "label": "Accounts",
+        "placeholder": "Enter your accounts"
       }
     },
     "button": {
-      "save_changes_account_source": "Save Changes Accout Source"
+      "save_changes_account_source": "Save Changes Accout Source",
+      "edit_account_source": "Edit Account Source"
+    },
+    "editAccountSource": {
+      "title": "Source Account Transaction Details",
+      "description": "Details of Source Account",
+      "currentAmount": "Current Amount",
+      "accountBank": "Account Bank",
+      "checkType": "Check Type",
+      "currency": "Currency",
+      "initialAmount": "Initial Amount",
+      "name": "Name"
     }
+  },
+  "table": {
+    "name": "Name",
+    "type": "Type",
+    "initAmount": "Initial Amount",
+    "accountBank": "Account Bank",
+    "currentAmount": "Current Amount"
   }
 }
