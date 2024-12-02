@@ -2,9 +2,9 @@
   "totalBalance": "Total Balance",
   "incomingTransaction": "Incoming Transaction",
   "expenseTransaction": "Expense Transaction",
-  "noChangeFromYesterday": "No change from yesterday",
-  "increaseFromLastMonth": "+{{percentage}}% from last month",
-  "increaseFromYesterday": "+{{percentage}}% from yesterday",
+  "notiTotalBalance": "{{percentage}}% from last month",
+  "notiIncoming": "{{percentage}}% from yesterday",
+  "notiExpense": "{{percentage}}% from yesterday",
   "charts": {
     "expenseChart": {
       "label": "Expense Chart",
@@ -27,6 +27,38 @@
     "unclassifiedDialog": {
       "title": "Unclassified Transactions",
       "description": "Overview of unclassified transactions."
+    }
+  },
+  "form": {
+    "defineCreateTrackerTransactionFormBody": {
+      "reasonName": {
+        "label": "Reason Name",
+        "placeholder": "Enter reason name"
+      },
+      "amount": {
+        "label": "Amount",
+        "placeholder": "Enter amount"
+      },
+      "accountSourceId": {
+        "label": "Account Source",
+        "placeholder": "Select account source"
+      },
+      "direction": {
+        "label": "Direction",
+        "placeholder": "Select a direction",
+        "options": {
+          "incoming": "INCOMING",
+          "expense": "EXPENSE"
+        }
+      },
+      "trackerTypeId": {
+        "label": "Category",
+        "placeholder": "Select category"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Enter description"
+      }
     }
   }
 }

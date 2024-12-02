@@ -378,7 +378,7 @@ export default function TrackerTransactionForm() {
             <div className='absolute inset-0 bg-gradient-to-br from-violet-500 via-indigo-500 to-blue-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/circuit-board.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
-              <CardTitle className='flex items-center text-base font-medium text-white'>
+              <CardTitle className='text-md flex items-center text-nowrap text-base font-medium text-white 2xl:text-lg'>
                 <PcCase className='mr-2 h-5 w-5 animate-pulse' />
                 {t('totalBalance')}
               </CardTitle>
@@ -394,7 +394,7 @@ export default function TrackerTransactionForm() {
                   </p>
                   <p className='mt-1 flex items-center text-sm text-blue-100'>
                     <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('increaseFromLastMonth', { percentage: 2.5 })}</span>
+                    <span>{t('notiTotalBalance', { percentage: 2.5 })}</span>
                   </p>
                 </div>
               </div>
@@ -406,7 +406,7 @@ export default function TrackerTransactionForm() {
             <div className='absolute inset-0 bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/plus.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
-              <CardTitle className='flex items-center text-base font-medium text-white'>
+              <CardTitle className='text-md flex items-center text-nowrap text-base font-medium text-white 2xl:text-lg'>
                 <ArrowDownToLineIcon className='mr-2 h-5 w-5 animate-pulse' />
                 {t('incomingTransaction')}
               </CardTitle>
@@ -420,9 +420,9 @@ export default function TrackerTransactionForm() {
                   <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
                     {formatCurrency(statisticData?.data?.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
-                  <p className='mt-1 flex items-center text-sm text-emerald-100'>
+                  <p className='mt-1 flex h-[50%] items-center text-sm text-emerald-100'>
                     <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('noChangeFromYesterday')}</span>
+                    <span>{t('notiIncoming', { percentage: 2.5 })}</span>
                   </p>
                 </div>
               </div>
@@ -434,7 +434,7 @@ export default function TrackerTransactionForm() {
             <div className='absolute inset-0 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/minus.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
-              <CardTitle className='flex items-center text-base font-medium text-white'>
+              <CardTitle className='text-md flex items-center text-nowrap text-base font-medium text-white 2xl:text-lg'>
                 <CloudDownload className='mr-2 h-5 w-5 animate-pulse' />
                 {t('expenseTransaction')}
               </CardTitle>
@@ -450,7 +450,7 @@ export default function TrackerTransactionForm() {
                   </p>
                   <p className='mt-1 flex items-center text-sm text-red-100'>
                     <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('increaseFromLastMonth', { percentage: 15 })}</span>
+                    <span>{t('notiExpense', { percentage: 15 })}</span>
                   </p>
                 </div>
               </div>

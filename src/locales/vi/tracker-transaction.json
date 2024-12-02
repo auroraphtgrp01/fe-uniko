@@ -1,32 +1,65 @@
 {
-    "totalBalance": "Tổng Số Dư",
-    "incomingTransaction": "Giao Dịch Đến",
-    "expenseTransaction": "Giao Dịch Chi",
-    "noChangeFromYesterday": "Không thay đổi từ hôm qua",
-    "increaseFromLastMonth": "+{{percentage}}% từ tháng trước",
-    "increaseFromYesterday": "+{{percentage}}% từ hôm qua",
-    "charts": {
-        "expenseChart": {
-            "label": "Biểu đồ Chi phí",
-            "value": "expenseChart"
-        },
-        "incomingChart": {
-            "label": "Biểu đồ Thu nhập",
-            "value": "incomingChart"
-        }
+  "totalBalance": "Tổng số dư",
+  "incomingTransaction": "Giao dịch thu",
+  "expenseTransaction": "Giao dịch chi",
+  "notiTotalBalance": "{{percentage}}% so với tháng trước",
+  "notiIncoming": "{{percentage}}% so với hôm qua",
+  "notiExpense": "{{percentage}}% so với hôm qua",
+  "charts": {
+    "expenseChart": {
+      "label": "Biểu đồ chi tiêu",
+      "value": "expenseChart"
     },
-    "trackerTransactionType": {
-        "classifyDialog": {
-            "title": "Phân Loại Giao Dịch",
-            "description": "Vui lòng điền thông tin dưới đây để phân loại giao dịch."
-        },
-        "createDialog": {
-            "title": "Tạo Giao Dịch Theo Dõi",
-            "description": "Vui lòng điền thông tin dưới đây để tạo giao dịch theo dõi mới."
-        },
-        "unclassifiedDialog": {
-            "title": "Giao Dịch Chưa Phân Loại",
-            "description": "Tổng quan về các giao dịch chưa phân loại."
-        }
+    "incomingChart": {
+      "label": "Biểu đồ thu nhập",
+      "value": "incomingChart"
     }
+  },
+
+  "trackerTransactionType": {
+    "classifyDialog": {
+      "title": "Phân loại giao dịch",
+      "description": "Vui lòng điền thông tin bên dưới để phân loại giao dịch."
+    },
+    "createDialog": {
+      "title": "Tạo bộ theo dõi giao dịch",
+      "description": "Vui lòng điền thông tin bên dưới để tạo mới theo dõi giao dịch."
+    },
+    "unclassifiedDialog": {
+      "title": "Giao dịch chưa phân loại",
+      "description": "Tổng quan các giao dịch chưa được phân loại."
+    }
+  },
+  "form": {
+    "defineCreateTrackerTransactionFormBody": {
+      "reasonName": {
+        "label": "Mục đích",
+        "placeholder": "Nhập mục đích"
+      },
+      "amount": {
+        "label": "Số tiền",
+        "placeholder": "Nhập số tiền"
+      },
+      "accountSourceId": {
+        "label": "Nguồn tài khoản",
+        "placeholder": "Chọn nguồn tài khoản"
+      },
+      "direction": {
+        "label": "Loại giao dịch",
+        "placeholder": "Thu/Chi",
+        "options": {
+          "incoming": "THU VÀO",
+          "expense": "CHI TIÊU"
+        }
+      },
+      "trackerTypeId": {
+        "label": "Danh mục",
+        "placeholder": "Chọn danh mục"
+      },
+      "description": {
+        "label": "Mô tả",
+        "placeholder": "Nhập mô tả"
+      }
+    }
+  }
 }
