@@ -1,53 +1,55 @@
 {
-    "transactionToday": "Giao Dịch Hôm Nay",
-    "viewAll": "Xem tất cả",
-    "transactionTodayDescription": "Tổng quan các giao dịch hôm nay",
-    "totalTransactions": "Tổng số giao dịch",
-    "totalAmount": "Tổng số tiền",
-    "unclassifiedTransaction": "Giao Dịch Chưa Phân Loại",
-    "classify": "Phân loại",
-    "unclassifiedTransactionDescription": "Các giao dịch không có trình theo dõi",
-    "TransactionType": {
-        "detailsDialog": {
-            "title": "Chi Tiết Giao Dịch",
-            "description": "Thông tin chi tiết về giao dịch."
-        },
-        "transactionsTodayDialog": {
-            "title": "Giao Dịch Hôm Nay",
-            "description": "Tổng quan về các giao dịch trong ngày hôm nay."
-        },
-        "unclassifiedTransactionsDialog": {
-            "title": "Giao Dịch Chưa Phân Loại",
-            "description": "Tổng quan về các giao dịch chưa phân loại."
-        },
-        "classifyingTransactionDialog": {
-            "title": "Phân Loại Giao Dịch",
-            "description": "Vui lòng điền thông tin dưới đây để phân loại giao dịch."
-        },
-        "detailsConfigDialog": {
-            "trackerTransaction": "Giao Dịch Theo Dõi",
-            "amount": "Số Tiền",
-            "transactionId": "Mã Giao Dịch",
-            "direction": "Hướng",
-            "currency": "Loại Tiền",
-            "accountBank": "Ngân Hàng",
-            "accountNo": "Số Tài Khoản",
-            "description": "Mô Tả"
-        },
-        "defineClassifyTransactionFormBody": {
-            "reasonName": {
-                "label": "Tên Lý Do",
-                "placeholder": "Nhập tên lý do"
-            },
-            "trackerTypeId": {
-                "label": "Loại Theo Dõi",
-                "placeholder": "Chọn loại theo dõi",
-                "labelTrackerTransactionType": "Loại giao dịch theo dõi"
-            },
-            "description": {
-                "label": "Mô Tả",
-                "placeholder": "Nhập mô tả"
-            }
-        }
+  "transactionToday": "Giao dịch hôm nay",
+  "viewAll": "Xem tất cả",
+  "transactionTodayDescription": "Tổng quan các giao dịch hôm nay",
+  "totalTransactions": "Tổng số giao dịch",
+  "totalAmount": "Tổng số tiền",
+  "unclassifiedTransaction": "Giao dịch chưa được phân loại",
+  "classify": "Phân loại",
+  "unclassifiedTransactionDescription": "Các giao dịch không có bộ theo dõi",
+  "totalIncomeAmount": "Tổng số tiền thu nhập",
+  "totalExpenseAmount": "Tổng số tiền chi tiêu",
+  "TransactionType": {
+    "detailsDialog": {
+      "title": "Chi tiết giao dịch",
+      "description": "Thông tin chi tiết của giao dịch."
+    },
+    "transactionsTodayDialog": {
+      "title": "Giao dịch hôm nay",
+      "description": "Tổng quan các giao dịch trong ngày."
+    },
+    "unclassifiedTransactionsDialog": {
+      "title": "Giao dịch chưa được phân loại",
+      "description": "Tổng quan các giao dịch chưa được phân loại."
+    },
+    "classifyingTransactionDialog": {
+      "title": "Phân loại giao dịch",
+      "description": "Vui lòng điền thông tin dưới đây để phân loại giao dịch."
+    },
+    "detailsConfigDialog": {
+      "trackerTransaction": "Bộ theo dõi giao dịch",
+      "amount": "Số tiền",
+      "transactionId": "Mã giao dịch",
+      "direction": "Loại giao dịch",
+      "currency": "Loại tiền tệ",
+      "accountBank": "Ngân hàng tài khoản",
+      "accountNo": "Số tài khoản",
+      "description": "Mô tả"
+    },
+    "defineClassifyTransactionFormBody": {
+      "reasonName": {
+        "label": "Tên lý do",
+        "placeholder": "Nhập tên lý do"
+      },
+      "trackerTypeId": {
+        "label": "Danh mục",
+        "placeholder": "Chọn danh mục",
+        "labelTrackerTransactionType": "Danh mục"
+      },
+      "description": {
+        "label": "Mô tả",
+        "placeholder": "Nhập mô tả"
+      }
     }
+  }
 }

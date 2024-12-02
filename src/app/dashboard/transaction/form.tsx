@@ -406,13 +406,13 @@ export default function TransactionForm() {
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.transactionToday.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Income Amount</div>
+              <div>{t('transaction:totalIncomeAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.transactionToday.incomeAmount, 'đ', 'vi-vn')}
               </div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Expense Amount</div>
+              <div>{t('transaction:totalExpenseAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.transactionToday.expenseAmount, 'đ', 'vi-vn')}
               </div>
@@ -438,13 +438,13 @@ export default function TransactionForm() {
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.unclassifiedTransaction.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Income Amount</div>
+              <div>{t('transaction:totalIncomeAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.unclassifiedTransaction.incomeAmount, 'đ', 'vi-vn')}
               </div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Expense Amount</div>
+              <div>{t('transaction:totalExpenseAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.unclassifiedTransaction.expenseAmount, 'đ', 'vi-vn')}
               </div>

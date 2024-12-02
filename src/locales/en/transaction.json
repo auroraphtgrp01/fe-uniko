@@ -7,6 +7,8 @@
   "unclassifiedTransaction": "Unclassified Transaction",
   "classify": "Classify",
   "unclassifiedTransactionDescription": "Transactions without a tracker",
+  "totalIncomeAmount": "Total Income Amount",
+  "totalExpenseAmount": "Total Expense Amount",
   "TransactionType": {
     "detailsDialog": {
       "title": "Transaction Detail",
