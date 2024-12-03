@@ -6,8 +6,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
-  gradientClasses,
   initAccountSourceFormData,
+  initAccountSourceTab,
   initButtonInDataTableHeader,
   initDialogFlag,
   initEmptyDetailAccountSource
@@ -21,9 +21,16 @@ import {
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
-import { formatCurrency, getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
+import {
+  formatCurrency,
+  getConvertedKeysToTitleCase,
+  getCurrentMonthDateRange,
+  getTypes,
+  mergeQueryParams
+} from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
+  EAccountSourceType,
   IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
@@ -41,26 +48,28 @@ import toast from 'react-hot-toast'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import {
-  ArrowUpRight,
-  BadgeCent,
-  ChevronRight,
-  CreditCard,
+  ArrowDownIcon,
+  ArrowDownToLineIcon,
+  ArrowUpIcon,
+  BanknoteIcon,
+  CloudDownload,
   Landmark,
-  PiggyBank,
-  Plus,
+  Layers2Icon,
+  PcCase,
+  TrendingDown,
   TrendingUp,
-  Wallet,
-  WalletMinimal
+  Wallet
 } from 'lucide-react'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@radix-ui/react-progress'
 import DonutChart from '@/components/core/charts/DonutChart'
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { AnimatePresence, motion } from 'framer-motion'
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
   // States
+
   const [dataDetail, setDataDetail] = useState<IAccountSourceDataFormat>(initEmptyDetailAccountSource)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [idDeletes, setIdDeletes] = useState<string[]>([])
@@ -69,6 +78,9 @@ export default function AccountSourceForm() {
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
   const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
+  const [currentTypeAccount, setCurrentTypeAccount] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
+  const [isHovered, setIsHovered] = useState(false)
+  const isWallet = currentTypeAccount === 'WALLET'
 
   const refetchPage = () => {
     refetchGetAdvanced()
@@ -84,7 +96,7 @@ export default function AccountSourceForm() {
     deleteAnAccountSource,
     deleteMultipleAccountSource
   } = useAccountSource()
-  const [chartData, setChartData] = useState<{ name: string; value: number }[]>([])
+  const [chartData, setChartData] = useState<any>([])
   const { getStatisticData } = useTrackerTransaction()
   const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
   const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
@@ -98,7 +110,6 @@ export default function AccountSourceForm() {
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
-
   // Memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
   const columns = useMemo(() => {
@@ -139,191 +150,317 @@ export default function AccountSourceForm() {
 
   // Other components
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
-  const totalBalance = tableData.reduce(
-    (sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')),
-    0
-  )
-  const totalWallet = tableData
-    .filter((account) => account.checkType === 'WALLET')
-    .reduce((sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')), 0)
 
-  const totalBanking = tableData
-    .filter((account) => account.checkType === 'BANKING')
-    .reduce((sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')), 0)
+  const totalBalance = useMemo(
+    () => tableData.reduce((sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')), 0),
+    [tableData]
+  )
+  const totalBalanceWallet = useMemo(
+    () =>
+      tableData
+        .filter((account) => account.checkType === EAccountSourceType.WALLET)
+        .reduce((sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')), 0),
+    [tableData]
+  )
+  const totalBalanceBanking = useMemo(
+    () =>
+      tableData
+        .filter((account) => account.checkType === EAccountSourceType.BANKING)
+        .reduce((sum, account) => sum + parseFloat(account.currentAmount.replace(/[^0-9.-]+/g, '')), 0),
+    [tableData]
+  )
+  const totalAccountWallet = useMemo(
+    () => tableData.filter((account) => account.checkType === EAccountSourceType.WALLET).length,
+    [tableData]
+  )
+  const totalAccountBanking = useMemo(
+    () => tableData.filter((account) => account.checkType === EAccountSourceType.BANKING).length,
+    [tableData]
+  )
+
+  const accountBanks = {
+    totalBalance,
+    totalAccountWallet,
+    totalAccountBanking,
+    totalBalanceWallet,
+    totalBalanceBanking
+  }
+  console.log('🚀 ~ AccountSourceForm ~ accountBanks:', accountBanks)
+
+  const previousBalance = totalBalance * 0.95
+  const isIncreased = totalBalance > previousBalance
 
   useEffect(() => {
     if (getAdvancedData) {
-      setChartData(
-        getAdvancedData?.data.map((item: IAccountSource) => ({
+      const data = getAdvancedData.data.map((item) => {
+        return {
           name: item.name,
           value: item.currentAmount
-        }))
-      )
+        }
+      })
+      setChartData(data)
     }
   }, [getAdvancedData])
+
   return (
-    <div className='w-full space-y-8 rounded-lg bg-gradient-to-br shadow-xl sm:grid'>
-      <div className='sm grid grid-cols-2 gap-6 sm:mt-0 lg:order-none lg:grid-cols-4'>
-        <Card className='transition-shadow duration-300 hover:shadow-xl'>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Total Accounts</CardTitle>
-            <Wallet className='h-4 w-4 text-blue-600' />
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{tableData.length}</div>
-            <Progress value={(tableData.length / 100) * 100} className='mt-2' />
-            <p className='mt-2 text-xs text-gray-500'>Total number of accounts being tracked</p>
-          </CardContent>
-        </Card>
-        <Card className='transition-shadow duration-300 hover:shadow-xl'>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Total Banking</CardTitle>
-            <Landmark className='h-4 w-4 text-red-400' />
-          </CardHeader>
-          <CardContent>
-            <div className='block w-[300px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold'>
-              {formatCurrency(totalBanking, 'VND')}
-            </div>
-            <Progress value={(totalBalance / 1000000) * 100} className='mt-2' />
-            <p className='mt-2 text-xs text-gray-500'>Total balance from all banking accounts</p>
-          </CardContent>
-        </Card>
-        <Card className='transition-shadow duration-300 hover:shadow-xl'>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Total Wallet</CardTitle>
-            <WalletMinimal className='h-4 w-4 text-amber-800' />
-          </CardHeader>
-          <CardContent>
-            <div className='block w-[300px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold'>
-              {formatCurrency(totalWallet, 'VND')}
-            </div>
-            <Progress value={(totalBalance / 1000000) * 100} className='mt-2' />
-            <p className='mt-2 text-xs text-gray-500'> Total balance from all wallet accounts</p>
-          </CardContent>
-        </Card>
-        <Card className='transition-shadow duration-300 hover:shadow-xl'>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Total Balance</CardTitle>
-            <BadgeCent className='h-4 w-4 text-green-600' />
-          </CardHeader>
-          <CardContent>
-            <div className='block w-[300px] items-center overflow-hidden text-ellipsis whitespace-nowrap text-2xl font-bold'>
-              {formatCurrency(totalBalance, 'VND ')}
-            </div>
-            <Progress value={(totalBalance / 1000000) * 100} className='mt-2' />
-            <p className='mt-2 text-xs text-gray-500'> Combined balance across all accounts and wallets</p>
-          </CardContent>
-        </Card>
-      </div>
-      <Carousel
-        opts={{
-          align: 'start',
-          loop: true
-        }}
-        className='grid sm:space-y-6 lg:order-none'
-      >
-        <CarouselContent>
-          {tableData.map((data, index) => (
-            <CarouselItem key={data.id} className='md:basis-1/2 lg:basis-1/3'>
-              <Card
-                className={`${gradientClasses[index % gradientClasses.length]} transition-all duration-300 hover:shadow-lg`}
-              >
-                <CardHeader className=''>
-                  <CardTitle className='flex items-center justify-between text-lg font-medium text-white'>
-                    <div>{data.name}</div>
-                    <div>{data.type}</div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='flex items-center justify-between'>
-                    {data.checkType === 'BANKING' ? (
-                      <Landmark className='h-12 w-12 text-white opacity-75' />
-                    ) : (
-                      <Wallet className='h-12 w-12 text-white opacity-75' />
-                    )}
-                    <div className='text-right'>
-                      <p className='text-2xl font-bold text-white'>{data.accountBank}</p>
-                      <p className='text-sm text-blue-100'>Current Amount: {data.currentAmount}</p>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => {
-                      const selectedData = tableData.find((item) => item.id === data.id)
-                      if (selectedData) {
-                        onRowClick(selectedData, getAdvancedData, setIsDialogOpen, setDataDetail)
-                      }
-                    }}
-                    variant='secondary'
-                    className='mt-4 w-full bg-white/10 text-white hover:bg-white/20'
-                  >
-                    View Details <ChevronRight className='ml-2 h-4 w-4' />
-                  </Button>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
-        <Card className='order-2 col-span-1 lg:col-span-2'>
-          <CardContent>
-            <DataTable
-              data={tableData}
-              config={dataTableConfig}
-              setConfig={setDataTableConfig}
-              columns={columns}
-              onRowClick={(rowData) => onRowClick(rowData, getAdvancedData, setIsDialogOpen, setDataDetail)}
-              buttons={dataTableButtons}
-              onOpenDeleteAll={(ids: string[]) => {
-                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
-                setIdDeletes(ids)
-              }}
-              onOpenDelete={(id: string) => {
-                setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
-                setIdDeletes([id])
-              }}
-              deleteProps={{
-                isDialogOpen: isDialogOpen.isDialogDeleteOpen,
-                onDelete: () => {
-                  if (idDeletes.length > 0)
-                    deleteAnAccountSource(
-                      { id: idDeletes[0] },
-                      {
-                        onSuccess: (res: any) => {
-                          if (res.statusCode === 200 || res.statusCode === 201) {
-                            refetchPage()
-                            resetCacheStatistic()
-                            setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                            setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                            setIdDeletes([])
-                            toast.success('Delete account source successfully')
+    <div className='grid h-full select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
+      {/* Left Section */}
+      <div className='flex w-full flex-1 flex-col md:col-span-2'>
+        <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
+          {/* Total Balance Card */}
+          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+            <div className='absolute inset-0 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 opacity-95'></div>
+            <div className='absolute inset-0 bg-[url("/patterns/minus.svg")] opacity-20'></div>
+            <CardHeader className='relative pb-1'>
+              <CardTitle className='flex items-center text-base font-medium text-white'>
+                <CloudDownload className='mr-2 h-5 w-5 animate-pulse' />
+                Total Balance
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='relative pt-1'>
+              <div className='flex items-center justify-between'>
+                <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
+                  <Layers2Icon className='h-7 w-7 text-white' />
+                </div>
+                <div className='text-right'>
+                  <p className='overflow-hidden truncate whitespace-nowrap text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105 md:w-[190px]'>
+                    {formatCurrency(accountBanks.totalBalance, 'VND ')}
+                  </p>
+                  <p className='mt-1 flex items-center text-sm text-red-100'>
+                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    <span>increaseFromLastMonth</span>
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+            <div className='absolute inset-0 bg-gradient-to-br from-violet-500 via-indigo-500 to-blue-600 opacity-95'></div>
+            <div className='absolute inset-0 bg-[url("/patterns/circuit-board.svg")] opacity-20'></div>
+            <CardHeader className='relative pb-1'>
+              <CardTitle className='flex items-center text-base font-medium text-white'>
+                <PcCase className='mr-2 h-5 w-5 animate-pulse' />
+                Total Banking
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='relative pt-1'>
+              <div className='flex items-center justify-between'>
+                <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
+                  <Landmark className='h-7 w-7 text-white' />
+                </div>
+                <div className='text-right'>
+                  <p className='overflow-hidden truncate whitespace-nowrap text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105 md:w-[190px]'>
+                    {formatCurrency(accountBanks.totalBalanceBanking, 'VND')}
+                  </p>
+                  <p className='mt-1 flex items-center text-sm text-blue-100'>
+                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    <span>increaseFromLastMonth</span>
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Income Card */}
+          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+            <div className='absolute inset-0 bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 opacity-95'></div>
+            <div className='absolute inset-0 bg-[url("/patterns/plus.svg")] opacity-20'></div>
+            <CardHeader className='relative pb-1'>
+              <CardTitle className='flex items-center text-base font-medium text-white'>
+                <ArrowDownToLineIcon className='mr-2 h-5 w-5 animate-pulse' />
+                Total Wallet
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='relative pt-1'>
+              <div className='flex items-center justify-between'>
+                <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
+                  <Wallet className='h-7 w-7 text-white' />
+                </div>
+                <div className='text-right'>
+                  <p className='overflow-hidden truncate whitespace-nowrap text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105 md:w-[190px]'>
+                    {formatCurrency(accountBanks.totalBalanceWallet, 'VND')}
+                  </p>
+                  <p className='mt-1 flex items-center text-sm text-emerald-100'>
+                    <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    <span>noChangeFromYesterday</span>
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* DataTable Section */}
+        <div className='mt-4 flex h-full flex-1'>
+          <Card className='h-full w-full'>
+            <CardContent className='h-full'>
+              <DataTable
+                data={tableData}
+                config={dataTableConfig}
+                setConfig={setDataTableConfig}
+                columns={columns}
+                onRowClick={(rowData) => onRowClick(rowData, getAdvancedData, setIsDialogOpen, setDataDetail)}
+                buttons={dataTableButtons}
+                onOpenDeleteAll={(ids: string[]) => {
+                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
+                  setIdDeletes(ids)
+                }}
+                onOpenDelete={(id: string) => {
+                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                  setIdDeletes([id])
+                }}
+                deleteProps={{
+                  isDialogOpen: isDialogOpen.isDialogDeleteOpen,
+                  onDelete: () => {
+                    if (idDeletes.length > 0)
+                      deleteAnAccountSource(
+                        { id: idDeletes[0] },
+                        {
+                          onSuccess: (res: any) => {
+                            if (res.statusCode === 200 || res.statusCode === 201) {
+                              refetchPage()
+                              resetCacheStatistic()
+                              setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+                              setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                              setIdDeletes([])
+                              toast.success('Delete account source successfully')
+                            }
                           }
                         }
-                      }
-                    )
-                },
-                onOpen: (rowData: any) => {
-                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
-                  setIdDeletes((prev) => [...prev, rowData.id])
-                },
-                onClose: () => {
-                  setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                  setIdDeletes([])
-                }
-              }}
-            />
-          </CardContent>
-        </Card>
-        <Card className='order-1 col-span-1'>
+                      )
+                  },
+                  onOpen: (rowData: any) => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
+                    setIdDeletes((prev) => [...prev, rowData.id])
+                  },
+                  onClose: () => {
+                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+                    setIdDeletes([])
+                  }
+                }}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      {/* Right Section */}
+      <div className='flex h-full w-full flex-1 flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
+        <Card className='flex-1'>
           <CardHeader className='mb-5 py-4'>
-            <CardTitle>Account Summary</CardTitle>
+            <CardTitle>Total Balance</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className='mx-auto'>
+            <div>
               <DonutChart data={chartData} className='mt-[-2rem] h-[20rem] w-full' types='donut' />
             </div>
           </CardContent>
         </Card>
+        <div className='h-[calc(45%)]'>
+          <Card className='flex h-full flex-col'>
+            <CardHeader className='flex-none py-4'>
+              <div className='flex-row items-center justify-between gap-3 space-y-4 md:flex md:space-y-2'>
+                <CardTitle>Account Source</CardTitle>
+                <div className='flex flex-wrap items-center gap-2'>
+                  <Select
+                    value={currentTypeAccount}
+                    onValueChange={(value: EAccountSourceType) => setCurrentTypeAccount(value)}
+                  >
+                    <SelectTrigger className='h-full w-full bg-background p-2 text-center hover:bg-accent/50 md:w-56'>
+                      <SelectValue placeholder='Select type account' />
+                    </SelectTrigger>
+                    <SelectContent className='w-full'>
+                      <SelectItem value='WALLET'>Wallet</SelectItem>
+                      <SelectItem value='BANKING'>Banking</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className='relative overflow-hidden text-white'>
+                <div className='mb-4 flex items-center justify-between'>
+                  <Badge
+                    variant='secondary'
+                    className='md:text-md rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white'
+                  >
+                    {isWallet ? 'WALLET' : 'BANKING'}
+                  </Badge>
+                  <motion.div whileHover={{ rotate: 20 }} transition={{ type: 'spring', stiffness: 300 }}>
+                    {isWallet ? <Wallet size={28} /> : <BanknoteIcon size={28} />}
+                  </motion.div>
+                </div>
+
+                <AnimatePresence>
+                  {isHovered && (
+                    <motion.div
+                      className='absolute bottom-2 right-2 text-sm'
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                    >
+                      Last updated: {new Date().toLocaleString()}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              <div>
+                <motion.div
+                  className='space-y-6'
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm md:text-lg'>Total Accounts</span>
+                    <motion.span
+                      className='text-sm font-bold md:text-lg'
+                      initial={{ scale: 1 }}
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 0.3, times: [0, 0.5, 1] }}
+                    >
+                      {isWallet ? accountBanks.totalAccountWallet : accountBanks.totalAccountBanking}
+                    </motion.span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm text-gray-600 dark:text-gray-400 md:text-lg'>Total Balance</span>
+                    <div className='flex items-center'>
+                      <motion.span
+                        className={`text-sm font-bold md:text-lg ${isIncreased ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+                        animate={{ scale: isHovered ? 1.1 : 1 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
+                        {isWallet
+                          ? formatCurrency(accountBanks.totalBalanceWallet, 'VND')
+                          : formatCurrency(accountBanks.totalBalanceBanking, 'VND')}
+                      </motion.span>
+                      <motion.div
+                        className='ml-2'
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        {isIncreased ? (
+                          <TrendingUp className='text-green-600 dark:text-green-400' size={20} />
+                        ) : (
+                          <TrendingDown className='text-red-600 dark:text-red-400' size={20} />
+                        )}
+                      </motion.div>
+                    </div>
+                  </div>
+                  <motion.div
+                    className='text-sm text-gray-500 dark:text-gray-400 md:text-lg'
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    {isIncreased ? 'Increased' : 'Decreased'} from {formatCurrency(previousBalance, 'VND')}
+                  </motion.div>
+                </motion.div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
       <AccountSourceDialog
         onSuccessCallback={refetchPage}

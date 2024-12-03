@@ -1,3 +1,4 @@
+import DonutChart, { IChartDataAccountSource } from '@/components/core/charts/DonutChart'
 import {
   EAccountSourceType,
   IAccountSource,
@@ -8,6 +9,10 @@ import {
 import { formatCurrency, translate } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { HandCoins, Landmark, PlusIcon, Wallet2 } from 'lucide-react'
+import Image from 'next/image'
+import NoDataPlaceHolder from '@/images/2.png'
+import { TFunction } from 'i18next'
+import { ITabConfig } from '@/components/dashboard/TrackerTransactionChart'
 
 export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDataFormat => {
   const { id, name, type, initAmount, currentAmount, accountBank } = data
@@ -94,15 +99,42 @@ export const initEmptyDetailAccountSourceType = {
   }
 }
 
-export const gradientClasses = [
-  'bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600',
-  'bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600',
-  'bg-gradient-to-br from-orange-400 via-pink-500 to-rose-600',
-  'bg-gradient-to-br from-purple-500 via-pink-600 to-red-500',
-  'bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-600',
-  'bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500',
-  'bg-gradient-to-br from-green-400 via-lime-500 to-yellow-500',
-  'bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400',
-  'bg-gradient-to-br from-gray-700 via-gray-900 to-black',
-  'bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-700'
-]
+export const initAccountSourceTab = (data: IChartDataAccountSource, t: TFunction<any>): ITabConfig => {
+  return {
+    default: 'Total Balance',
+    tabContents: [
+      {
+        content: (
+          <div className='flex w-full items-center justify-center'>
+            {data && data?.totalBalanceTypeStats?.length > 0 ? (
+              <DonutChart data={data.totalBalanceTypeStats} className='h-[17rem] w-full' types='donut' />
+            ) : (
+              <div className='mt-10 flex flex-col items-center justify-center'>
+                <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
+          </div>
+        ),
+        labels: 'Total Balance',
+        value: 'Total Balance'
+      },
+      {
+        content: (
+          <div className='flex w-full items-center justify-center'>
+            {data && data.detailBalanceTypeStats?.length > 0 ? (
+              <DonutChart data={data.detailBalanceTypeStats} className='h-[17rem] w-full' types='donut' />
+            ) : (
+              <div className='mt-10 flex flex-col items-center justify-center'>
+                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
+          </div>
+        ),
+        labels: 'Detail Balance',
+        value: 'Detail Balance'
+      }
+    ]
+  }
+}
