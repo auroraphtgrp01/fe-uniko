@@ -116,11 +116,11 @@ export default function TrackerTransactionForm() {
     useState<ITrackerTransactionTypeBody>(initTrackerTypeForm)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
-    classNameOfScroll: 'lg:h-[calc(100vh-15rem)] lg:max-h-[calc(100vh-15rem)] h-full '
+    classNameOfScroll: 'h-[calc(100vh-26rem)]'
   })
   const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
-    ...initTableConfig,
-    classNameOfScroll: 'h-[calc(100vh-35rem)] max-h-[calc(100vh-35rem)] '
+    ...initTableConfig
+    // classNameOfScroll: 'h-[calc(100vh-35rem)] max-h-[calc(100vh-35rem)] '
   })
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
