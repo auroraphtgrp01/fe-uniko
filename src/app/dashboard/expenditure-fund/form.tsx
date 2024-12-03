@@ -51,7 +51,7 @@ export default function ExpenditureFundForm() {
   const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
-    classNameOfScroll: 'h-[calc(100vh-19rem)]',
+    classNameOfScroll: 'h-[calc(100vh-28rem)]',
     isVisibleSortType: false
   })
   const [dataTable, setDataTable] = useState<IExpenditureFundDataFormat[]>([])
@@ -176,7 +176,7 @@ export default function ExpenditureFundForm() {
   return (
     <div className='grid h-full w-full grid-cols-1 gap-4'>
       <div className='grid h-full grid-cols-1 gap-4 md:col-span-2 md:w-full md:flex-1 md:flex-col lg:grid-cols-3'>
-        <div className='order-2 flex h-full w-full flex-1 flex-col space-y-4'>
+        <div className='order-2 flex h-full w-full flex-1 flex-col space-y-4 lg:order-none'>
           <Card className='flex-shrink-0'>
             <CardHeader className='py-4'>
               <div className='flex w-full items-center justify-between'>
@@ -201,7 +201,7 @@ export default function ExpenditureFundForm() {
             </CardContent>
           </Card>
         </div>
-        <div className='order-1 flex h-full w-full flex-1 flex-col lg:col-span-2'>
+        <div className='order-1 flex h-full w-full flex-1 flex-col lg:order-none lg:col-span-2'>
           <div className='grid w-full grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
             <Card className='group relative overflow-hidden bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
