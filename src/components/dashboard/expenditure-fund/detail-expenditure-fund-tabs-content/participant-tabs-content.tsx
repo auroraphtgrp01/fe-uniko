@@ -84,9 +84,13 @@ export default function ParticipantTabsContent({
             <Button
               onClick={() => inviteTabProps.formRef.current?.requestSubmit()}
               disabled={false}
-              className='flex h-full w-full items-center justify-center'
+              className='flex h-full w-full items-center justify-center text-center'
             >
-              {false ? <Loader2Icon className='h-4 w-4 animate-spin' /> : <UserPlus className='mr-2 h-4 w-4' />}
+              {false ? (
+                <Loader2Icon className='hidden h-4 w-4 animate-spin md:block' />
+              ) : (
+                <UserPlus className='mr-2 hidden h-4 w-4 md:block' />
+              )}
               Invite
             </Button>
           </div>

@@ -11,7 +11,7 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
   return (
     <div>
       <div className='rounded-lg bg-muted p-3'>
-        <div className='grid grid-cols-10 grid-rows-1 gap-2'>
+        <div className='grid grid-cols-1 grid-rows-1 gap-2 md:grid-cols-10'>
           <div className='col-span-6'>
             <div className='flex flex-col justify-between'>
               <div>
@@ -20,7 +20,7 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
               </div>
             </div>
           </div>
-          <div className='col-span-4 col-start-8 items-start'>
+          <div className='col-span-4 col-start-7 items-start lg:col-start-8'>
             <div className='flex h-full flex-col justify-center space-y-2 text-sm'>
               <div className='flex h-4'>
                 <CalendarDays className='mr-2 h-4 w-4 text-muted-foreground' />
