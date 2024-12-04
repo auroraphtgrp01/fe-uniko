@@ -34,7 +34,7 @@ export function DetailExpenditureFund({
 
   return (
     <>
-      <div className='flex items-center justify-between text-2xl font-bold'>
+      <div className='flex items-center justify-between text-sm font-bold md:text-2xl'>
         <span>{detailData.name}</span>
         <Badge
           style={{ userSelect: 'none', pointerEvents: 'none', cursor: 'none' }}
@@ -44,7 +44,7 @@ export function DetailExpenditureFund({
         </Badge>
       </div>
       <Tabs defaultValue='overview' className='h-[23rem] w-full'>
-        <TabsList className='grid w-full grid-cols-5 pb-10'>
+        <TabsList className='md:text-md grid w-full grid-cols-5 pb-10 text-xs sm:text-sm'>
           <TabsTrigger value='overview'>Overview</TabsTrigger>
           <TabsTrigger value='participants'>Participants</TabsTrigger>
           <TabsTrigger value='categories'>Categories</TabsTrigger>

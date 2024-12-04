@@ -42,7 +42,7 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
   }
 
   const detailConfigDialog: IDialogConfig = {
-    className: 'sm:max-w-[325px] md:max-w-[650px]',
+    className: 'max-w-[500px] md:max-w-[650px]',
     content: DetailExpenditureFund({
       detailData: detailUpdateDialog.data,
       inviteTabProps: {
