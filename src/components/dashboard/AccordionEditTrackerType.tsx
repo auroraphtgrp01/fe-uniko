@@ -14,6 +14,7 @@ import {
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface IAccordionEditTrackerTypeProps {
   dataArr: IEditTrackerTypeDialogData[]
@@ -39,6 +40,7 @@ export default function AccordionEditTrackerType({
     }
     setIsUpdate(!isUpdate)
   }
+  const { t } = useTranslation(['common'])
 
   return (
     <div>
@@ -58,7 +60,7 @@ export default function AccordionEditTrackerType({
                   <AccordionContent>
                     <div className='flex w-full justify-between'>
                       <Button variant={'destructive'} onClick={() => handleDeleteTrackerType(data.id)}>
-                        Delete
+                        {t('common:button.delete')}
                         <Delete className='h-4' />
                       </Button>
                       <div className='flex gap-2'>
@@ -81,13 +83,13 @@ export default function AccordionEditTrackerType({
                             <div>
                               <div className='flex w-full justify-between'>
                                 <Save className='h-4' />
-                                <span>Save</span>
+                                <span>{t('common:button.save')}</span>
                               </div>
                             </div>
                           ) : (
                             <div className='flex w-full justify-between'>
                               <Edit className='h-4' />
-                              <span>Edit</span>
+                              <span>{t('common:button.edit')}</span>
                             </div>
                           )}
                         </Button>

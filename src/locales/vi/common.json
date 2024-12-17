@@ -9,7 +9,10 @@
     "classify": "Phân loại",
     "refetch_in_bank": "Lấy lại dữ liệu trong ngân hàng",
     "reload_data": "Tải lại dữ liệu",
-    "view": "Xem"
+    "view": "Xem",
+    "Invite": "Mời",
+    "edit": "Chỉnh sửa",
+    "close": "Đóng"
   },
   "card_header": {
     "create_project": "Tạo dự án",
@@ -31,6 +34,7 @@
   "deleteDialog": {
     "deleteConfirmation": "Xác nhận xóa",
     "description": "Bạn có chắc chắn muốn xóa dữ liệu này?",
-    "note": "Lưu ý: Dữ liệu sau khi xóa sẽ không thể khôi phục được!"
+    "note": "Lưu ý: ",
+    "info": "Dữ liệu sau khi xóa sẽ không thể khôi phục được!"
   }
 }

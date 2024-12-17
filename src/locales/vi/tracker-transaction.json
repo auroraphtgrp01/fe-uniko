@@ -15,7 +15,6 @@
       "value": "incomingChart"
     }
   },
-
   "trackerTransactionType": {
     "classifyDialog": {
       "title": "Phân loại giao dịch",
@@ -28,6 +27,10 @@
     "unclassifiedDialog": {
       "title": "Giao dịch chưa phân loại",
       "description": "Tổng quan các giao dịch chưa được phân loại."
+    },
+    "detailsConfigDialog": {
+      "title": "Thông tin chi tiết về giao dịch đã phân loại",
+      "description": "Chi tiết giao dịch đã phân loại"
     }
   },
   "form": {
@@ -61,5 +64,40 @@
         "placeholder": "Nhập mô tả"
       }
     }
+  },
+  "editCategory": {
+    "title": "Chỉnh sửa danh mục",
+    "description": "Thực hiện thay đổi cho danh mục của bạn",
+    "search": "Tìm kiếm danh mục",
+    "form": {
+      "name": "Tên",
+      "type": "Loại",
+      "description": "Mô tả"
+    }
+  },
+  "defineContentCreateTracker": {
+    "labelName": "Tên",
+    "placeholderName": "Tên *",
+    "type": "Loại",
+    "labelDes": "Mô tả",
+    "placeholderDes": "Mô tả *"
+  },
+  "defineEditTrackerTypeBody": {
+    "name": {
+      "label": "Tên",
+      "placeholder": "Nhập tên loại giao dịch theo dõi"
+    },
+    "type": {
+      "label": "Loại",
+      "placeholder": "Chọn loại cho loại giao dịch theo dõi"
+    },
+    "description": {
+      "label": "Mô Tả",
+      "placeholder": "Nhập mô tả loại giao dịch theo dõi"
+    }
+  },
+  "unclassifiedForm": {
+    "title": "Giao dịch chưa phân loại",
+    "button": "Lấy lại dữ liệu từ ngân hàng"
   }
 }

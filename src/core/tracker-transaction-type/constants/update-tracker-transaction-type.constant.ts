@@ -1,14 +1,16 @@
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
 import { z } from 'zod'
 import { ETypeOfTrackerTransactionType } from '../models/tracker-transaction-type.enum'
+import { translate } from '@/libraries/utils'
 
 export const defineEditTrackerTypeBody = (isUpdate: boolean, type: string): IBodyFormField[] => {
+  const t = translate(['trackerTransaction'])
   return [
     {
       name: 'name',
       type: EFieldType.Input,
-      label: 'Name',
-      placeHolder: 'Enter tracker transaction type name',
+      label: t('defineEditTrackerTypeBody.name.label'),
+      placeHolder: t('defineEditTrackerTypeBody.name.placeholder'),
       props: {
         autoComplete: 'name',
         disabled: !isUpdate
@@ -17,8 +19,8 @@ export const defineEditTrackerTypeBody = (isUpdate: boolean, type: string): IBod
     {
       name: 'type',
       type: EFieldType.Select,
-      label: 'Type',
-      placeHolder: 'Select type for tracker transaction type',
+      label: t('defineEditTrackerTypeBody.type.label'),
+      placeHolder: t('defineEditTrackerTypeBody.type.placeholder'),
       props: {
         autoComplete: 'type',
         disabled: !isUpdate,
@@ -32,8 +34,8 @@ export const defineEditTrackerTypeBody = (isUpdate: boolean, type: string): IBod
     {
       name: 'description',
       type: EFieldType.Textarea,
-      label: 'Description',
-      placeHolder: 'Enter tracker transaction type description',
+      label: t('defineEditTrackerTypeBody.description.label'),
+      placeHolder: t('defineEditTrackerTypeBody.description.placeholder'),
       props: {
         disabled: !isUpdate
       }

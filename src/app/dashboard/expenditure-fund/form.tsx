@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, translate } from '@/libraries/utils'
 import FlatList, { IFlatListData } from '@/components/core/FlatList'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -59,6 +59,7 @@ export default function ExpenditureFundForm() {
   const [dateRange, setDateRange] = useState<string>('1-week')
 
   // memos
+
   const titles = ['Name', 'Status', 'Current Amount', 'Owner']
 
   const columns = useMemo(() => {

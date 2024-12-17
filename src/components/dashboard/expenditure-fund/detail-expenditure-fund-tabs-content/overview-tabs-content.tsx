@@ -4,10 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { IOverviewTabsContentProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
-import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN, translate } from '@/libraries/utils'
 import { CalendarDays, Users2Icon } from 'lucide-react'
 
 export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOverviewTabsContentProps) {
+  const t = translate(['expenditureFundDetails', 'common'])
+
   return (
     <div>
       <div className='rounded-lg bg-muted p-3'>
@@ -15,7 +17,7 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
           <div className='col-span-6'>
             <div className='flex flex-col justify-between'>
               <div>
-                <span className='mb-1 text-sm font-medium'>Current Balance</span>
+                <span className='mb-1 text-sm font-medium'>{t('overview.currentBalance')}</span>
                 <div className='text-2xl font-bold'>{formatCurrency(detailData.currentAmount, 'đ')}</div>
               </div>
             </div>
@@ -28,20 +30,20 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
               </div>
               <div className='flex h-4'>
                 <Users2Icon className='mr-2 h-4 w-4 text-muted-foreground' />
-                {detailData.participants.length} Participants
+                {detailData.participants.length} {t('overview.participants')}
               </div>
             </div>
           </div>
         </div>
       </div>
       <div>
-        <h3 className='mb-2 mt-2 text-sm font-medium'>Description</h3>
+        <h3 className='mb-2 mt-2 text-sm font-medium'>{t('overview.description')}</h3>
         <p className='text-sm text-muted-foreground'>
           {!detailData.description || detailData.description === '' ? 'N/A' : detailData.description}
         </p>
       </div>
       <div>
-        <h3 className='mb-2 mt-2 text-sm font-medium'>Categories</h3>
+        <h3 className='mb-2 mt-2 text-sm font-medium'>{t('overview.categories')}</h3>
         <div className='flex flex-wrap gap-2'>
           {detailData.categories.length > 0 ? (
             detailData.categories.map((category, index) => (
@@ -59,7 +61,7 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
         </div>
       </div>
       <div>
-        <h3 className='mb-2 mt-2 text-sm font-medium'>Participants</h3>
+        <h3 className='mb-2 mt-2 text-sm font-medium'>{t('overview.participants')}</h3>
         <div className='flex gap-2'>
           {detailData.participants.map((participant, index) => (
             <Badge
@@ -79,7 +81,7 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
             setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: true }))
           }}
         >
-          Update
+          {t('common:button.update')}
         </Button>
       </div>
     </div>

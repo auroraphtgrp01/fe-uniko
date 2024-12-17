@@ -137,8 +137,8 @@ export default function TrackerTransactionDialog({
         commonProps={{ accountSourceData: sharedDialogElements.accountSourceData }}
       />
     ),
-    description: 'Thông tin chi tiết về giao dịch đã phân loại',
-    title: 'Chi tiết giao dịch đã phân loại',
+    description: t('trackerTransaction:trackerTransactionType.detailsConfigDialog.title'),
+    title: t('trackerTransaction:trackerTransactionType.detailsConfigDialog.description'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogDetailOpen,
     onClose: () => {
       detailUpdateTrackerTransactionDialog.setDataDetail(initEmptyDetailTrackerTransaction)

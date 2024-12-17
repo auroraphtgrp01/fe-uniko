@@ -9,12 +9,6 @@
     "transactions": "Transactions",
     "statistics": "Statistics"
   },
-  "overview": {
-    "currentBalance": "Current Balance",
-    "description": "Description",
-    "categories": "Categories",
-    "participants": "Participants"
-  },
   "participants": {
     "placeholder": "Enter email addresses or phone numbers"
   },
@@ -35,5 +29,21 @@
         "description": "Enter Discription"
       }
     }
+  },
+  "overview": {
+    "currentBalance": "Current Balance",
+    "description": "Description",
+    "categories": "Categories",
+    "participants": "Participants"
+  },
+  "transactionTabsContent": {
+    "placeHolder": "Enter email addresses or phone numbers"
+  },
+  "categoryTabsContent": {
+    "input": "Search Tracker Transaction Type"
+  },
+  "createTrackerTypeDialog": {
+    "title": "Create Tracker Transaction Type",
+    "description": "Create a new tracker transaction type"
   }
 }

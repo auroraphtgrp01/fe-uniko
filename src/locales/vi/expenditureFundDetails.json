@@ -9,12 +9,6 @@
     "transactions": "Giao dịch",
     "statistics": "Thống kê"
   },
-  "overview": {
-    "currentBalance": "Số dư hiện tại",
-    "description": "Mô tả",
-    "categories": "Danh mục",
-    "participants": "Thành viên"
-  },
   "participants": {
     "placeholder": "Nhập địa chỉ email hoặc số điện thoại"
   },
@@ -35,5 +29,21 @@
         "description": "Nhập mô tả"
       }
     }
+  },
+  "overview": {
+    "currentBalance": "Số dư hiện tại",
+    "description": "Mô tả",
+    "categories": "Danh mục",
+    "participants": "Thành viên"
+  },
+  "transactionTabsContent": {
+    "placeHolder": "Nhập địa chỉ email hoặc số điện thoại"
+  },
+  "categoryTabsContent": {
+    "input": "Tìm kiếm loại giao dịch theo dõi"
+  },
+  "createTrackerTypeDialog": {
+    "title": "Tạo loại giao dịch theo dõi",
+    "description": "Tạo một loại giao dịch theo dõi mới"
   }
 }

@@ -7,6 +7,10 @@
     "updateDialog": {
       "title": "Update Account Source",
       "description": "Please fill in the information below to update an account source."
+    },
+    "detailsDialog": {
+      "title": "Account Source Details",
+      "description": "Account Source Transaction"
     }
   },
   "form": {

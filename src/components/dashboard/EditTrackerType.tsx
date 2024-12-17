@@ -21,6 +21,7 @@ import {
   editTrackerTypeSchema
 } from '@/core/tracker-transaction-type/constants/update-tracker-transaction-type.constant'
 import AccordionEditTrackerType from './AccordionEditTrackerType'
+import { useTranslation } from 'react-i18next'
 
 export default function EditTrackerTypeDialog({
   openEditDialog,
@@ -59,19 +60,20 @@ export default function EditTrackerTypeDialog({
       setType(typeDefault)
     }
   }, [openEditDialog])
+  const { t } = useTranslation(['trackerTransaction', 'common'])
   return (
     <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
       <DialogContent className='rsm:max-w-[525px]'>
         <DialogHeader>
-          <DialogTitle>Edit Category</DialogTitle>
-          <DialogDescription>Make changes to your category</DialogDescription>
+          <DialogTitle>{t('editCategory.title')}</DialogTitle>
+          <DialogDescription>{t('editCategory.description')}</DialogDescription>
           <div className='mt-3 w-full'>
             <div className='flex flex-col gap-2 sm:flex-row'>
               <Input
                 value={valueSearch}
                 onChange={(e) => setValueSearch(e.target.value)}
                 className='w-full'
-                placeholder='Search Category'
+                placeholder={t('editCategory.search')}
               />
             </div>
             <div className='mt-2 flex w-full flex-col gap-2 sm:flex-row'>
@@ -91,10 +93,10 @@ export default function EditTrackerTypeDialog({
               {isCreating === true ? (
                 <>
                   <Button variant='secondary' onClick={() => formRefCreate.current?.requestSubmit()}>
-                    Save <SaveIcon className='ml-2 h-4 w-4' />
+                    {t('common:button.save')} <SaveIcon className='ml-2 h-4 w-4' />
                   </Button>
                   <Button className='w-full whitespace-nowrap sm:w-auto' onClick={() => setIsCreating(false)}>
-                    Close <X className='ml-2 h-4 w-4' />
+                    {t('common:button.close')} <X className='ml-2 h-4 w-4' />
                   </Button>
                 </>
               ) : (
@@ -103,7 +105,7 @@ export default function EditTrackerTypeDialog({
                   variant='secondary'
                   onClick={() => setIsCreating(true)}
                 >
-                  Create <PlusIcon className='ml-2 h-4 w-4' />
+                  {t('common:button.create')} <PlusIcon className='ml-2 h-4 w-4' />
                 </Button>
               )}
             </div>

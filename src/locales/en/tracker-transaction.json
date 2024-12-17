@@ -27,6 +27,10 @@
     "unclassifiedDialog": {
       "title": "Unclassified Transactions",
       "description": "Overview of unclassified transactions."
+    },
+    "detailsConfigDialog": {
+      "title": "Classified Transaction Details",
+      "description": "Details of the classified transaction"
     }
   },
   "form": {
@@ -60,5 +64,40 @@
         "placeholder": "Enter description"
       }
     }
+  },
+  "editCategory": {
+    "title": "Edit Category",
+    "description": "Make changes to your category",
+    "search": "Search Category",
+    "form": {
+      "name": "Name",
+      "type": "Type",
+      "description": "Description"
+    }
+  },
+  "defineContentCreateTracker": {
+    "labelName": "Name",
+    "placeholderName": "Name *",
+    "type": "Type",
+    "labelDes": "Description",
+    "placeholderDes": "Description *"
+  },
+  "defineEditTrackerTypeBody": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Enter tracker transaction type name"
+    },
+    "type": {
+      "label": "Type",
+      "placeholder": "Select type for tracker transaction type"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Enter tracker transaction type description"
+    }
+  },
+  "unclassifiedForm": {
+    "title": "Unclassified",
+    "button": "Refetch in bank"
   }
 }

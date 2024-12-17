@@ -522,7 +522,7 @@ export default function TrackerTransactionForm() {
           <Card className='flex h-full flex-col'>
             <CardHeader className='flex-none py-4'>
               <div className='flex flex-row items-center justify-between gap-3'>
-                <CardTitle>Unclassified</CardTitle>
+                <CardTitle>{t('unclassifiedForm.title')}</CardTitle>
                 <div className='flex flex-wrap items-center gap-2'>
                   <Button
                     variant={'secondary'}
@@ -542,7 +542,7 @@ export default function TrackerTransactionForm() {
                     isLoading={isPendingRefetch}
                     onClick={refetchTransactionBySocket}
                   >
-                    <span className='mr-1 truncate max-[1580px]:hidden'>Refetch in bank</span>
+                    <span className='mr-1 truncate max-[1580px]:hidden'>{t('unclassifiedForm.button')}</span>
                     {!isPendingRefetch && <HardDriveDownload className='h-4 w-4 shrink-0' />}
                   </Button>
                 </div>

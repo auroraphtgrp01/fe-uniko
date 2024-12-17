@@ -51,5 +51,33 @@
         "placeholder": "Nhập mô tả"
       }
     }
+  },
+  "IUpdateTransactionFormBody": {
+    "amount": {
+      "label": "Số tiền",
+      "placeholder": "Nhập số tiền"
+    },
+    "accountSource": {
+      "label": "Nguồn tài khoản",
+      "placeholder": "Chọn nguồn tài khoản"
+    },
+    "direction": {
+      "label": "Hướng giao dịch",
+      "placeholder": "Chọn hướng giao dịch"
+    }
+  },
+  "transactionDetails": {
+    "senderAccount": "Ví gửi",
+    "receiverAccount": "Tài khoản nhận",
+    "transactionContent": "Nội dung chuyển tiền",
+    "transactionCode": "Mã giao dịch: ",
+    "classifier": "Người phân loại",
+    "classificationTime": "Thời gian phân loại",
+    "description": "Mô tả",
+    "category": "Danh mục",
+    "note": "Ghi chú",
+    "noNote": "Không có ghi chú",
+    "toast": "Không thể chỉnh sửa giao dịch lấy từ tài khoản ngân hàng!",
+    "classify": "Phân loại"
   }
 }

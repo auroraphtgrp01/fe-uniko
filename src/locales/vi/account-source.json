@@ -7,6 +7,10 @@
     "updateDialog": {
       "title": "Cập nhật nguồn tài khoản",
       "description": "Vui lòng điền thông tin bên dưới để cập nhật nguồn tài khoản."
+    },
+    "detailsDialog": {
+      "title": "Thông tin chi tiết về tài khoản nguồn",
+      "description": "Chi tiết giao dịch tài khoản nguồn"
     }
   },
   "form": {
