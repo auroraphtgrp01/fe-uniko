@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { IUpdateTransactionBody } from '@/core/transaction/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { Button } from '@/components/ui/button'
-import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN, translate } from '@/libraries/utils'
 import {
   IDetailUpdateTransactionDialogProps,
   IUpdateTrackerTransactionBody
@@ -82,6 +82,7 @@ export default function DetailUpdateTransaction({
       )
     )
   }, [transactionState.isUpdateTrackerTransaction])
+  const t = translate(['transaction', 'common'])
 
   const TransactionDetails = () => (
     <div className='select-none space-y-6'>
@@ -122,7 +123,7 @@ export default function DetailUpdateTransaction({
 
       <div className='grid grid-cols-2 gap-4'>
         <div className='space-y-1'>
-          <p className='text-sm text-muted-foreground'>Ví gửi</p>
+          <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.senderAccount')}</p>
           {updateTransactionProps.transaction.ofAccount ? (
             <div className='mt-1 flex items-start gap-3'>
               <Avatar>
@@ -153,7 +154,7 @@ export default function DetailUpdateTransaction({
 
         {updateTransactionProps.transaction.toAccountNo && (
           <div className='space-y-1'>
-            <p className='text-sm text-muted-foreground'>Tài khoản nhận</p>
+            <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.receiverAccount')}</p>
             <div className='flex items-start gap-3'>
               <Avatar>
                 <AvatarFallback className='bg-muted'>
@@ -172,7 +173,7 @@ export default function DetailUpdateTransaction({
       </div>
 
       <div className='space-y-2'>
-        <div className='text-sm text-muted-foreground'>Nội dung chuyển tiền</div>
+        <div className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.transactionContent')}</div>
         {updateTransactionProps.transaction.description ? (
           <div className='flex items-start gap-3'>
             <Avatar>
@@ -201,7 +202,9 @@ export default function DetailUpdateTransaction({
       {updateTransactionProps.transaction.transactionId && (
         <div className='flex items-center gap-2 text-sm text-muted-foreground'>
           <CreditCard className='h-4 w-4' />
-          <span>Mã giao dịch: {updateTransactionProps.transaction.transactionId}</span>
+          <span>
+            {t('transaction:transactionDetails.transactionCode')} {updateTransactionProps.transaction.transactionId}
+          </span>
         </div>
       )}
 
@@ -211,7 +214,7 @@ export default function DetailUpdateTransaction({
           <div className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Người phân loại</p>
+                <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.classifier')}</p>
                 <div className='flex items-center gap-2'>
                   <User className='h-4 w-4 text-muted-foreground' />
                   <p className='font-medium'>
@@ -221,7 +224,9 @@ export default function DetailUpdateTransaction({
               </div>
 
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Thời gian phân loại</p>
+                <p className='text-sm text-muted-foreground'>
+                  {t('transaction:transactionDetails.classificationTime')}
+                </p>
                 <div className='flex items-center gap-2'>
                   <Clock className='h-4 w-4 text-muted-foreground' />
                   <p className='font-medium'>
@@ -232,7 +237,7 @@ export default function DetailUpdateTransaction({
             </div>
             <div className='grid grid-cols-2 gap-4'>
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Mô tả</p>
+                <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.description')}</p>
                 <div className='flex items-center gap-2'>
                   <p className='font-semibold'>
                     {updateTrackerTransactionProps.trackerTransaction.reasonName || 'N/A'}
@@ -241,7 +246,7 @@ export default function DetailUpdateTransaction({
               </div>
 
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Danh mục</p>
+                <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.category')}</p>
                 <div className='flex items-center gap-2'>
                   {/* <ChartBarStackedIcon className='h-4 w-4 text-muted-foreground' /> */}
                   <p className='font-medium'>{updateTrackerTransactionProps.trackerTransaction.TrackerType.name}</p>
@@ -250,9 +255,10 @@ export default function DetailUpdateTransaction({
             </div>
 
             <div className='space-y-1'>
-              <p className='text-sm text-muted-foreground'>Ghi chú</p>
+              <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.note')}</p>
               <p className='text-muted-foreground'>
-                {updateTrackerTransactionProps.trackerTransaction.description || 'Không có ghi chú'}
+                {updateTrackerTransactionProps.trackerTransaction.description ||
+                  t('transaction:transactionDetails.noNote')}
               </p>
             </div>
           </div>
@@ -267,14 +273,14 @@ export default function DetailUpdateTransaction({
               updateTransactionProps.transaction.TrackerTransaction &&
               !updateTrackerTransactionProps
             )
-              toast.error('Không thể chỉnh sửa giao dịch lấy từ tài khoản ngân hàng!')
+              toast.error(t('transactionDetails.toast'))
             else updateTransactionProps.setIsEditing(true)
           }}
         >
           <Pencil className='mr-2 h-4 w-4' />
           {!updateTransactionProps.transaction.TrackerTransaction && !updateTrackerTransactionProps
-            ? 'Phân loại'
-            : 'Cập nhật'}
+            ? t('transactionDetails.classify')
+            : t('common:button.update')}
         </Button>
       </div>
     </div>
@@ -361,7 +367,7 @@ export default function DetailUpdateTransaction({
       )}
       <div className='flex justify-between'>
         <Button type='button' variant='outline' onClick={() => updateTransactionProps.setIsEditing(false)}>
-          Hủy
+          {t('common:button.cancel')}
         </Button>
         <Button
           type='button'
@@ -373,7 +379,7 @@ export default function DetailUpdateTransaction({
               : updateTransactionProps.statusUpdateTransaction === 'pending'
           }
         >
-          Lưu thay đổi
+          {t('common:button.save_changes')}
         </Button>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
 import { z } from 'zod'
 
@@ -7,25 +8,25 @@ export const updateAccountBankSchema = z.object({
   password: z.string().min(5),
   accounts: z.array(z.string().min(5)).min(1)
 })
-
+const t = translate(['accountSource'])
 export const updateAccountBankFormBody = [
   {
     name: 'type',
     type: EFieldType.Select,
-    label: 'Bank Type',
+    label: t('form.createAccountSourceFormBody.bankType.label'),
     dataSelector: [
       {
         value: 'MB_BANK',
         label: 'MB BANK'
       }
     ],
-    placeHolder: 'Enter your type'
+    placeHolder: t('form.createAccountSourceFormBody.bankType.placeholder')
   },
   {
     name: 'login_id',
     type: EFieldType.Input,
-    label: 'Login Id',
-    placeHolder: 'Enter your login id',
+    label: t('form.createAccountSourceFormBody.loginId.label'),
+    placeHolder: t('form.createAccountSourceFormBody.bankType.placeholder'),
     props: {
       autoComplete: 'login_id'
     }
@@ -33,8 +34,8 @@ export const updateAccountBankFormBody = [
   {
     name: 'password',
     type: EFieldType.Input,
-    label: 'Password',
-    placeHolder: 'Enter your password',
+    label: t('form.createAccountSourceFormBody.password.label'),
+    placeHolder: t('form.createAccountSourceFormBody.password.placeholder'),
     props: {
       autoComplete: 'password'
     }
@@ -42,10 +43,10 @@ export const updateAccountBankFormBody = [
   {
     name: 'accounts',
     type: EFieldType.MultiInput,
-    label: 'Accounts',
-    placeHolder: 'Enter your accounts',
+    label: t('form.createAccountSourceFormBody.accounts.label'),
+    placeHolder: t('form.createAccountSourceFormBody.accounts.placeholder'),
     props: {
-      placeholder: 'Enter your accounts'
+      placeholder: t('form.createAccountSourceFormBody.accounts.placeholder')
     }
   }
 ]

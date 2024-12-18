@@ -19,13 +19,13 @@ export const defineCreateTrackerTransactionFormBody = ({
   handleUpdateTrackerType,
   expenditureFund
 }: any) => {
-  const t = translate(['accountSource'])
+  const t = translate(['trackerTransaction'])
   return [
     {
       name: 'reasonName',
       type: EFieldType.Input,
-      label: t('form.defineCreateAccountSourceFormBody.reasonName.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.reasonName.placeholder'),
+      label: t('form.defineCreateTrackerTransactionFormBody.reasonName.label'),
+      placeHolder: t('form.defineCreateTrackerTransactionFormBody.reasonName.placeholder'),
       props: {
         autoComplete: 'reasonName'
       }
@@ -33,8 +33,8 @@ export const defineCreateTrackerTransactionFormBody = ({
     {
       name: 'amount',
       type: EFieldType.MoneyInput,
-      label: t('form.defineCreateAccountSourceFormBody.amount.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.amount.placeholder'),
+      label: t('form.defineCreateTrackerTransactionFormBody.amount.label'),
+      placeHolder: t('form.defineCreateTrackerTransactionFormBody.amount.placeholder'),
       props: {
         autoComplete: 'amount'
       }
@@ -42,8 +42,8 @@ export const defineCreateTrackerTransactionFormBody = ({
     {
       name: 'accountSourceId',
       type: EFieldType.Select,
-      label: t('form.defineCreateAccountSourceFormBody.accountSourceId.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.accountSourceId.placeholder'),
+      label: t('form.defineCreateTrackerTransactionFormBody.accountSourceId.label'),
+      placeHolder: t('form.defineCreateTrackerTransactionFormBody.accountSourceId.placeholder'),
       props: {
         onchange: (value: any) => {
           setCurrentDirection(value as ETypeOfTrackerTransactionType)
@@ -54,8 +54,8 @@ export const defineCreateTrackerTransactionFormBody = ({
     {
       name: 'direction',
       type: EFieldType.Select,
-      label: t('form.defineCreateAccountSourceFormBody.direction.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.direction.placeholder'),
+      label: t('form.defineCreateTrackerTransactionFormBody.direction.label'),
+      placeHolder: t('form.defineCreateTrackerTransactionFormBody.direction.placeholder'),
       props: {
         autoComplete: 'direction',
         onchange: (value: any) => {
@@ -76,8 +76,8 @@ export const defineCreateTrackerTransactionFormBody = ({
     {
       name: 'trackerTypeId',
       type: EFieldType.Combobox,
-      label: t('form.defineCreateAccountSourceFormBody.trackerTypeId.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.trackerTypeId.placeholder'),
+      label: t('form.defineCreateTrackerTransactionFormBody.trackerTypeId.label'),
+      placeHolder: t('form.defineCreateTrackerTransactionFormBody.trackerTypeId.placeholder'),
       props: {
         autoComplete: 'trackerTypeId',
         setOpenEditDialog: setOpenEditTrackerTxTypeDialog,
@@ -103,8 +103,8 @@ export const defineCreateTrackerTransactionFormBody = ({
     {
       name: 'description',
       type: EFieldType.Textarea,
-      label: t('form.defineCreateAccountSourceFormBody.description.label'),
-      placeHolder: t('form.defineCreateAccountSourceFormBody.description.placeholder'),
+      label: t('form.defineCreateTrackerTransactionFormBody.description.label'),
+      placeHolder: t('form.defineCreateTrackerTransactionFormBody.description.placeholder'),
       props: {
         autoComplete: 'description'
       }

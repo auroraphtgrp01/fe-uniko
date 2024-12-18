@@ -8,7 +8,7 @@ import {
   IInitButtonInHeaderProps,
   IUpdateExpenditureFundBody
 } from '@/core/expenditure-fund/models/expenditure-fund.interface'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, translate } from '@/libraries/utils'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { PlusIcon } from 'lucide-react'
 import React from 'react'
@@ -24,9 +24,10 @@ export const initEmptyExpenditureFundDialogOpen = {
 }
 
 export const initButtonInHeaders = ({ setIsDialogOpen }: IInitButtonInHeaderProps): IButtonInDataTableHeader[] => {
+  const t = translate(['expenditureFund', 'common'])
   return [
     {
-      title: 'Create ',
+      title: t('button.create'),
       icon: <PlusIcon className='h-4 w-4' />,
       onClick: () => {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: true }))

@@ -1,51 +1,63 @@
 {
-    "title": "Hồ Sơ",
-    "tabs": {
-        "account": "Thông Tin Chung",
-        "password": "Mật Khẩu"
+  "title": "Hồ sơ",
+  "tabs": {
+    "account": "Thông tin chung",
+    "password": "Mật khẩu"
+  },
+  "userProfileTitle": "Hồ sơ người dùng",
+  "form": {
+    "common": {
+      "fullName": {
+        "label": "Họ và tên",
+        "placeholder": "Nhập họ và tên của bạn"
+      },
+      "dateOfBirth": {
+        "label": "Ngày sinh",
+        "placeholder": "Nhập ngày sinh của bạn"
+      },
+      "gender": {
+        "label": "Giới tính",
+        "placeholder": "Chọn giới tính của bạn",
+        "male": "Nam",
+        "female": "Nữ"
+      },
+      "workplace": {
+        "label": "Nơi làm việc",
+        "placeholder": "Nhập nơi làm việc của bạn"
+      },
+      "phone_number": {
+        "label": "Số điện thoại",
+        "placeholder": "Nhập số điện thoại của bạn"
+      },
+      "address": {
+        "label": "Địa chỉ",
+        "placeholder": "Nhập địa chỉ của bạn"
+      }
     },
-    "userProfileTitle": "Hồ Sơ Người Dùng",
-    "form": {
-        "common": {
-            "fullName": {
-                "label": "Họ và Tên",
-                "placeholder": "Nhập họ và tên của bạn"
-            },
-            "dateOfBirth": {
-                "label": "Ngày Sinh",
-                "placeholder": "Nhập ngày sinh của bạn"
-            },
-            "gender": {
-                "label": "Giới Tính",
-                "placeholder": "Chọn giới tính của bạn",
-                "male": "Nam",
-                "female": "Nữ"
-            },
-            "workplace": {
-                "label": "Nơi Làm Việc",
-                "placeholder": "Nhập nơi làm việc của bạn"
-            },
-            "phone_number": {
-                "label": "Số Điện Thoại",
-                "placeholder": "Nhập số điện thoại của bạn"
-            },
-            "address": {
-                "label": "Địa Chỉ",
-                "placeholder": "Nhập địa chỉ của bạn"
-            }
-        },
-        "credential": {
-            "passwordDescription": "Thay đổi mật khẩu của bạn ở đây. Sau khi lưu, bạn sẽ được đăng xuất.",
-            "savePasswordButton": "Lưu Mật Khẩu",
-            "saveChangesButton": "Lưu Thay Đổi",
-            "currentPassword": {
-                "label": "Mật khẩu hiện tại",
-                "placeholder": "Nhập mật khẩu hiện tại của bạn"
-            },
-            "newPassword": {
-                "label": "Mật khẩu mới",
-                "placeholder": "Nhập mật khẩu mới của bạn"
-            }
-        }
+    "credential": {
+      "passwordDescription": "Thay đổi mật khẩu của bạn ở đây. Sau khi lưu, bạn sẽ được đăng xuất.",
+      "savePasswordButton": "Lưu mật khẩu",
+      "saveChangesButton": "Lưu thay đổi",
+      "currentPassword": {
+        "label": "Mật khẩu hiện tại",
+        "placeholder": "Nhập mật khẩu hiện tại của bạn"
+      },
+      "newPassword": {
+        "label": "Mật khẩu mới",
+        "placeholder": "Nhập mật khẩu mới của bạn"
+      }
     }
+  },
+  "infoProfileTitle": {
+    "infoDateOfBirth": "Ngày sinh",
+    "infoGender": {
+      "label": "Giới tính",
+      "male": "Nam",
+      "female": "Nữ"
+    },
+    "infoLocation": "Vị trí",
+    "infoWorkplace": "Địa chỉ làm việc",
+    "infoPhone_number": "Số điện thoại",
+    "infoAddress": "Địa chỉ"
+  }
 }

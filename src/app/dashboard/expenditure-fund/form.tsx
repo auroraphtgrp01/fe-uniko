@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatCurrency } from '@/libraries/utils'
+import { formatCurrency, translate } from '@/libraries/utils'
 import FlatList, { IFlatListData } from '@/components/core/FlatList'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { DataTable } from '@/components/dashboard/DataTable'
@@ -44,6 +44,7 @@ import {
 } from '@/core/tracker-transaction/constants'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { IFundOfUser } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { useTranslation } from 'react-i18next'
 
 export default function ExpenditureFundForm() {
   // states
@@ -58,6 +59,7 @@ export default function ExpenditureFundForm() {
   const [dateRange, setDateRange] = useState<string>('1-week')
 
   // memos
+
   const titles = ['Name', 'Status', 'Current Amount', 'Owner']
 
   const columns = useMemo(() => {
@@ -130,6 +132,7 @@ export default function ExpenditureFundForm() {
       }
     })
   }
+  const { t } = useTranslation(['expenditureFund', 'common'])
 
   // effects
   useEffect(() => {
@@ -174,7 +177,7 @@ export default function ExpenditureFundForm() {
           <Card className='flex-shrink-0'>
             <CardHeader className='py-4'>
               <div className='flex items-center justify-between'>
-                <CardTitle>Summary Recent Transactions</CardTitle>
+                <CardTitle>{t('summaryRecentTransactions')}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -186,7 +189,7 @@ export default function ExpenditureFundForm() {
 
           <Card className='flex-1'>
             <CardHeader className='mb-5 py-4'>
-              <CardTitle>Balance Summary</CardTitle>
+              <CardTitle>{t('balanceSummary')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div>
@@ -199,16 +202,18 @@ export default function ExpenditureFundForm() {
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
             <Card className='bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
-                <CardTitle className='text-lg font-medium text-white'>Total Balance Summary</CardTitle>
+                <CardTitle className='text-md text-nowrap font-medium text-white 2xl:text-lg'>
+                  {t('totalBalanceSummary')}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className='flex items-center justify-between'>
-                  <PiggyBank className='h-12 w-12 text-white opacity-75' />
+                  <PiggyBank className='h-12 w-12 animate-pulse text-white opacity-75' />
                   <div className='text-right'>
                     <p className='text-2xl font-bold text-white'>
                       {formatCurrency(getStatisticExpenditureFundData?.data.totalBalanceSummary || 0, 'đ', 'vi-VN')}
                     </p>
-                    <p className='text-sm text-blue-100'>+2.5% from last month</p>
+                    <p className='text-sm text-blue-100'>{t('notiTotalBalanceSummary', { percentage: 2.5 })}</p>
                   </div>
                 </div>
               </CardContent>
@@ -216,11 +221,13 @@ export default function ExpenditureFundForm() {
 
             <Card className='bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
-                <CardTitle className='text-lg font-medium text-white'>Incoming Transaction Summary</CardTitle>
+                <CardTitle className='text-md text-nowrap font-medium text-white 2xl:text-lg'>
+                  {t('incomingTransactionSummary')}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className='flex items-center justify-between'>
-                  <TrendingUp className='h-12 w-12 rotate-45 transform text-white opacity-75' />
+                  <TrendingUp className='h-12 w-12 rotate-45 transform animate-pulse text-white opacity-75' />
                   <div className='text-right'>
                     <p className='text-2xl font-bold text-white'>
                       {formatCurrency(
@@ -229,7 +236,9 @@ export default function ExpenditureFundForm() {
                         'vi-VN'
                       )}
                     </p>
-                    <p className='text-sm text-emerald-100'>No change from yesterday</p>
+                    <p className='text-sm text-emerald-100'>
+                      {t('notiIncomingTransactionSummary', { percentage: 2.5 })}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -237,11 +246,13 @@ export default function ExpenditureFundForm() {
 
             <Card className='bg-gradient-to-br from-orange-400 via-pink-500 to-rose-600 transition-all duration-300 hover:shadow-lg'>
               <CardHeader className='pb-2'>
-                <CardTitle className='text-lg font-medium text-white'>Expense Transaction Summary</CardTitle>
+                <CardTitle className='text-md text-nowrap font-medium text-white 2xl:text-lg'>
+                  {t('expenseTransactionSummary')}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className='flex items-center justify-between'>
-                  <CreditCard className='h-12 w-12 -rotate-12 transform text-white opacity-75' />
+                  <CreditCard className='h-12 w-12 -rotate-12 transform animate-pulse text-white opacity-75' />
                   <div className='text-right'>
                     <p className='text-2xl font-bold text-white'>
                       {formatCurrency(
@@ -250,7 +261,7 @@ export default function ExpenditureFundForm() {
                         'vi-VN'
                       )}
                     </p>
-                    <p className='text-sm text-orange-100'>+15% from last month</p>
+                    <p className='text-sm text-orange-100'>{t('notiExpenseTransactionSummary', { percentage: 2.5 })}</p>
                   </div>
                 </div>
               </CardContent>

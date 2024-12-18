@@ -2,9 +2,9 @@
   "totalBalance": "Total Balance",
   "incomingTransaction": "Incoming Transaction",
   "expenseTransaction": "Expense Transaction",
-  "noChangeFromYesterday": "No change from yesterday",
-  "increaseFromLastMonth": "+{{percentage}}% from last month",
-  "increaseFromYesterday": "+{{percentage}}% from yesterday",
+  "notiTotalBalance": "{{percentage}}% from last month",
+  "notiIncoming": "{{percentage}}% from yesterday",
+  "notiExpense": "{{percentage}}% from yesterday",
   "charts": {
     "expenseChart": {
       "label": "Expense Chart",
@@ -27,6 +27,77 @@
     "unclassifiedDialog": {
       "title": "Unclassified Transactions",
       "description": "Overview of unclassified transactions."
+    },
+    "detailsConfigDialog": {
+      "title": "Classified Transaction Details",
+      "description": "Details of the classified transaction"
     }
+  },
+  "form": {
+    "defineCreateTrackerTransactionFormBody": {
+      "reasonName": {
+        "label": "Reason Name",
+        "placeholder": "Enter reason name"
+      },
+      "amount": {
+        "label": "Amount",
+        "placeholder": "Enter amount"
+      },
+      "accountSourceId": {
+        "label": "Account Source",
+        "placeholder": "Select account source"
+      },
+      "direction": {
+        "label": "Direction",
+        "placeholder": "Select a direction",
+        "options": {
+          "incoming": "INCOMING",
+          "expense": "EXPENSE"
+        }
+      },
+      "trackerTypeId": {
+        "label": "Category",
+        "placeholder": "Select category"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Enter description"
+      }
+    }
+  },
+  "editCategory": {
+    "title": "Edit Category",
+    "description": "Make changes to your category",
+    "search": "Search Category",
+    "form": {
+      "name": "Name",
+      "type": "Type",
+      "description": "Description"
+    }
+  },
+  "defineContentCreateTracker": {
+    "labelName": "Name",
+    "placeholderName": "Name *",
+    "type": "Type",
+    "labelDes": "Description",
+    "placeholderDes": "Description *"
+  },
+  "defineEditTrackerTypeBody": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Enter tracker transaction type name"
+    },
+    "type": {
+      "label": "Type",
+      "placeholder": "Select type for tracker transaction type"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "Enter tracker transaction type description"
+    }
+  },
+  "unclassifiedForm": {
+    "title": "Unclassified",
+    "button": "Refetch in bank"
   }
 }

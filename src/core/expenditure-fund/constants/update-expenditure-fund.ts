@@ -6,13 +6,13 @@ interface IDefineUpdateExpenditureFundFormBodyProps {}
 
 export const defineUpdateExpenditureFundFormBody =
   ({}: IDefineUpdateExpenditureFundFormBodyProps): IBodyFormField[] => {
-    const t = translate(['transaction', 'common'])
+    const t = translate(['expenditureFund', 'common'])
     return [
       {
         name: 'name',
         type: EFieldType.Input,
-        label: 'Name',
-        placeHolder: 'Enter name *',
+        label: t('form.name.label'),
+        placeHolder: t('form.name.placeholder'),
         props: {
           autoComplete: 'name'
         }
@@ -40,19 +40,19 @@ export const defineUpdateExpenditureFundFormBody =
       {
         name: 'status',
         type: EFieldType.Select,
-        label: 'Status',
+        label: '',
         dataSelector: [
           {
             value: 'ACTIVE',
-            label: 'ACTIVE'
+            label: t('update.form.selectActive.active')
           },
           {
             value: 'CLOSED',
-            label: 'CLOSED'
+            label: t('update.form.selectActive.closed')
           },
           {
             value: 'PENDING',
-            label: 'PENDING'
+            label: t('update.form.selectActive.pending')
           }
         ],
         placeHolder: 'Select status *'
@@ -60,8 +60,8 @@ export const defineUpdateExpenditureFundFormBody =
       {
         name: 'description',
         type: EFieldType.Textarea,
-        label: 'Description',
-        placeHolder: 'Enter description'
+        label: t('update.form.selectActive.label'),
+        placeHolder: t('update.form.selectActive.description')
       }
     ]
   }

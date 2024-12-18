@@ -63,11 +63,12 @@ export const defineContentCreateTrackerTxTypeDialog = ({
   formData: ITrackerTransactionTypeBody
   setFormData: React.Dispatch<React.SetStateAction<ITrackerTransactionTypeBody>>
 }) => {
+  const t = translate(['trackerTransaction', 'common'])
   return (
     <div className='grid gap-4 py-4'>
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='name' className='text-right'>
-          Name
+          {t('defineContentCreateTracker.labelName')}
         </Label>
         <div className='col-span-3 flex gap-2'>
           <Input
@@ -75,7 +76,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
             onChange={(e) => {
               setFormData((prev) => ({ ...prev, name: e.target.value }))
             }}
-            placeholder='Name *'
+            placeholder={t('defineContentCreateTracker.placeholderName')}
           />
           <EmojiPicker
             onChangeValue={(value) => {
@@ -86,7 +87,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='type' className='text-right'>
-          Type
+          {t('defineContentCreateTracker.type')}
         </Label>
         <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value }))} value={formData.type}>
           <SelectTrigger className='col-span-3'>
@@ -104,7 +105,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
       </div>
       <div className='grid grid-cols-4 items-center gap-4'>
         <Label htmlFor='description' className='text-right'>
-          Description
+          {t('defineContentCreateTracker.labelDes')}
         </Label>
         <Textarea
           value={formData.description}
@@ -112,7 +113,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
             setFormData((prev) => ({ ...prev, description: e.target.value }))
           }}
           className='col-span-3'
-          placeholder='Description *'
+          placeholder={t('defineContentCreateTracker.placeholderDes')}
         />
       </div>
     </div>

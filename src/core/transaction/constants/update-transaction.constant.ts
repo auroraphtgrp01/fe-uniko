@@ -2,8 +2,8 @@ import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transact
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { IAccountSource } from '@/core/account-source/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
-import { t } from 'i18next'
 import React from 'react'
 import { z } from 'zod'
 
@@ -16,12 +16,13 @@ export const defineUpdateTransactionFormBody = ({
   accountSourceData,
   handleSetTrackerTypeDefault
 }: IUpdateTransactionFormBody): any[] => {
+  const t = translate(['transaction'])
   return [
     {
       name: 'amount',
       type: EFieldType.MoneyInput,
-      label: 'Amount',
-      placeHolder: 'Enter amount',
+      label: t('IUpdateTransactionFormBody.amount.label'),
+      placeHolder: t('IUpdateTransactionFormBody.amount.placeholder'),
       props: {
         autoComplete: 'amount'
       }
@@ -29,15 +30,15 @@ export const defineUpdateTransactionFormBody = ({
     {
       name: 'accountSourceId',
       type: EFieldType.Select,
-      label: 'Account Source',
-      placeHolder: 'Select account source',
+      label: t('IUpdateTransactionFormBody.accountSource.label'),
+      placeHolder: t('IUpdateTransactionFormBody.accountSource.placeholder'),
       dataSelector: modifiedTrackerTypeForComboBox(accountSourceData)
     },
     {
       name: 'direction',
       type: EFieldType.Select,
-      label: 'Direction',
-      placeHolder: 'Select direction',
+      label: t('IUpdateTransactionFormBody.direction.label'),
+      placeHolder: t('IUpdateTransactionFormBody.direction.placeholder'),
       props: {
         onchange: (value: string) => {
           handleSetTrackerTypeDefault(value)

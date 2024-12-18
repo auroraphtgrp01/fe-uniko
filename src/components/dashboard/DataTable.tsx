@@ -222,7 +222,7 @@ export function DataTable<TData, TValue>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='whitespace-nowrap'>
-                View <Settings2 className='ml-2 h-4 w-4' />
+                {t('button.view')} <Settings2 className='ml-2 h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[200px]'>
