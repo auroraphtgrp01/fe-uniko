@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   CalendarIcon,
   CreditCard,
@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { IUpdateTransactionBody } from '@/core/transaction/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { Button } from '@/components/ui/button'
-import { formatCurrency, formatDateTimeVN } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN, translate } from '@/libraries/utils'
 import {
   IDetailUpdateTransactionDialogProps,
   IUpdateTrackerTransactionBody
@@ -35,6 +35,11 @@ import {
 } from '@/core/tracker-transaction/constants/update-tracker-transaction.constant'
 import { Pencil2Icon } from '@radix-ui/react-icons'
 import { Separator } from '@/components/ui/separator'
+import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
+import {
+  ITrackerTranSactionEditType,
+  ITrackerTransactionType
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 
 export default function DetailUpdateTransaction({
   updateTransactionProps,
@@ -45,7 +50,14 @@ export default function DetailUpdateTransaction({
   const submitUpdateTransactionRef = useRef<HTMLFormElement>(null)
   const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
   const formUpdateTrackerTransactionRef = useRef<any>()
-
+  const [trackerTypeData, setTrackerTypeData] = useState<ITrackerTransactionType[]>([])
+  const [transactionState, setTransactionState] = useState<ITrackerTranSactionEditType>({
+    isUpdateTrackerTransaction:
+      (updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType) ||
+      ETypeOfTrackerTransactionType.INCOMING,
+    direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType,
+    trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || ''
+  })
   const handleSubmit = () => {
     if (updateTransactionProps.isEditing) {
       if (
@@ -60,6 +72,17 @@ export default function DetailUpdateTransaction({
     }
     if (updateTrackerTransactionProps?.isEditing) submitUpdateTrackerTransactionRef.current?.requestSubmit()
   }
+
+  useEffect(() => {
+    setTrackerTypeData(
+      modifiedTrackerTypeForComboBox(
+        transactionState.isUpdateTrackerTransaction === ETypeOfTrackerTransactionType.INCOMING
+          ? updateTrackerTransactionProps?.editTrackerTransactionTypeProps.incomeTrackerType
+          : updateTrackerTransactionProps?.editTrackerTransactionTypeProps.expenseTrackerType
+      )
+    )
+  }, [transactionState.isUpdateTrackerTransaction])
+  const t = translate(['transaction', 'common'])
 
   const TransactionDetails = () => (
     <div className='select-none space-y-6'>
@@ -100,7 +123,7 @@ export default function DetailUpdateTransaction({
 
       <div className='grid grid-cols-2 gap-4'>
         <div className='space-y-1'>
-          <p className='text-sm text-muted-foreground'>Ví gửi</p>
+          <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.senderAccount')}</p>
           {updateTransactionProps.transaction.ofAccount ? (
             <div className='mt-1 flex items-start gap-3'>
               <Avatar>
@@ -131,7 +154,7 @@ export default function DetailUpdateTransaction({
 
         {updateTransactionProps.transaction.toAccountNo && (
           <div className='space-y-1'>
-            <p className='text-sm text-muted-foreground'>Tài khoản nhận</p>
+            <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.receiverAccount')}</p>
             <div className='flex items-start gap-3'>
               <Avatar>
                 <AvatarFallback className='bg-muted'>
@@ -150,7 +173,7 @@ export default function DetailUpdateTransaction({
       </div>
 
       <div className='space-y-2'>
-        <div className='text-sm text-muted-foreground'>Nội dung chuyển tiền</div>
+        <div className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.transactionContent')}</div>
         {updateTransactionProps.transaction.description ? (
           <div className='flex items-start gap-3'>
             <Avatar>
@@ -179,7 +202,9 @@ export default function DetailUpdateTransaction({
       {updateTransactionProps.transaction.transactionId && (
         <div className='flex items-center gap-2 text-sm text-muted-foreground'>
           <CreditCard className='h-4 w-4' />
-          <span>Mã giao dịch: {updateTransactionProps.transaction.transactionId}</span>
+          <span>
+            {t('transaction:transactionDetails.transactionCode')} {updateTransactionProps.transaction.transactionId}
+          </span>
         </div>
       )}
 
@@ -189,7 +214,7 @@ export default function DetailUpdateTransaction({
           <div className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Người phân loại</p>
+                <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.classifier')}</p>
                 <div className='flex items-center gap-2'>
                   <User className='h-4 w-4 text-muted-foreground' />
                   <p className='font-medium'>
@@ -199,7 +224,9 @@ export default function DetailUpdateTransaction({
               </div>
 
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Thời gian phân loại</p>
+                <p className='text-sm text-muted-foreground'>
+                  {t('transaction:transactionDetails.classificationTime')}
+                </p>
                 <div className='flex items-center gap-2'>
                   <Clock className='h-4 w-4 text-muted-foreground' />
                   <p className='font-medium'>
@@ -210,7 +237,7 @@ export default function DetailUpdateTransaction({
             </div>
             <div className='grid grid-cols-2 gap-4'>
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Mô tả</p>
+                <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.description')}</p>
                 <div className='flex items-center gap-2'>
                   <p className='font-semibold'>
                     {updateTrackerTransactionProps.trackerTransaction.reasonName || 'N/A'}
@@ -219,7 +246,7 @@ export default function DetailUpdateTransaction({
               </div>
 
               <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Danh mục</p>
+                <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.category')}</p>
                 <div className='flex items-center gap-2'>
                   {/* <ChartBarStackedIcon className='h-4 w-4 text-muted-foreground' /> */}
                   <p className='font-medium'>{updateTrackerTransactionProps.trackerTransaction.TrackerType.name}</p>
@@ -228,9 +255,10 @@ export default function DetailUpdateTransaction({
             </div>
 
             <div className='space-y-1'>
-              <p className='text-sm text-muted-foreground'>Ghi chú</p>
+              <p className='text-sm text-muted-foreground'>{t('transaction:transactionDetails.note')}</p>
               <p className='text-muted-foreground'>
-                {updateTrackerTransactionProps.trackerTransaction.description || 'Không có ghi chú'}
+                {updateTrackerTransactionProps.trackerTransaction.description ||
+                  t('transaction:transactionDetails.noNote')}
               </p>
             </div>
           </div>
@@ -245,14 +273,14 @@ export default function DetailUpdateTransaction({
               updateTransactionProps.transaction.TrackerTransaction &&
               !updateTrackerTransactionProps
             )
-              toast.error('Không thể chỉnh sửa giao dịch lấy từ tài khoản ngân hàng!')
+              toast.error(t('transactionDetails.toast'))
             else updateTransactionProps.setIsEditing(true)
           }}
         >
           <Pencil className='mr-2 h-4 w-4' />
           {!updateTransactionProps.transaction.TrackerTransaction && !updateTrackerTransactionProps
-            ? 'Phân loại'
-            : 'Cập nhật'}
+            ? t('transactionDetails.classify')
+            : t('common:button.update')}
         </Button>
       </div>
     </div>
@@ -271,9 +299,15 @@ export default function DetailUpdateTransaction({
               formFieldBody={defineUpdateTransactionFormBody({
                 accountSourceData: commonProps.accountSourceData,
                 handleSetTrackerTypeDefault: (value: string) => {
-                  if (value !== updateTransactionProps.transaction.direction) {
-                    formUpdateTrackerTransactionRef.current?.setValue('trackerTypeId', '')
-                  }
+                  setTransactionState((prevState) => ({
+                    ...prevState,
+                    isUpdateTrackerTransaction: value as ETypeOfTrackerTransactionType,
+                    direction: value as ETypeOfTrackerTransactionType,
+                    trackerTypeId:
+                      value === updateTransactionProps.transaction.direction
+                        ? updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || ''
+                        : ''
+                  }))
                 }
               })}
               formSchema={updateTransactionSchema}
@@ -289,7 +323,7 @@ export default function DetailUpdateTransaction({
               defaultValues={{
                 amount: String(updateTransactionProps.transaction.amount),
                 accountSourceId: updateTransactionProps.transaction.accountSource.id,
-                direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType
+                direction: transactionState.direction
               }}
             />
           )}
@@ -300,11 +334,12 @@ export default function DetailUpdateTransaction({
               formRef={formUpdateTrackerTransactionRef}
               submitRef={submitUpdateTrackerTransactionRef}
               formFieldBody={defineUpdateTrackerTransactionFormBody({
+                trackerTypeData,
                 editTrackerTypeDialogProps:
                   updateTrackerTransactionProps.editTrackerTransactionTypeProps.editTrackerTypeDialogProps,
                 expenseTrackerType: updateTrackerTransactionProps.editTrackerTransactionTypeProps.expenseTrackerType,
                 incomeTrackerType: updateTrackerTransactionProps.editTrackerTransactionTypeProps.incomeTrackerType,
-                typeOfEditTrackerType: updateTrackerTransactionProps.typeOfEditTrackerType,
+                typeOfEditTrackerType: transactionState.isUpdateTrackerTransaction as ETypeOfTrackerTransactionType,
                 setTypeOfEditTrackerType: updateTrackerTransactionProps.setTypeOfEditTrackerType,
                 setOpenEditDialog: updateTrackerTransactionProps.setOpenEditDialog,
                 openEditDialog: updateTrackerTransactionProps.openEditDialog
@@ -323,7 +358,7 @@ export default function DetailUpdateTransaction({
               }}
               defaultValues={{
                 reasonName: updateTrackerTransactionProps?.trackerTransaction.reasonName || '',
-                trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || '',
+                trackerTypeId: transactionState.trackerTypeId || '',
                 description: updateTrackerTransactionProps?.trackerTransaction.description
               }}
             />
@@ -332,7 +367,7 @@ export default function DetailUpdateTransaction({
       )}
       <div className='flex justify-between'>
         <Button type='button' variant='outline' onClick={() => updateTransactionProps.setIsEditing(false)}>
-          Hủy
+          {t('common:button.cancel')}
         </Button>
         <Button
           type='button'
@@ -344,7 +379,7 @@ export default function DetailUpdateTransaction({
               : updateTransactionProps.statusUpdateTransaction === 'pending'
           }
         >
-          Lưu thay đổi
+          {t('common:button.save_changes')}
         </Button>
       </div>
     </div>

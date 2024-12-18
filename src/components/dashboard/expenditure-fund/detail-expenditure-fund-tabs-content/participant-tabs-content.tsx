@@ -20,6 +20,7 @@ import { IUser } from '@/types/user.i'
 import { useState } from 'react'
 import { initEmptyUser } from '@/app/dashboard/profile/constants'
 import CustomDialog from '../../Dialog'
+import { translate } from '@/libraries/utils'
 
 export default function ParticipantTabsContent({
   detailData,
@@ -72,7 +73,7 @@ export default function ParticipantTabsContent({
     className: 'sm:max-w-[325px] md:max-w-[650px]',
     footer: <Button onClick={() => setIsOpenUserProfileDialog(false)}>Đóng</Button>
   }
-
+  const t = translate(['common'])
   return (
     <TooltipProvider>
       {isOwner && (
@@ -87,7 +88,7 @@ export default function ParticipantTabsContent({
               className='flex h-full w-full items-center justify-center'
             >
               {false ? <Loader2Icon className='h-4 w-4 animate-spin' /> : <UserPlus className='mr-2 h-4 w-4' />}
-              Invite
+              {t('common:button.Invite')}
             </Button>
           </div>
         </div>

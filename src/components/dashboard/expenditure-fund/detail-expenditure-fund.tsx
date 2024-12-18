@@ -9,6 +9,7 @@ import TransactionTabsContent from './detail-expenditure-fund-tabs-content/trans
 import StatisticTabsContent from './detail-expenditure-fund-tabs-content/statistic-tabs-content'
 import ParticipantTabsContent from './detail-expenditure-fund-tabs-content/participant-tabs-content'
 import CategoryTabsContent from './detail-expenditure-fund-tabs-content/category-tabs-content'
+import { useTranslation } from 'react-i18next'
 
 export function DetailExpenditureFund({
   detailData,
@@ -31,7 +32,7 @@ export function DetailExpenditureFund({
         return 'bg-blue-100 text-blue-800'
     }
   }
-
+  const { t } = useTranslation(['expenditureFundDetails', 'common'])
   return (
     <>
       <div className='flex items-center justify-between text-2xl font-bold'>
@@ -45,11 +46,11 @@ export function DetailExpenditureFund({
       </div>
       <Tabs defaultValue='overview' className='h-[23rem] w-full'>
         <TabsList className='grid w-full grid-cols-5 pb-10'>
-          <TabsTrigger value='overview'>Overview</TabsTrigger>
-          <TabsTrigger value='participants'>Participants</TabsTrigger>
-          <TabsTrigger value='categories'>Categories</TabsTrigger>
-          <TabsTrigger value='transactions'>Transactions</TabsTrigger>
-          <TabsTrigger value='statistics'>Statistics</TabsTrigger>
+          <TabsTrigger value='overview'>{t('tabs.overview')}</TabsTrigger>
+          <TabsTrigger value='participants'>{t('tabs.participants')}</TabsTrigger>
+          <TabsTrigger value='categories'>{t('tabs.categories')}</TabsTrigger>
+          <TabsTrigger value='transactions'>{t('tabs.transactions')}</TabsTrigger>
+          <TabsTrigger value='statistics'>{t('tabs.statistics')}</TabsTrigger>
         </TabsList>
         <TabsContent value='overview' className='h-[23rem] space-y-4'>
           <OverviewTabsContent detailData={detailData} setIsDialogOpen={setIsDialogOpen} />

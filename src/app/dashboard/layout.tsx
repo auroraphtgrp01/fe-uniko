@@ -1,6 +1,7 @@
 import Header from '@/components/core/header'
 import Sidebar from '@/components/core/sidebar'
 import BreadcrumbHeader from '../../components/core/breadcrumb'
+import { ChatBox } from '../../components/dashboard/BoxChat'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </h1>
           </div>
           <div className='overflow-x-hidden pb-2'>{children}</div>
+          <ChatBox></ChatBox>
         </div>
       </main>
     </div>

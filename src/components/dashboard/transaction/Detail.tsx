@@ -12,6 +12,7 @@ import CustomDialog from '../Dialog'
 import { Badge } from '@/components/ui/badge'
 import { Pencil2Icon } from '@radix-ui/react-icons'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useTranslation } from 'react-i18next'
 
 export function DetailTransactionDialog({
   detailData,
@@ -22,6 +23,7 @@ export function DetailTransactionDialog({
   isDialogOpen: IDialogTrackerTransaction
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTrackerTransaction>>
 }) {
+  const { t } = useTranslation(['transaction', 'common'])
   const config: IDialogConfig = {
     content: (
       <div className='space-y-6'>
@@ -68,7 +70,7 @@ export function DetailTransactionDialog({
             </div>
           )}
           <div className='space-y-2'>
-            <div className='font-semibold'>Ví gửi</div>
+            <div className='font-semibold'>{t('transactionDetails.senderAccount')}</div>
 
             {detailData.ofAccount ? (
               <div className='flex items-start gap-3'>
@@ -101,7 +103,7 @@ export function DetailTransactionDialog({
           {detailData.toAccountNo && (
             <>
               <div className='space-y-2'>
-                <div className='font-semibold'>Tài khoản nhận</div>
+                <div className='font-semibold'>{t('transactionDetails.receiverAccount')}</div>
                 <div className='flex items-start gap-3'>
                   <Avatar>
                     <AvatarFallback className='bg-muted'>
@@ -117,7 +119,7 @@ export function DetailTransactionDialog({
                 </div>
               </div>
               <div className='space-y-2'>
-                <div className='font-semibold'>Nội dung chuyển tiền</div>
+                <div className='font-semibold'>{t('transactionDetails.transactionContent')}</div>
                 <div className='flex items-start gap-3'>
                   <Avatar>
                     <AvatarFallback className='bg-muted'>
@@ -143,14 +145,13 @@ export function DetailTransactionDialog({
             setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
           }}
         >
-          Classtify
+          {t('transaction:transactionDetails.classify')}
         </Button>
-
         <Button
           onClick={() => setIsDialogOpen((prev) => ({ ...prev, isDialogDetailTransactionOpen: false }))}
           variant={'destructive'}
         >
-          Đóng
+          {t('common:button.close')}
         </Button>
       </div>
     ),

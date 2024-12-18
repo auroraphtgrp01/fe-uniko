@@ -1,30 +1,40 @@
 {
-    "button": {
-        "save": "Lưu",
-        "save_changes": "Lưu thay đổi",
-        "cancel": "Hủy",
-        "update": "Cập nhật",
-        "delete": "Xóa",
-        "create": "Tạo mới",
-        "classify": "Phân loại",
-        "refetch_in_bank": "Tải dữ liệu ngân hàng",
-        "reload_data": "Tải lại dữ liệu"
-    },
-    "card_header": {
-        "create_project": "Tạo dự án",
-        "deploy_project": "Triển khai dự án mới của bạn chỉ với một cú nhấp chuột."
-    },
-    "table": {
-        "filterPlaceholder": "Lọc",
-        "typesLabel": "Loại",
-        "columnsLabel": "Cột",
-        "rowsPerPageLabel": "Số hàng mỗi trang",
-        "pageOf": "Trang {{currentPage}} trên {{totalPage}}",
-        "loadingText": "Đang tải...",
-        "noDataText": "Không có dữ liệu",
-        "selectedRowsText": "{{selected}} trên {{total}} hàng được chọn."
-    },
-    "dropdown": {
-        "noTypesAvailable": "Không có loại nào có sẵn"
-    }
+  "button": {
+    "save": "Lưu",
+    "save_changes": "Lưu thay đổi",
+    "cancel": "Hủy bỏ",
+    "update": "Cập nhật",
+    "delete": "Xóa",
+    "create": "Tạo mới",
+    "classify": "Phân loại",
+    "refetch_in_bank": "Lấy lại dữ liệu trong ngân hàng",
+    "reload_data": "Tải lại dữ liệu",
+    "view": "Xem",
+    "Invite": "Mời",
+    "edit": "Chỉnh sửa",
+    "close": "Đóng"
+  },
+  "card_header": {
+    "create_project": "Tạo dự án",
+    "deploy_project": "Triển khai dự án mới chỉ với một cú nhấp chuột."
+  },
+  "table": {
+    "filterPlaceholder": "Lọc",
+    "typesLabel": "Loại",
+    "columnsLabel": "Cột",
+    "rowsPerPageLabel": "Số dòng mỗi trang",
+    "pageOf": "Trang {{currentPage}} trong tổng số {{totalPage}}",
+    "loadingText": "Đang tải...",
+    "noDataText": "Không có dữ liệu",
+    "selectedRowsText": "{{selected}} trong tổng số {{total}} dòng đã chọn."
+  },
+  "dropdown": {
+    "noTypesAvailable": "Không có loại nào khả dụng"
+  },
+  "deleteDialog": {
+    "deleteConfirmation": "Xác nhận xóa",
+    "description": "Bạn có chắc chắn muốn xóa dữ liệu này?",
+    "note": "Lưu ý: ",
+    "info": "Dữ liệu sau khi xóa sẽ không thể khôi phục được!"
+  }
 }

@@ -1,51 +1,63 @@
 {
-    "title": "Profile",
-    "tabs": {
-        "account": "Common",
-        "password": "Credential"
+  "title": "Profile",
+  "tabs": {
+    "account": "Common",
+    "password": "Credential"
+  },
+  "userProfileTitle": "User Profile",
+  "form": {
+    "common": {
+      "fullName": {
+        "label": "Full Name",
+        "placeholder": "Enter your full name"
+      },
+      "dateOfBirth": {
+        "label": "Date of Birth",
+        "placeholder": "Enter your date of birth"
+      },
+      "gender": {
+        "label": "Gender",
+        "placeholder": "Enter your gender",
+        "male": "Male",
+        "female": "Female"
+      },
+      "workplace": {
+        "label": "Workplace",
+        "placeholder": "Enter your workplace"
+      },
+      "phone_number": {
+        "label": "Phone Number",
+        "placeholder": "Enter your phone number"
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Enter your address"
+      }
     },
-    "userProfileTitle": "User Profile",
-    "form": {
-        "common": {
-            "fullName": {
-                "label": "Full Name",
-                "placeholder": "Enter your full name"
-            },
-            "dateOfBirth": {
-                "label": "Date of Birth",
-                "placeholder": "Enter your date of birth"
-            },
-            "gender": {
-                "label": "Gender",
-                "placeholder": "Enter your gender",
-                "male": "Male",
-                "female": "Female"
-            },
-            "workplace": {
-                "label": "Workplace",
-                "placeholder": "Enter your workplace"
-            },
-            "phone_number": {
-                "label": "Phone Number",
-                "placeholder": "Enter your phone number"
-            },
-            "address": {
-                "label": "Address",
-                "placeholder": "Enter your address"
-            }
-        },
-        "credential": {
-            "passwordDescription": "Change your password here. After saving, you will be logged out.",
-            "savePasswordButton": "Save password",
-            "saveChangesButton": "Save Changes",
-            "currentPassword": {
-                "label": "Current Password",
-                "placeholder": "Enter your current password"
-            },
-            "newPassword": {
-                "label": "New Password",
-                "placeholder": "Enter your new password"
-            }
-        }
+    "credential": {
+      "passwordDescription": "Change your password here. After saving, you will be logged out.",
+      "savePasswordButton": "Save password",
+      "saveChangesButton": "Save Changes",
+      "currentPassword": {
+        "label": "Current Password",
+        "placeholder": "Enter your current password"
+      },
+      "newPassword": {
+        "label": "New Password",
+        "placeholder": "Enter your new password"
+      }
     }
+  },
+  "infoProfileTitle": {
+    "infoDateOfBirth": "Date of Birth",
+    "infoGender": {
+      "label": "Gender",
+      "male": "Male",
+      "female": "Female"
+    },
+    "infoLocation": "Location",
+    "infoWorkplace": "Workplace",
+    "infoPhone_number": "Phone Number",
+    "infoAddress": "Address"
+  }
 }

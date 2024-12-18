@@ -1,0 +1,30 @@
+{
+  "summaryRecentTransactions": "Summary Recent Transactions",
+  "balanceSummary": "Balance Summary",
+  "totalBalanceSummary": "Total Balance Summary",
+  "incomingTransactionSummary": "Incoming Transaction Summary",
+  "expenseTransactionSummary": "Expense Transaction Summary",
+  "notiTotalBalanceSummary": "{{percentage}}% from last month",
+  "notiIncomingTransactionSummary": "{{percentage}}% from yesterday",
+  "notiExpenseTransactionSummary": "{{percentage}}% from last month",
+  "form": {
+    "createExpenditureFund": {
+      "title": "Create Expenditure Fund",
+      "description": "Create a new expenditure fund"
+    },
+    "name": {
+      "label": "Name",
+      "placeholder": "Enter name *"
+    },
+    "direction": {
+      "label": "Description",
+      "placeholder": "Enter description *"
+    }
+  },
+  "tableExpenditureFundFormBody": {
+    "name": "Name",
+    "status": "Status",
+    "currentAmount": "Current Amount",
+    "owner": "Owner"
+  }
+}

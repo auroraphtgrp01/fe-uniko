@@ -3,6 +3,7 @@
 import { Trash2, AlertTriangle, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { translate } from '@/libraries/utils'
 
 export interface IDeleteDialogProps {
   customTitle?: string
@@ -11,13 +12,14 @@ export interface IDeleteDialogProps {
   isDialogOpen: boolean
   onClose: () => void
 }
+const t = translate(['common'])
 
 export default function DeleteDialog({
   onDelete,
   isDialogOpen,
   onClose,
-  customTitle = 'Xác nhận xóa',
-  customDescription = 'Bạn chắc chắn muốn xóa dữ liệu này?'
+  customTitle = t('deleteDialog.deleteConfirmation'),
+  customDescription = t('deleteDialog.description')
 }: IDeleteDialogProps) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={onClose}>
@@ -34,14 +36,13 @@ export default function DeleteDialog({
             <div className='flex items-start'>
               <AlertTriangle className='mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-rose-600 dark:text-rose-600' />
               <p className='text-sm text-rose-600 dark:text-rose-500'>
-                <span className='font-semibold text-rose-600'>Lưu ý:</span> Dữ liệu khi đã được xóa sẽ không thể khôi
-                phục trở lại!
+                <span className='font-semibold text-rose-600'>{t('deleteDialog.note')}</span> {t('deleteDialog.info')}
               </p>
             </div>
           </div>
           <div className='mt-6 flex justify-end gap-3'>
             <Button variant='outline' onClick={onClose}>
-              Hủy
+              {t('button.cancel')}
             </Button>
             <Button
               variant='default'
@@ -51,7 +52,7 @@ export default function DeleteDialog({
               }}
               className='relative overflow-hidden'
             >
-              <span className='relative z-10'>Xóa</span>
+              <span className='relative z-10'>{t('button.delete')}</span>
             </Button>
           </div>
         </div>

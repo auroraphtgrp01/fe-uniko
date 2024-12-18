@@ -1,16 +1,19 @@
+import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
 import { z } from 'zod'
 
 interface IDefineInviteParticipantFormBodyProps {}
 
 export const defineInviteParticipantFormBody = ({}: IDefineInviteParticipantFormBodyProps): IBodyFormField[] => {
+  const t = translate(['expenditureFundDetails'])
+
   return [
     {
       name: 'userInfoValues',
       type: EFieldType.MultiInput,
-      placeHolder: 'Enter email addresses or phone numbers',
+      placeHolder: t('transactionTabsContent.placeHolder'),
       props: {
-        placeholder: 'Enter email addresses or phone numbers'
+        placeholder: t('transactionTabsContent.placeHolder')
       }
     }
   ]
