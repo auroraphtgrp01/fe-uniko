@@ -118,10 +118,10 @@ export function BalanceChart() {
                             textAnchor='middle'
                             dominantBaseline='middle'
                           >
-                            <tspan x={viewBox.cx} y={viewBox.cy - 12} className='fill-muted-foreground text-sm'>
+                            <tspan x={viewBox.cx} y={viewBox.cy ? viewBox.cy - 12 : 0} className='fill-muted-foreground text-sm'>
                               {selected ? selected.account : 'Total Balance'}
                             </tspan>
-                            <tspan x={viewBox.cx} y={viewBox.cy + 12} className='fill-foreground text-2xl font-bold'>
+                            <tspan x={viewBox.cx} y={(viewBox.cy ?? 0) + 12} className='fill-foreground text-2xl font-bold'>
                               {formatCurrency(selected ? selected.amount : totalAmount, 'đ', 'vi-VN')}
                             </tspan>
                           </motion.text>
