@@ -282,7 +282,7 @@ export function DataTable<TData, TValue>({
 
                     return (
                       <TableHead
-                        className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''} ${
+                        className={`h-full items-center text-nowrap ${!data?.length ? 'pointer-events-none' : ''} ${
                           !isFirstColumn && !isLastColumn ? 'text-center' : ''
                         } ${isFirstColumn ? 'text-left' : ''} ${isLastColumn ? 'text-right' : ''}`}
                         key={header.id}
