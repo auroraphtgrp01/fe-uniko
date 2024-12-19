@@ -9,39 +9,43 @@ import { CalendarDays, Users2Icon } from 'lucide-react'
 
 export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOverviewTabsContentProps) {
   return (
-    <div>
-      <div className='rounded-lg bg-muted p-3'>
-        <div className='grid grid-cols-1 grid-rows-1 gap-2 md:grid-cols-10'>
+    <div className='space-y-4'>
+      {/* Current Balance Section */}
+      <div className='rounded-lg bg-muted p-4'>
+        <div className='grid grid-cols-1 grid-rows-1 gap-2 sm:grid-cols-10'>
+          {/* Balance Info */}
           <div className='col-span-6'>
-            <div className='flex flex-col justify-between'>
-              <div>
-                <span className='mb-1 text-sm font-medium'>Current Balance</span>
-                <div className='text-2xl font-bold'>{formatCurrency(detailData.currentAmount, 'đ')}</div>
-              </div>
+            <div className='flex flex-col'>
+              <span className='mb-1 text-sm font-medium'>Current Balance</span>
+              <div className='text-2xl font-bold'>{formatCurrency(detailData.currentAmount, 'đ')}</div>
             </div>
           </div>
-          <div className='col-span-4 col-start-7 items-start lg:col-start-8'>
-            <div className='flex h-full flex-col justify-center space-y-2 text-sm'>
-              <div className='flex h-4'>
-                <CalendarDays className='mr-2 h-4 w-4 text-muted-foreground' />
-                {formatDateTimeVN(detailData.time, true)}
-              </div>
-              <div className='flex h-4'>
-                <Users2Icon className='mr-2 h-4 w-4 text-muted-foreground' />
-                {detailData.participants.length} Participants
-              </div>
+
+          {/* Date and Participants */}
+          <div className='col-span-4 flex flex-col justify-center space-y-2 text-sm md:col-start-7'>
+            <div className='flex items-center'>
+              <CalendarDays className='mr-2 h-4 w-4 text-muted-foreground' />
+              {formatDateTimeVN(detailData.time, true)}
+            </div>
+            <div className='flex items-center'>
+              <Users2Icon className='mr-2 h-4 w-4 text-muted-foreground' />
+              {detailData.participants.length} Participants
             </div>
           </div>
         </div>
       </div>
+
+      {/* Description Section */}
       <div>
-        <h3 className='mb-2 mt-2 text-sm font-medium'>Description</h3>
+        <h3 className='mb-2 text-sm font-medium'>Description</h3>
         <p className='text-sm text-muted-foreground'>
           {!detailData.description || detailData.description === '' ? 'N/A' : detailData.description}
         </p>
       </div>
+
+      {/* Categories Section */}
       <div>
-        <h3 className='mb-2 mt-2 text-sm font-medium'>Categories</h3>
+        <h3 className='mb-2 text-sm font-medium'>Categories</h3>
         <div className='flex flex-wrap gap-2'>
           {detailData.categories.length > 0 ? (
             detailData.categories.map((category, index) => (
@@ -58,9 +62,11 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
           )}
         </div>
       </div>
+
+      {/* Participants Section */}
       <div>
-        <h3 className='mb-2 mt-2 text-sm font-medium'>Participants</h3>
-        <div className='flex gap-2'>
+        <h3 className='mb-2 text-sm font-medium'>Participants</h3>
+        <div className='flex flex-wrap gap-2'>
           {detailData.participants.map((participant, index) => (
             <Badge
               style={{ userSelect: 'none', pointerEvents: 'none', cursor: 'none' }}
@@ -73,6 +79,8 @@ export default function OverviewTabsContent({ detailData, setIsDialogOpen }: IOv
           ))}
         </div>
       </div>
+
+      {/* Update Button */}
       <div className='flex justify-end'>
         <Button
           onClick={() => {

@@ -17,7 +17,7 @@ import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { IDialogConfig } from '@/types/common.i'
 import UserProfile from '../../profile/UserProfile'
 import { IUser } from '@/types/user.i'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { initEmptyUser } from '@/app/dashboard/profile/constants'
 import CustomDialog from '../../Dialog'
 
@@ -69,75 +69,78 @@ export default function ParticipantTabsContent({
     },
     title: 'Thông tin người tham gia',
     content: <UserProfile user={userProfileData} />,
-    className: 'sm:max-w-[325px] md:max-w-[650px]',
+    className: 'max-w-[90%] ',
     footer: <Button onClick={() => setIsOpenUserProfileDialog(false)}>Đóng</Button>
   }
 
   return (
     <TooltipProvider>
       {isOwner && (
-        <div className='grid w-full grid-cols-6 items-end gap-2'>
-          <div className='col-span-5 h-full w-full'>
+        <div className='grid w-full grid-cols-1 items-end justify-center gap-2 sm:grid-cols-4 md:grid-cols-6'>
+          <div className='col-span-1 sm:col-span-3 md:col-span-5'>
             <InviteParticipantForm formInviteRef={inviteTabProps.formRef} handleInvite={inviteTabProps.handleInvite} />
           </div>
-          <div className='col-span-1 w-full'>
+          <div className='col-span-1'>
             <Button
               onClick={() => inviteTabProps.formRef.current?.requestSubmit()}
               disabled={false}
-              className='flex h-full w-full items-center justify-center text-center'
+              className='flex h-full w-full items-center justify-center gap-2'
             >
-              {false ? (
-                <Loader2Icon className='hidden h-4 w-4 animate-spin md:block' />
-              ) : (
-                <UserPlus className='mr-2 hidden h-4 w-4 md:block' />
-              )}
-              Invite
+              <UserPlus className='inline-block h-4 w-4' />
+              <span>Invite</span>
             </Button>
           </div>
         </div>
       )}
-      <div className={`flex-1 overflow-hidden ${!isOwner ? 'mt-2' : ''}`}>
+
+      <div className={`w-full flex-1 overflow-x-hidden ${!isOwner ? 'mt-2' : ''}`}>
         <ScrollArea className={`${isOwner ? 'h-[17rem]' : 'h-[20.5rem]'} overflow-y-auto rounded-md border`}>
-          <div className='space-y-2 p-2'>
+          <div className='space-y-4 p-4'>
             {detailData.participants.map((participant) => (
-              <div key={participant.id} className='flex items-center justify-between rounded-lg p-2'>
-                <div className='flex items-center space-x-3'>
+              <div
+                key={participant.id}
+                className='max-w-[450px]:flex-col flex rounded-lg border bg-background p-2 sm:flex-row sm:items-center sm:justify-between sm:p-4'
+              >
+                {/* User Information */}
+                <div className='flex w-full flex-1 items-center gap-3'>
                   <Avatar>
                     <AvatarImage src={`/avatars/${participant.user?.avatarId}.png`} />
-                    <AvatarFallback>{participant.user?.fullName.charAt(0) ?? 'N/A'}</AvatarFallback>
+                    <AvatarFallback>{participant.user?.fullName?.charAt(0) ?? 'N/A'}</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className='text-sm font-medium'>{participant.user?.fullName ?? 'N/A'}</p>
-                    <p className='text-xs'>{participant.user?.email ?? participant?.subEmail}</p>
+                  <div className='flex flex-col'>
+                    <p className='truncate text-sm font-medium'>{participant.user?.fullName ?? 'N/A'}</p>
+                    <p className='truncate text-xs text-muted-foreground'>
+                      {participant.user?.email ?? participant?.subEmail}
+                    </p>
                   </div>
                 </div>
-                <div className='flex items-center space-x-2'>
-                  {participant.status === 'ACCEPTED' ? (
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <CheckIcon className='h-4 w-4 text-green-500' />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Accepted</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Clock className='h-4 w-4 text-yellow-500' />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Pending</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                  {getRoleBadge(participant.role)}
+
+                {/* Actions */}
+                <div className='flex flex-wrap items-center justify-end gap-2 sm:flex-nowrap sm:gap-4'>
+                  {/* Status */}
+                  <Tooltip>
+                    <TooltipTrigger>
+                      {participant.status === 'ACCEPTED' ? (
+                        <CheckIcon className='order-2 h-4 w-4 text-green-500 sm:order-none' />
+                      ) : (
+                        <Clock className='order-2 h-4 w-4 text-yellow-500 sm:order-none' />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{participant.status === 'ACCEPTED' ? 'Accepted' : 'Pending'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  {/* Role Badge */}
+                  <div className='order-1 sm:order-none'>{getRoleBadge(participant.role)}</div>
+
+                  {/* More Options */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        disabled={participant.role === 'OWNER' || isOwner === false}
+                        disabled={participant.role === 'OWNER' || !isOwner}
                         variant='ghost'
-                        className='h-8 w-8 p-0'
+                        className='order-3 h-8 w-8 p-0 sm:order-none'
                       >
                         <MoreHorizontalIcon className='h-4 w-4 text-gray-400' />
                       </Button>
@@ -145,27 +148,22 @@ export default function ParticipantTabsContent({
                     <DropdownMenuContent align='end'>
                       {participant.role !== 'OWNER' && (
                         <DropdownMenuItem
-                          style={{ cursor: 'pointer' }}
-                          className='text-red-400'
-                          onClick={() => {
-                            participantProps.handleDelete(participant.id)
-                          }}
+                          className='cursor-pointer text-red-400'
+                          onClick={() => participantProps.handleDelete(participant.id)}
                         >
                           <Trash2Icon className='mr-2 h-4 w-4' />
-                          <span>Remove</span>
+                          Remove
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem
-                        disabled={!participant.user}
-                        style={{ cursor: 'pointer' }}
-                        className='text-muted-foreground'
+                        className='cursor-pointer'
                         onClick={() => {
                           setUserProfileData(participant.user)
                           setIsOpenUserProfileDialog(true)
                         }}
                       >
-                        <UserCheck2Icon className='ml-[2px] mr-2 h-4 w-4' />
-                        <span>Profile</span>
+                        <UserCheck2Icon className='mr-2 h-4 w-4' />
+                        Profile
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -175,6 +173,7 @@ export default function ParticipantTabsContent({
           </div>
         </ScrollArea>
       </div>
+
       <CustomDialog config={userProfileDialogConfig} />
     </TooltipProvider>
   )
