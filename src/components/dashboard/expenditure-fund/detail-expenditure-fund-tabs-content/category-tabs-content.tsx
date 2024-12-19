@@ -71,14 +71,14 @@ export default function CategoryTabsContent({
       <div className='flex space-x-2'>
         <Select onValueChange={(value) => setType(value as ETypeOfTrackerTransactionType)} value={type}>
           <SelectTrigger style={{ userSelect: 'none' }}>
-            <SelectValue placeholder='Select type' />
+            <SelectValue placeholder='Select type'  />
           </SelectTrigger>
           <SelectContent style={{ userSelect: 'none' }}>
             <SelectItem value='INCOMING'>Incoming</SelectItem>
             <SelectItem value='EXPENSE'>Expense</SelectItem>
           </SelectContent>
         </Select>
-        <Button className='w-full whitespace-nowrap sm:w-auto' variant='secondary' onClick={() => setIsCreating(true)}>
+        <Button className='w-full whitespace-nowrap sm:w-auto py-1' variant='secondary' onClick={() => setIsCreating(true)}>
           Create <PlusIcon className='ml-1 h-4 w-4' />
         </Button>
       </div>

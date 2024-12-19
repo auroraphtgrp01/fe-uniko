@@ -3,12 +3,73 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EFundStatus, IDetailExpenditureFundProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import OverviewTabsContent from './detail-expenditure-fund-tabs-content/overview-tabs-content'
 import TransactionTabsContent from './detail-expenditure-fund-tabs-content/transaction-tabs-content'
 import StatisticTabsContent from './detail-expenditure-fund-tabs-content/statistic-tabs-content'
 import ParticipantTabsContent from './detail-expenditure-fund-tabs-content/participant-tabs-content'
 import CategoryTabsContent from './detail-expenditure-fund-tabs-content/category-tabs-content'
+import { ChevronDown, ChevronUp, LayoutDashboard, Users, Tags, Receipt, BarChart3 } from 'lucide-react'
+
+// Add variants for stagger animation
+const menuVariants = {
+  open: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      staggerChildren: 0.07,
+      duration: 0.2
+    }
+  },
+  closed: {
+    opacity: 0,
+    y: -10,
+    transition: {
+      staggerChildren: 0.05,
+      staggerDirection: -1
+    }
+  }
+}
+
+const itemVariants = {
+  open: {
+    opacity: 1,
+    y: 0
+  },
+  closed: {
+    opacity: 0,
+    y: -10
+  }
+}
+
+// Add menu items array
+const menuItems = [
+  {
+    value: 'overview',
+    title: 'Overview',
+    icon: LayoutDashboard
+  },
+  {
+    value: 'participants',
+    title: 'Participants',
+    icon: Users
+  },
+  {
+    value: 'categories',
+    title: 'Categories',
+    icon: Tags
+  },
+  {
+    value: 'transactions',
+    title: 'Transactions',
+    icon: Receipt
+  },
+  {
+    value: 'statistics',
+    title: 'Statistics',
+    icon: BarChart3
+  }
+]
 
 export function DetailExpenditureFund({
   detailData,
@@ -23,6 +84,20 @@ export function DetailExpenditureFund({
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   const [titleMenu, setTitleMenu] = useState<string>('Overview')
 
+  // Add ref
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Add click outside handler
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const getStatusColor = (status: EFundStatus) => {
     switch (status) {
       case EFundStatus.ACTIVE:
@@ -36,7 +111,6 @@ export function DetailExpenditureFund({
 
   const handleMenuOpen = (event: React.MouseEvent, { title, status }: { title: string; status: boolean }) => {
     event.preventDefault()
-    setIsMenuOpen(status)
     setTitleMenu(title)
   }
 
@@ -53,72 +127,42 @@ export function DetailExpenditureFund({
       </div>
 
       <Tabs defaultValue='overview' className='relative w-full sm:hidden'>
-        <TabsList className='w-full'>
-          <div className='relative w-full'>
+        <TabsList className='w-full !px-0'>
+          <div className='relative w-full' ref={dropdownRef}>
             {/* Button Toggle Menu */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className='flex w-full items-center justify-between rounded-md border bg-background px-4 py-2 text-sm font-medium'
             >
               <span>{titleMenu}</span>
-              <span>{isMenuOpen ? '▲' : '▼'}</span>
+              {isMenuOpen ? <ChevronUp className='h-4 w-4' /> : <ChevronDown className='h-4 w-4' />}
             </button>
 
             {/* Dropdown Menu */}
             <AnimatePresence>
               {isMenuOpen && (
                 <motion.div
-                  className='absolute left-0 z-10 w-full max-w-md rounded-md border bg-background shadow-md'
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
+                  className='mt-2 px-2 absolute left-0 z-10 w-full max-w-md divide-y divide-border overflow-hidden rounded-md border bg-background/95 shadow-lg backdrop-blur-sm'
+                  variants={menuVariants}
+                  initial='closed'
+                  animate='open'
+                  exit='closed'
                 >
-                  <TabsTrigger
-                    value='overview'
-                    className='block w-full px-4 py-2 text-left focus:outline-none focus:ring focus:ring-offset-2'
-                    onClick={(e) => {
-                      handleMenuOpen(e, { title: 'Overview', status: false })
-                    }}
-                  >
-                    Overview
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value='participants'
-                    className='block w-full px-4 py-2 text-left focus:outline-none focus:ring focus:ring-offset-2'
-                    onClick={(e) => {
-                      handleMenuOpen(e, { title: 'Participants', status: false })
-                    }}
-                  >
-                    Participants
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value='categories'
-                    className='block w-full px-4 py-2 text-left focus:outline-none focus:ring focus:ring-offset-2'
-                    onClick={(e) => {
-                      handleMenuOpen(e, { title: 'Categories', status: false })
-                    }}
-                  >
-                    Categories
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value='transactions'
-                    className='block w-full px-4 py-2 text-left focus:outline-none focus:ring focus:ring-offset-2'
-                    onClick={(e) => {
-                      handleMenuOpen(e, { title: 'Transactions', status: false })
-                    }}
-                  >
-                    Transactions
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value='statistics'
-                    className='block w-full px-4 py-2 text-left focus:outline-none focus:ring focus:ring-offset-2'
-                    onClick={(e) => {
-                      handleMenuOpen(e, { title: 'Statistics', status: false })
-                    }}
-                  >
-                    Statistics
-                  </TabsTrigger>
+                  {menuItems.map((item) => (
+                    <motion.div key={item.value} variants={itemVariants}>
+                      <TabsTrigger
+                        value={item.value}
+                        className='group flex mt-2 w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted focus:outline-none'
+                        onClick={(e) => {
+                          handleMenuOpen(e, { title: item.title, status: false })
+                          setIsMenuOpen(false)
+                        }}
+                      >
+                        <item.icon className='h-4 w-4 transition-transform group-hover:scale-110' />
+                        <span>{item.title}</span>
+                      </TabsTrigger>
+                    </motion.div>
+                  ))}
                 </motion.div>
               )}
             </AnimatePresence>
