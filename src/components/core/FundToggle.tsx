@@ -41,20 +41,22 @@ export default function FundToggle() {
           </motion.div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='mt-5 w-56 select-none' align='center' sideOffset={5}>
+      <DropdownMenuContent className='w-56 select-none' align='center' sideOffset={5}>
         <DropdownMenuGroup>
           <div className='px-2 py-1.5 text-center text-sm font-semibold text-muted-foreground'>
             <span>Expenditure Funds</span>
           </div>
           <DropdownMenuSeparator />
-          {fundArr?.map((fund, index) => (
-            <React.Fragment key={fund.id}>
-              {index !== 0 && <DropdownMenuSeparator />}
-              <DropdownMenuItem className='cursor-pointer' onClick={() => setFundId(fund.id)}>
-                {fund.name.charAt(0).toUpperCase() + fund.name.slice(1)}
-              </DropdownMenuItem>
-            </React.Fragment>
-          ))}
+          <div className='max-h-[140px] overflow-x-hidden overflow-y-scroll'>
+            {fundArr?.map((fund, index) => (
+              <React.Fragment key={fund.id}>
+                {index !== 0 && <DropdownMenuSeparator />}
+                <DropdownMenuItem className='cursor-pointer' onClick={() => setFundId(fund.id)}>
+                  {fund.name.charAt(0).toUpperCase() + fund.name.slice(1)}
+                </DropdownMenuItem>
+              </React.Fragment>
+            ))}
+          </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

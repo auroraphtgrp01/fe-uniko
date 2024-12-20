@@ -80,7 +80,11 @@ export default function CategoryTabsContent({
             <SelectItem value='EXPENSE'>Expense</SelectItem>
           </SelectContent>
         </Select>
-        <Button className='w-full whitespace-nowrap sm:w-auto' variant='secondary' onClick={() => setIsCreating(true)}>
+        <Button
+          className='w-full whitespace-nowrap py-1 sm:w-auto'
+          variant='secondary'
+          onClick={() => setIsCreating(true)}
+        >
           {t('common:button.create')} <PlusIcon className='ml-1 h-4 w-4' />
         </Button>
       </div>
