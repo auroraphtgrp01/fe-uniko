@@ -78,6 +78,7 @@ import { useAccountSource } from '@/core/account-source/hooks'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
 import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function TransactionForm() {
   // states
@@ -115,6 +116,7 @@ export default function TransactionForm() {
 
   // hooks
   // declare hooks
+  const queryClient = useQueryClient()
   const { t } = useTranslation(['transaction'])
   const {
     getTransactions,
@@ -145,6 +147,7 @@ export default function TransactionForm() {
   const { isGetMeUserPending } = getMe(true)
   const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
   const { refetchAdvancedExpendingFund } = getAdvancedExpenditureFund({})
+  const { refetchAllData: refetchAllAccountSourceData } = getAllAccountSource(fundId)
 
   // custom hooks
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
@@ -403,13 +406,13 @@ export default function TransactionForm() {
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.transactionToday.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Income Amount</div>
+              <div>{t('transaction:totalIncomeAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.transactionToday.incomeAmount, 'đ', 'vi-vn')}
               </div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Expense Amount</div>
+              <div>{t('transaction:totalExpenseAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.transactionToday.expenseAmount, 'đ', 'vi-vn')}
               </div>
@@ -435,13 +438,13 @@ export default function TransactionForm() {
               <div className='text-lg font-bold sm:text-xl'>{transactionSummary.unclassifiedTransaction.count}</div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Income Amount</div>
+              <div>{t('transaction:totalIncomeAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.unclassifiedTransaction.incomeAmount, 'đ', 'vi-vn')}
               </div>
             </div>
             <div className='flex items-center justify-between'>
-              <div>Total Expense Amount</div>
+              <div>{t('transaction:totalExpenseAmount')}</div>
               <div className='text-xl font-bold'>
                 {formatCurrency(transactionSummary.unclassifiedTransaction.expenseAmount, 'đ', 'vi-vn')}
               </div>
@@ -501,7 +504,9 @@ export default function TransactionForm() {
                 hookUpdate: updateTransaction,
                 setDataTableConfig: setDataTableConfig,
                 setDetailDialog: setDataDetail,
-                callBackOnSuccess: callBackRefetchTransactionPage
+                callBackOnSuccess: callBackRefetchTransactionPage,
+                setIsDialogOpen,
+                queryClient
               }),
             statusUpdateTransaction: statusUpdate
           }}

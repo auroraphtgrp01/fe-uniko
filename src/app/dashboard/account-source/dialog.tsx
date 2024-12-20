@@ -111,8 +111,8 @@ export default function AccountSourceDialog({
         }}
       />
     ),
-    description: 'Thông tin chi tiết về account source',
-    title: 'Chi tiết giao dịch account source',
+    description: t('AccountSourceDialog.detailsDialog.description'),
+    title: t('AccountSourceDialog.detailsDialog.title'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogDetailOpen,
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: false }))

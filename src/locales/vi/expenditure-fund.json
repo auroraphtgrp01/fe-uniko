@@ -1,0 +1,30 @@
+{
+  "summaryRecentTransactions": "Tóm tắt giao dịch gần đây",
+  "balanceSummary": "Tóm tắt số dư",
+  "totalBalanceSummary": "Tổng tóm tắt số dư",
+  "incomingTransactionSummary": "Tóm tắt giao dịch thu",
+  "expenseTransactionSummary": "Tóm tắt giao dịch chi",
+  "notiTotalBalanceSummary": "{{percentage}}% so với tháng trước",
+  "notiIncomingTransactionSummary": "{{percentage}}% so với hôm qua",
+  "notiExpenseTransactionSummary": "{{percentage}}% so với tháng trước",
+  "form": {
+    "createExpenditureFund": {
+      "title": "Tạo quỹ chi tiêu",
+      "description": "Tạo một quỹ chi tiêu mới"
+    },
+    "name": {
+      "label": "Tên",
+      "placeholder": "Nhập tên *"
+    },
+    "direction": {
+      "label": "Mô tả",
+      "placeholder": "Nhập mô tả *"
+    }
+  },
+  "tableExpenditureFundFormBody": {
+    "name": "Tên",
+    "status": "Trạng thái",
+    "currentAmount": "Số tiền hiện tại",
+    "owner": "Chủ sở hữu"
+  }
+}

@@ -7,6 +7,8 @@
   "unclassifiedTransaction": "Unclassified Transaction",
   "classify": "Classify",
   "unclassifiedTransactionDescription": "Transactions without a tracker",
+  "totalIncomeAmount": "Total Income Amount",
+  "totalExpenseAmount": "Total Expense Amount",
   "TransactionType": {
     "detailsDialog": {
       "title": "Transaction Detail",
@@ -49,5 +51,33 @@
         "placeholder": "Enter description"
       }
     }
+  },
+  "IUpdateTransactionFormBody": {
+    "amount": {
+      "label": "Amount",
+      "placeholder": "Enter amount"
+    },
+    "accountSource": {
+      "label": "Account Source",
+      "placeholder": "Select account source"
+    },
+    "direction": {
+      "label": "Direction",
+      "placeholder": "Select direction"
+    }
+  },
+  "transactionDetails": {
+    "senderAccount": "Sender Account",
+    "receiverAccount": "Receiver Account",
+    "transactionContent": "Transaction Content",
+    "transactionCode": "Transaction Code: ",
+    "classifier": "Classifier",
+    "classificationTime": "Classification Time",
+    "description": "Description",
+    "category": "Category",
+    "note": "Comments",
+    "noNote": "No comments",
+    "toast": "Cannot edit transactions fetched from bank accounts!",
+    "classify": "Classify"
   }
 }

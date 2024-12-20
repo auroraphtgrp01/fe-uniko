@@ -1,65 +1,103 @@
 {
-    "AccountSourceDialog": {
-        "createDialog": {
-            "title": "Tạo Nguồn Tài Khoản",
-            "description": "Vui lòng điền thông tin dưới đây để tạo nguồn tài khoản mới."
-        },
-        "updateDialog": {
-            "title": "Cập Nhật Nguồn Tài Khoản",
-            "description": "Vui lòng điền thông tin dưới đây để cập nhật nguồn tài khoản."
-        }
+  "AccountSourceDialog": {
+    "createDialog": {
+      "title": "Tạo nguồn tài khoản",
+      "description": "Vui lòng điền thông tin bên dưới để tạo nguồn tài khoản mới."
     },
-    "form": {
-        "defineCreateAccountSourceFormBody": {
-            "reasonName": {
-                "label": "Tên Lý Do",
-                "placeholder": "Nhập tên lý do"
-            },
-            "amount": {
-                "label": "Số Tiền",
-                "placeholder": "Nhập số tiền"
-            },
-            "accountSourceId": {
-                "label": "Nguồn Tài Khoản",
-                "placeholder": "Chọn nguồn tài khoản"
-            },
-            "direction": {
-                "label": "Hướng",
-                "placeholder": "Chọn hướng",
-                "options": {
-                    "incoming": "THU VÀO",
-                    "expense": "CHI TIÊU"
-                }
-            },
-            "trackerTypeId": {
-                "label": "Loại Giao Dịch Tracker",
-                "placeholder": "Chọn loại tracker"
-            },
-            "description": {
-                "label": "Mô Tả",
-                "placeholder": "Nhập mô tả"
-            }
-        },
-        "createAccountSourceFormBody": {
-            "accountSourceName": {
-                "label": "Tên Nguồn",
-                "placeholder": "Nhập tên nguồn của bạn"
-            },
-            "accountSourceType": {
-                "label": "Loại",
-                "placeholder": "Chọn loại",
-                "options": {
-                    "wallet": "VÍ",
-                    "banking": "NGÂN HÀNG"
-                }
-            },
-            "initAmount": {
-                "label": "Số Tiền Ban Đầu",
-                "placeholder": "Nhập số tiền ban đầu của bạn"
-            }
-        },
-        "button": {
-            "save_changes_account_source": "Lưu thay đổi nguồn tài khoản"
-        }
+    "updateDialog": {
+      "title": "Cập nhật nguồn tài khoản",
+      "description": "Vui lòng điền thông tin bên dưới để cập nhật nguồn tài khoản."
+    },
+    "detailsDialog": {
+      "title": "Thông tin chi tiết về tài khoản nguồn",
+      "description": "Chi tiết giao dịch tài khoản nguồn"
     }
+  },
+  "form": {
+    "defineCreateAccountSourceFormBody": {
+      "reasonName": {
+        "label": "Mục đích",
+        "placeholder": "Nhập mục đích chi/tiêu"
+      },
+      "amount": {
+        "label": "Số tiền",
+        "placeholder": "Nhập số tiền"
+      },
+      "accountSourceId": {
+        "label": "Nguồn tài khoản",
+        "placeholder": "Chọn nguồn tài khoản"
+      },
+      "direction": {
+        "label": "Hướng giao dịch",
+        "placeholder": "Chọn hướng giao dịch",
+        "options": {
+          "incoming": "THU VÀO",
+          "expense": "CHI RA"
+        }
+      },
+      "trackerTypeId": {
+        "label": "Danh mục",
+        "placeholder": "Chọn danh mục"
+      },
+      "description": {
+        "label": "Mô tả",
+        "placeholder": "Nhập mô tả"
+      }
+    },
+    "createAccountSourceFormBody": {
+      "accountSourceName": {
+        "label": "Tên nguồn tài khoản",
+        "placeholder": "Nhập tên nguồn tài khoản của bạn"
+      },
+      "accountSourceType": {
+        "label": "Loại tài khoản",
+        "placeholder": "Chọn loại tài khoản",
+        "options": {
+          "wallet": "VÍ ĐIỆN TỬ",
+          "banking": "NGÂN HÀNG"
+        }
+      },
+      "initAmount": {
+        "label": "Số dư ban đầu",
+        "placeholder": "Nhập số dư ban đầu của bạn"
+      },
+      "bankType": {
+        "label": "Loại ngân hàng",
+        "placeholder": "Chọn loại ngân hàng"
+      },
+      "loginId": {
+        "label": "ID đăng nhập",
+        "placeholder": "Nhập ID đăng nhập của bạn"
+      },
+      "password": {
+        "label": "Mật khẩu",
+        "placeholder": "Nhập mật khẩu đăng nhập của bạn"
+      },
+      "accounts": {
+        "label": "Tài khoản",
+        "placeholder": "Nhập tài khoản của bạn"
+      }
+    },
+    "button": {
+      "save_changes_account_source": "Lưu thay đổi nguồn tài khoản",
+      "edit_account_source": "Chỉnh sửa tài khoản nguồn"
+    },
+    "editAccountSource": {
+      "title": "Chi tiết giao dịch tài khoản nguồn",
+      "description": "Thông tin chi tiết tài khoản nguồn",
+      "currentAmount": "Số dư hiện tại",
+      "accountBank": "Ngân hàng tài khoản",
+      "checkType": "Loại kiểm tra",
+      "currency": "Loại tiền tệ",
+      "initialAmount": "Số dư ban đầu",
+      "name": "Tên tài khoản"
+    }
+  },
+  "table": {
+    "name": "Tên tài khoản",
+    "type": "Loại tài khoản",
+    "initAmount": "Số dư ban đầu",
+    "accountBank": "Ngân hàng",
+    "currentAmount": "Số dư hiện tại"
+  }
 }

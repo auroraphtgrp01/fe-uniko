@@ -6,6 +6,7 @@ import { IUser } from '@/types/user.i'
 import { Briefcase, Calendar, Mail, MapPin, Phone, User2 } from 'lucide-react'
 import Image from 'next/image'
 import { Avatar } from '@/components/ui/avatar'
+import { useTranslation } from 'react-i18next'
 
 interface IUserProfileProps {
   handleUpdateUser?: (formData: {
@@ -21,6 +22,7 @@ interface IUserProfileProps {
 }
 
 export default function UserProfile({ handleUpdateUser, user }: IUserProfileProps) {
+  const { t } = useTranslation(['profile'])
   return (
     <>
       <div className='flex flex-col items-center space-y-4'>
@@ -47,13 +49,18 @@ export default function UserProfile({ handleUpdateUser, user }: IUserProfileProp
       <div className='grid gap-4 sm:grid-cols-2'>
         <div className='space-y-4'>
           <InfoItem icon={Mail} label='Email' value={user.email} />
-          <InfoItem icon={Phone} label='Phone' value={user.phone_number} />
-          <InfoItem icon={MapPin} label='Location' value={user.address} />
+          <InfoItem icon={Phone} label={t('profile:infoProfileTitle.infoPhone_number')} value={user.phone_number} />
+
+          <InfoItem icon={MapPin} label={t('profile:infoProfileTitle.infoAddress')} value={user.address} />
         </div>
         <div className='space-y-4'>
-          <InfoItem icon={Calendar} label='Date of Birth' value={formatDateToInput(user.dateOfBirth)} />
-          <InfoItem icon={User2} label='Gender' value={user.gender} />
-          <InfoItem icon={Briefcase} label='Workplace' value={user.workplace} />
+          <InfoItem
+            icon={Calendar}
+            label={t('profile:infoProfileTitle.infoDateOfBirth')}
+            value={formatDateToInput(user.dateOfBirth)}
+          />
+          <InfoItem icon={User2} label={t('profile:infoProfileTitle.infoGender.label')} value={user.gender} />
+          <InfoItem icon={Briefcase} label={t('profile:infoProfileTitle.infoWorkplace')} value={user.workplace} />
         </div>
       </div>
     </>

@@ -9,6 +9,7 @@ import CreateExpenditureFundForm from '@/components/dashboard/expenditure-fund/c
 import { DetailExpenditureFund } from '@/components/dashboard/expenditure-fund/detail-expenditure-fund'
 import UpdateExpenditureFundForm from '@/components/dashboard/expenditure-fund/update-expenditure-fund'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
+import { useTranslation } from 'react-i18next'
 
 export default function ExpenditureFundDialog(params: IExpenditureFundDialogProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -16,6 +17,7 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
   const formUpdateExpenditureFundRef = useRef<HTMLFormElement>(null)
   const formInviteParticipantRef = useRef<HTMLFormElement>(null)
   const [idParticipantDelete, setIdParticipantDelete] = useState<string>('')
+  const { t } = useTranslation(['expenditureFund', 'expenditureFundDetails', 'common'])
 
   const {
     commonDialogState,
@@ -32,8 +34,8 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
     }),
     isOpen: commonDialogState.isDialogOpen.isDialogCreateOpen,
     onClose: () => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false })),
-    title: 'Create Expenditure Fund',
-    description: 'Create a new expenditure fund',
+    title: t('expenditureFund:form.createExpenditureFund.title'),
+    description: t('expenditureFund:form.createExpenditureFund.description'),
     footer: (
       <Button onClick={() => formCreateExpenditureFundRef.current?.requestSubmit()} type='button'>
         {t('common:button.save')}
@@ -42,7 +44,7 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
   }
 
   const detailConfigDialog: IDialogConfig = {
-    className: 'sm:max-w-[325px] md:max-w-[650px]',
+    className: ' max-w-[500px]:w-[500px] sm:max-w-[650px]',
     content: DetailExpenditureFund({
       detailData: detailUpdateDialog.data,
       inviteTabProps: {
@@ -65,8 +67,8 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
         }
       }
     }),
-    description: 'Detail information of the expenditure fund.',
-    title: 'Expenditure Fund Details',
+    description: t('expenditureFundDetails:detailInformationOfTheExpenditureFund'),
+    title: t('expenditureFundDetails:ExpenditureFundDetails'),
     isOpen: commonDialogState.isDialogOpen.isDialogDetailOpen,
     onClose: () => {
       detailUpdateDialog.setDetailData(initEmptyDetailExpenditureFund)
@@ -87,8 +89,8 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
     }),
     isOpen: commonDialogState.isDialogOpen.isDialogUpdateOpen,
     onClose: () => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false })),
-    title: 'Update Expenditure Fund',
-    description: 'Update a new expenditure fund',
+    title: t('expenditureFundDetails:update.title'),
+    description: t('expenditureFundDetails:update.description'),
     footer: (
       <Button onClick={() => formUpdateExpenditureFundRef.current?.requestSubmit()} type='button'>
         {t('common:button.save')}

@@ -15,6 +15,7 @@ import React from 'react'
 import toast from 'react-hot-toast'
 import { initCreateTrackerTransactionForm } from './constants'
 import { IDataTableConfig } from '@/types/common.i'
+import { QueryClient } from '@tanstack/react-query'
 
 export const modifyTransactionHandler = (payload: ITransaction[]): IDataTransactionTable[] => {
   return payload.map((item: ITransaction) => {
@@ -159,7 +160,9 @@ export const handleUpdateTransaction = ({
   hookUpdate,
   setDataTableConfig,
   setDetailDialog,
-  callBackOnSuccess
+  callBackOnSuccess,
+  setIsDialogOpen,
+  queryClient
 }: {
   data: IUpdateTransactionBody
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
@@ -167,6 +170,8 @@ export const handleUpdateTransaction = ({
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDetailDialog: React.Dispatch<React.SetStateAction<ITransaction>>
   callBackOnSuccess: (actions: TTransactionActions[]) => void
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
+  queryClient: QueryClient
 }) => {
   hookUpdate(data, {
     onSuccess: (res: any) => {
@@ -181,7 +186,9 @@ export const handleUpdateTransaction = ({
         toast.success('Update transaction successfully!')
         setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
         setDetailDialog(res.data)
+        queryClient.clear()
         setIsEditing(false)
+        setIsDialogOpen((prev: any) => ({ ...prev, isDialogDetailOpen: false }))
       }
     }
   })

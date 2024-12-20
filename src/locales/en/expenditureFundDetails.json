@@ -1,0 +1,49 @@
+{
+  "ExpenditureFundDetails": "Expenditure Fund Details",
+  "detailInformationOfTheExpenditureFund": "Detail information of the expenditure fund.",
+  "personal": "Personal",
+  "tabs": {
+    "overview": "Overview",
+    "participants": "Participants",
+    "categories": "Categories",
+    "transactions": "Transactions",
+    "statistics": "Statistics"
+  },
+  "participants": {
+    "placeholder": "Enter email addresses or phone numbers"
+  },
+  "categories": {
+    "placeholder": "Search Tracker Transaction Type"
+  },
+  "transactions": {},
+  "statistics": {},
+  "update": {
+    "title": "Update Expenditure Fund",
+    "description": "Update a new expenditure fund",
+    "form": {
+      "selectActive": {
+        "active": "ACTIVE",
+        "closed": "CLOSED",
+        "pending": "ĐANG CHỜ",
+        "label": "Description",
+        "description": "Enter Discription"
+      }
+    }
+  },
+  "overview": {
+    "currentBalance": "Current Balance",
+    "description": "Description",
+    "categories": "Categories",
+    "participants": "Participants"
+  },
+  "transactionTabsContent": {
+    "placeHolder": "Enter email addresses or phone numbers"
+  },
+  "categoryTabsContent": {
+    "input": "Search Tracker Transaction Type"
+  },
+  "createTrackerTypeDialog": {
+    "title": "Create Tracker Transaction Type",
+    "description": "Create a new tracker transaction type"
+  }
+}

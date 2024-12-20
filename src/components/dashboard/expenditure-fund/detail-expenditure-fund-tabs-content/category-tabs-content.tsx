@@ -13,6 +13,7 @@ import { useMemo, useRef, useState } from 'react'
 import CreateTrackerTypeForm from '../../CreateTrackerTypeForm'
 import CustomDialog from '../../Dialog'
 import AccordionEditTrackerType from '../../AccordionEditTrackerType'
+import { useTranslation } from 'react-i18next'
 
 export default function CategoryTabsContent({
   detailData,
@@ -36,6 +37,7 @@ export default function CategoryTabsContent({
   const filteredDataArr = editCategories?.filter((data: IEditTrackerTypeDialogData) =>
     data.label.toLowerCase().includes(valueSearch.trim().toLowerCase())
   )
+  const { t } = useTranslation(['expenditureFundDetails', 'common'])
 
   const createTrackerTypeDialog: IDialogConfig = {
     content: (
@@ -51,11 +53,11 @@ export default function CategoryTabsContent({
     ),
     isOpen: isCreating,
     onClose: () => setIsCreating(false),
-    title: 'Create Tracker Transaction Type',
-    description: 'Create a new tracker transaction type',
+    title: t('createTrackerTypeDialog.title'),
+    description: t('createTrackerTypeDialog.description'),
     footer: (
       <Button onClick={() => formRefCreate.current?.requestSubmit()} type='button'>
-        Save
+        {t('common:button.save')}
       </Button>
     )
   }
@@ -66,7 +68,7 @@ export default function CategoryTabsContent({
         value={valueSearch}
         onChange={(e) => setValueSearch(e.target.value)}
         className='w-full'
-        placeholder='Search Tracker Transaction Type'
+        placeholder={t('categoryTabsContent.input')}
       />
       <div className='flex space-x-2'>
         <Select onValueChange={(value) => setType(value as ETypeOfTrackerTransactionType)} value={type}>
@@ -78,8 +80,12 @@ export default function CategoryTabsContent({
             <SelectItem value='EXPENSE'>Expense</SelectItem>
           </SelectContent>
         </Select>
-        <Button className='w-full whitespace-nowrap sm:w-auto' variant='secondary' onClick={() => setIsCreating(true)}>
-          Create <PlusIcon className='ml-1 h-4 w-4' />
+        <Button
+          className='w-full whitespace-nowrap py-1 sm:w-auto'
+          variant='secondary'
+          onClick={() => setIsCreating(true)}
+        >
+          {t('common:button.create')} <PlusIcon className='ml-1 h-4 w-4' />
         </Button>
       </div>
       <AccordionEditTrackerType

@@ -1,9 +1,9 @@
 import { IDateRange } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IDynamicType } from '@/types/common.i'
 import { IBodyFormField } from '@/types/formZod.interface'
-import { AppNamespace } from '@/types/i18n'
+import { KNamespace, KPrefix } from '@/types/i18n'
 import { type ClassValue, clsx } from 'clsx'
-import i18next, { TFunction, TOptions } from 'i18next'
+import i18next, { Namespace, TFunction, TOptions } from 'i18next'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -107,21 +107,19 @@ export const getCurrentMonthDateRange = (): IDateRange => {
   }
 }
 
-export function translate(keyOrNamespace: AppNamespace | AppNamespace[]): TFunction
-export function translate(keyOrNamespace: string, options?: TOptions<any>): string
-export function translate(
-  keyOrNamespace: string | AppNamespace | AppNamespace[],
-  options?: TOptions<any>
-): string | TFunction {
-  if (typeof keyOrNamespace === 'string' || Array.isArray(keyOrNamespace)) {
-    const namespaces = keyOrNamespace as AppNamespace | AppNamespace[]
-    return ((key: string, options?: TOptions<any>) => i18next.t(key, { ns: namespaces, ...options })) as TFunction
+export function translate(Ns: Namespace): TFunction<Namespace, KPrefix>
+export function translate(Ns: Namespace, options?: TOptions<any>): string
+export function translate(Ns: KNamespace, options?: TOptions<any>): string | TFunction<Namespace, KPrefix> {
+  if (typeof Ns === 'string' || Array.isArray(Ns)) {
+    return ((key: typeof Ns, options?: TOptions<any>) => i18next.t(key, { ns: Ns, ...options })) as TFunction<
+      Namespace,
+      KPrefix
+    >
   }
-
-  return i18next.t(keyOrNamespace as string, options)
+  return i18next.t(Ns, options)
 }
 
-export function getTranslatedFormBody(formBody: IBodyFormField[], t: TFunction<any>): IBodyFormField[] {
+export function getTranslatedFormBody(formBody: IBodyFormField[], t: Function): IBodyFormField[] {
   return formBody.map((field) => ({
     ...field,
     label: typeof field.label === 'string' ? t(field.label) : field.label,
