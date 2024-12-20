@@ -23,6 +23,7 @@ export function ChatBox() {
     { id: 1, text: 'Xin chào! Tôi có thể giúp gì cho bạn?', sender: 'bot' }
   ])
   const [input, setInput] = useState('')
+  const [error, setError] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -94,12 +95,15 @@ export function ChatBox() {
     if (input.trim()) {
       setMessages([...messages, { id: messages.length + 1, text: input, sender: 'user' }])
       setInput('')
+      setError('')
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
           { id: prev.length + 1, text: 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất có thể.', sender: 'bot' }
         ])
       }, 1000)
+    } else {
+      setError('Bạn phải nhập tin nhắn trước khi gửi.')
     }
   }
 
@@ -127,7 +131,7 @@ export function ChatBox() {
               stiffness: 300,
               damping: 25
             }}
-            className='flex h-[500px] w-[380px] flex-col overflow-hidden rounded-md border bg-background/95 shadow-lg backdrop-blur-md dark:bg-background/60'
+            className='flex h-[500px] w-[380px] flex-col overflow-hidden rounded-md border bg-background/95 shadow-lg backdrop-blur-md dark:bg-zinc-950/65'
           >
             <div className='relative border-b bg-primary/10 p-3 backdrop-blur-md dark:bg-slate-800/40'>
               <h2 className='text-center text-sm font-medium text-foreground dark:text-slate-100'>
@@ -198,8 +202,9 @@ export function ChatBox() {
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className='border-t bg-primary/10 p-3 backdrop-blur-md dark:bg-slate-800/40'
+              className='border-t bg-primary/10 p-3 pt-2 backdrop-blur-md dark:bg-slate-800/40'
             >
+              {error && <p className='mb-2 text-sm font-semibold text-red-500'>{error}</p>}
               <div className='flex items-center gap-2'>
                 <motion.div className='flex-grow' whileFocus={{ scale: 1.01 }} variants={inputVariants}>
                   <Input
