@@ -25,6 +25,11 @@ export interface IChartData {
   totalExpenseToday: number
 }
 
+export interface IChartDataAccountSource {
+  totalBalanceTypeStats: IPayloadDataChart[]
+  detailBalanceTypeStats: IPayloadDataChart[]
+}
+
 const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) => {
   const chartRef = useRef(null)
   const fontFamily = 'var(--font-sans)'

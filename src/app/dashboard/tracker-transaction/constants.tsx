@@ -121,6 +121,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
 }
 
 export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>): ITabConfig => {
+  console.log('🚀 ~ initTrackerTransactionTab ~ data:', data)
   return {
     default: 'expenseChart',
     tabContents: [
