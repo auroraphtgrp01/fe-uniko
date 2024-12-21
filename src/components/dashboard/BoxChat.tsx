@@ -197,7 +197,7 @@ export function ChatBox() {
       setTimeout(scrollToBottom, 100)
 
       try {
-        const response = await fetch('http://localhost:8000/chat/stream', {
+        const response = await fetch('https://bot.uniko.id.vn/chat/stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
