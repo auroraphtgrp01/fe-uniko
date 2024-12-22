@@ -10,6 +10,7 @@ export const useDeleteTrackerType = (opts?: IUseQueryHookOptions) => {
     mutateOption: {
       onSuccess: () => {
         toast.success('Delete Tracker type successfully 🚀 ')
+        opts?.callBackOnSuccess?.()
       },
       onError: (error) => {
         const errorMessage =

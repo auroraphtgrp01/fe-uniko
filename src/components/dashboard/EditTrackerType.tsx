@@ -22,6 +22,7 @@ import {
 } from '@/core/tracker-transaction-type/constants/update-tracker-transaction-type.constant'
 import AccordionEditTrackerType from './AccordionEditTrackerType'
 import { useTranslation } from 'react-i18next'
+import { typeCallBack } from '@/app/dashboard/tracker-transaction/constants'
 
 export default function EditTrackerTypeDialog({
   openEditDialog,
@@ -32,7 +33,8 @@ export default function EditTrackerTypeDialog({
   setType,
   handleCreateTrackerType,
   handleUpdateTrackerType,
-  expenditureFund
+  expenditureFund,
+  handleRefreshTrackerTransactionType
 }: IEditTrackerTypeDialogProps) {
   const { isDeleteOne, deleteTrackerType } = useTrackerTransactionType()
   const [isCreating, setIsCreating] = useState<boolean>(false)
@@ -42,6 +44,8 @@ export default function EditTrackerTypeDialog({
   const [accordionValue, setAccordionValue] = useState<string | null>(null)
   const handleDeleteTrackerType = (id: string) => {
     deleteTrackerType({ id })
+    handleRefreshTrackerTransactionType?.refetchTrackerTransactionType()
+    handleRefreshTrackerTransactionType?.callBackRefetchTrackerTransactionPage(typeCallBack)
     setOpenEditDialog(false)
   }
   const onHandleUpdate = () => {
@@ -59,6 +63,7 @@ export default function EditTrackerTypeDialog({
       setIsUpdate(false)
       setType(typeDefault)
     }
+    console.log('🚀 ~ useEffect ~ typeDefault:', typeDefault)
   }, [openEditDialog])
   const { t } = useTranslation(['trackerTransaction', 'common'])
   return (

@@ -3,7 +3,8 @@ import {
   ICustomTrackerTransaction,
   IDialogTrackerTransaction,
   IFundOfUser,
-  ITrackerTransaction
+  ITrackerTransaction,
+  TTrackerTransactionActions
 } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IButtonInDataTableHeader } from '@/types/core.i'
 import { PlusIcon } from 'lucide-react'
@@ -243,3 +244,15 @@ export enum EPaymentEvents {
   REFETCH_FAILED = 'refetchFailed',
   REFETCH_STARTED = 'refetchStarted'
 }
+
+export const typeCallBack: any = [
+  'getAllTrackerTransactionType',
+  'getTransactions',
+  'getTodayTransactions',
+  'getUnclassifiedTransactions',
+  'getAllAccountSource',
+  'getStatistic',
+  'getTrackerTransaction',
+  'getStatisticExpenditureFund',
+  'getExpenditureFund'
+]

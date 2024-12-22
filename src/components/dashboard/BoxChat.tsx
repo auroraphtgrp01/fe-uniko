@@ -10,12 +10,46 @@ import AvatarUniko from '@/images/avatar.jpg'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import Image from 'next/image'
 import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { formatCurrency } from '@/libraries/utils'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription
+} from '@/components/ui/dialog'
+import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Check } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { v4 as uuidv4 } from 'uuid'
+import {
+  ITrackerTransactionType,
+  ITrackerTransactionTypeBody
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { initTrackerTypeData, updateCacheDataCreateClassify } from '@/app/dashboard/tracker-transaction/handlers'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
+import { Combobox } from '@/components/core/Combobox'
+import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
+import {
+  ETrackerTypeOfTrackerTransactionType,
+  ETypeOfTrackerTransactionType
+} from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { useAccountSource } from '@/core/account-source/hooks'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
+import {
+  IAdvancedTrackerTransactionResponse,
+  TTrackerTransactionActions
+} from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { useUpdateModel } from '@/hooks/useQueryModel'
+import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import { GET_ADVANCED_TRANSACTION_KEY } from '@/core/transaction/constants'
+import { updateCacheDataTransactionForClassify } from '@/app/dashboard/transaction/handler'
+import { IGetTransactionResponse } from '@/core/transaction/models'
+import { GET_ADVANCED_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
+import { queryOptions } from '@tanstack/react-query'
+import { typeCallBack } from '@/app/dashboard/tracker-transaction/constants'
 
 interface Message {
   id: number
@@ -23,10 +57,35 @@ interface Message {
   sender: 'user' | 'bot'
 }
 
+interface Category {
+  id: string
+  name: string
+  type: ETypeOfTrackerTransactionType
+}
+
+interface Wallet {
+  id: string
+  name: string
+  type: 'WALLET'
+  currency: string
+  currentAmount: number
+}
+
+interface Transaction {
+  item: string
+  amount: number
+  categoryId: string
+  walletId: string
+  id: string
+  category: Category
+  wallet: Wallet
+  type: ETypeOfTrackerTransactionType
+}
+
 interface ChatResponse {
   messages: string
   recent: string
-  transactions: any[]
+  transactions: Transaction[]
   statistics: {
     total_expense: number
     total_income: number
@@ -41,7 +100,7 @@ export function ChatBox() {
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: 'Xin chào! Tôi có thể giúp gì cho bạn?', sender: 'bot' }
   ])
-  const [transactions, setTransactions] = useState<any[]>([])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [input, setInput] = useState('')
   const [error, setError] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -61,7 +120,46 @@ export function ChatBox() {
       walletId: string
     }
   }>({})
+
   const [editedTransactions, setEditedTransactions] = useState<any[]>([])
+  // hook
+  const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
+  const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
+  const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState(false)
+  const { fundId } = useStoreLocal()
+  const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
+  const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
+  console.log('🚀 ~ ChatBox ~ dataTrackerTransactionType:', dataTrackerTransactionType)
+  const { getAllAccountSource } = useAccountSource()
+  const { getAllData: getAllAccountSourceData, refetchAllData: refetchAllAccountSourceData } =
+    getAllAccountSource(fundId)
+  const { getAllExpenditureFund } = useExpenditureFund()
+  const { getAllExpenditureFundData } = getAllExpenditureFund()
+  const [typesState, setTypesState] = useState<Record<string, ETypeOfTrackerTransactionType>>({})
+  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
+  const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY],
+    updateCacheDataTransactionForClassify
+  )
+
+  const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
+    [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataCreateClassify
+  )
+
+  const actionMap: Partial<Record<TTrackerTransactionActions, () => void>> = {
+    getTransactions: resetCacheTransaction,
+    getAllAccountSource: resetAccountSource,
+    getAllTrackerTransactionType: refetchTrackerTransactionType,
+    getTrackerTransaction: resetCacheTrackerTx
+  }
+  const callBackRefetchTrackerTransactionPage = (actionMaps: TTrackerTransactionActions[]) => {
+    actionMaps.forEach((action) => {
+      if (actionMap[action]) {
+        actionMap[action]()
+      }
+    })
+  }
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -75,7 +173,7 @@ export function ChatBox() {
         behavior: 'smooth'
       })
     }
-    
+
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({
         behavior: 'smooth',
@@ -230,7 +328,12 @@ export function ChatBox() {
             try {
               const data = JSON.parse(line)
               if (data.done) {
-                setTransactions(data.transactions)
+                const response = data.transactions.map((transaction: Transaction) => ({
+                  ...transaction,
+                  id: uuidv4()
+                }))
+
+                setTransactions(response)
                 setTimeout(scrollToBottom, 100)
               }
 
@@ -282,9 +385,36 @@ export function ChatBox() {
     }
   }
 
-  const handleViewDetails = (transactions: any[]) => {
-    setSelectedTransactions(transactions)
+  const handleViewDetails = (transactions: Transaction[]) => {
+    setSelectedTransactions(
+      transactions.map((transaction) => {
+        const firstAccount = getAllAccountSourceData?.data?.[0]
+        return {
+          ...transaction,
+          wallet: {
+            ...transaction.wallet,
+            id: transaction.wallet.id === 'default' ? firstAccount?.id || transaction.wallet.id : transaction.wallet.id,
+            name:
+              transaction.wallet.name === 'Ví tiền mặt'
+                ? firstAccount?.name || transaction.wallet.name
+                : transaction.wallet.name,
+            currentAmount:
+              transaction.wallet.name === 'Ví tiền mặt'
+                ? firstAccount?.currentAmount || transaction.wallet.currentAmount
+                : transaction.wallet.currentAmount
+          }
+        }
+      })
+    )
+
     setIsDialogOpen(true)
+  }
+
+  const handleTypeChange = (transactionId: string, newType: any) => {
+    setTypesState((prev) => ({
+      ...prev,
+      [transactionId]: newType
+    }))
   }
 
   const handleStartEdit = (transaction: any) => {
@@ -295,7 +425,12 @@ export function ChatBox() {
         item: transaction.item,
         amount: transaction.amount,
         categoryId: transaction.category.id,
-        walletId: transaction.wallet.id
+        walletId:
+          transaction.wallet.id === 'default'
+            ? getAllAccountSourceData?.data[0]?.id || ''
+            : editForms[transaction.id]?.walletId
+              ? editForms[transaction.id]?.walletId
+              : getAllAccountSourceData?.data[0].id
       }
     }))
   }
@@ -309,20 +444,27 @@ export function ChatBox() {
       const currentForm = editForms[transactionId]
       if (!currentForm) return
 
+      // Kiểm tra các trường bắt buộc
       if (!currentForm.item || !currentForm.amount) {
         console.error('Missing required fields')
+        return
+      }
+
+      const existingTransaction = selectedTransactions.find((t) => t.id === transactionId)
+      if (!existingTransaction) {
+        console.error('No transaction found in selectedTransactions for transactionId:', transactionId)
         return
       }
 
       const updatedTransaction = {
         ...currentForm,
         id: transactionId,
-        category: selectedTransactions.find((t) => t.id === transactionId)?.category,
-        wallet: selectedTransactions.find((t) => t.id === transactionId)?.wallet
+        category: existingTransaction.category,
+        wallet: existingTransaction.wallet
       }
 
-      setSelectedTransactions((prev) =>
-        prev.map((t) => {
+      setSelectedTransactions((prev) => {
+        const updated = prev.map((t) => {
           if (t.id === transactionId) {
             return {
               ...t,
@@ -334,14 +476,22 @@ export function ChatBox() {
           }
           return t
         })
-      )
+
+        setEditedTransactions(updated)
+        return updated
+      })
 
       setEditedTransactions((prev) => {
         const exists = prev.find((et) => et.id === transactionId)
+
         if (!exists) {
-          return [...prev, updatedTransaction]
+          const newEditedTransactions = [...prev, updatedTransaction]
+          return newEditedTransactions
         }
-        return prev.map((et) => (et.id === transactionId ? updatedTransaction : et))
+
+        const updatedEditedTransactions = prev.map((et) => (et.id === transactionId ? updatedTransaction : et))
+
+        return updatedEditedTransactions
       })
 
       handleCancelEdit()
@@ -351,7 +501,7 @@ export function ChatBox() {
   }
 
   const handleConfirm = () => {
-    console.log('Các giao dịch đã được chỉnh sửa:', editedTransactions)
+    console.log('payload:', editedTransactions)
     setIsDialogOpen(false)
     setEditedTransactions([])
   }
@@ -373,8 +523,13 @@ export function ChatBox() {
     tap: { scale: 0.99 }
   }
 
+  useEffect(() => {
+    if (dataTrackerTransactionType)
+      initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
+  }, [dataTrackerTransactionType])
+
   return (
-    <div className='fixed bottom-4 right-4'>
+    <div className='fixed bottom-4 right-4 z-50'>
       <AnimatePresence mode='wait'>
         {isOpen ? (
           <motion.div
@@ -400,12 +555,9 @@ export function ChatBox() {
               </motion.button>
             </div>
 
-            <ScrollArea 
-              className="h-[350px] flex-grow px-4 pt-4"
-              ref={scrollRef}
-            >
-              <div className="flex flex-col space-y-4">
-                <AnimatePresence mode="popLayout">
+            <ScrollArea className='h-[350px] flex-grow px-4 pt-4' ref={scrollRef}>
+              <div className='flex flex-col space-y-4'>
+                <AnimatePresence mode='popLayout'>
                   {messages.map((message) => (
                     <motion.div
                       key={message.id}
@@ -551,163 +703,290 @@ export function ChatBox() {
           }
         }}
       >
-        <DialogContent className='max-w-[500px]'>
+        <DialogContent className='max-w-[500px]' aria-describedby='des'>
           <DialogHeader>
             <DialogTitle>Chi tiết giao dịch</DialogTitle>
           </DialogHeader>
-
+          <DialogDescription>Uniko-chan</DialogDescription>
           <Accordion type='single' collapsible className='w-full'>
-            {selectedTransactions.map((transaction, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className='hover:no-underline'>
-                  <div className='flex w-full items-center justify-between pr-4'>
-                    <div className='flex items-center gap-2'>
-                      <span className='text-lg'>{transaction.category.name.split(' ')[0]}</span>
-                      <span className='font-medium'>{transaction.item}</span>
+            {selectedTransactions.map((transaction: Transaction, index) => {
+              const currentType = typesState[transaction.id] ?? transaction.type
+              const trackerType =
+                transaction.type === ETypeOfTrackerTransactionType.INCOMING ? incomingTrackerType : expenseTrackerType
+              return (
+                <AccordionItem key={transaction.id} value={`item-${transaction.id}`}>
+                  <AccordionTrigger className='hover:no-underline'>
+                    <div className='flex w-full items-center justify-between pr-4'>
+                      <div className='flex items-center gap-2'>
+                        <span className='text-lg'>{transaction.category.name.split(' ')[0]}</span>
+                        <span className='font-medium'>{transaction.item}</span>
+                      </div>
+                      <div
+                        className={`font-medium ${transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'}`}
+                      >
+                        {transaction.type === 'EXPENSE' ? '-' : '+'}
+                        {formatCurrency(transaction.amount ?? 0, 'VND')}
+                      </div>
                     </div>
-                    <div
-                      className={`font-medium ${transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'}`}
-                    >
-                      {transaction.type === 'EXPENSE' ? '-' : '+'}
-                      {formatCurrency(transaction.amount)}
-                    </div>
-                  </div>
-                </AccordionTrigger>
+                  </AccordionTrigger>
 
-                <AccordionContent>
-                  {editingId === transaction.id ? (
-                    <div className='space-y-4 p-4'>
-                      <div className='grid gap-3'>
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Tên giao dịch</label>
-                          <Input
-                            value={editForms[transaction.id]?.item || ''}
-                            onChange={(e) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  item: e.target.value
-                                }
-                              }))
-                            }
-                            placeholder='Nhập tên giao dịch'
-                          />
+                  <AccordionContent>
+                    {editingId === transaction.id ? (
+                      <div className='space-y-4 p-4'>
+                        <div className='grid gap-3'>
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Tên giao dịch</label>
+                            <Input
+                              value={editForms[transaction.id]?.item || ''}
+                              onChange={(e) =>
+                                setEditForms((prev) => ({
+                                  ...prev,
+                                  [transaction.id]: {
+                                    ...prev[transaction.id],
+                                    item: e.target.value
+                                  }
+                                }))
+                              }
+                              placeholder='Nhập tên giao dịch'
+                            />
+                          </div>
+
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Số tiền</label>
+                            <Input
+                              type='number'
+                              value={editForms[transaction.id]?.amount || 0}
+                              onChange={(e) =>
+                                setEditForms((prev) => ({
+                                  ...prev,
+                                  [transaction.id]: {
+                                    ...prev[transaction.id],
+                                    amount: Number(e.target.value)
+                                  }
+                                }))
+                              }
+                              placeholder='Nhập số tiền'
+                            />
+                          </div>
+
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Danh mục</label>
+                            <Combobox
+                              label='Danh mục'
+                              dataArr={
+                                currentType === ETypeOfTrackerTransactionType.INCOMING
+                                  ? incomingTrackerType.map((item) => ({
+                                      ...item,
+                                      value: item.id,
+                                      label: item.name
+                                    }))
+                                  : expenseTrackerType.map((item) => ({
+                                      ...item,
+                                      value: item.id,
+                                      label: item.name
+                                    }))
+                              }
+                              value={editForms[transaction.id]?.categoryId || transaction.category.id}
+                              onChange={(value) => {
+                                setSelectedTransactions((prev) =>
+                                  prev.map((item) => {
+                                    if (item.id === transaction.id) {
+                                      return {
+                                        ...item,
+                                        category: {
+                                          id: value,
+                                          name: trackerType.find((type) => type.id === value)?.name ?? ''
+                                        }
+                                      }
+                                    }
+                                    return item
+                                  })
+                                )
+
+                                setEditForms((prev) => {
+                                  const currentForm = prev[transaction.id] || {
+                                    item: transaction.item,
+                                    amount: transaction.amount,
+                                    categoryId: transaction.category.id,
+                                    walletId: transaction.walletId
+                                  }
+
+                                  if (currentForm.categoryId !== value) {
+                                    return {
+                                      ...prev,
+                                      [transaction.id]: {
+                                        ...currentForm,
+                                        categoryId: value
+                                      }
+                                    }
+                                  }
+
+                                  return prev
+                                })
+                              }}
+                              key={transaction.id}
+                              setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
+                              dialogEdit={
+                                openEditTrackerTxTypeDialog && (
+                                  <EditTrackerTypeDialog
+                                    openEditDialog={openEditTrackerTxTypeDialog}
+                                    setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
+                                    dataArr={
+                                      transaction.type === ETypeOfTrackerTransactionType.INCOMING
+                                        ? incomingTrackerType.map((item) => ({
+                                            ...item,
+                                            value: item.id,
+                                            label: item.name
+                                          }))
+                                        : expenseTrackerType.map((item) => ({
+                                            ...item,
+                                            value: item.id,
+                                            label: item.name
+                                          }))
+                                    }
+                                    typeDefault={ETypeOfTrackerTransactionType.INCOMING}
+                                    type={currentType}
+                                    setType={(newType) => handleTypeChange(transaction.id, newType)}
+                                    handleCreateTrackerType={async (
+                                      data: ITrackerTransactionTypeBody,
+                                      setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+                                    ) => {
+                                      try {
+                                        await createTrackerTxType(data)
+                                        setIsCreating(false)
+
+                                        refetchTrackerTransactionType()
+                                        callBackRefetchTrackerTransactionPage(typeCallBack)
+                                      } catch (error) {
+                                        setIsCreating(false)
+                                      }
+                                    }}
+                                    handleUpdateTrackerType={async (data: ITrackerTransactionTypeBody) => {
+                                      try {
+                                        await updateTrackerTxType(data)
+                                        refetchTrackerTransactionType()
+                                        callBackRefetchTrackerTransactionPage(typeCallBack)
+                                      } catch (error) {
+                                        console.error('Error updating tracker type:', error)
+                                      }
+                                    }}
+                                    handleRefreshTrackerTransactionType={{
+                                      refetchTrackerTransactionType,
+                                      callBackRefetchTrackerTransactionPage: () =>
+                                        callBackRefetchTrackerTransactionPage(typeCallBack)
+                                    }}
+                                    expenditureFund={
+                                      getAllExpenditureFundData?.data?.map((item) => ({
+                                        value: item.id,
+                                        label: item.name
+                                      })) || []
+                                    }
+                                  />
+                                )
+                              }
+                            />
+                          </div>
+
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Ví</label>
+                            <Select
+                              value={
+                                editForms[transaction.id]?.walletId === 'default'
+                                  ? getAllAccountSourceData?.data[0]?.id || ''
+                                  : editForms[transaction.id]?.walletId
+                              }
+                              onValueChange={(value) => {
+                                setEditForms((prev) => ({
+                                  ...prev,
+                                  [transaction.id]: {
+                                    ...prev[transaction.id],
+                                    walletId: value
+                                  }
+                                }))
+
+                                setSelectedTransactions((prev) =>
+                                  prev.map((item) =>
+                                    item.id === transaction.id
+                                      ? {
+                                          ...item,
+                                          wallet: {
+                                            ...item.wallet,
+                                            id: value,
+                                            name:
+                                              getAllAccountSourceData?.data?.find((account) => account.id === value)
+                                                ?.name || item.wallet.name,
+                                            currentAmount:
+                                              getAllAccountSourceData?.data?.find((account) => account.id === value)
+                                                ?.currentAmount || item.wallet.currentAmount
+                                          }
+                                        }
+                                      : item
+                                  )
+                                )
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={getAllAccountSourceData?.data[0].name} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {getAllAccountSourceData?.data?.map((account) => (
+                                  <SelectItem key={account.id} value={account.id}>
+                                    {account.name} - {account.currentAmount} {account.currency}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
 
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Số tiền</label>
-                          <Input
-                            type='number'
-                            value={editForms[transaction.id]?.amount || 0}
-                            onChange={(e) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  amount: Number(e.target.value)
-                                }
-                              }))
-                            }
-                            placeholder='Nhập số tiền'
-                          />
+                        <div className='flex items-center justify-end gap-2'>
+                          <Button variant='outline' size='sm' onClick={handleCancelEdit}>
+                            <X className='mr-2 h-4 w-4' />
+                            Hủy
+                          </Button>
+                          <Button size='sm' onClick={() => handleSaveEdit(transaction.id)}>
+                            <Check className='mr-2 h-4 w-4' />
+                            Lưu
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className='space-y-4 p-4'>
+                        <div className='grid gap-2 text-sm'>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-muted-foreground'>Danh mục:</span>
+                            <span className='rounded-full bg-slate-100 px-2 py-0.5 dark:bg-slate-800'>
+                              {transaction.category.name}
+                            </span>
+                          </div>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-muted-foreground'>Ví:</span>
+                            <span>{transaction.wallet.name}</span>
+                          </div>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-muted-foreground'>Loại:</span>
+                            <span>{transaction.type === 'EXPENSE' ? 'Chi tiêu' : 'Thu nhập'}</span>
+                          </div>
                         </div>
 
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Danh mục</label>
-                          <Select
-                            value={editForms[transaction.id]?.categoryId || ''}
-                            onValueChange={(value) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  categoryId: value
-                                }
-                              }))
-                            }
+                        <div className='flex justify-end'>
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            className='gap-2'
+                            onClick={() => handleStartEdit(transaction)}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder='Chọn danh mục' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value={transaction.category.id}>{transaction.category.name}</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Ví</label>
-                          <Select
-                            value={editForms[transaction.id]?.walletId || ''}
-                            onValueChange={(value) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  walletId: value
-                                }
-                              }))
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder='Chọn ví' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value={transaction.wallet.id}>{transaction.wallet.name}</SelectItem>
-                            </SelectContent>
-                          </Select>
+                            <Pencil className='h-4 w-4' />
+                            Chỉnh sửa
+                          </Button>
                         </div>
                       </div>
-
-                      <div className='flex items-center justify-end gap-2'>
-                        <Button variant='outline' size='sm' onClick={handleCancelEdit}>
-                          <X className='mr-2 h-4 w-4' />
-                          Hủy
-                        </Button>
-                        <Button size='sm' onClick={() => handleSaveEdit(transaction.id)}>
-                          <Check className='mr-2 h-4 w-4' />
-                          Lưu
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className='space-y-4 p-4'>
-                      <div className='grid gap-2 text-sm'>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>Danh mục:</span>
-                          <span className='rounded-full bg-slate-100 px-2 py-0.5 dark:bg-slate-800'>
-                            {transaction.category.name}
-                          </span>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>Ví:</span>
-                          <span>{transaction.wallet.name}</span>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>Loại:</span>
-                          <span>{transaction.type === 'EXPENSE' ? 'Chi tiêu' : 'Thu nhập'}</span>
-                        </div>
-                      </div>
-
-                      <div className='flex justify-end'>
-                        <Button
-                          variant='outline'
-                          size='sm'
-                          className='gap-2'
-                          onClick={() => handleStartEdit(transaction)}
-                        >
-                          <Pencil className='h-4 w-4' />
-                          Chỉnh sửa
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              )
+            })}
           </Accordion>
-
           <DialogFooter className='mt-4 flex items-center justify-between border-t pt-4'>
             <div className='text-sm text-muted-foreground'>
               {editedTransactions.length > 0

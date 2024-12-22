@@ -1,5 +1,6 @@
 import { IBaseResponseData, IBaseResponsePagination } from '@/types/common.i'
 import { ETrackerTypeOfTrackerTransactionType, ETypeOfTrackerTransactionType } from './tracker-transaction-type.enum'
+import { TTrackerTransactionActions } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 
 export type TrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType>
 export type IAdvancedTrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType[]>
@@ -37,6 +38,10 @@ export interface IEditTrackerTypeDialogProps {
     setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
   ) => void
   handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => void
+  handleRefreshTrackerTransactionType?: {
+    refetchTrackerTransactionType: () => void
+    callBackRefetchTrackerTransactionPage: (type: TTrackerTransactionActions) => void
+  }
   expenditureFund: { label: string; value: string | number }[]
 }
 
