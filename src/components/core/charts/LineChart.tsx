@@ -13,6 +13,7 @@ import {
   ChartTooltipContent
 } from '@/components/ui/chart'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ICashFlowAnalysisStatistic } from '@/core/overview/models/overview.interface'
 const chartData = [
   { date: '2024-04-01', incoming: 2200, outgoing: 1500 },
   { date: '2024-04-02', incoming: 1970, outgoing: 1800 },
@@ -121,22 +122,23 @@ const chartConfig = {
   }
 } satisfies ChartConfig
 
-export function LineChart() {
+export function LineChart({
+  chartData,
+  setDaysToSubtract
+}: {
+  chartData: ICashFlowAnalysisStatistic[]
+  setDaysToSubtract: React.Dispatch<React.SetStateAction<number>>
+}) {
   const [timeRange, setTimeRange] = React.useState('90d')
-
-  const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date)
-    const referenceDate = new Date('2024-06-30')
-    let daysToSubtract = 90
+  React.useEffect(() => {
     if (timeRange === '30d') {
-      daysToSubtract = 30
+      setDaysToSubtract(30)
     } else if (timeRange === '7d') {
-      daysToSubtract = 7
+      setDaysToSubtract(7)
+    } else {
+      setDaysToSubtract(90)
     }
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
-    return date >= startDate
-  })
+  }, [timeRange])
 
   return (
     <Card>
@@ -164,7 +166,7 @@ export function LineChart() {
       </CardHeader>
       <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6'>
         <ChartContainer config={chartConfig} className='aspect-auto h-[250px] w-full'>
-          <AreaChart data={filteredData}>
+          <AreaChart data={chartData}>
             <defs>
               <linearGradient id='fillIncoming' x1='0' y1='0' x2='0' y2='1'>
                 <stop offset='5%' stopColor='hsl(142.1 76.2% 36.3%)' stopOpacity={0.8} />
