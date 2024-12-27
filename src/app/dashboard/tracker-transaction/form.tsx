@@ -108,7 +108,10 @@ export default function TrackerTransactionForm() {
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
     useState<ITrackerTransactionTypeBody>(initTrackerTypeForm)
-  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig,
+    classNameOfScroll: 'h-[calc(100vh-19rem)]'
+  })
   const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
