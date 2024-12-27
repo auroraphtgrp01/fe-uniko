@@ -52,7 +52,7 @@ export default function ExpenditureFundForm() {
   const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
-    classNameOfScroll: 'h-[calc(100vh-28rem)]',
+    classNameOfScroll: 'h-[calc(100vh-19rem)]',
     isVisibleSortType: false
   })
   const [dataTable, setDataTable] = useState<IExpenditureFundDataFormat[]>([])
