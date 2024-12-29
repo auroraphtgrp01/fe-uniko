@@ -99,6 +99,7 @@ import {
   GET_ADVANCED_EXPENDITURE_FUND_KEY,
   GET_STATISTIC_EXPENDITURE_FUND_KEY
 } from '@/core/expenditure-fund/constants'
+import { useOverviewPage } from '@/core/overview/hooks'
 
 export default function TrackerTransactionForm() {
   // states
@@ -129,7 +130,6 @@ export default function TrackerTransactionForm() {
   )
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   // hooks
-  // declare hooks
   const socket = useSocket()
   const { user, fundId } = useStoreLocal()
   const { getMe } = useUser()
@@ -146,6 +146,13 @@ export default function TrackerTransactionForm() {
     deleteAnTrackerTransaction,
     deleteMultipleTrackerTransaction
   } = useTrackerTransaction()
+  const { getStatisticOverviewPage } = useOverviewPage()
+  const { refetchGetStatisticOverviewPageData } = getStatisticOverviewPage(
+    {
+      daysToSubtract: 90
+    },
+    fundId
+  )
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions, updateTransaction, statusUpdate: statusUpdateTransaction } = useTransaction()
   const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
@@ -203,7 +210,8 @@ export default function TrackerTransactionForm() {
     getAllTrackerTransactionType: refetchTrackerTransactionType,
     getTrackerTransaction: resetCacheTrackerTx,
     getStatisticExpenditureFund: resetCacheStatisticExpenditureFund,
-    getExpenditureFund: resetCacheExpenditureFund
+    getExpenditureFund: resetCacheExpenditureFund,
+    getStatisticOverview: refetchGetStatisticOverviewPageData
   }
   const callBackRefetchTrackerTransactionPage = (actionMaps: TTrackerTransactionActions[]) => {
     actionMaps.forEach((action) => {

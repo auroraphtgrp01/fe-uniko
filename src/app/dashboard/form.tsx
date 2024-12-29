@@ -23,6 +23,7 @@ export default function DashboardMainForm() {
   const [totalIncome, setTotalIncome] = useState<ITotalAmount>(initEmptyTotalAmount)
   const [totalExpenses, setTotalExpenses] = useState<ITotalAmount>(initEmptyTotalAmount)
 
+  // hooks
   const { getStatisticOverviewPage } = useOverviewPage()
   const { refetchGetStatisticOverviewPageData, getStatisticOverviewPageData } = getStatisticOverviewPage(
     {
