@@ -204,9 +204,7 @@ export default function AccountSourceForm() {
         fundId={fundId}
         sharedDialogElements={{
           isDialogOpen,
-          setIsDialogOpen,
-          hookResetCacheStatistic: resetCacheStatistic,
-          hookResetCacheGetAllAccount: resetCacheGetAllAccount
+          setIsDialogOpen
         }}
         callBack={(payload: IAccountSourceBody) => {
           handleSubmitAccountSource({

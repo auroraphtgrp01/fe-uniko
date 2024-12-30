@@ -1,14 +1,16 @@
 import { Button } from '@/components/ui/button'
 import { Separator } from '@radix-ui/react-select'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import { translate } from '@/libraries/utils'
+import { formatCurrency, translate } from '@/libraries/utils'
+import { EAccountSourceType, IAccountSource } from '@/core/account-source/models'
 
 export default function DetailUpdateAccountSourceForm({
-  detailUpdateAccountSource
+  detailAccountSource,
+  sharedDialogElements
 }: {
-  detailUpdateAccountSource: any
+  detailAccountSource: IAccountSource
+  sharedDialogElements: any
 }) {
-  const { detailAccountSourceDialog, sharedDialogElements } = detailUpdateAccountSource
   const t = translate(['accountSource', 'common'])
   return (
     <div className='py-4'>
@@ -17,7 +19,9 @@ export default function DetailUpdateAccountSourceForm({
           <div className='mb-2 w-full sm:mb-0'>
             <p className='text-sm text-muted-foreground'>{t('form.editAccountSource.currentAmount')}</p>
             <div className='flex w-full items-center justify-between'>
-              <p className='text-2xl font-bold'>{detailAccountSourceDialog.dataDetail.currentAmount}</p>
+              <p className='text-2xl font-bold'>
+                {formatCurrency(detailAccountSource.currentAmount ?? 0, 'đ', 'vi-vn')}
+              </p>
               <Button
                 variant={'destructive'}
                 type='button'
@@ -44,29 +48,33 @@ export default function DetailUpdateAccountSourceForm({
               <TableCell className='font-medium text-muted-foreground'>
                 {t('form.editAccountSource.accountBank')}
               </TableCell>
-              <TableCell>{detailAccountSourceDialog.dataDetail.accountBank}</TableCell>
+              <TableCell>
+                {detailAccountSource.accountBank && detailAccountSource.accountBank.accounts.length > 0
+                  ? detailAccountSource.accountBank.accounts.map((account) => account.accountNo).join(',\n') || ''
+                  : 'N/A'}
+              </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell className='font-medium text-muted-foreground'>
-                {t('form.editAccountSource.checkType')}
+              <TableCell className='font-medium text-muted-foreground'>{t('form.editAccountSource.type')}</TableCell>
+              <TableCell>
+                {detailAccountSource.type === EAccountSourceType.WALLET ? t('type.WALLET') : t('type.BANKING')}
               </TableCell>
-              <TableCell>{detailAccountSourceDialog.dataDetail.checkType}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className='font-medium text-muted-foreground'>
                 {t('form.editAccountSource.currency')}
               </TableCell>
-              <TableCell>{detailAccountSourceDialog.dataDetail.data.currency}</TableCell>
+              <TableCell>{detailAccountSource.currency}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className='font-medium text-muted-foreground'>
                 {t('form.editAccountSource.initialAmount')}
               </TableCell>
-              <TableCell>{detailAccountSourceDialog.dataDetail.initAmount}</TableCell>
+              <TableCell>{formatCurrency(detailAccountSource.initAmount ?? 0, 'đ', 'vi-vn')}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className='font-medium text-muted-foreground'>{t('form.editAccountSource.name')}</TableCell>
-              <TableCell>{detailAccountSourceDialog.dataDetail.name}</TableCell>
+              <TableCell>{detailAccountSource.name}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

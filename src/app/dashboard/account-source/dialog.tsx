@@ -15,7 +15,7 @@ import {
   TAccountSourceActions
 } from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface IAccountSourceDialogProps {
@@ -23,8 +23,6 @@ interface IAccountSourceDialogProps {
   sharedDialogElements: {
     isDialogOpen: IDialogAccountSource
     setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
-    hookResetCacheStatistic: any
-    hookResetCacheGetAllAccount: any
   }
   callBack: (payload: IAccountSourceBody) => void
   detailAccountSourceDialog: {
@@ -70,10 +68,8 @@ export default function AccountSourceDialog({
   const detailsConfigDialog: IDialogConfig = {
     content: (
       <DetailUpdateAccountSourceForm
-        detailUpdateAccountSource={{
-          detailAccountSourceDialog,
-          sharedDialogElements
-        }}
+        sharedDialogElements={sharedDialogElements}
+        detailAccountSource={detailAccountSourceDialog.dataDetail}
       />
     ),
     description: t('AccountSourceDialog.detailsDialog.description'),

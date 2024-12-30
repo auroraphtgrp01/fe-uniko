@@ -68,14 +68,16 @@ export default function CreateAndUpdateAccountSourceForm({
     if (defaultValue) {
       setDefaultValueData({
         accountBank: {
-          type: defaultValue?.accountBank?.type ?? EBankTypes.MB_BANK,
-          login_id: defaultValue?.accountBank?.login_id ?? '',
-          accounts: ['']
+          type: defaultValue.accountBank?.type ?? EBankTypes.MB_BANK,
+          login_id: defaultValue.accountBank?.login_id ?? '',
+          accounts: defaultValue.accountBank
+            ? defaultValue.accountBank.accounts.map((account) => account.accountNo)
+            : []
         },
         accountSource: {
-          accountSourceName: defaultValue?.name,
-          accountSourceType: defaultValue?.type,
-          initAmount: String(defaultValue?.initAmount)
+          accountSourceName: defaultValue.name,
+          accountSourceType: defaultValue.type,
+          initAmount: String(defaultValue.initAmount)
         }
       })
       setTypeState(defaultValue?.type)

@@ -5,6 +5,7 @@ export interface IAccountBank {
   id: string
   type: EBankTypes
   login_id: string
+  accounts: { accountNo: string }[]
 }
 
 export type IGetAccountBankResponse = IBaseResponseData<IAccountBank[]>
