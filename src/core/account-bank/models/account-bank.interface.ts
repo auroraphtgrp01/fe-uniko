@@ -5,6 +5,7 @@ export interface IAccountBank {
   id: string
   type: EBankTypes
   login_id: string
+  pass: string
   accounts: { accountNo: string }[]
 }
 

@@ -1,4 +1,4 @@
-import { formatAccountSourceData, initAccountSourceFormData } from '@/app/dashboard/account-source/constants'
+import { formatAccountSourceData } from '@/app/dashboard/account-source/constants'
 import {
   EAccountSourceType,
   IAccountSource,
@@ -57,13 +57,11 @@ export const handleUpdateAccountSource = ({
   payload,
   setIsDialogOpen,
   updateAccountSource,
-  setIdRowClicked,
   callBackOnSuccess
 }: {
   payload: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   updateAccountSource: any
-  setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
   callBackOnSuccess: (actions: TAccountSourceActions[]) => void
 }) => {
   updateAccountSource(payload, {
@@ -71,7 +69,6 @@ export const handleUpdateAccountSource = ({
       if (res.statusCode === 200 || res.statusCode === 201) {
         callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance'])
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false, isDialogDetailOpen: false }))
-        setIdRowClicked('')
         toast.success('Update account source successfully!')
       }
     }
@@ -154,13 +151,11 @@ export const handleSubmitAccountSource = ({
   callBackOnSuccess,
   hookUpdate,
   hookCreate,
-  setIdRowClicked,
   fundId
 }: {
   payload: IAccountSourceBody
   isDialogOpen: IDialogAccountSource
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
-  setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
   callBackOnSuccess: (actions: TAccountSourceActions[]) => void
   hookUpdate: any
   hookCreate: any
@@ -171,7 +166,6 @@ export const handleSubmitAccountSource = ({
       payload,
       setIsDialogOpen,
       updateAccountSource: hookUpdate,
-      setIdRowClicked,
       callBackOnSuccess
     })
   }

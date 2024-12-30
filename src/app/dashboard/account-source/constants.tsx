@@ -36,12 +36,6 @@ export const formatAccountSourceData = (data: IAccountSource): IAccountSourceDat
   }
 }
 
-export const initAccountSourceFormData: IAccountSourceBody = {
-  name: '',
-  initAmount: 0,
-  accountSourceType: EAccountSourceType.WALLET
-}
-
 export const initDialogFlag: IDialogAccountSource = {
   isDialogCreateOpen: false,
   isDialogUpdateOpen: false,

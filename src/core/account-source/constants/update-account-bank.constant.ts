@@ -1,5 +1,6 @@
 import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
+import { type } from 'os'
 import { z } from 'zod'
 
 export const updateAccountBankSchema = z.object({
@@ -37,6 +38,7 @@ export const updateAccountBankFormBody = [
     label: t('form.createAccountSourceFormBody.password.label'),
     placeHolder: t('form.createAccountSourceFormBody.password.placeholder'),
     props: {
+      type: 'password',
       autoComplete: 'password'
     }
   },
@@ -46,6 +48,7 @@ export const updateAccountBankFormBody = [
     label: t('form.createAccountSourceFormBody.accounts.label'),
     placeHolder: t('form.createAccountSourceFormBody.accounts.placeholder'),
     props: {
+      autoComplete: 'accounts',
       placeholder: t('form.createAccountSourceFormBody.accounts.placeholder')
     }
   }

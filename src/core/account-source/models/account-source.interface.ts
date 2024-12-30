@@ -46,7 +46,7 @@ export interface IAccountSourceFormData {
     accountSourceType: EAccountSourceType
     initAmount?: string
   }
-  accountBank: (Omit<IAccountBank, 'id' | 'accounts'> & { accounts: string[] }) | undefined
+  accountBank: (Omit<IAccountBank, 'id' | 'accounts' | 'pass'> & { accounts: string[]; password: string }) | undefined
 }
 
 export enum EAccountSourceType {

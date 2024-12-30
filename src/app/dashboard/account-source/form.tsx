@@ -6,19 +6,14 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
-  initAccountSourceFormData,
   initButtonInDataTableHeader,
   initDialogFlag,
   initEmptyAccountSource
 } from '@/app/dashboard/account-source/constants'
 import {
-  handleCreateAccountSource,
-  handleShowDetailAccountSource,
   handleSubmitAccountSource,
   initDataTable,
-  onRowClick,
   updateCacheDataCreate,
-  updateCacheDataForDeleteFeat,
   updateCacheDataUpdate
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
@@ -50,17 +45,9 @@ export default function AccountSourceForm() {
   const [dataDetail, setDataDetail] = useState<IAccountSource>(initEmptyAccountSource)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [idDeletes, setIdDeletes] = useState<string[]>([])
-  const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<IAccountSourceDataFormat[]>([])
-  const [formData, setFormData] = useState<IAccountSourceBody>(initAccountSourceFormData)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
-
-  const refetchPage = () => {
-    refetchGetAdvanced()
-    resetAccountSource()
-    resetDataUpdate()
-  }
 
   // Hooks
   // declare hooks
@@ -129,13 +116,6 @@ export default function AccountSourceForm() {
   }, [accountSourceData])
 
   useEffect(() => {
-    if (tableData !== undefined && idRowClicked !== '') {
-      const getDetailAccountSource = tableData.find((row) => row.id === idRowClicked)
-      handleShowDetailAccountSource(setFormData, setIsDialogOpen, getDetailAccountSource)
-    }
-  }, [tableData, idRowClicked])
-
-  useEffect(() => {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
 
@@ -177,7 +157,11 @@ export default function AccountSourceForm() {
                     {
                       onSuccess: (res: any) => {
                         if (res.statusCode === 200 || res.statusCode === 201) {
-                          refetchPage()
+                          callBackRefetchAccountSourcePage([
+                            'getAllAccountSource',
+                            'getStatisticAccountBalance',
+                            'getStatisticAccountBalance'
+                          ])
                           resetCacheStatistic()
                           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
                           setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
@@ -208,19 +192,17 @@ export default function AccountSourceForm() {
         }}
         callBack={(payload: IAccountSourceBody) => {
           handleSubmitAccountSource({
-            payload,
+            payload: { ...payload },
             setIsDialogOpen,
             hookCreate: createAccountSource,
             hookUpdate: updateAccountSource,
             fundId,
             isDialogOpen,
-            setIdRowClicked,
             callBackOnSuccess: callBackRefetchAccountSourcePage
           })
         }}
         detailAccountSourceDialog={{
-          dataDetail,
-          setIdRowClicked
+          dataDetail
         }}
       />
       <DeleteDialog

@@ -1,21 +1,10 @@
-import { initEmptyAccountSource, initEmptyDetailAccountSourceType } from '@/app/dashboard/account-source/constants'
-import {
-  handleCreateAccountSource,
-  handleSubmitAccountSource,
-  handleUpdateAccountSource
-} from '@/app/dashboard/account-source/handler'
+import { initEmptyAccountSource } from '@/app/dashboard/account-source/constants'
 import CreateAndUpdateAccountSourceForm from '@/components/dashboard/account-source/Create&UpdateForm'
 import DetailUpdateAccountSourceForm from '@/components/dashboard/account-source/DetailUpdateForm'
 import CustomDialog from '@/components/dashboard/Dialog'
-import {
-  IAccountSource,
-  IAccountSourceBody,
-  IAccountSourceDataFormat,
-  IDialogAccountSource,
-  TAccountSourceActions
-} from '@/core/account-source/models'
+import { IAccountSource, IAccountSourceBody, IDialogAccountSource } from '@/core/account-source/models'
 import { IDialogConfig } from '@/types/common.i'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface IAccountSourceDialogProps {
@@ -27,7 +16,6 @@ interface IAccountSourceDialogProps {
   callBack: (payload: IAccountSourceBody) => void
   detailAccountSourceDialog: {
     dataDetail: IAccountSource
-    setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
   }
 }
 
@@ -48,7 +36,6 @@ export default function AccountSourceDialog({
     isOpen: sharedDialogElements.isDialogOpen.isDialogUpdateOpen,
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
-      detailAccountSourceDialog.setIdRowClicked('')
     }
   }
 

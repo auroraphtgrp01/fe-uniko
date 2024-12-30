@@ -38,6 +38,9 @@ export default function CreateAndUpdateAccountSourceForm({
     accountBank: undefined,
     accountSource: { accountSourceName: '', accountSourceType: EAccountSourceType.WALLET, initAmount: '' }
   })
+  useEffect(() => {
+    console.log('>>>', defaultValue)
+  }, [defaultValue])
   const formCreateAccountSourceRef = useRef<HTMLFormElement>(null)
   const formCreateAccountBankRef = useRef<HTMLFormElement>(null)
 
@@ -48,7 +51,7 @@ export default function CreateAndUpdateAccountSourceForm({
     initAmount?: string
     accountSourceType: EAccountSourceType
   }) => {
-    payload = { ...v, initAmount: Number(v.initAmount), name: v.accountSourceName }
+    payload = { ...v, id: defaultValue?.id, initAmount: Number(v.initAmount), name: v.accountSourceName }
     if (typeState !== EAccountSourceType.BANKING) callBack(payload)
   }
 
@@ -70,6 +73,7 @@ export default function CreateAndUpdateAccountSourceForm({
         accountBank: {
           type: defaultValue.accountBank?.type ?? EBankTypes.MB_BANK,
           login_id: defaultValue.accountBank?.login_id ?? '',
+          password: defaultValue.accountBank?.pass ?? '',
           accounts: defaultValue.accountBank
             ? defaultValue.accountBank.accounts.map((account) => account.accountNo)
             : []
