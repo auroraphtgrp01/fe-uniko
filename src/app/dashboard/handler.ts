@@ -7,26 +7,18 @@ import {
   ITotalBalanceChart
 } from '@/core/overview/models/overview.interface'
 import { initEmptyBalanceChartConfig } from './constants'
+import { IAccountBalanceStatistic } from '@/core/account-source/models'
 
-export const initData = ({
+export const initDataStatisticAccountBalance = ({
   data,
-  setCashFlowAnalysisChartData,
   setBalanceChartData,
-  setTotalIncome,
-  setTotalExpenses,
   setBalanceChartConfig
 }: {
-  data: IStatisticOverview
-  setCashFlowAnalysisChartData: React.Dispatch<React.SetStateAction<ICashFlowAnalysisStatistic[]>>
+  data: IAccountBalanceStatistic[]
   setBalanceChartData: React.Dispatch<React.SetStateAction<ITotalBalanceChart[]>>
-  setTotalIncome: React.Dispatch<React.SetStateAction<ITotalAmount>>
-  setTotalExpenses: React.Dispatch<React.SetStateAction<ITotalAmount>>
   setBalanceChartConfig: React.Dispatch<React.SetStateAction<ChartConfig>>
 }) => {
-  setCashFlowAnalysisChartData(data.cashFlowAnalysis)
-  setTotalIncome(data.totalIncome)
-  setTotalExpenses(data.totalExpenses)
-  const { totalBalanceChartData, balanceChartConfig } = data.accountSources.reduce(
+  const { totalBalanceChartData, balanceChartConfig } = data.reduce(
     (result, item, index) => {
       const fill = `hsl(var(--chart-${index + 1}))`
       result.totalBalanceChartData.push({
@@ -47,4 +39,20 @@ export const initData = ({
   )
   setBalanceChartConfig(balanceChartConfig)
   setBalanceChartData(totalBalanceChartData)
+}
+
+export const initDataStatisticCashFlowAnalysis = ({
+  data,
+  setCashFlowAnalysisChartData,
+  setTotalIncome,
+  setTotalExpenses
+}: {
+  data: IStatisticOverview
+  setCashFlowAnalysisChartData: React.Dispatch<React.SetStateAction<ICashFlowAnalysisStatistic[]>>
+  setTotalIncome: React.Dispatch<React.SetStateAction<ITotalAmount>>
+  setTotalExpenses: React.Dispatch<React.SetStateAction<ITotalAmount>>
+}) => {
+  setCashFlowAnalysisChartData(data.cashFlowAnalysis)
+  setTotalIncome(data.totalIncome)
+  setTotalExpenses(data.totalExpenses)
 }

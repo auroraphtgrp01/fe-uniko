@@ -6,7 +6,8 @@ import {
   IAccountSourceDataFormat,
   IAccountSourceResponse,
   IAdvancedAccountSourceResponse,
-  IDialogAccountSource
+  IDialogAccountSource,
+  TAccountSourceActions
 } from '@/core/account-source/models'
 import { formatArrayData, getTypes } from '@/libraries/utils'
 import { IBaseResponsePagination, IDataTableConfig } from '@/types/common.i'
@@ -34,27 +35,18 @@ export const handleCreateAccountSource = ({
   payload,
   setIsDialogOpen,
   createAccountSource,
-  setDataCreate,
-  hookResetCacheStatistic,
-  hookResetCacheGetAllAccount,
-  onSuccessCallback
+  callBackOnSuccess
 }: {
-  payload: any
+  payload: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   createAccountSource: any
-  setDataCreate: any
-  hookResetCacheStatistic: any
-  hookResetCacheGetAllAccount: any
-  onSuccessCallback: () => void
+  callBackOnSuccess: (actions: TAccountSourceActions[]) => void
 }) => {
   createAccountSource(payload, {
     onSuccess: (res: IAccountSourceResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-        // setDataCreate(res.data)
-        hookResetCacheStatistic()
-        hookResetCacheGetAllAccount()
-        onSuccessCallback()
+        callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance'])
         toast.success('Create account source successfully!')
       }
     }
@@ -65,30 +57,22 @@ export const handleUpdateAccountSource = ({
   payload,
   setIsDialogOpen,
   updateAccountSource,
-  setDataUpdate,
   setIdRowClicked,
-  hookResetCacheStatistic,
-  hookResetCacheGetAllAccount,
-  onSuccessCallback
+  callBackOnSuccess
 }: {
   payload: IAccountSourceBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
   updateAccountSource: any
-  setDataUpdate: any
   setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
-  hookResetCacheStatistic: any
-  hookResetCacheGetAllAccount: any
-  onSuccessCallback: () => void
+  callBackOnSuccess: (actions: TAccountSourceActions[]) => void
 }) => {
   updateAccountSource(payload, {
     onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
+        callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance'])
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false, isDialogDetailOpen: false }))
         setIdRowClicked('')
-        hookResetCacheStatistic()
-        hookResetCacheGetAllAccount()
         toast.success('Update account source successfully!')
-        onSuccessCallback()
       }
     }
   })
@@ -160,5 +144,46 @@ export const onRowClick = (
     const updatedData = { ...rowData, data: { ...matchingData } }
     setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
     setDataDetail(updatedData)
+  }
+}
+
+export const handleSubmitAccountSource = ({
+  payload,
+  isDialogOpen,
+  setIsDialogOpen,
+  callBackOnSuccess,
+  hookUpdate,
+  hookCreate,
+  setIdRowClicked,
+  fundId
+}: {
+  payload: IAccountSourceBody
+  isDialogOpen: IDialogAccountSource
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+  setIdRowClicked: React.Dispatch<React.SetStateAction<string>>
+  callBackOnSuccess: (actions: TAccountSourceActions[]) => void
+  hookUpdate: any
+  hookCreate: any
+  fundId: string
+}) => {
+  if (isDialogOpen.isDialogUpdateOpen) {
+    handleUpdateAccountSource({
+      payload,
+      setIsDialogOpen,
+      updateAccountSource: hookUpdate,
+      setIdRowClicked,
+      callBackOnSuccess
+    })
+  }
+  if (isDialogOpen.isDialogCreateOpen) {
+    handleCreateAccountSource({
+      payload: {
+        ...payload,
+        fundId
+      },
+      setIsDialogOpen,
+      createAccountSource: hookCreate,
+      callBackOnSuccess
+    })
   }
 }

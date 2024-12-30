@@ -39,6 +39,16 @@ export interface IAccountSourceBody {
   fundId?: string
 }
 
+export interface IAccountSourceFormData {
+  accountSource: {
+    id?: string
+    accountSourceName: string
+    accountSourceType: EAccountSourceType
+    initAmount?: string
+  }
+  accountBank: (Omit<IAccountBank, 'id'> & { accounts: string[] }) | undefined
+}
+
 export enum EAccountSourceType {
   WALLET = 'WALLET',
   BANKING = 'BANKING'
@@ -52,3 +62,10 @@ export interface IDialogAccountSource {
   isDialogDeleteAllOpen: boolean
   isDialogDetailOpen: boolean
 }
+
+export interface IAccountBalanceStatistic {
+  name: string
+  currentAmount: number
+}
+
+export type TAccountSourceActions = 'getAllAccountSource' | 'getStatisticAccountBalance'

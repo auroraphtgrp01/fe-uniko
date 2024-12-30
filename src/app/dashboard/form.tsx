@@ -8,10 +8,11 @@ import { BalanceChart } from '@/components/core/charts/BalanceChart'
 import { useOverviewPage } from '@/core/overview/hooks'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { ICashFlowAnalysisStatistic, ITotalAmount, ITotalBalanceChart } from '@/core/overview/models/overview.interface'
-import { initData } from './handler'
+import { initDataStatisticAccountBalance, initDataStatisticCashFlowAnalysis } from './handler'
 import { initEmptyBalanceChartConfig, initEmptyTotalAmount } from './constants'
 import { formatCurrency } from '@/libraries/utils'
 import { ChartConfig } from '@/components/ui/chart'
+import { useAccountSource } from '@/core/account-source/hooks'
 
 export default function DashboardMainForm() {
   const { fundId } = useStoreLocal()
@@ -24,8 +25,13 @@ export default function DashboardMainForm() {
   const [totalExpenses, setTotalExpenses] = useState<ITotalAmount>(initEmptyTotalAmount)
 
   // hooks
+  // declare hooks
   const { getStatisticOverviewPage } = useOverviewPage()
-  const { refetchGetStatisticOverviewPageData, getStatisticOverviewPageData } = getStatisticOverviewPage(
+  const { getStatisticAccountBalance } = useAccountSource()
+
+  // use hooks
+  const { getStatisticAccountBalanceData } = getStatisticAccountBalance(fundId)
+  const { getStatisticOverviewPageData } = getStatisticOverviewPage(
     {
       daysToSubtract
     },
@@ -35,15 +41,22 @@ export default function DashboardMainForm() {
   // effects
   useEffect(() => {
     if (getStatisticOverviewPageData)
-      initData({
+      initDataStatisticCashFlowAnalysis({
         data: getStatisticOverviewPageData.data,
         setCashFlowAnalysisChartData,
-        setBalanceChartData,
         setTotalIncome,
-        setTotalExpenses,
-        setBalanceChartConfig
+        setTotalExpenses
       })
   }, [getStatisticOverviewPageData])
+  useEffect(() => {
+    if (getStatisticAccountBalanceData && getStatisticAccountBalanceData.data.length > 0)
+      initDataStatisticAccountBalance({
+        data: getStatisticAccountBalanceData.data,
+        setBalanceChartConfig,
+        setBalanceChartData
+      })
+  }, [getStatisticAccountBalanceData])
+
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
       <div className='flex w-full flex-col md:col-span-1'>

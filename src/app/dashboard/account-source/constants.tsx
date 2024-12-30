@@ -67,14 +67,14 @@ export const initButtonInDataTableHeader = ({
   ]
 }
 
-export const initEmptyDetailAccountSource: IAccountSourceDataFormat = {
+export const initEmptyAccountSource: IAccountSource = {
   id: '',
   name: '',
-  type: '',
-  initAmount: '',
-  accountBank: '',
-  currentAmount: '',
-  checkType: ''
+  type: EAccountSourceType.WALLET,
+  initAmount: 0,
+  accountBank: null,
+  currency: '',
+  currentAmount: 0
 }
 
 export const initEmptyDetailAccountSourceType = {
@@ -92,4 +92,8 @@ export const initEmptyDetailAccountSourceType = {
       accountSourceType: EAccountSourceType.WALLET
     }
   }
+}
+
+export enum EBankTypes {
+  MB_BANK = 'MB_BANK'
 }

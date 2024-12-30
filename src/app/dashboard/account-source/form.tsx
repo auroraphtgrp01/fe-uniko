@@ -9,10 +9,12 @@ import {
   initAccountSourceFormData,
   initButtonInDataTableHeader,
   initDialogFlag,
-  initEmptyDetailAccountSource
+  initEmptyAccountSource
 } from '@/app/dashboard/account-source/constants'
 import {
+  handleCreateAccountSource,
   handleShowDetailAccountSource,
+  handleSubmitAccountSource,
   initDataTable,
   onRowClick,
   updateCacheDataCreate,
@@ -24,10 +26,12 @@ import { useAccountSource } from '@/core/account-source/hooks'
 import { getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
+  IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
   IAdvancedAccountSourceResponse,
-  IDialogAccountSource
+  IDialogAccountSource,
+  TAccountSourceActions
 } from '@/core/account-source/models'
 import { initQueryOptions } from '@/constants/init-query-options'
 import { useUpdateModel } from '@/hooks/useQueryModel'
@@ -43,7 +47,7 @@ import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
   // States
-  const [dataDetail, setDataDetail] = useState<IAccountSourceDataFormat>(initEmptyDetailAccountSource)
+  const [dataDetail, setDataDetail] = useState<IAccountSource>(initEmptyAccountSource)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   const [idRowClicked, setIdRowClicked] = useState<string>('')
@@ -59,15 +63,19 @@ export default function AccountSourceForm() {
   }
 
   // Hooks
+  // declare hooks
   const {
     createAccountSource,
     updateAccountSource,
     getAdvancedAccountSource,
     deleteAnAccountSource,
-    deleteMultipleAccountSource
+    deleteMultipleAccountSource,
+    getStatisticAccountBalance
   } = useAccountSource()
   const { getStatisticData } = useTrackerTransaction()
   const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
+
+  const { refetchGetStatisticAccountBalanceData } = getStatisticAccountBalance(fundId)
   const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
   const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
     [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
@@ -79,6 +87,19 @@ export default function AccountSourceForm() {
   )
   const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
+
+  const actionMap: Record<TAccountSourceActions, () => void> = {
+    getAllAccountSource: refetchGetAdvanced,
+    getStatisticAccountBalance: refetchGetStatisticAccountBalanceData
+  }
+
+  const callBackRefetchAccountSourcePage = (actions: TAccountSourceActions[]) => {
+    actions.forEach((action) => {
+      if (actionMap[action]) {
+        actionMap[action]()
+      }
+    })
+  }
 
   // Memos
   const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
@@ -134,7 +155,10 @@ export default function AccountSourceForm() {
             config={dataTableConfig}
             setConfig={setDataTableConfig}
             columns={columns}
-            onRowClick={(rowData) => onRowClick(rowData, getAdvancedData, setIsDialogOpen, setDataDetail)}
+            onRowClick={(rowData) => {
+              setDataDetail(getAdvancedData?.data.find((data) => data.id === rowData.id) || initEmptyAccountSource)
+              setIsDialogOpen((prev) => ({ ...prev, isDialogDetailOpen: true }))
+            }}
             buttons={dataTableButtons}
             onOpenDeleteAll={(ids: string[]) => {
               setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: true }))
@@ -177,7 +201,6 @@ export default function AccountSourceForm() {
         </CardContent>
       </Card>
       <AccountSourceDialog
-        onSuccessCallback={refetchPage}
         fundId={fundId}
         sharedDialogElements={{
           isDialogOpen,
@@ -185,12 +208,17 @@ export default function AccountSourceForm() {
           hookResetCacheStatistic: resetCacheStatistic,
           hookResetCacheGetAllAccount: resetCacheGetAllAccount
         }}
-        createAccountSourceDialog={{ createAccountSource, setDataCreate }}
-        UpdateAccountSourceDialog={{
-          setDataUpdate,
-          updateAccountSource,
-          setIdRowClicked,
-          dataDetail
+        callBack={(payload: IAccountSourceBody) => {
+          handleSubmitAccountSource({
+            payload,
+            setIsDialogOpen,
+            hookCreate: createAccountSource,
+            hookUpdate: updateAccountSource,
+            fundId,
+            isDialogOpen,
+            setIdRowClicked,
+            callBackOnSuccess: callBackRefetchAccountSourcePage
+          })
         }}
         detailAccountSourceDialog={{
           dataDetail,

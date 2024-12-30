@@ -12,13 +12,7 @@ export interface ITotalAmount {
 export interface IStatisticOverview {
   totalIncome: ITotalAmount
   totalExpenses: ITotalAmount
-  accountSources: IAccountSourceStatisticOverview[]
   cashFlowAnalysis: ICashFlowAnalysisStatistic[]
-}
-
-interface IAccountSourceStatisticOverview {
-  name: string
-  currentAmount: number
 }
 
 export interface ITotalBalanceChart {
