@@ -1,7 +1,6 @@
 import { IdCard, Loader2 } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
-import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,10 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 
 export default function FundToggle() {
   const { fundId, setFundId, fundArr, setFundArr } = useStoreLocal()
-  const { getFundOfUser } = useTrackerTransaction()
+  const { getFundOfUser } = useExpenditureFund()
   const { fundOfUserData, isGetFundPending } = getFundOfUser()
 
   useEffect(() => {
