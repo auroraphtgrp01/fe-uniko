@@ -232,6 +232,7 @@ export interface IHandleDeleteAnExpenditureFundProps
   id: string
   hookDelete: any
   setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+  fundId: string
 }
 
 export interface IHandleDeleteMultipleExpenditureFundProps extends Omit<IHandleDeleteAnExpenditureFundProps, 'id'> {

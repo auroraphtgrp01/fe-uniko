@@ -22,6 +22,7 @@ import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 import {
   handleCreateExpenditureFund,
   handleDeleteAnExpenditureFund,
+  handleDeleteMultipleExpenditureFund,
   handleDeleteParticipant,
   handleInviteParticipant,
   handleUpdateExpenditureFund,
@@ -46,6 +47,7 @@ import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { IFundOfUser } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { IDataTableConfig } from '@/types/common.i'
 import { useTranslation } from 'react-i18next'
+import DeleteDialog from '@/components/dashboard/DeleteDialog'
 
 export default function ExpenditureFundForm() {
   // states
@@ -76,6 +78,7 @@ export default function ExpenditureFundForm() {
   }, [dataTable])
 
   // hooks
+  const { fundId } = useStoreLocal()
   const { createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const {
     createExpenditureFund,
@@ -90,7 +93,8 @@ export default function ExpenditureFundForm() {
     statusInviteParticipant,
     getStatisticDetailOfFund,
     deleteAnParticipant,
-    getAllExpenditureFund
+    getAllExpenditureFund,
+    deleteMultipleExpenditureFund
   } = useExpenditureFund()
   const { advancedExpenditureFundData, isGetAdvancedPending, refetchAdvancedExpendingFund } =
     getAdvancedExpenditureFund({ query: queryOptions })
@@ -309,7 +313,8 @@ export default function ExpenditureFundForm() {
                           setIsDialogOpen,
                           callBackRefetchAPI: callBackRefetchExpenditureFundPage,
                           setDataTableConfig,
-                          setIdDeletes
+                          setIdDeletes,
+                          fundId
                         })
                     },
                     onOpen: (rowData: any) => {
@@ -400,6 +405,26 @@ export default function ExpenditureFundForm() {
           expenditureFund: modifiedTrackerTypeForComboBox(getAllExpenditureFundData?.data || [])
         }}
         statisticProps={{ data: getStatisticDetailOfFundData?.data || [], dateRange, setDateRange }}
+      />
+      <DeleteDialog
+        customDescription='Bạn chắc chắn muốn xóa tất cả dữ liệu này?'
+        onDelete={() => {
+          if (idDeletes.length > 0)
+            handleDeleteMultipleExpenditureFund({
+              ids: idDeletes,
+              setDataTableConfig,
+              setIsDialogOpen,
+              hookDelete: deleteMultipleExpenditureFund,
+              setIdDeletes,
+              callBackRefetchAPI: callBackRefetchExpenditureFundPage,
+              fundId
+            })
+        }}
+        onClose={() => {
+          setIdDeletes([])
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+        }}
+        isDialogOpen={isDialogOpen.isDialogDeleteAllOpen}
       />
     </div>
   )

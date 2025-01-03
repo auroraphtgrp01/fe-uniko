@@ -84,8 +84,14 @@ export const handleDeleteAnExpenditureFund = async ({
   setIsDialogOpen,
   hookDelete,
   setIdDeletes,
-  callBackRefetchAPI
+  callBackRefetchAPI,
+  fundId
 }: IHandleDeleteAnExpenditureFundProps) => {
+  if (id === fundId) {
+    //  toast.error('Không thể xoá quỹ đang được chọn! Vui lòng chọn quỹ khác trước khi thử lại.')
+    toast.error('Cannot delete the currently selected fund! Please choose a different fund before trying again.')
+    return
+  }
   hookDelete(
     { id },
     {
@@ -102,20 +108,28 @@ export const handleDeleteAnExpenditureFund = async ({
   )
 }
 
-export const handleDeleteAllExpenditureFund = async ({
+export const handleDeleteMultipleExpenditureFund = async ({
   ids,
   setDataTableConfig,
   setIsDialogOpen,
   hookDelete,
-  setIdDeletes
+  setIdDeletes,
+  callBackRefetchAPI,
+  fundId
 }: IHandleDeleteMultipleExpenditureFundProps) => {
+  if (ids.includes(fundId)) {
+    //  toast.error('Không thể xoá quỹ đang được chọn! Vui lòng chọn quỹ khác trước khi thử lại.')
+    toast.error('Cannot delete the currently selected fund! Please choose a different fund before trying again.')
+    return
+  }
   hookDelete(
     { ids },
     {
       onSuccess: (res: any) => {
         if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackRefetchAPI(['getAllExpendingFund', 'getExpenditureFund', 'getStatisticExpenditureFund'])
           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
           setIdDeletes([])
           toast.success('Delete all expenditure fund successfully')
         }

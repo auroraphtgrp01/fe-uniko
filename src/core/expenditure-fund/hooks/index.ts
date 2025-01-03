@@ -10,6 +10,7 @@ import { useGetStatisticDetailOfFund } from './useGetStatisticDetailOfFund'
 import { useGetAllExpenditureFund } from './useGetAllExpenditureFund'
 import { useDeleteAnParticipant } from './useDeleteAnParticipant'
 import { useGetFundOfUser } from './useGetFundOfUser'
+import { useDeleteMultipleExpenditureFund } from './useDeleteMultipleExpenditureFund'
 
 export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
   const { mutate: createExpenditureFund, status: statusCreate } = useCreateExpenditureFund(opts)
@@ -17,6 +18,8 @@ export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
     useInviteParticipantToExpenditureFund(opts)
   const { mutate: updateExpenditureFund, status: statusUpdate } = useUpdateExpenditureFund(opts)
   const { mutate: deleteAnExpenditureFund, status: statusDeleteAnExpenditureFund } = useDeleteAnExpenditureFund(opts)
+  const { mutate: deleteMultipleExpenditureFund, status: statusDeleteMultipleExpenditureFund } =
+    useDeleteMultipleExpenditureFund(opts)
   const { mutate: deleteAnParticipant, status: statusDeleteAnParticipant } = useDeleteAnParticipant(opts)
   return {
     createExpenditureFund,
@@ -34,6 +37,8 @@ export const useExpenditureFund = (opts?: IUseQueryHookOptions) => {
     getAllExpenditureFund: useGetAllExpenditureFund,
     deleteAnParticipant,
     statusDeleteAnParticipant,
-    getFundOfUser: useGetFundOfUser
+    getFundOfUser: useGetFundOfUser,
+    deleteMultipleExpenditureFund,
+    statusDeleteMultipleExpenditureFund
   }
 }
