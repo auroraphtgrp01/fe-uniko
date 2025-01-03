@@ -11,11 +11,11 @@ import {
   initEmptyAccountSource
 } from '@/app/dashboard/account-source/constants'
 import {
+  filterDataAccountSource,
   handleDeleteAnAccountSource,
   handleDeleteMultipleAccountSource,
   handleSubmitAccountSource,
-  initDataTable,
-  updateCacheDataCreate
+  initDataTable
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
@@ -25,17 +25,13 @@ import {
   IAccountSource,
   IAccountSourceBody,
   IAccountSourceDataFormat,
-  IAdvancedAccountSourceResponse,
   IDialogAccountSource,
   TAccountSourceActions
 } from '@/core/account-source/models'
 import { initQueryOptions } from '@/constants/init-query-options'
-import { useUpdateModel } from '@/hooks/useQueryModel'
 import AccountSourceDialog from '@/app/dashboard/account-source/dialog'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
-import { GET_ADVANCED_ACCOUNT_SOURCE_KEY, GET_ALL_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import { useTranslation } from 'react-i18next'
-import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
 
 export default function AccountSourceForm() {
@@ -80,7 +76,7 @@ export default function AccountSourceForm() {
   }
 
   // Memos
-  const titles = useMemo(() => getConvertedKeysToTitleCase(tableData[0]), [tableData])
+  const titles = ['Name', 'Type', 'Init Amount', 'Account Bank', 'Current Amount']
   const columns = useMemo(() => {
     if (tableData.length === 0) return []
     return getColumns<IAccountSourceDataFormat>({
@@ -101,6 +97,10 @@ export default function AccountSourceForm() {
       }))
     }
   }, [getAdvancedData])
+
+  useEffect(() => {
+    setTableData(filterDataAccountSource(dataTableConfig.selectedTypes || [], getAdvancedData?.data || []))
+  }, [dataTableConfig.selectedTypes])
 
   useEffect(() => {
     initDataTable(setTableData, accountSourceData)

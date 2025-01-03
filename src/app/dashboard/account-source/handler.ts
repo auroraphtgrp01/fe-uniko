@@ -75,10 +75,11 @@ export const handleUpdateAccountSource = ({
   })
 }
 
-export const filterDataAccountSource = (data: IAccountSource[], filter: string[]): IAccountSourceDataFormat[] => {
-  if (filter.length === 0)
+export const filterDataAccountSource = (selectedTypes: string[], data: IAccountSource[]) => {
+  if (selectedTypes.length === 0)
     return formatArrayData<IAccountSource, IAccountSourceDataFormat>(data, formatAccountSourceData)
-  const validValues = data.filter((item: IAccountSource) => filter.includes(item.type as string))
+  const validValues = data.filter((item: IAccountSource) => selectedTypes.includes(item.type))
+
   return formatArrayData<IAccountSource, IAccountSourceDataFormat>(validValues, formatAccountSourceData)
 }
 
