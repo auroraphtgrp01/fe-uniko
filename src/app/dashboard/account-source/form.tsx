@@ -11,10 +11,11 @@ import {
   initEmptyAccountSource
 } from '@/app/dashboard/account-source/constants'
 import {
+  handleDeleteAnAccountSource,
+  handleDeleteMultipleAccountSource,
   handleSubmitAccountSource,
   initDataTable,
-  updateCacheDataCreate,
-  updateCacheDataUpdate
+  updateCacheDataCreate
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
@@ -35,9 +36,7 @@ import { useStoreLocal } from '@/hooks/useStoreLocal'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY, GET_ALL_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
 import { useTranslation } from 'react-i18next'
 import { STATISTIC_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
-import toast from 'react-hot-toast'
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
-import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 
 export default function AccountSourceForm() {
   const { t } = useTranslation(['common'])
@@ -57,27 +56,19 @@ export default function AccountSourceForm() {
     getAdvancedAccountSource,
     deleteAnAccountSource,
     deleteMultipleAccountSource,
-    getStatisticAccountBalance
+    getStatisticAccountBalance,
+    getAllAccountSource
   } = useAccountSource()
-  const { getStatisticData } = useTrackerTransaction()
   const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
 
   const { refetchGetStatisticAccountBalanceData } = getStatisticAccountBalance(fundId)
+  const { refetchAllData } = getAllAccountSource(fundId)
   const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
-  const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
-    updateCacheDataCreate
-  )
-  const { setData: setDataUpdate, resetData: resetDataUpdate } = useUpdateModel<IAdvancedAccountSourceResponse>(
-    [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
-    updateCacheDataUpdate
-  )
-  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { resetData: resetCacheGetAllAccount } = useUpdateModel([GET_ALL_ACCOUNT_SOURCE_KEY], () => {})
 
   const actionMap: Record<TAccountSourceActions, () => void> = {
-    getAllAccountSource: refetchGetAdvanced,
-    getStatisticAccountBalance: refetchGetStatisticAccountBalanceData
+    getAllAccountSource: refetchAllData,
+    getStatisticAccountBalance: refetchGetStatisticAccountBalanceData,
+    getAdvancedAccountSource: refetchGetAdvanced
   }
 
   const callBackRefetchAccountSourcePage = (actions: TAccountSourceActions[]) => {
@@ -152,25 +143,14 @@ export default function AccountSourceForm() {
               isDialogOpen: isDialogOpen.isDialogDeleteOpen,
               onDelete: () => {
                 if (idDeletes.length > 0)
-                  deleteAnAccountSource(
-                    { id: idDeletes[0] },
-                    {
-                      onSuccess: (res: any) => {
-                        if (res.statusCode === 200 || res.statusCode === 201) {
-                          callBackRefetchAccountSourcePage([
-                            'getAllAccountSource',
-                            'getStatisticAccountBalance',
-                            'getStatisticAccountBalance'
-                          ])
-                          resetCacheStatistic()
-                          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                          setIdDeletes([])
-                          toast.success('Delete account source successfully')
-                        }
-                      }
-                    }
-                  )
+                  handleDeleteAnAccountSource({
+                    hookDelete: deleteAnAccountSource,
+                    id: idDeletes[0],
+                    setIsDialogOpen,
+                    setIdDeletes,
+                    callBackOnSuccess: callBackRefetchAccountSourcePage,
+                    setDataTableConfig
+                  })
               },
               onOpen: (rowData: any) => {
                 setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: true }))
@@ -209,22 +189,14 @@ export default function AccountSourceForm() {
         customDescription='Bạn chắc chắn muốn xóa tất cả dữ liệu này?'
         onDelete={() => {
           if (idDeletes.length > 0)
-            deleteMultipleAccountSource(
-              { ids: idDeletes },
-              {
-                onSuccess: (res: any) => {
-                  if (res.statusCode === 200 || res.statusCode === 201) {
-                    resetAccountSource()
-                    resetCacheStatistic()
-                    setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
-                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
-                    setIdDeletes([])
-                    setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
-                    toast.success('Delete all account source successfully')
-                  }
-                }
-              }
-            )
+            handleDeleteMultipleAccountSource({
+              hookDelete: deleteMultipleAccountSource,
+              idDeletes,
+              setIsDialogOpen,
+              setIdDeletes,
+              callBackOnSuccess: callBackRefetchAccountSourcePage,
+              setDataTableConfig
+            })
         }}
         onClose={() => {
           setIdDeletes([])

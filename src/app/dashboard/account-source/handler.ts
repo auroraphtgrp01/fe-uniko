@@ -46,7 +46,7 @@ export const handleCreateAccountSource = ({
     onSuccess: (res: IAccountSourceResponse) => {
       if (res.statusCode === 200 || res.statusCode === 201) {
         setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false }))
-        callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance'])
+        callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance', 'getAdvancedAccountSource'])
         toast.success('Create account source successfully!')
       }
     }
@@ -67,7 +67,7 @@ export const handleUpdateAccountSource = ({
   updateAccountSource(payload, {
     onSuccess(res: IAccountSourceResponse) {
       if (res.statusCode === 200 || res.statusCode === 201) {
-        callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance'])
+        callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance', 'getAdvancedAccountSource'])
         setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false, isDialogDetailOpen: false }))
         toast.success('Update account source successfully!')
       }
@@ -180,4 +180,67 @@ export const handleSubmitAccountSource = ({
       callBackOnSuccess
     })
   }
+}
+
+export const handleDeleteMultipleAccountSource = ({
+  hookDelete,
+  idDeletes,
+  callBackOnSuccess,
+  setDataTableConfig,
+  setIsDialogOpen,
+  setIdDeletes
+}: {
+  hookDelete: any
+  idDeletes: string[]
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+  setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+  callBackOnSuccess: (actions: TAccountSourceActions[]) => void
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+}) => {
+  hookDelete(
+    { ids: idDeletes },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackOnSuccess(['getAdvancedAccountSource', 'getAllAccountSource', 'getStatisticAccountBalance'])
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIdDeletes([])
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteAllOpen: false }))
+          toast.success('Delete all account source successfully')
+        }
+      }
+    }
+  )
+}
+
+export const handleDeleteAnAccountSource = ({
+  hookDelete,
+  id,
+  callBackOnSuccess,
+  setDataTableConfig,
+  setIsDialogOpen,
+  setIdDeletes
+}: {
+  hookDelete: any
+  id: string
+  callBackOnSuccess: (actions: TAccountSourceActions[]) => void
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+  setIdDeletes: React.Dispatch<React.SetStateAction<string[]>>
+}) => {
+  hookDelete(
+    { id },
+    {
+      onSuccess: (res: any) => {
+        if (res.statusCode === 200 || res.statusCode === 201) {
+          callBackOnSuccess(['getAllAccountSource', 'getStatisticAccountBalance', 'getAdvancedAccountSource'])
+          setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
+          setIsDialogOpen((prev) => ({ ...prev, isDialogDeleteOpen: false }))
+          setIdDeletes([])
+          toast.success('Delete account source successfully')
+        }
+      }
+    }
+  )
 }
