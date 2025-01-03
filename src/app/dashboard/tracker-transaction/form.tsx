@@ -401,11 +401,20 @@ export default function TrackerTransactionForm() {
                 </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
-                    {formatCurrency(statisticData?.data?.totalBalance ?? 0, 'đ', 'vi-vn')}
+                    {formatCurrency(statisticData?.data?.total?.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-blue-100'>
-                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('notiTotalBalance', { percentage: 2.5 })}</span>
+                    {statisticData?.data?.total?.rate?.[0] !== '-' || statisticData?.data?.total?.rate === undefined ? (
+                      <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    ) : (
+                      <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    )}
+                    {/* <span>{t('notiTotalBalance', { percentage: 2.5 })}</span> */}
+                    <span>
+                      {(statisticData?.data?.total?.rate?.[0] === '-' ? '' : '+') +
+                        (statisticData?.data?.total.rate || '0') +
+                        '% left this month'}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -429,11 +438,19 @@ export default function TrackerTransactionForm() {
                 </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
-                    {formatCurrency(statisticData?.data?.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
+                    {formatCurrency(statisticData?.data?.income.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex h-[50%] items-center text-sm text-emerald-100'>
-                    <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('notiIncoming', { percentage: 2.5 })}</span>
+                    {statisticData?.data?.income?.rate?.[0] !== '-' ||
+                    statisticData?.data?.income?.rate === undefined ? (
+                      <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    ) : (
+                      <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    )}
+                    {/* <span>{t('notiIncoming', { percentage: 2.5 })}</span> */}
+                    {(statisticData?.data?.income?.rate?.[0] === '-' ? '' : '+') +
+                      (statisticData?.data?.income.rate || '0') +
+                      '% from last week'}
                   </p>
                 </div>
               </div>
@@ -457,11 +474,19 @@ export default function TrackerTransactionForm() {
                 </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
-                    {formatCurrency(statisticData?.data?.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
+                    {formatCurrency(statisticData?.data?.expense.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-red-100'>
-                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('notiExpense', { percentage: 15 })}</span>
+                    {statisticData?.data?.income?.rate?.[0] !== '-' ||
+                    statisticData?.data?.income?.rate === undefined ? (
+                      <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    ) : (
+                      <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    )}
+                    {/* <span>{t('notiExpense', { percentage: 15 })}</span> */}
+                    {(statisticData?.data?.expense?.rate?.[0] === '-' ? '' : '+') +
+                      (statisticData?.data?.expense.rate || '0') +
+                      '% from last week'}
                   </p>
                 </div>
               </div>

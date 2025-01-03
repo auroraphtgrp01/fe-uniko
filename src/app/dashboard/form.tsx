@@ -78,13 +78,17 @@ export default function DashboardMainForm() {
                   </h3>
                   <div
                     // Nếu như tăng/thu nhiều hơn hoặc không đổi (true) => green ngược lại red
-                    className={`flex items-center gap-1 text-sm font-medium ${true ? 'text-green-600' : 'text-red-600'}`}
+                    className={`flex items-center gap-1 text-sm font-medium ${totalIncome.rate?.[0] !== '-' || totalIncome.rate === undefined ? 'text-green-600' : 'text-red-600'}`}
                     style={{ userSelect: 'none' }}
                   >
                     <motion.div initial={{ rotate: -45 }} animate={{ rotate: 0 }} transition={{ duration: 0.3 }}>
-                      {true ? <TrendingUp className='h-4 w-4' /> : <TrendingDown className='h-4 w-4' />}
+                      {totalIncome.rate?.[0] !== '-' || totalIncome.rate === undefined ? (
+                        <TrendingUp className='h-4 w-4' />
+                      ) : (
+                        <TrendingDown className='h-4 w-4' />
+                      )}
                     </motion.div>
-                    {totalIncome.rate}
+                    {(totalIncome.rate?.[0] === '-' ? '' : '+') + (totalIncome.rate || '0') + '% from last week'}
                   </div>
                 </div>
                 <motion.div
@@ -110,13 +114,17 @@ export default function DashboardMainForm() {
                   </h3>
                   <div
                     // Nếu như tăng/tiêu nhiều hơn (true) => red ngược lại green
-                    className={`flex items-center gap-1 text-sm font-medium ${true ? 'text-red-600' : 'text-green-600'}`}
+                    className={`flex items-center gap-1 text-sm font-medium ${totalExpenses.rate?.[0] !== '-' || totalExpenses.rate === undefined ? 'text-red-600' : 'text-green-600'}`}
                     style={{ userSelect: 'none' }}
                   >
                     <motion.div initial={{ rotate: 45 }} animate={{ rotate: 0 }} transition={{ duration: 0.3 }}>
-                      {true ? <TrendingDown className='h-4 w-4' /> : <TrendingUp className='h-4 w-4' />}
+                      {totalExpenses.rate?.[0] !== '-' || totalExpenses.rate === undefined ? (
+                        <TrendingUp className='h-4 w-4' />
+                      ) : (
+                        <TrendingDown className='h-4 w-4' />
+                      )}
                     </motion.div>
-                    {totalExpenses.rate}
+                    {(totalExpenses.rate?.[0] === '-' ? '' : '+') + (totalExpenses.rate || '0') + '% from last week'}
                   </div>
                 </div>
                 <motion.div

@@ -20,9 +20,18 @@ export interface IChartData {
   expenseTransactionTypeStats: IPayloadDataChart[]
   incomingTransactionAccountTypeStats: IPayloadDataChart[]
   expenseTransactionAccountTypeStats: IPayloadDataChart[]
-  totalIncomeToday: number
-  totalBalance: number
-  totalExpenseToday: number
+  income: {
+    totalIncomeToday: number
+    rate: string
+  }
+  expense: {
+    totalExpenseToday: number
+    rate: string
+  }
+  total: {
+    totalBalance: number
+    rate: string
+  }
 }
 
 const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) => {
