@@ -25,6 +25,7 @@ import { Combobox } from '../../../components/core/Combobox'
 import { EParticipantRole, EParticipantStatus } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import { initEmptyUser } from '../profile/constants'
 import { Badge } from '@/components/ui/badge'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 
 export const initButtonInDataTableHeader = ({
   setIsDialogOpen
@@ -242,4 +243,73 @@ export enum EPaymentEvents {
   REFETCH_COMPLETE = 'refetchComplete',
   REFETCH_FAILED = 'refetchFailed',
   REFETCH_STARTED = 'refetchStarted'
+}
+
+
+export const typeCallBack: any = [
+  'getAllTrackerTransactionType',
+  'getTransactions',
+  'getTodayTransactions',
+  'getUnclassifiedTransactions',
+  'getAllAccountSource',
+  'getStatistic',
+  'getTrackerTransaction',
+  'getStatisticExpenditureFund',
+  'getExpenditureFund'
+]
+
+
+export interface Message {
+  id: number
+  text: string
+  sender: 'user' | 'bot'
+}
+
+export interface ChatResponse {
+  messages: string
+  recent: string
+  transactions: any[]
+  statistics: {
+    total_expense: number
+    total_income: number
+    transaction_count: number
+    categories: any
+  }
+}
+
+
+export interface Category {
+  id: string
+  name: string
+  type: ETypeOfTrackerTransactionType
+}
+
+export interface Wallet {
+  id: string
+  name: string
+  type: 'WALLET'
+  currency: string
+  currentAmount: number
+}
+
+export interface Transaction {
+  id: string
+  amount: number
+  type: ETypeOfTrackerTransactionType
+  description: string
+  walletName: string
+  categoryId: string
+  categoryName: string
+  fundId: string
+  userId: string
+}
+
+export interface IEditForm {
+  [key: string]: {
+    description: string
+    amount: number
+    categoryId: string
+    walletId: string
+    categoryName: string
+  }
 }
