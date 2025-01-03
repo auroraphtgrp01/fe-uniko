@@ -412,7 +412,9 @@ export default function TrackerTransactionForm() {
                     {/* <span>{t('notiTotalBalance', { percentage: 2.5 })}</span> */}
                     <span>
                       {(statisticData?.data?.total?.rate?.[0] === '-' ? '' : '+') +
-                        (statisticData?.data?.total.rate || '0') +
+                        (statisticData?.data.total.rate && statisticData?.data.total.rate !== 'none'
+                          ? statisticData?.data?.total.rate
+                          : '0') +
                         '% left this month'}
                     </span>
                   </p>
