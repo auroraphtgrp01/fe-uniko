@@ -1,11 +1,10 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Send, X, MessageCircle, Square, Pencil, Repeat } from 'lucide-react'
+import { Send, X, MessageCircle, Square, Pencil, Repeat, Icon, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AvatarUniko from '@/images/avatar.jpg'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
@@ -16,14 +15,13 @@ import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Check } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { getAccessTokenFromLocalStorage } from '@/libraries/helpers'
 import { DialogDescription } from '@radix-ui/react-dialog'
 import { useAccountSource } from '@/core/account-source/hooks'
 import { ITrackerTransactionType, ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
-import { IGetTransactionResponse } from '@/core/transaction/models'
+import { ICreateTrackerTransactionBody, IGetTransactionResponse } from '@/core/transaction/models'
 import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 import { useUpdateModel } from '@/hooks/useQueryModel'
 import { GET_ADVANCED_TRANSACTION_KEY, GET_TODAY_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
@@ -33,41 +31,40 @@ import { GET_ADVANCED_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction
 import { initTrackerTypeData, updateCacheDataCreateClassify } from '@/app/dashboard/tracker-transaction/handlers'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
 import { Combobox } from '@/components/core/Combobox'
-import { IEditForm, Message, Transaction, typeCallBack } from '@/app/dashboard/tracker-transaction/constants'
 import toast from 'react-hot-toast'
 import { initQueryOptions } from '@/constants/init-query-options'
 import { GET_ADVANCED_EXPENDITURE_FUND_KEY, GET_STATISTIC_EXPENDITURE_FUND_KEY } from '@/core/expenditure-fund/constants'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import { IQueryOptions } from '@/types/query.interface'
+import { IEditForm, inputVariants, ITrackerTransactionBody, Message, messageVariants, quickActions, Transaction, typeCallBack } from '@/app/chatbox/constants'
+import { handleCancelEdit, handleConfirm, handleSaveEdit, handleSend, handleStartEdit } from '@/app/chatbox/handler'
+import { Card } from '@/components/ui/card'
+import Link from 'next/link'
 
 export function ChatBox() {
+  let typingInterval: NodeJS.Timeout | null = null
+  // state
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const { user, fundId } = useStoreLocal()
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: 'Xin chào! Tôi có thể giúp gì cho bạn?', sender: 'bot' }
-  ])
-  const [transactions, setTransactions] = useState<any[]>([])
-  const [input, setInput] = useState('')
-  const [error, setError] = useState('')
+  const [messages, setMessages] = useState<Message[]>([{ id: 1, text: 'Xin chào! Tôi có thể giúp gì cho bạn?', sender: 'bot' }])
+  const [input, setInput] = useState<string>('')
+  const [error, setError] = useState<string>('')
+  const [currentResponse, setCurrentResponse] = useState<string>('')
   const scrollRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  let typingInterval: NodeJS.Timeout | null = null
-  const [isTyping, setIsTyping] = useState(false)
-  const [currentResponse, setCurrentResponse] = useState<string>('')
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [selectedTransactions, setSelectedTransactions] = useState<any[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [isTyping, setIsTyping] = useState<boolean>(false)
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([])
   const [editForms, setEditForms] = useState<IEditForm>({})
-  const [apiData, setApiData] = useState<{
-    message: Message, transactions: Transaction[]
-  }[]>([])
+  const [apiData, setApiData] = useState<{ message: Message, transactions: Transaction[] }[]>([])
   const [editedTransactions, setEditedTransactions] = useState<any[]>([])
-  // hook
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState(false)
+  // hook
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
   const { getAllAccountSource } = useAccountSource()
@@ -80,32 +77,23 @@ export function ChatBox() {
     [GET_ADVANCED_TRANSACTION_KEY],
     updateCacheDataTransactionForClassify
   )
-
   const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataCreateClassify
   )
-
-  const {
-    getAdvancedData,
-  } = useTrackerTransaction()
+  const { createTrackerTransaction, getAdvancedData } = useTrackerTransaction()
   const { advancedTrackerTxData, isGetAdvancedPending, refetchGetAdvancedTrackerTransaction } = getAdvancedData({
     query: queryOptions,
     fundId
   })
-
-  const { resetData: resetCacheTodayTxs } = useUpdateModel(
-    [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    () => { }
-  )
-
+  const { resetData: resetCacheTodayTxs } = useUpdateModel([GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)], () => { })
   const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => { })
   const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
     [GET_STATISTIC_EXPENDITURE_FUND_KEY],
     () => { }
   )
-  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => { })
 
+  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => { })
   const actionMap: Partial<Record<TTrackerTransactionActions, () => void>> = {
     getTransactions: resetCacheTransaction,
     getTodayTransactions: resetCacheTodayTxs,
@@ -123,6 +111,7 @@ export function ChatBox() {
       }
     })
   }
+  // memo/callback
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
       const scrollElement = scrollRef.current
@@ -143,61 +132,7 @@ export function ChatBox() {
       })
     }
   }, [])
-
-  // useEffect
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToBottom()
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [messages, scrollToBottom])
-
-  useEffect(() => {
-    if (currentResponse) {
-      const timer = setTimeout(() => {
-        scrollToBottom()
-      }, 100)
-      return () => clearTimeout(timer)
-    }
-  }, [currentResponse, scrollToBottom])
-
-  useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        scrollToBottom()
-      }, 100)
-      return () => clearTimeout(timer)
-    }
-  }, [isOpen, scrollToBottom])
-
-  useEffect(() => {
-    const handleEscPress = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isOpen) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener('keydown', handleEscPress)
-    return () => document.removeEventListener('keydown', handleEscPress)
-  }, [isOpen])
-
-  useEffect(() => {
-    const handleCtrlEnter = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === 'Enter') {
-        setIsOpen((prev) => !prev)
-      }
-    }
-
-    document.addEventListener('keydown', handleCtrlEnter)
-    return () => document.removeEventListener('keydown', handleCtrlEnter)
-  }, [])
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isOpen])
-
+  // functional
   const simulateTyping = (text: string, delay: number, messageId: number) => {
     return new Promise<void>((resolve) => {
       let index = 0
@@ -239,122 +174,6 @@ export function ChatBox() {
     })
   }
 
-  const handleSend = async () => {
-    if (!input.trim()) {
-      setError('Bạn phải nhập tin nhắn trước khi gửi.')
-      return;
-    }
-
-    if (typingInterval) {
-      clearInterval(typingInterval)
-      typingInterval = null
-    }
-
-    const newUserMessageId = Date.now()
-    const newBotMessageId = Date.now() + 1
-
-    setMessages((prev) => [
-      ...prev.filter((msg) => msg.text !== ''),
-      { id: newUserMessageId, text: input, sender: 'user' },
-      { id: newBotMessageId, text: '', sender: 'bot' }
-    ])
-
-    setInput('')
-    setError('')
-    setTimeout(scrollToBottom, 100)
-
-    try {
-      const response = await fetch('https://bot.uniko.id.vn/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${getAccessTokenFromLocalStorage()}`
-        },
-        body: JSON.stringify({
-          message: input,
-          fundId
-        })
-      })
-
-      if (!response.ok) throw new Error('Network response was not ok')
-
-      const reader = response.body?.getReader()
-      if (!reader) throw new Error('Response reader not available')
-
-      let fullResponse = ''
-      setIsTyping(true)
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) {
-          setIsTyping(false)
-          setTimeout(scrollToBottom, 100)
-          break;
-        }
-
-        const chunk = new TextDecoder().decode(value)
-        const lines = chunk.split('data: ').filter((line) => line.trim())
-
-        for (const line of lines) {
-          try {
-            const data = JSON.parse(line)
-            const updatedTransactions = data?.data?.transactions?.map((transaction: any) => ({
-              ...transaction,
-              idMessage: newBotMessageId,
-              id: uuidv4()
-            })) || []
-
-            if (updatedTransactions.length > 0) {
-              setTransactions((prev = []) => [...prev, ...updatedTransactions]);
-            }
-
-            const processedRecent = data.recent
-              ? data.recent.replace(/\\n/g, '<br />').replace(/\\"/g, '"').replace(/\\'/g, "'")
-              : '';
-
-            fullResponse = `${data.message}\n\n${'_'.repeat(50)}\n\n${processedRecent}`;
-            setCurrentResponse(fullResponse)
-
-            setMessages((prev) =>
-              prev.map((msg) =>
-                msg.id === newBotMessageId
-                  ? { ...msg, text: fullResponse }
-                  : msg
-              )
-            );
-
-            setApiData((prev = []) => [
-              ...prev,
-              {
-                message: { id: newBotMessageId, text: fullResponse, sender: 'bot' },
-                transactions: updatedTransactions
-              }
-            ]);
-
-            setTimeout(scrollToBottom, 100);
-          } catch (e) {
-            console.error('Error parsing JSON:', e);
-            console.log('Problematic line:', line);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          text: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.',
-          sender: 'bot'
-        }
-      ]);
-
-      setIsTyping(false);
-      setTimeout(scrollToBottom, 100);
-    }
-  };
-
   const handleViewDetails = (transactions: Transaction[]) => {
     setSelectedTransactions(transactions)
     setIsDialogOpen(true)
@@ -367,157 +186,97 @@ export function ChatBox() {
     }))
   }
 
-  const handleStartEdit = (transaction: Transaction) => {
-    setEditingId(transaction.id)
-    setEditForms((prev) => ({
-      ...prev,
-      [transaction.id]: {
-        description: transaction.description,
-        amount: transaction.amount,
-        categoryId: transaction.categoryId,
-        walletId: "c7909d84-dd33-4e54-bef5-3dc5cc59e684",
-        categoryName: transaction.categoryName
-      }
-    }))
-  }
-
-  const handleCancelEdit = () => {
-    setEditingId(null)
-  }
-
-  const handleSaveEdit = async (transactionId: string) => {
-    try {
-      const currentForm = editForms[transactionId]
-      if (!currentForm) return
-
-      if (!currentForm.description || !currentForm.amount) {
-        console.error('Missing required fields')
-        return
-      }
-
-      const existingTransaction = selectedTransactions.find((t) => t.id === transactionId)
-      console.log("🚀 ~ handleSaveEdit ~ existingTransaction:", existingTransaction)
-      if (!existingTransaction) {
-        console.error('No transaction found in selectedTransactions for transactionId:', transactionId)
-        return
-      }
-
-      const updatedTransaction = {
-        ...currentForm,
-        id: transactionId,
-        category: existingTransaction.category,
-        wallet: existingTransaction.wallet,
-        categoryName: existingTransaction.categoryName
-      }
-
-      setSelectedTransactions((prev) => {
-        const updated = prev.map((t) => {
-          if (t.id === transactionId) {
-            return {
-              ...t,
-              description: currentForm.description,
-              amount: currentForm.amount,
-              categoryId: currentForm.categoryId,
-              walletId: "c7909d84-dd33-4e54-bef5-3dc5cc59e684",
-              categoryName: existingTransaction?.category?.name ?? currentForm.categoryName
-            }
-          }
-          return t
-        })
-
-        setEditedTransactions(updated)
-        return updated
-      })
-
-      setEditedTransactions((prev) => {
-        const exists = prev.find((et) => et.id === transactionId)
-
-        if (!exists) {
-          const newEditedTransactions = [...prev, updatedTransaction]
-          return newEditedTransactions
-        }
-
-        const updatedEditedTransactions = prev.map((et) => (et.id === transactionId ? updatedTransaction : et))
-
-        return updatedEditedTransactions
-      })
-
-      handleCancelEdit()
-    } catch (error) {
-      console.error('Failed to update transaction:', error)
-    }
-  }
-
-  async function postTrackerTransactions(payload: {
-    trackerTypeId: any;
-    reasonName: any;
-    direction: any;
-    amount: any;
-    accountSourceId: string;
-    fundId: string;
-  }[]) {
-    try {
-      // Lặp qua từng phần tử trong payload
-      for (const item of payload) {
-        // Gọi API POST cho từng phần tử
-        const response = await fetch('https://api.uniko.id.vn/api/tracker-transactions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${getAccessTokenFromLocalStorage()}` // Hàm lấy token
-          },
-          body: JSON.stringify(item)
-        });
-
-
-        // Kiểm tra phản hồi từ server
-        if (!response.ok) {
-          console.error(`Failed to post item: ${JSON.stringify(item)} - Status: ${response.status}`);
-        } else {
-          const data = await response.json();
-          console.log(`Successfully posted item: ${JSON.stringify(item)} - Response: `, data);
-        }
-      }
-      toast.success("Successfully")
-      refetchGetAdvancedTrackerTransaction()
-    } catch (error) {
-      console.error('Error occurred while posting transactions:', error);
-    }
-  }
-
-  const handleConfirm = async () => {
-    const payload = editedTransactions.map((item) => {
-      return {
-        trackerTypeId: item.categoryId,
-        reasonName: item.description,
-        direction: item.type,
-        amount: item.amount,
-        accountSourceId: "c7909d84-dd33-4e54-bef5-3dc5cc59e684",
-        fundId
-      }
+  const onClickSend = (messageAvairable?: string) => {
+    const messageInput = messageAvairable || input
+    return handleSend({
+      input: messageInput,
+      setError,
+      typingInterval,
+      setMessages,
+      setInput,
+      scrollToBottom,
+      fundId,
+      setIsTyping,
+      setCurrentResponse,
+      setApiData
     })
-    console.log('payload:', payload)
-    postTrackerTransactions(payload) // call api
-    setIsDialogOpen(false)
-    setEditedTransactions([])
   }
 
-  const messageVariants = {
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, x: -10 }
+  const onclickConfirm = () => {
+    return handleConfirm({
+      editedTransactions,
+      fundId,
+      postTrackerTransactions,
+      setIsDialogOpen,
+      setEditedTransactions
+    })
   }
 
-  const textVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 }
+  const postTrackerTransactions = (payload: ICreateTrackerTransactionBody[]) => {
+    for (const item of payload) {
+      createTrackerTransaction(item, {
+        onSuccess: () => {
+          console.log(`Successfully created transaction: ${JSON.stringify(item)}`)
+        },
+        onError: (error) => {
+          toast.error(`Failed to create transaction`)
+        },
+      });
+    }
+    toast.success('All transactions created successfully!');
+    refetchGetAdvancedTrackerTransaction()
+    callBackRefetchTrackerTransactionPage(typeCallBack)
   }
 
-  const inputVariants = {
-    focus: { scale: 1.01 },
-    tap: { scale: 0.99 }
-  }
+  // useEffect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [messages, scrollToBottom])
+
+  useEffect(() => {
+    if (currentResponse) {
+      const timer = setTimeout(() => { scrollToBottom() }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [currentResponse, scrollToBottom])
+
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => { scrollToBottom() }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen, scrollToBottom])
+
+  useEffect(() => {
+    const handleEscPress = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleEscPress)
+    return () => document.removeEventListener('keydown', handleEscPress)
+  }, [isOpen])
+
+  useEffect(() => {
+    const handleCtrlEnter = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'Enter') {
+        setIsOpen((prev) => !prev)
+      }
+    }
+
+    document.addEventListener('keydown', handleCtrlEnter)
+    return () => document.removeEventListener('keydown', handleCtrlEnter)
+  }, [])
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if (dataTrackerTransactionType)
@@ -595,6 +354,27 @@ export function ChatBox() {
                             {message.sender === 'user' ? user?.fullName?.charAt(0) || 'U' : 'UN'}
                           </AvatarFallback>
                         </Avatar>
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+                          className='relative top translate-y-[-50%] flex justify-center items-center'
+                        >
+                          {!message.text.split('_'.repeat(50))[0] && (
+                            Array.from({ length: 3 }).map((_, index) => (
+                              <motion.span
+                                key={index}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse", delay: index * 0.2 }}
+                              >
+                                <span>.</span>
+                              </motion.span>
+                            ))
+                          )}
+                        </motion.span>
 
                         {(message.sender === 'user' || (message.sender === 'bot' && message.text)) && (
                           <motion.div
@@ -613,9 +393,8 @@ export function ChatBox() {
                               style={{ margin: 0 }}
                               className="prose prose-sm dark:prose-invert max-w-none"
                             >
-                              {/* Hiển thị phần đầu của message */}
                               <div
-                                dangerouslySetInnerHTML={{ __html: message.text.split('_'.repeat(50))[0] }}
+                                dangerouslySetInnerHTML={{ __html: message.text.split('_'.repeat(50))[0].split("`")[0] ? message.text.split('_'.repeat(50))[0].split("`")[0] : message.text.split('_'.repeat(50))[0] }}
                               />
 
                               {/* Kiểm tra nếu message có phân cách */}
@@ -637,7 +416,27 @@ export function ChatBox() {
                                 )
                               ))}
                             </motion.div>
+                            {/* render 1 lần ngay dưới mesage đầu tiên*/}
+                            {index === 0 &&
+                              <div className="mt-2">
+                                <div className="space-y-3">
+                                  {quickActions.map(action => (
+                                    <Card key={action.id} onClick={() => onClickSend(action.description)} className="cursor-pointer flex items-center p-4 bg-zinc-800 border-zinc-700 hover:bg-zinc-700/50 transition-colors">
+                                      <div className={`h-8 w-8 rounded-xl ${action.iconBgColor} flex items-center justify-center flex-shrink-0`}>
+                                        <action.icon className={`h-6 w-6 ${action.iconColor}`} />
+                                      </div>
+                                      <div className="ml-4 flex-grow">
+                                        <h2 className="text-white font-medium">{action.title}</h2>
+                                      </div>
+                                      <ChevronRight className="h-5 w-5 text-zinc-500 flex-shrink-0" />
+                                    </Card>
+                                  ))}
+                                </div>
+                              </div>}
                           </motion.div>
+
+                          // o ưday
+
                         )}
                       </div>
                     </motion.div>
@@ -662,12 +461,12 @@ export function ChatBox() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder='Nhập tin nhắn...'
                     className='flex-grow bg-background/80 text-sm placeholder:text-muted-foreground/70 dark:bg-muted/30'
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                    onKeyPress={(e) => e.key === 'Enter' && onClickSend()}
                   />
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    onClick={isTyping ? handleStopTyping : handleSend}
+                    onClick={isTyping ? handleStopTyping : () => onClickSend()}
                     size='icon'
                     variant='default'
                     className='bg-primary/90 hover:bg-primary dark:bg-primary'
@@ -693,8 +492,9 @@ export function ChatBox() {
               <MessageCircle className='h-5 w-5' />
             </Button>
           </motion.div>
-        )}
-      </AnimatePresence>
+        )
+        }
+      </AnimatePresence >
 
       <Dialog
         open={isDialogOpen}
@@ -711,7 +511,7 @@ export function ChatBox() {
           </DialogHeader>
           <DialogDescription>Uniko-chan</DialogDescription>
           <Accordion type='single' collapsible className='w-full'>
-            {selectedTransactions.map((transaction: Transaction, index) => {
+            {selectedTransactions.map((transaction: Transaction) => {
               const currentType = transaction.id ? typesState[transaction.id] ?? transaction.type : transaction.type
               const trackerType =
                 transaction.type === ETypeOfTrackerTransactionType.INCOMING ? incomingTrackerType : expenseTrackerType
@@ -808,7 +608,7 @@ export function ChatBox() {
                                   const currentForm = prev[transaction.id] || {
                                     amount: transaction.amount,
                                     categoryId: transaction.categoryId,
-                                    walletId: "c7909d84-dd33-4e54-bef5-3dc5cc59e684",
+                                    accountSourceId: transaction.accountSourceId,
                                     description: transaction.description
                                   }
 
@@ -855,7 +655,6 @@ export function ChatBox() {
                                       try {
                                         await createTrackerTxType(data)
                                         setIsCreating(false)
-
                                         refetchTrackerTransactionType()
                                         callBackRefetchTrackerTransactionPage(typeCallBack)
                                       } catch (error) {
@@ -887,16 +686,16 @@ export function ChatBox() {
                             <label className='text-sm font-medium'>Ví</label>
                             <Select
                               value={
-                                editForms[transaction.id]?.walletId === 'default'
+                                editForms[transaction.id]?.accountSourceId === 'default'
                                   ? getAllAccountSourceData?.data[0]?.id || ''
-                                  : editForms[transaction.id]?.walletId
+                                  : editForms[transaction.id]?.accountSourceId
                               }
                               onValueChange={(value) => {
                                 setEditForms((prev) => ({
                                   ...prev,
                                   [transaction.id]: {
                                     ...prev[transaction.id],
-                                    walletId: value
+                                    accountSourceId: value
                                   }
                                 }))
 
@@ -913,7 +712,7 @@ export function ChatBox() {
                                               ?.name || item.walletName,
                                           currentAmount:
                                             getAllAccountSourceData?.data?.find((account) => account.id === value)
-                                              ?.currentAmount || item.wallet.currentAmount
+                                              ?.currentAmount || (item?.wallet?.currentAmount ?? 0)
                                         }
                                       }
                                       : item
@@ -936,11 +735,18 @@ export function ChatBox() {
                         </div>
 
                         <div className='flex items-center justify-end gap-2'>
-                          <Button variant='outline' size='sm' onClick={handleCancelEdit}>
+                          <Button variant='outline' size='sm' onClick={() => handleCancelEdit(setEditingId)}>
                             <X className='mr-2 h-4 w-4' />
                             Hủy
                           </Button>
-                          <Button size='sm' onClick={() => handleSaveEdit(transaction.id)}>
+                          <Button size='sm' onClick={() => handleSaveEdit({
+                            transactionId: transaction.id,
+                            editForms,
+                            selectedTransactions,
+                            setSelectedTransactions,
+                            setEditedTransactions,
+                            setEditingId
+                          })}>
                             <Check className='mr-2 h-4 w-4' />
                             Lưu
                           </Button>
@@ -969,7 +775,7 @@ export function ChatBox() {
                             variant='outline'
                             size='sm'
                             className='gap-2'
-                            onClick={() => handleStartEdit(transaction)}
+                            onClick={() => handleStartEdit({ transaction, setEditForms, setEditingId })}
                           >
                             <Pencil className='h-4 w-4' />
                             Chỉnh sửa
@@ -992,13 +798,13 @@ export function ChatBox() {
               <Button variant='outline' onClick={() => setIsDialogOpen(false)}>
                 Đóng
               </Button>
-              <Button onClick={handleConfirm} disabled={editedTransactions.length === 0}>
+              <Button onClick={onclickConfirm} isLoading={isGetAdvancedPending} disabled={editedTransactions.length === 0}>
                 Xác nhận thay đổi
               </Button>
             </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   )
 }

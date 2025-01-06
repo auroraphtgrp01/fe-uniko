@@ -245,29 +245,29 @@ export function DataTable<TData, TValue>({
                 .getAllColumns()
                 .filter((column) => column.getCanHide() && column.id !== 'id' && column.id !== 'checkType').length ===
                 0 && (
-                <div className='flex items-center justify-center p-4'>
-                  <div className='text-center'>
-                    <Image priority src={EmptyBox} alt='' height={30} width={30} className='mx-auto' />
-                    <span className='mt-2 block text-sm font-semibold text-foreground'>{t('table.noDataText')}</span>
+                  <div className='flex items-center justify-center p-4'>
+                    <div className='text-center'>
+                      <Image priority src={EmptyBox} alt='' height={30} width={30} className='mx-auto' />
+                      <span className='mt-2 block text-sm font-semibold text-foreground'>{t('table.noDataText')}</span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </DropdownMenuContent>
           </DropdownMenu>
           {buttons && buttons.length > 0
             ? buttons.map((button: IButtonInDataTableHeader) => (
-                <Button
-                  disabled={button.disabled}
-                  key={button.title}
-                  variant={button.variants ? button.variants : 'default'}
-                  className='whitespace-nowrap'
-                  onClick={() => button.onClick()}
-                >
-                  {button.title} {button.icon}
-                </Button>
-              ))
+              <Button
+                disabled={button.disabled}
+                key={button.title}
+                variant={button.variants ? button.variants : 'default'}
+                className='whitespace-nowrap'
+                onClick={() => button.onClick()}
+              >
+                {button.title} {button.icon}
+              </Button>
+            ))
             : ''}
-          {}
+          { }
         </div>
       </div>
       <div className='flex flex-1 flex-col overflow-hidden rounded-md border'>
@@ -282,9 +282,8 @@ export function DataTable<TData, TValue>({
 
                     return (
                       <TableHead
-                        className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''} ${
-                          !isFirstColumn && !isLastColumn ? 'text-center' : ''
-                        } ${isFirstColumn ? 'text-left' : ''} ${isLastColumn ? 'text-right' : ''}`}
+                        className={`text-nowrap ${!data?.length ? 'pointer-events-none' : ''} ${!isFirstColumn && !isLastColumn ? 'text-center' : ''
+                          } ${isFirstColumn ? 'text-left' : ''} ${isLastColumn ? 'text-right' : ''}`}
                         key={header.id}
                         onMouseDown={(event) => {
                           if (event.detail > 1) {
@@ -381,9 +380,8 @@ export function DataTable<TData, TValue>({
                             e.stopPropagation()
                             onOpenDelete((row.original as any).id)
                           }}
-                          className={`h-8 w-8 transition-opacity duration-200 ${
-                            hoveredRow === index ? 'opacity-100' : 'opacity-0'
-                          }`}
+                          className={`h-8 w-8 transition-opacity duration-200 ${hoveredRow === index ? 'opacity-100' : 'opacity-0'
+                            }`}
                         >
                           <Trash2Icon className='h-4 w-4 text-red-600 dark:text-red-400' />
                           <span className='sr-only'>Delete row</span>
