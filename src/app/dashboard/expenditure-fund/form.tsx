@@ -124,7 +124,7 @@ export default function ExpenditureFundForm() {
     }
   }, [getAllExpenditureFundData])
 
-  const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => {})
+  const { resetData: resetCacheTrackerTxType } = useUpdateModel([GET_ADVANCED_TRACKER_TRANSACTION_KEY], () => { })
 
   const actionMap: Record<TExpenditureFundActions, () => void> = {
     getExpenditureFund: refetchAdvancedExpendingFund,
