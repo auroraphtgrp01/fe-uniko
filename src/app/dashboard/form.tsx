@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { LineChart } from '@/components/core/charts/LineChart'
@@ -13,6 +13,9 @@ import { initEmptyBalanceChartConfig, initEmptyTotalAmount } from './constants'
 import { formatCurrency } from '@/libraries/utils'
 import { ChartConfig } from '@/components/ui/chart'
 import { useAccountSource } from '@/core/account-source/hooks'
+import Image from 'next/image'
+import NoDataPlaceHolder from '@/images/2.png'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function DashboardMainForm() {
   const { fundId } = useStoreLocal()
@@ -23,6 +26,16 @@ export default function DashboardMainForm() {
   const [balanceChartConfig, setBalanceChartConfig] = useState<ChartConfig>(initEmptyBalanceChartConfig)
   const [totalIncome, setTotalIncome] = useState<ITotalAmount>(initEmptyTotalAmount)
   const [totalExpenses, setTotalExpenses] = useState<ITotalAmount>(initEmptyTotalAmount)
+  const [timeRange, setTimeRange] = useState<string>('90d')
+  React.useEffect(() => {
+    if (timeRange === '30d') {
+      setDaysToSubtract(30)
+    } else if (timeRange === '7d') {
+      setDaysToSubtract(7)
+    } else {
+      setDaysToSubtract(90)
+    }
+  }, [timeRange])
 
   // hooks
   // declare hooks
@@ -62,7 +75,14 @@ export default function DashboardMainForm() {
       <div className='flex w-full flex-col md:col-span-1'>
         <div className='grid flex-1 grid-cols-1 gap-4'>
           <Card className='p-4'>
-            <BalanceChart chartConfig={balanceChartConfig} chartData={balanceChartData} />
+            {balanceChartData.length > 0 ? (
+              <BalanceChart chartConfig={balanceChartConfig} chartData={balanceChartData} />
+            ) : (
+              <div className='mb-28 mt-28 flex flex-col items-center justify-center'>
+                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
           </Card>
         </div>
       </div>
@@ -141,7 +161,40 @@ export default function DashboardMainForm() {
           </motion.div>
         </div>
         <div className='mt-4 flex-1'>
-          <LineChart chartData={cashFlowAnalysisChartData} setDaysToSubtract={setDaysToSubtract} />
+          <Card>
+            <CardHeader className='flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row'>
+              <div className='grid flex-1 gap-1 text-center sm:text-left'>
+                <CardTitle>Cash Flow Analysis</CardTitle>
+                <CardDescription>Monitoring incoming and outgoing transactions</CardDescription>
+              </div>
+              <Select value={timeRange} onValueChange={setTimeRange}>
+                <SelectTrigger className='w-[160px] rounded-lg sm:ml-auto' aria-label='Select a value'>
+                  <SelectValue placeholder='Last 3 months' />
+                </SelectTrigger>
+                <SelectContent className='rounded-xl'>
+                  <SelectItem value='90d' className='rounded-lg'>
+                    Last 3 months
+                  </SelectItem>
+                  <SelectItem value='30d' className='rounded-lg'>
+                    Last 30 days
+                  </SelectItem>
+                  <SelectItem value='7d' className='rounded-lg'>
+                    Last 7 days
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </CardHeader>
+            <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6'>
+              {cashFlowAnalysisChartData.length > 0 ? (
+                <LineChart chartData={cashFlowAnalysisChartData} />
+              ) : (
+                <div className='mb-7 mt-7 flex flex-col items-center justify-center'>
+                  <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                  <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
       <div className='flex w-full gap-4 md:col-span-3'>
