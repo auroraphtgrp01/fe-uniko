@@ -404,18 +404,18 @@ export default function TrackerTransactionForm() {
                     {formatCurrency(statisticData?.data?.total?.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-blue-100'>
-                    {statisticData?.data?.total?.rate?.[0] !== '-' || statisticData?.data?.total?.rate === undefined ? (
+                    {statisticData?.data?.total?.rate?.[0] !== '-' || !statisticData.data.income.rate ? (
                       <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
                     ) : (
                       <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
                     )}
                     {/* <span>{t('notiTotalBalance', { percentage: 2.5 })}</span> */}
                     <span>
-                      {(statisticData?.data?.total?.rate?.[0] === '-' ? '' : '+') +
-                        (statisticData?.data.total.rate && statisticData?.data.total.rate !== 'none'
-                          ? statisticData?.data?.total.rate
-                          : '0') +
-                        '% left this month'}
+                      {`${
+                        statisticData?.data?.total?.rate && statisticData.data.total.rate !== 'none'
+                          ? (statisticData.data.total.rate.startsWith('-') ? '' : '+') + statisticData.data.total.rate
+                          : '0'
+                      }% left this month`}
                     </span>
                   </p>
                 </div>
@@ -443,8 +443,7 @@ export default function TrackerTransactionForm() {
                     {formatCurrency(statisticData?.data?.income.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex h-[50%] items-center text-sm text-emerald-100'>
-                    {statisticData?.data?.income?.rate?.[0] !== '-' ||
-                    statisticData?.data?.income?.rate === undefined ? (
+                    {statisticData?.data?.income?.rate?.[0] !== '-' || !statisticData.data.income.rate ? (
                       <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
                     ) : (
                       <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
@@ -479,8 +478,7 @@ export default function TrackerTransactionForm() {
                     {formatCurrency(statisticData?.data?.expense.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-red-100'>
-                    {statisticData?.data?.income?.rate?.[0] !== '-' ||
-                    statisticData?.data?.income?.rate === undefined ? (
+                    {statisticData?.data?.income?.rate?.[0] !== '-' || !statisticData.data.income.rate ? (
                       <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
                     ) : (
                       <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
