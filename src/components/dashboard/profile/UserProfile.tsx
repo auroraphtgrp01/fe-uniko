@@ -1,12 +1,13 @@
 import { Separator } from '@/components/ui/separator'
 import AvatarSelector from './AvatarSelector'
 import InfoItem from './InfoItems'
-import { formatDateToInput } from '@/libraries/utils'
+import { formatDateTimeVN, formatDateToInput } from '@/libraries/utils'
 import { IUser } from '@/types/user.i'
 import { Briefcase, Calendar, Mail, MapPin, Phone, User2 } from 'lucide-react'
 import Image from 'next/image'
 import { Avatar } from '@/components/ui/avatar'
 import { useTranslation } from 'react-i18next'
+import { useMemo } from 'react'
 
 interface IUserProfileProps {
   handleUpdateUser?: (formData: {
@@ -22,6 +23,10 @@ interface IUserProfileProps {
 }
 
 export default function UserProfile({ handleUpdateUser, user }: IUserProfileProps) {
+  const dateOfBirth = useMemo(
+    () => (user.dateOfBirth ? formatDateTimeVN(user.dateOfBirth, false) : 'N/A'),
+    [user.dateOfBirth]
+  )
   const { t } = useTranslation(['profile'])
   return (
     <>
@@ -54,12 +59,12 @@ export default function UserProfile({ handleUpdateUser, user }: IUserProfileProp
           <InfoItem icon={MapPin} label={t('profile:infoProfileTitle.infoAddress')} value={user.address} />
         </div>
         <div className='space-y-4'>
+          <InfoItem icon={Calendar} label={t('profile:infoProfileTitle.infoDateOfBirth')} value={dateOfBirth} />
           <InfoItem
-            icon={Calendar}
-            label={t('profile:infoProfileTitle.infoDateOfBirth')}
-            value={formatDateToInput(user.dateOfBirth)}
+            icon={User2}
+            label={t('profile:infoProfileTitle.infoGender.label')}
+            value={t(`profile:infoProfileValue.infoGender.${user.gender.toLowerCase()}`, user.gender.toLowerCase())}
           />
-          <InfoItem icon={User2} label={t('profile:infoProfileTitle.infoGender.label')} value={user.gender} />
           <InfoItem icon={Briefcase} label={t('profile:infoProfileTitle.infoWorkplace')} value={user.workplace} />
         </div>
       </div>
