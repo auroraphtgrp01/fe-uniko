@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -10,7 +10,7 @@ import AvatarUniko from '@/images/avatar.jpg'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import Image from 'next/image'
 import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
 import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Check } from 'lucide-react'
@@ -40,6 +40,7 @@ import { IEditForm, inputVariants, ITrackerTransactionBody, Message, messageVari
 import { handleCancelEdit, handleConfirm, handleSaveEdit, handleSend, handleStartEdit } from '@/app/chatbox/handler'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
+import { Label } from '@/components/ui/label'
 
 export function ChatBox() {
   let typingInterval: NodeJS.Timeout | null = null
@@ -64,6 +65,8 @@ export function ChatBox() {
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState(false)
+  const [isDisabled, setIsDisabled] = useState<boolean>(true)
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false)
   // hook
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
@@ -177,6 +180,7 @@ export function ChatBox() {
   const handleViewDetails = (transactions: Transaction[]) => {
     setSelectedTransactions(transactions)
     setIsDialogOpen(true)
+    setIsDisabled(true)
   }
 
   const handleTypeChange = (transactionId: string, newType: any) => {
@@ -208,7 +212,8 @@ export function ChatBox() {
       fundId,
       postTrackerTransactions,
       setIsDialogOpen,
-      setEditedTransactions
+      setEditedTransactions,
+      setIsDisabled
     })
   }
 
@@ -331,8 +336,10 @@ export function ChatBox() {
                       className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-3`}
                     >
                       <div
-                        className={`flex ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'} items-end gap-2`}
+                        className={`relative flex ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
+                          } items-end gap-2`}
                       >
+                        {/* Avatar */}
                         <Avatar className="h-8 w-8">
                           {message.sender === 'user' ? (
                             user?.avatarId ? (
@@ -351,98 +358,118 @@ export function ChatBox() {
                             <AvatarImage src={AvatarUniko.src} alt="Uniko" />
                           )}
                           <AvatarFallback>
-                            {message.sender === 'user' ? user?.fullName?.charAt(0) || 'U' : 'UN'}
+                            {message.sender === 'user'
+                              ? user?.fullName?.charAt(0) || 'U'
+                              : 'UN'}
                           </AvatarFallback>
                         </Avatar>
-                        <motion.span
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
-                          className='relative top translate-y-[-50%] flex justify-center items-center'
-                        >
-                          {!message.text.split('_'.repeat(50))[0] && (
-                            Array.from({ length: 3 }).map((_, index) => (
+                        {!message.text.split('_'.repeat(50))[0] && (
+                          <div
+                            className={`absolute ${message.sender === 'user' ? 'right-12' : 'left-12'}
+      top-1/2 transform -translate-y-1/2 flex items-center gap-1`}
+                          >
+                            <span className="text-sm whitespace-nowrap">Đợi tôi chút</span>
+                            {Array.from({ length: 3 }).map((_, index) => (
                               <motion.span
                                 key={index}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse", delay: index * 0.2 }}
+                                transition={{
+                                  duration: 0.5,
+                                  repeat: Infinity,
+                                  repeatType: 'reverse',
+                                  delay: index * 0.2,
+                                }}
+                                className="text-2xl"
                               >
-                                <span>.</span>
+                                .
                               </motion.span>
-                            ))
-                          )}
-                        </motion.span>
-
-                        {(message.sender === 'user' || (message.sender === 'bot' && message.text)) && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            transition={{ duration: 0.2 }}
-                            className={`max-w-[70%] overflow-hidden rounded-md px-3 py-2 text-sm ${message.sender === 'user'
-                              ? 'bg-primary text-white'
-                              : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
-                              }`}
-                          >
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.1 }}
-                              style={{ margin: 0 }}
-                              className="prose prose-sm dark:prose-invert max-w-none"
-                            >
-                              <div
-                                dangerouslySetInnerHTML={{ __html: message.text.split('_'.repeat(50))[0].split("`")[0] ? message.text.split('_'.repeat(50))[0].split("`")[0] : message.text.split('_'.repeat(50))[0] }}
-                              />
-
-                              {/* Kiểm tra nếu message có phân cách */}
-                              {apiData.length > 0 && apiData.map((data: any) => (
-                                data.message.id === message.id && data.transactions.length > 0 && (
-                                  <div key={data.message.id}>
-                                    <Separator className="my-4 bg-slate-200/60 dark:bg-slate-600/30" />
-                                    <div className="mb-2 text-center font-semibold text-green-400">
-                                      Bạn đang phân loại {data.transactions?.length ?? 0} giao dịch
-                                    </div>
-                                    <Button
-                                      className="w-full"
-                                      variant={'ghost'}
-                                      onClick={() => handleViewDetails(data.transactions)}
-                                    >
-                                      <b className="text-red-400">Xem chi tiết</b>
-                                    </Button>
-                                  </div>
-                                )
-                              ))}
-                            </motion.div>
-                            {/* render 1 lần ngay dưới mesage đầu tiên*/}
-                            {index === 0 &&
-                              <div className="mt-2">
-                                <div className="space-y-3">
-                                  {quickActions.map(action => (
-                                    <Card key={action.id} onClick={() => onClickSend(action.description)} className="cursor-pointer flex items-center p-4 bg-zinc-800 border-zinc-700 hover:bg-zinc-700/50 transition-colors">
-                                      <div className={`h-8 w-8 rounded-xl ${action.iconBgColor} flex items-center justify-center flex-shrink-0`}>
-                                        <action.icon className={`h-6 w-6 ${action.iconColor}`} />
-                                      </div>
-                                      <div className="ml-4 flex-grow">
-                                        <h2 className="text-white font-medium">{action.title}</h2>
-                                      </div>
-                                      <ChevronRight className="h-5 w-5 text-zinc-500 flex-shrink-0" />
-                                    </Card>
-                                  ))}
-                                </div>
-                              </div>}
-                          </motion.div>
-
-                          // o ưday
-
+                            ))}
+                          </div>
                         )}
+
+
+                        {/* Nội dung tin nhắn */}
+                        {(message.sender === 'user' ||
+                          (message.sender === 'bot' && message.text)) && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              transition={{ duration: 0.2 }}
+                              className={`max-w-[70%] overflow-hidden rounded-md px-3 py-2 text-sm ${message.sender === 'user'
+                                ? 'bg-primary text-white'
+                                : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                                }`}
+                            >
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.1 }}
+                                style={{ margin: 0 }}
+                                className="prose prose-sm dark:prose-invert max-w-none"
+                              >
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: message.text.split('_'.repeat(50))[0].split('`')[0]
+                                      ? message.text.split('_'.repeat(50))[0].split('`')[0]
+                                      : message.text.split('_'.repeat(50))[0],
+                                  }}
+                                />
+
+                                {/* Kiểm tra nếu message có phân cách */}
+                                {apiData.length > 0 &&
+                                  apiData.map((data: any) => (
+                                    data.message.id === message.id &&
+                                    data.transactions.length > 0 && (
+                                      <div key={data.message.id}>
+                                        <Separator className="my-4 bg-slate-200/60 dark:bg-slate-600/30" />
+                                        <div className="mb-2 text-center font-semibold text-green-400">
+                                          Bạn đang phân loại {data.transactions?.length ?? 0} giao dịch
+                                        </div>
+                                        <Button
+                                          className="w-full"
+                                          variant={'ghost'}
+                                          onClick={() => handleViewDetails(data.transactions)}
+                                        >
+                                          <b className="text-red-400">Xem chi tiết</b>
+                                        </Button>
+                                      </div>
+                                    )
+                                  ))}
+                              </motion.div>
+                              {index === 0 && (
+                                <div className="mt-2">
+                                  <div className="space-y-3">
+                                    {quickActions.map((action) => (
+                                      <Card
+                                        key={action.id}
+                                        onClick={() => onClickSend(action.description)}
+                                        className="flex cursor-pointer items-center p-3 transition-colors dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
+                                      >
+                                        <div
+                                          className={`h-7 w-7 rounded-md ${action.iconBgColor} flex flex-shrink-0 items-center justify-center`}
+                                        >
+                                          <action.icon
+                                            className={`h-5 w-5 ${action.iconColor}`}
+                                          />
+                                        </div>
+                                        <div className="ml-4 flex-grow">
+                                          <h2 className="font-medium dark:text-white">{action.title}</h2>
+                                        </div>
+                                        <ChevronRight className="h-5 w-5 flex-shrink-0 text-zinc-500" />
+                                      </Card>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </motion.div>
+                          )}
                       </div>
+
                     </motion.div>
                   ))}
                 </AnimatePresence>
-
                 <div ref={messagesEndRef} style={{ height: '1px' }} />
               </div>
             </ScrollArea>
@@ -794,12 +821,50 @@ export function ChatBox() {
                 ? `Đã chỉnh sửa ${editedTransactions.length} giao dịch`
                 : 'Chưa có thay đổi nào'}
             </div>
-            <div className='flex gap-2'>
+            <div className='flex gap-2 items-center'>
               <Button variant='outline' onClick={() => setIsDialogOpen(false)}>
                 Đóng
               </Button>
-              <Button onClick={onclickConfirm} isLoading={isGetAdvancedPending} disabled={editedTransactions.length === 0}>
-                Xác nhận thay đổi
+              <Dialog open={isOpenConfirm} onOpenChange={setIsOpenConfirm}>
+                <DialogTrigger asChild>
+                  <Button disabled={!isDisabled} variant='destructive' onClick={() => handleStartEdit({ transaction: selectedTransactions[0], setEditForms, setEditingId })}>
+                    {!isDisabled ? (
+                      <div className="flex items-center gap-2">
+                        Xác nhận thay đổi   <Check className="h-4 w-4" />
+                      </div>
+                    ) : 'Xác nhận thay đổi'}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Confirm Change</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to change?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="sm:justify-start">
+                    <div className="w-full flex justify-between items-center">
+                      <Button variant="outline" onClick={() => setIsOpenConfirm(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={() => {
+                        handleSaveEdit({
+                          transactionId: selectedTransactions[0].id,
+                          editForms,
+                          selectedTransactions,
+                          setSelectedTransactions,
+                          setEditedTransactions,
+                          setEditingId
+                        }),
+                          setIsDisabled(false),
+                          setIsOpenConfirm(false)
+                      }}>Thay đổi</Button>
+                    </div>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              <Button variant={'secondary'} onClick={onclickConfirm} isLoading={isGetAdvancedPending} disabled={isDisabled}>
+                Thêm mới
               </Button>
             </div>
           </DialogFooter>

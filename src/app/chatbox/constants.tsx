@@ -116,6 +116,7 @@ export interface IpropsHandleConfirm {
   fundId: string,
   postTrackerTransactions: any,
   setIsDialogOpen: Dispatch<SetStateAction<boolean>>,
+  setIsDisabled: Dispatch<SetStateAction<boolean>>,
   setEditedTransactions: Dispatch<SetStateAction<any[]>>
 }
 
@@ -149,7 +150,7 @@ export interface ActionItem {
 export const quickActions: ActionItem[] = [
   {
     id: 'expense-entry',
-    title: 'Ghi chép các khoản chi tiêu một cách nhanh chóng',
+    title: 'Ghi chép nhanh các khoản chi tiêu',
     description: 'Ăn sáng 200k, xe 100k, điện thoại 100k',
     icon: NotebookPen,
     iconBgColor: 'bg-emerald-600/20',
@@ -158,7 +159,7 @@ export const quickActions: ActionItem[] = [
   },
   {
     id: 'financial-stats',
-    title: 'Thống kê tài chính của tôi tháng này',
+    title: 'Thống kê tài chính tháng này',
     description: 'Xem báo cáo chi tiết về thu chi trong tháng',
     icon: LineChart,
     iconBgColor: 'bg-blue-600/20',

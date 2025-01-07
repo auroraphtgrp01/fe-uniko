@@ -222,7 +222,8 @@ export const handleConfirm = async ({
   fundId,
   postTrackerTransactions,
   setIsDialogOpen,
-  setEditedTransactions
+  setEditedTransactions,
+  setIsDisabled
 }: IpropsHandleConfirm) => {
   const payload = editedTransactions.map((item) => {
     return {
@@ -237,4 +238,5 @@ export const handleConfirm = async ({
   await postTrackerTransactions(payload)
   setIsDialogOpen(false)
   setEditedTransactions([])
+  setIsDisabled(true)
 }
