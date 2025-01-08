@@ -57,6 +57,7 @@ export function ChatBox() {
   const [isTyping, setIsTyping] = useState<boolean>(false)
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([])
+  console.log("🚀 ~ selectedTransactions:", selectedTransactions)
   const [editForms, setEditForms] = useState<IEditForm>({})
   const [apiData, setApiData] = useState<{ message: Message, transactions: Transaction[] }[]>([])
   const [editedTransactions, setEditedTransactions] = useState<any[]>([])
@@ -176,6 +177,7 @@ export function ChatBox() {
   }
 
   const handleViewDetails = (transactions: Transaction[]) => {
+    console.log("🚀 ~ handleViewDetails ~ transactions:", transactions)
     setSelectedTransactions(transactions)
     setIsDialogOpen(true)
     setIsDisabled(true)
@@ -226,7 +228,6 @@ export function ChatBox() {
         },
       });
     }
-    toast.success('All transactions created successfully!');
     refetchGetAdvancedTrackerTransaction()
     callBackRefetchTrackerTransactionPage(typeCallBack)
   }
@@ -287,7 +288,7 @@ export function ChatBox() {
   }, [dataTrackerTransactionType])
 
   useEffect(() => {
-    console.log("🚀 ~ ChatBox ~ apiData:", apiData)
+    console.log("🚀 ~ >>>>>>>>>>>>>>>>>>>>ChatBox ~ apiData:", apiData)
   }, [messages]);
 
   return (
@@ -387,8 +388,8 @@ export function ChatBox() {
                                 >
                                   <span className={`
                                     text-sm font-medium
-                                    ${message.sender === 'user' 
-                                      ? 'text-white/90' 
+                                    ${message.sender === 'user'
+                                      ? 'text-white/90'
                                       : 'text-slate-700 dark:text-slate-200'
                                     }
                                   `}>
@@ -402,8 +403,8 @@ export function ChatBox() {
                                       key={index}
                                       className={`
                                         h-1.5 w-1.5 rounded-full
-                                        ${message.sender === 'user' 
-                                          ? 'bg-white/80' 
+                                        ${message.sender === 'user'
+                                          ? 'bg-white/80'
                                           : 'bg-slate-600 dark:bg-slate-300'
                                         }
                                       `}
@@ -457,24 +458,27 @@ export function ChatBox() {
 
                                 {/* Kiểm tra nếu message có phân cách */}
                                 {apiData.length > 0 &&
-                                  apiData.map((data: any) => (
-                                    data.message.id === message.id &&
-                                    data.transactions.length > 0 && (
-                                      <div key={data.message.id}>
-                                        <Separator className="my-4 bg-slate-200/60 dark:bg-slate-600/30" />
-                                        <div className="mb-2 text-center font-semibold text-green-400">
-                                          Bạn đang phân loại {data.transactions?.length ?? 0} giao dịch
+                                  apiData.map((data: any) => {
+                                    console.log("🚀 ~ apiData.map ~ data:", data)
+                                    return (
+                                      data.message.id === message.id &&
+                                      data.transactions.length > 0 && (
+                                        <div key={data.message.id}>
+                                          <Separator className="my-4 bg-slate-200/60 dark:bg-slate-600/30" />
+                                          <div className="mb-2 text-center font-semibold text-green-400">
+                                            Bạn đang phân loại {data.transactions?.length ?? 0} giao dịch
+                                          </div>
+                                          <Button
+                                            className="w-full"
+                                            variant={'ghost'}
+                                            onClick={() => handleViewDetails(data.transactions)}
+                                          >
+                                            <b className="text-red-400">Xem chi tiết</b>
+                                          </Button>
                                         </div>
-                                        <Button
-                                          className="w-full"
-                                          variant={'ghost'}
-                                          onClick={() => handleViewDetails(data.transactions)}
-                                        >
-                                          <b className="text-red-400">Xem chi tiết</b>
-                                        </Button>
-                                      </div>
+                                      )
                                     )
-                                  ))}
+                                  })}
                               </motion.div>
                               {index === 0 && (
                                 <div className="mt-3">
@@ -609,15 +613,19 @@ export function ChatBox() {
           <DialogDescription>Uniko-chan</DialogDescription>
           <Accordion type='single' collapsible className='w-full'>
             {selectedTransactions.map((transaction: Transaction) => {
+              // console.log("🚀 ~ {editForms.map ~ transaction:", editForms[transaction.id] ?? transaction.categoryName)
               const currentType = transaction.id ? typesState[transaction.id] ?? transaction.type : transaction.type
               const trackerType =
                 transaction.type === ETypeOfTrackerTransactionType.INCOMING ? incomingTrackerType : expenseTrackerType
+              console.log("trackerType[0].name : ", trackerType[0].id);
+
               return (
                 <AccordionItem key={transaction.id} value={`item-${transaction.id}`}>
                   <AccordionTrigger className='hover:no-underline'>
                     <div className='flex w-full items-center justify-between pr-4'>
                       <div className='flex items-center gap-2'>
-                        <span className='text-lg'>{transaction.categoryName}</span>
+                        <span className='text-lg'>{transaction?.categoryName ?? trackerType[0].name}</span>
+                        {/* <span className='text-lg'>{editForms[transaction.id]?.categoryName}</span> */}
                       </div>
                       <div
                         className={`font-medium ${transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'}`}
@@ -684,7 +692,7 @@ export function ChatBox() {
                                     label: item.name
                                   }))
                               }
-                              value={editForms[transaction.id]?.categoryId || transaction.categoryId}
+                              value={editForms[transaction.id]?.categoryId || transaction.categoryId || trackerType[0].id}
                               onChange={(value: any) => {
                                 setSelectedTransactions((prev) =>
                                   prev.map((item) => {
@@ -693,14 +701,13 @@ export function ChatBox() {
                                         ...item,
                                         category: {
                                           id: value,
-                                          name: trackerType.find((type) => type.id === value)?.name ?? ''
+                                          name: trackerType.find((type) => type.id === value)?.name ?? trackerType[0].name
                                         }
                                       }
                                     }
                                     return item
                                   })
                                 )
-
                                 setEditForms((prev) => {
                                   const currentForm = prev[transaction.id] || {
                                     amount: transaction.amount,
@@ -818,7 +825,7 @@ export function ChatBox() {
                               }}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder={getAllAccountSourceData?.data[0].name} />
+                                <SelectValue placeholder={editForms[transaction.id]?.accountSourceName ?? getAllAccountSourceData?.data[0].name} />
                               </SelectTrigger>
                               <SelectContent>
                                 {getAllAccountSourceData?.data?.map((account) => (
@@ -855,9 +862,9 @@ export function ChatBox() {
                           <div className='flex items-center justify-between'>
                             <span className='text-muted-foreground'>Danh mục:</span>
                             <span className='rounded-full bg-slate-100 px-2 py-0.5 dark:bg-slate-800'>
-                              {transaction.categoryName}
+                              {transaction?.categoryName ?? trackerType[0].name}
                             </span>
-                          </div>
+                          </div> 
                           <div className='flex items-center justify-between'>
                             <span className='text-muted-foreground'>Ví:</span>
                             <span>{transaction?.walletName ?? ''}</span>

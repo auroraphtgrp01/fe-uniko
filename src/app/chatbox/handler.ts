@@ -6,17 +6,20 @@ import { v4 as uuidv4 } from 'uuid'
 
 export const handleStartEdit = ({ transaction, setEditingId, setEditForms }: IPropsStartEdit) => {
   setEditingId(transaction.id)
-  setEditForms((prev) => ({
-    ...prev,
-    [transaction.id]: {
-      description: transaction.description,
-      amount: transaction.amount,
-      categoryId: transaction.categoryId,
-      accountSourceId: transaction.accountSourceId,
-      categoryName: transaction.categoryName,
-      accountSourceName: transaction.accountSourceName
-    }
-  }))
+  setEditForms((prev) => {
+    const updatedForm = {
+      ...prev,
+      [transaction.id]: {
+        description: transaction.description,
+        amount: transaction.amount,
+        categoryId: transaction.categoryId,
+        categoryName: transaction.categoryName,
+        accountSourceId: transaction?.accountSourceId ?? '',
+        accountSourceName: transaction.walletName
+      }
+    };
+    return updatedForm;
+  });
 }
 
 export const handleSend = async ({
@@ -89,6 +92,7 @@ export const handleSend = async ({
       for (const line of lines) {
         try {
           const data = JSON.parse(line)
+          console.log("🚀 ~ data:", data)
           const updatedTransactions = data?.data?.transactions?.map((transaction: any) => ({
             ...transaction,
             idMessage: newBotMessageId,
@@ -184,6 +188,7 @@ export const handleSaveEdit = async ({
         }
         return t
       })
+      console.log("🚀 ~ updated ~ updated:", updated)
       setEditedTransactions(updated)
       return updated
     })
@@ -227,7 +232,7 @@ export const handleConfirm = async ({
 }: IpropsHandleConfirm) => {
   const payload = editedTransactions.map((item) => {
     return {
-      trackerTypeId: item.categoryId,
+      trackerTypeId: item?.categoryId ?? 'd215514a-9dae-4293-b3f5-d0e08ce36a82',
       accountSourceId: item.accountSourceId,
       reasonName: item.description,
       direction: item.type,
@@ -235,6 +240,7 @@ export const handleConfirm = async ({
       fundId
     }
   })
+  console.log("🚀 ~ payload ~ payload:", payload)
   await postTrackerTransactions(payload)
   setIsDialogOpen(false)
   setEditedTransactions([])
