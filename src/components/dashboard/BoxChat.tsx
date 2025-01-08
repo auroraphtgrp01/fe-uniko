@@ -36,11 +36,9 @@ import { initQueryOptions } from '@/constants/init-query-options'
 import { GET_ADVANCED_EXPENDITURE_FUND_KEY, GET_STATISTIC_EXPENDITURE_FUND_KEY } from '@/core/expenditure-fund/constants'
 import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
 import { IQueryOptions } from '@/types/query.interface'
-import { IEditForm, inputVariants, ITrackerTransactionBody, Message, messageVariants, quickActions, Transaction, typeCallBack } from '@/app/chatbox/constants'
+import { IEditForm, inputVariants, Message, messageVariants, quickActions, Transaction, typeCallBack } from '@/app/chatbox/constants'
 import { handleCancelEdit, handleConfirm, handleSaveEdit, handleSend, handleStartEdit } from '@/app/chatbox/handler'
 import { Card } from '@/components/ui/card'
-import Link from 'next/link'
-import { Label } from '@/components/ui/label'
 
 export function ChatBox() {
   let typingInterval: NodeJS.Timeout | null = null
@@ -364,31 +362,71 @@ export function ChatBox() {
                           </AvatarFallback>
                         </Avatar>
                         {!message.text.split('_'.repeat(50))[0] && (
-                          <div
-                            className={`absolute ${message.sender === 'user' ? 'right-12' : 'left-12'}
-      top-1/2 transform -translate-y-1/2 flex items-center gap-1`}
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                            className={`overflow-hidden rounded-md px-3 py-2 text-sm ${message.sender === 'user'
+                              ? 'bg-primary text-white'
+                              : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                              }`}
                           >
-                            <span className="text-sm whitespace-nowrap">Đợi tôi chút</span>
-                            {Array.from({ length: 3 }).map((_, index) => (
-                              <motion.span
-                                key={index}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{
-                                  duration: 0.5,
-                                  repeat: Infinity,
-                                  repeatType: 'reverse',
-                                  delay: index * 0.2,
-                                }}
-                                className="text-2xl"
-                              >
-                                .
-                              </motion.span>
-                            ))}
-                          </div>
-                        )}
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ duration: 0.1 }}
+                              style={{ margin: 0 }}
+                              className="prose prose-sm dark:prose-invert max-w-none"
+                            >
+                              <div className="flex items-center gap-2">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: "auto" }}
+                                  transition={{ duration: 0.7 }}
+                                  className="overflow-hidden whitespace-nowrap"
+                                >
+                                  <span className={`
+                                    text-sm font-medium
+                                    ${message.sender === 'user' 
+                                      ? 'text-white/90' 
+                                      : 'text-slate-700 dark:text-slate-200'
+                                    }
+                                  `}>
+                                    Đợi tui chút
+                                  </span>
+                                </motion.div>
 
+                                <div className="flex items-center gap-1">
+                                  {Array.from({ length: 3 }).map((_, index) => (
+                                    <motion.div
+                                      key={index}
+                                      className={`
+                                        h-1.5 w-1.5 rounded-full
+                                        ${message.sender === 'user' 
+                                          ? 'bg-white/80' 
+                                          : 'bg-slate-600 dark:bg-slate-300'
+                                        }
+                                      `}
+                                      animate={{
+                                        scale: [0.6, 1, 0.6],
+                                        opacity: [0.3, 1, 0.3],
+                                      }}
+                                      transition={{
+                                        duration: 0.6,
+                                        repeat: Infinity,
+                                        ease: "easeInOut",
+                                        delay: index * 0.1,
+                                        times: [0, 0.5, 1]
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            </motion.div>
+                          </motion.div>
+
+
+                        )}
 
                         {/* Nội dung tin nhắn */}
                         {(message.sender === 'user' ||
@@ -439,26 +477,58 @@ export function ChatBox() {
                                   ))}
                               </motion.div>
                               {index === 0 && (
-                                <div className="mt-2">
-                                  <div className="space-y-3">
+                                <div className="mt-3">
+                                  <div className="flex flex-col gap-2">
                                     {quickActions.map((action) => (
-                                      <Card
+                                      <motion.div
                                         key={action.id}
-                                        onClick={() => onClickSend(action.description)}
-                                        className="flex cursor-pointer items-center p-3 transition-colors dark:border-zinc-700 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
+                                        whileHover={{ x: 4 }}
+                                        whileTap={{ scale: 0.98 }}
                                       >
-                                        <div
-                                          className={`h-7 w-7 rounded-md ${action.iconBgColor} flex flex-shrink-0 items-center justify-center`}
+                                        <Card
+                                          onClick={() => onClickSend(action.description)}
+                                          className="group relative flex items-center overflow-hidden p-2 cursor-pointer border-0 bg-gradient-to-r from-slate-50/80 to-white/40 dark:from-zinc-800/80 dark:to-zinc-900/40 hover:from-slate-100 hover:to-white/60 dark:hover:from-zinc-800 dark:hover:to-zinc-800/60 transition-all duration-300"
                                         >
-                                          <action.icon
-                                            className={`h-5 w-5 ${action.iconColor}`}
-                                          />
-                                        </div>
-                                        <div className="ml-4 flex-grow">
-                                          <h2 className="font-medium dark:text-white">{action.title}</h2>
-                                        </div>
-                                        <ChevronRight className="h-5 w-5 flex-shrink-0 text-zinc-500" />
-                                      </Card>
+                                          {/* Shine effect */}
+                                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+
+                                          {/* Left accent gradient */}
+                                          <div className={`absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b ${action.iconBgColor} opacity-40 group-hover:opacity-100 group-hover:w-0.5 transition-all duration-300`} />
+
+                                          {/* Icon container with glass effect */}
+                                          <div className={`
+                                            relative flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md
+                                            bg-gradient-to-br from-white/80 to-white/20 dark:from-zinc-700/80 dark:to-zinc-700/20
+                                            shadow-sm backdrop-blur-sm
+                                            group-hover:scale-105 transition-all duration-300
+                                          `}>
+                                            <div className={`absolute inset-0 ${action.iconBgColor} opacity-10 group-hover:opacity-20 rounded-md transition-opacity duration-300`} />
+                                            <action.icon className={`h-3 w-3 ${action.iconColor} transform group-hover:scale-110 transition-transform duration-300`} />
+                                          </div>
+
+                                          {/* Title with gradient text */}
+                                          <div className="ml-2 flex-grow">
+                                            <h2 className={`
+                                              text-xs font-medium bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-200 dark:to-slate-100
+                                              bg-clip-text text-transparent group-hover:from-slate-900 group-hover:to-slate-700
+                                              dark:group-hover:from-white dark:group-hover:to-slate-200
+                                              transition-all duration-300
+                                            `}>
+                                              {action.title}
+                                            </h2>
+                                          </div>
+
+                                          {/* Animated arrow with glass effect */}
+                                          <div className="flex-shrink-0 p-0.5 rounded-full bg-white/50 dark:bg-zinc-700/50 backdrop-blur-sm group-hover:bg-white/80 dark:group-hover:bg-zinc-600/80 transition-colors duration-300">
+                                            <motion.div
+                                              animate={{ x: [0, 4, 0] }}
+                                              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                                            >
+                                              <ChevronRight className="h-2.5 w-2.5 text-slate-400 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200" />
+                                            </motion.div>
+                                          </div>
+                                        </Card>
+                                      </motion.div>
                                     ))}
                                   </div>
                                 </div>
@@ -479,7 +549,7 @@ export function ChatBox() {
               animate={{ y: 0, opacity: 1 }}
               className='border-t bg-primary/10 p-3 pt-2 backdrop-blur-md dark:bg-slate-800/40'
             >
-              {error && <p className='mb-2 text-sm font-semibold text-red-500'>{error}</p>}
+              {error && <p className='mb-2 text-sm font-semibold text-green-600'>{error}</p>}
               <div className='flex items-center gap-2'>
                 <motion.div className='flex-grow' whileFocus={{ scale: 1.01 }} variants={inputVariants}>
                   <Input

@@ -151,7 +151,7 @@ export const quickActions: ActionItem[] = [
   {
     id: 'expense-entry',
     title: 'Ghi chép nhanh các khoản chi tiêu',
-    description: 'Ăn sáng 200k, xe 100k, điện thoại 100k',
+    description: 'Hãy giúp tôi ghi chép chi tiêu',
     icon: NotebookPen,
     iconBgColor: 'bg-emerald-600/20',
     iconColor: 'text-emerald-500',
