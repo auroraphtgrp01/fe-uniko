@@ -12,6 +12,9 @@ import dynamic from 'next/dynamic'
 import { SocketProvider } from '../libraries/useSocketIo'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import Script from 'next/script'
+import { Onborda, OnbordaProvider } from "onborda";
+import { steps } from '@/libraries/step'
+import { TourCard } from '@/components/ui/tour-card'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -98,9 +101,19 @@ export default function RootLayout({
         <TopProgressBar />
         <SocketProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-            <GoogleOAuthProvider clientId={configProject.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
-              <QueryProvider>{children}</QueryProvider>
-            </GoogleOAuthProvider>
+            <OnbordaProvider>
+              <Onborda
+                steps={steps}
+                shadowOpacity="0.8"
+                cardComponent={TourCard}
+                cardTransition={{ duration: 2, type: "spring" }} >
+                <GoogleOAuthProvider clientId={configProject.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+                  <QueryProvider>
+                    {children}
+                  </QueryProvider>
+                </GoogleOAuthProvider>
+              </Onborda>
+            </OnbordaProvider>
           </ThemeProvider>
         </SocketProvider>
       </body>

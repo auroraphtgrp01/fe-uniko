@@ -99,6 +99,7 @@ import {
   GET_ADVANCED_EXPENDITURE_FUND_KEY,
   GET_STATISTIC_EXPENDITURE_FUND_KEY
 } from '@/core/expenditure-fund/constants'
+import { useOnborda } from 'onborda'
 
 export default function TrackerTransactionForm() {
   // states
@@ -131,6 +132,7 @@ export default function TrackerTransactionForm() {
   const { user, fundId } = useStoreLocal()
   const { getMe } = useUser()
   const { t } = useTranslation(['trackerTransaction', 'common'])
+  const { startOnborda } = useOnborda();
   const { isGetMeUserPending } = getMe(true)
   const { getAllAccountSource } = useAccountSource()
   const {
@@ -162,20 +164,20 @@ export default function TrackerTransactionForm() {
     getAllAccountSource(fundId)
   const { getAllExpenditureFundData } = getAllExpenditureFund()
   // custom hooks
-  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => {})
+  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => { })
   const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
     [GET_STATISTIC_EXPENDITURE_FUND_KEY],
-    () => {}
+    () => { }
   )
   const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataCreateClassify
   )
-  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => {})
+  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => { })
+  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => { })
   const { resetData: resetCacheTodayTxs } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    () => {}
+    () => { }
   )
   const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
@@ -184,7 +186,7 @@ export default function TrackerTransactionForm() {
     }
   )
 
-  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
+  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => { })
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY],
     updateCacheDataTransactionForClassify
@@ -368,13 +370,25 @@ export default function TrackerTransactionForm() {
     }
   }, [socket])
 
+  const handleStartOnborda = (tourName: string) => {
+    startOnborda(tourName);
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      handleStartOnborda("tracker-transaction")
+    }, 1500)
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <div className='grid h-full select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
           {/* Total Balance Card */}
-          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+          <Card id="tracker-step1" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
             <div className='absolute inset-0 bg-gradient-to-br from-violet-500 via-indigo-500 to-blue-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/circuit-board.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
@@ -402,7 +416,7 @@ export default function TrackerTransactionForm() {
           </Card>
 
           {/* Income Card */}
-          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+          <Card id="tracker-step2" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
             <div className='absolute inset-0 bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/plus.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
@@ -430,7 +444,7 @@ export default function TrackerTransactionForm() {
           </Card>
 
           {/* Expense Card */}
-          <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+          <Card id="tracker-step3" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
             <div className='absolute inset-0 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/minus.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
@@ -459,7 +473,7 @@ export default function TrackerTransactionForm() {
         </div>
 
         {/* DataTable Section */}
-        <div className='mt-4 flex h-full flex-1'>
+        <div id="tracker-step4" className='mt-4 flex h-full flex-1'>
           <Card className='h-full w-full'>
             <CardContent className='h-full'>
               <DataTable
@@ -515,10 +529,10 @@ export default function TrackerTransactionForm() {
       </div>
       {/* Right Section */}{' '}
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
-        <div className='h-[55%]'>
+        <div id='tracker-step9' className='h-[55%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
-        <div className='h-[calc(45%)]'>
+        <div id='tracker-step10' className='h-[calc(45%)]'>
           <Card className='flex h-full flex-col'>
             <CardHeader className='flex-none py-4'>
               <div className='flex flex-row items-center justify-between gap-3'>

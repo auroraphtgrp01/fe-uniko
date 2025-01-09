@@ -4,7 +4,10 @@ const svgToDataUri = require('mini-svg-data-uri')
 const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 const config = {
   darkMode: ['class'],
-  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
+  content: [
+    './pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}',
+    './node_modules/onborda/dist/**/*.{js,ts,jsx,tsx}'
+  ],
   prefix: '',
   theme: {
     container: {
