@@ -388,7 +388,7 @@ export default function TrackerTransactionForm() {
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
           {/* Total Balance Card */}
-          <Card id="tracker-step1" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+          <Card id="tracker-transaction-step1" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
             <div className='absolute inset-0 bg-gradient-to-br from-violet-500 via-indigo-500 to-blue-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/circuit-board.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
@@ -416,7 +416,7 @@ export default function TrackerTransactionForm() {
           </Card>
 
           {/* Income Card */}
-          <Card id="tracker-step2" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+          <Card id="tracker-transaction-step2" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
             <div className='absolute inset-0 bg-gradient-to-br from-teal-400 via-emerald-500 to-green-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/plus.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
@@ -444,7 +444,7 @@ export default function TrackerTransactionForm() {
           </Card>
 
           {/* Expense Card */}
-          <Card id="tracker-step3" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
+          <Card id="tracker-transaction-step3" className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
             <div className='absolute inset-0 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 opacity-95'></div>
             <div className='absolute inset-0 bg-[url("/patterns/minus.svg")] opacity-20'></div>
             <CardHeader className='relative pb-1'>
@@ -473,7 +473,7 @@ export default function TrackerTransactionForm() {
         </div>
 
         {/* DataTable Section */}
-        <div id="tracker-step4" className='mt-4 flex h-full flex-1'>
+        <div id="tracker-transaction-step4" className='mt-4 flex h-full flex-1'>
           <Card className='h-full w-full'>
             <CardContent className='h-full'>
               <DataTable
@@ -529,10 +529,10 @@ export default function TrackerTransactionForm() {
       </div>
       {/* Right Section */}{' '}
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
-        <div id='tracker-step9' className='h-[55%]'>
+        <div id='tracker-transaction-step9' className='h-[55%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
         </div>
-        <div id='tracker-step10' className='h-[calc(45%)]'>
+        <div id='tracker-transaction-step10' className='h-[calc(45%)]'>
           <Card className='flex h-full flex-col'>
             <CardHeader className='flex-none py-4'>
               <div className='flex flex-row items-center justify-between gap-3'>

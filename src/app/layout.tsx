@@ -13,8 +13,8 @@ import { SocketProvider } from '../libraries/useSocketIo'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import Script from 'next/script'
 import { Onborda, OnbordaProvider } from "onborda";
-import { steps } from '@/libraries/step'
 import { TourCard } from '@/components/ui/tour-card'
+import { steps } from '@/guides'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -103,7 +103,7 @@ export default function RootLayout({
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
             <OnbordaProvider>
               <Onborda
-                steps={steps}
+                steps={steps.flat()}
                 shadowOpacity="0.8"
                 cardComponent={TourCard}
                 cardTransition={{ duration: 2, type: "spring" }} >

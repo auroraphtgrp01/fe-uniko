@@ -1,28 +1,14 @@
-interface Step {
-    icon: JSX.Element;
-    title: string;
-    content: JSX.Element; // 
-    selector: string; // 
-    side: "top" | "right" | "bottom" | "left";
-    showControls: boolean;
-    pointerPadding?: number;
-    pointerRadius?: number;
-}
+import { Tour } from "@/guides";
 
-interface Tour {
-    tour: string;
-    steps: Step[];
-}
-
-export const steps: Tour[] = [
+export const trackerTransaction: Tour[] = [
     {
         tour: "tracker-transaction",
         steps: [
             {
                 icon: <>👋</>,
                 title: "Welcome to Onborda!",
-                content: <>This is step 1</>,
-                selector: "#tracker-step1",
+                content: <>This is step 1 </>,
+                selector: "#tracker-transaction-step1",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -31,8 +17,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 2</>,
-                selector: "#tracker-step2",
+                content: <>This is step 2 </>,
+                selector: "#tracker-transaction-step2",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -41,8 +27,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 3</>,
-                selector: "#tracker-step3",
+                content: <>This is step 3 </>,
+                selector: "#tracker-transaction-step3",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -51,8 +37,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 4</>,
-                selector: "#tracker-step4",
+                content: <>This is step 4 </>,
+                selector: "#tracker-transaction-step4",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -61,8 +47,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 5</>,
-                selector: "#tracker-step5",
+                content: <>This is step 5 </>,
+                selector: "#tracker-transaction-step5",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -71,8 +57,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 6</>,
-                selector: "#tracker-step6",
+                content: <>This is step 6 </>,
+                selector: "#tracker-transaction-step6",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -81,8 +67,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 7</>,
-                selector: "#tracker-step7",
+                content: <>This is step 7 </>,
+                selector: "#tracker-transaction-step7",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -91,8 +77,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 8</>,
-                selector: "#tracker-step8",
+                content: <>This is step 8 </>,
+                selector: "#tracker-transaction-step8",
                 side: "right",
                 showControls: true,
                 pointerPadding: 0,
@@ -101,8 +87,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🪄</>,
                 title: "It's like magic!",
-                content: <>This is step 9</>,
-                selector: "#tracker-step9",
+                content: <>This is step 9 </>,
+                selector: "#tracker-transaction-step9",
                 side: "left",
                 showControls: true,
                 pointerPadding: 0,
@@ -111,8 +97,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🎉</>,
                 title: "Celebrate!",
-                content: <>This is step 10</>,
-                selector: "#tracker-step10",
+                content: <>This is step 10 </>,
+                selector: "#tracker-transaction-step10",
                 side: "left",
                 showControls: true,
                 pointerPadding: 0,
@@ -121,113 +107,8 @@ export const steps: Tour[] = [
             {
                 icon: <>🎉</>,
                 title: "Celebrate!",
-                content: <>This is step 11</>,
-                selector: "#tracker-step11",
-                side: "left",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 11,
-            }
-        ],
-    },
-    {
-        tour: "dashboard",
-        steps: [
-            {
-                icon: <>👋</>,
-                title: "Welcome to Onborda!",
-                content: <>This is step 1</>,
-                selector: "#tracker-step1",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 2</>,
-                selector: "#tracker-step2",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 3</>,
-                selector: "#tracker-step3",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 4</>,
-                selector: "#tracker-step4",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 5</>,
-                selector: "#tracker-step5",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 6</>,
-                selector: "#tracker-step6",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 7</>,
-                selector: "#tracker-step7",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 8</>,
-                selector: "#tracker-step8",
-                side: "right",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🪄</>,
-                title: "It's like magic!",
-                content: <>This is step 9</>,
-                selector: "#tracker-step9",
-                side: "left",
-                showControls: true,
-                pointerPadding: 0,
-                pointerRadius: 5,
-            },
-            {
-                icon: <>🎉</>,
-                title: "Celebrate!",
-                content: <>This is step 10</>,
-                selector: "#tracker-step10",
+                content: <>This is step 11 </>,
+                selector: "#tracker-transaction-step11",
                 side: "left",
                 showControls: true,
                 pointerPadding: 0,
@@ -236,13 +117,93 @@ export const steps: Tour[] = [
             {
                 icon: <>🎉</>,
                 title: "Celebrate!",
-                content: <>This is step 11</>,
-                selector: "#tracker-step11",
+                content: <>This is step 12 </>,
+                selector: "#tracker-transaction-step12",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 13 </>,
+                selector: "#tracker-transaction-step13",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 14 </>,
+                selector: "#tracker-transaction-step14",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 15 </>,
+                selector: "#tracker-transaction-step15",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 16 </>,
+                selector: "#tracker-transaction-step16",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 17 </>,
+                selector: "#tracker-transaction-step17",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 18 </>,
+                selector: "#tracker-transaction-step18",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 19 </>,
+                selector: "#tracker-transaction-step19",
+                side: "left",
+                showControls: true,
+                pointerPadding: 0,
+                pointerRadius: 11,
+            },
+            {
+                icon: <>🎉</>,
+                title: "Celebrate!",
+                content: <>This is step 20 </>,
+                selector: "#tracker-transaction-step20",
                 side: "left",
                 showControls: true,
                 pointerPadding: 0,
                 pointerRadius: 11,
             }
-        ],
-    },
+        ]
+    }
 ];
