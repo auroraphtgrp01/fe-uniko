@@ -103,6 +103,7 @@ import { useOverviewPage } from '@/core/overview/hooks'
 
 export default function TrackerTransactionForm() {
   // states
+  const [checkHeightRange, setCheckHeightRange] = useState<boolean>(false) // check height range for responsive 600 - 900
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
@@ -116,6 +117,27 @@ export default function TrackerTransactionForm() {
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
+
+  useEffect(() => {
+    const updateScreenHeight = () => {
+      const viewportHeight = window.innerHeight;
+      if (viewportHeight >= 600 && viewportHeight <= 900) {
+        setCheckHeightRange(true);
+        console.log('màn MSI: ', viewportHeight);
+      } else {
+        setCheckHeightRange(false);
+        console.log('màn PC: ', viewportHeight);
+      }
+    }
+
+    updateScreenHeight();
+    window.addEventListener('resize', updateScreenHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateScreenHeight);
+    };
+  }, []);
+
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
   const [chartData, setChartData] = useState<IChartData>()
@@ -295,7 +317,7 @@ export default function TrackerTransactionForm() {
     }
   }, [statisticData])
 
-  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
+  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t, checkHeightRange), [chartData, t, checkHeightRange])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
   const refetchTransactionBySocket = () => {
@@ -379,7 +401,7 @@ export default function TrackerTransactionForm() {
   }, [socket])
 
   return (
-    <div className='grid h-full select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
+    <div className='grid select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
@@ -411,8 +433,8 @@ export default function TrackerTransactionForm() {
                     {/* <span>{t('notiTotalBalance', { percentage: 2.5 })}</span> */}
                     <span>
                       {`${statisticData?.data?.total?.rate && statisticData.data.total.rate !== 'none'
-                          ? (statisticData.data.total.rate.startsWith('-') ? '' : '+') + statisticData.data.total.rate
-                          : '0'
+                        ? (statisticData.data.total.rate.startsWith('-') ? '' : '+') + statisticData.data.total.rate
+                        : '0'
                         }% left this month`}
                     </span>
                   </p>
@@ -584,6 +606,7 @@ export default function TrackerTransactionForm() {
             </CardHeader>
             <CardContent className='flex-1 overflow-hidden'>
               <FlatList
+                checkHeightRange={checkHeightRange}
                 data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
                 onClick={(data: IFlatListData) => {
                   const item =

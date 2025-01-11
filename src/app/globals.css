@@ -311,11 +311,23 @@
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
 }
- 
+
 .no-visible-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+@media (max-height: 900px) {
+  html {
+    font-size: 90%;
+  }
+}
+
+@media (min-height: 901px) {
+  html {
+    font-size: 100%;
+  }
 }
