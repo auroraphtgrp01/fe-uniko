@@ -1,7 +1,7 @@
-import { IPropsHandleCancelEdit, IpropsHandleConfirm, IPropsHandleSend, IPropsStartEdit } from "@/app/chatbox/constants"
-import { ICreateTrackerTransactionBody } from "@/core/transaction/models"
-import { getAccessTokenFromLocalStorage } from "@/libraries/helpers"
-import { Dispatch, SetStateAction } from "react"
+import { IPropsHandleCancelEdit, IpropsHandleConfirm, IPropsHandleSend, IPropsStartEdit } from '@/app/chatbox/constants'
+import { ICreateTrackerTransactionBody } from '@/core/transaction/models'
+import { getAccessTokenFromLocalStorage } from '@/libraries/helpers'
+import { Dispatch, SetStateAction } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 export const handleStartEdit = ({ transaction, setEditingId, setEditForms }: IPropsStartEdit) => {
@@ -17,9 +17,9 @@ export const handleStartEdit = ({ transaction, setEditingId, setEditForms }: IPr
         accountSourceId: transaction?.accountSourceId ?? '',
         accountSourceName: transaction.walletName
       }
-    };
-    return updatedForm;
-  });
+    }
+    return updatedForm
+  })
 }
 
 export const handleSend = async ({
@@ -36,7 +36,7 @@ export const handleSend = async ({
 }: IPropsHandleSend) => {
   if (!input.trim()) {
     setError('Bạn phải nhập tin nhắn trước khi gửi.')
-    return;
+    return
   }
 
   if (typingInterval) {
@@ -83,7 +83,7 @@ export const handleSend = async ({
       if (done) {
         setIsTyping(false)
         setTimeout(scrollToBottom, 100)
-        break;
+        break
       }
 
       const chunk = new TextDecoder().decode(value)
@@ -92,27 +92,22 @@ export const handleSend = async ({
       for (const line of lines) {
         try {
           const data = JSON.parse(line)
-          console.log("🚀 ~ data:", data)
-          const updatedTransactions = data?.data?.transactions?.map((transaction: any) => ({
-            ...transaction,
-            idMessage: newBotMessageId,
-            id: uuidv4()
-          })) || []
+          console.log('🚀 ~ data:', data)
+          const updatedTransactions =
+            data?.data?.transactions?.map((transaction: any) => ({
+              ...transaction,
+              idMessage: newBotMessageId,
+              id: uuidv4()
+            })) || []
 
           const processedRecent = data.recent
             ? data.recent.replace(/\\n/g, '<br />').replace(/\\"/g, '"').replace(/\\'/g, "'")
-            : '';
+            : ''
 
-          fullResponse = `${data.message}\n\n${'_'.repeat(50)}\n\n${processedRecent}`;
+          fullResponse = `${data.message}\n\n${'_'.repeat(50)}\n\n${processedRecent}`
           setCurrentResponse(fullResponse)
 
-          setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === newBotMessageId
-                ? { ...msg, text: fullResponse }
-                : msg
-            )
-          );
+          setMessages((prev) => prev.map((msg) => (msg.id === newBotMessageId ? { ...msg, text: fullResponse } : msg)))
 
           setApiData((prev = []) => [
             ...prev,
@@ -120,17 +115,17 @@ export const handleSend = async ({
               message: { id: newBotMessageId, text: fullResponse, sender: 'bot' },
               transactions: updatedTransactions
             }
-          ]);
+          ])
 
-          setTimeout(scrollToBottom, 100);
+          setTimeout(scrollToBottom, 100)
         } catch (e) {
-          console.error('Error parsing JSON:', e);
-          console.log('Problematic line:', line);
+          console.error('Error parsing JSON:', e)
+          console.log('Problematic line:', line)
         }
       }
     }
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error('Error sending message:', error)
 
     setMessages((prev) => [
       ...prev,
@@ -139,12 +134,12 @@ export const handleSend = async ({
         text: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.',
         sender: 'bot'
       }
-    ]);
+    ])
 
-    setIsTyping(false);
-    setTimeout(scrollToBottom, 100);
+    setIsTyping(false)
+    setTimeout(scrollToBottom, 100)
   }
-};
+}
 
 export const handleCancelEdit = (setEditingId: Dispatch<SetStateAction<string | null>>) => {
   setEditingId(null)
@@ -188,7 +183,7 @@ export const handleSaveEdit = async ({
         }
         return t
       })
-      console.log("🚀 ~ updated ~ updated:", updated)
+      console.log('🚀 ~ updated ~ updated:', updated)
       setEditedTransactions(updated)
       return updated
     })
@@ -240,7 +235,7 @@ export const handleConfirm = async ({
       fundId
     }
   })
-  console.log("🚀 ~ payload ~ payload:", payload)
+  console.log('🚀 ~ payload ~ payload:', payload)
   await postTrackerTransactions(payload)
   setIsDialogOpen(false)
   setEditedTransactions([])

@@ -428,5 +428,3 @@ export const handleDeleteMultipleTrackerTransaction = ({
     }
   )
 }
-
-
