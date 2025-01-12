@@ -117,27 +117,6 @@ export default function TrackerTransactionForm() {
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
   })
-
-  useEffect(() => {
-    const updateScreenHeight = () => {
-      const viewportHeight = window.innerHeight;
-      if (viewportHeight >= 600 && viewportHeight <= 900) {
-        setCheckHeightRange(true);
-        console.log('màn MSI: ', viewportHeight);
-      } else {
-        setCheckHeightRange(false);
-        console.log('màn PC: ', viewportHeight);
-      }
-    }
-
-    updateScreenHeight();
-    window.addEventListener('resize', updateScreenHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateScreenHeight);
-    };
-  }, []);
-
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
   const [chartData, setChartData] = useState<IChartData>()
@@ -316,6 +295,24 @@ export default function TrackerTransactionForm() {
       setChartData(statisticData.data)
     }
   }, [statisticData])
+
+  useEffect(() => {
+    const updateScreenHeight = () => {
+      const viewportHeight = window.innerHeight
+      if (viewportHeight >= 600 && viewportHeight <= 900) {
+        setCheckHeightRange(true)
+      } else {
+        setCheckHeightRange(false)
+      }
+    }
+
+    updateScreenHeight()
+    window.addEventListener('resize', updateScreenHeight)
+
+    return () => {
+      window.removeEventListener('resize', updateScreenHeight)
+    };
+  }, []);
 
   const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t, checkHeightRange), [chartData, t, checkHeightRange])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
