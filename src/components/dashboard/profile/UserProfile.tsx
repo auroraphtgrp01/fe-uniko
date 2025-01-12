@@ -23,10 +23,6 @@ interface IUserProfileProps {
 }
 
 export default function UserProfile({ handleUpdateUser, user }: IUserProfileProps) {
-  const dateOfBirth = useMemo(
-    () => (user.dateOfBirth ? formatDateTimeVN(user.dateOfBirth, false) : 'N/A'),
-    [user.dateOfBirth]
-  )
   const { t } = useTranslation(['profile'])
   return (
     <>
@@ -54,18 +50,38 @@ export default function UserProfile({ handleUpdateUser, user }: IUserProfileProp
       <div className='grid gap-4 sm:grid-cols-2'>
         <div className='space-y-4'>
           <InfoItem icon={Mail} label='Email' value={user.email} />
-          <InfoItem icon={Phone} label={t('profile:infoProfileTitle.infoPhone_number')} value={user.phone_number} />
+          <InfoItem
+            icon={Phone}
+            label={t('profile:infoProfileTitle.infoPhone_number')}
+            value={user.phone_number || t('profile:infoProfileValue.unknown')}
+          />
 
-          <InfoItem icon={MapPin} label={t('profile:infoProfileTitle.infoAddress')} value={user.address} />
+          <InfoItem
+            icon={MapPin}
+            label={t('profile:infoProfileTitle.infoAddress')}
+            value={user.address || t('profile:infoProfileValue.unknown')}
+          />
         </div>
         <div className='space-y-4'>
-          <InfoItem icon={Calendar} label={t('profile:infoProfileTitle.infoDateOfBirth')} value={dateOfBirth} />
+          <InfoItem
+            icon={Calendar}
+            label={t('profile:infoProfileTitle.infoDateOfBirth')}
+            value={user.dateOfBirth ? formatDateTimeVN(user.dateOfBirth, false) : t('profile:infoProfileValue.unknown')}
+          />
           <InfoItem
             icon={User2}
             label={t('profile:infoProfileTitle.infoGender.label')}
-            value={t(`profile:infoProfileValue.infoGender.${user.gender.toLowerCase()}`, user.gender.toLowerCase())}
+            value={
+              user.gender
+                ? t(`profile:infoProfileValue.infoGender.${user.gender.toLowerCase()}`, user.gender.toLowerCase())
+                : t('profile:infoProfileValue.unknown')
+            }
           />
-          <InfoItem icon={Briefcase} label={t('profile:infoProfileTitle.infoWorkplace')} value={user.workplace} />
+          <InfoItem
+            icon={Briefcase}
+            label={t('profile:infoProfileTitle.infoWorkplace')}
+            value={user.workplace || t('profile:infoProfileValue.unknown')}
+          />
         </div>
       </div>
     </>

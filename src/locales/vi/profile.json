@@ -67,6 +67,7 @@
     "infoGender": {
       "male": "Nam",
       "female": "Nữ"
-    }
+    },
+    "unknown": "không xác định"
   }
 }
