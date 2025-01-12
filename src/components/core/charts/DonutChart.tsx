@@ -24,6 +24,10 @@ export interface IChartData {
   totalBalance: number
   totalExpenseToday: number
 }
+export interface IChartDataAccountSource {
+  totalBalanceTypeStats: IPayloadDataChart[]
+  detailBalanceTypeStats: IPayloadDataChart[]
+}
 
 const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) => {
   const chartRef = useRef(null)
@@ -273,7 +277,7 @@ const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) 
       }
     })
 
-    chartInstance.on('click', function (params: any) {})
+    chartInstance.on('click', function (params: any) { })
 
     const resizeChart = () => {
       chartInstance.resize()
