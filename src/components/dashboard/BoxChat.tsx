@@ -1,68 +1,119 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Send, X, MessageCircle, Square, Pencil } from 'lucide-react'
+import { Send, X, MessageCircle, Square, Pencil, Repeat, Icon, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AvatarUniko from '@/images/avatar.jpg'
 import { useStoreLocal } from '@/hooks/useStoreLocal'
 import Image from 'next/image'
 import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { formatCurrency } from '@/libraries/utils'
-import { useRouter } from 'next/navigation'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
+import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Check } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-
-interface Message {
-  id: number
-  text: string
-  sender: 'user' | 'bot'
-}
-
-interface ChatResponse {
-  messages: string
-  recent: string
-  transactions: any[]
-  statistics: {
-    total_expense: number
-    total_income: number
-    transaction_count: number
-    categories: any
-  }
-}
+import { DialogDescription } from '@radix-ui/react-dialog'
+import { useAccountSource } from '@/core/account-source/hooks'
+import { ITrackerTransactionType, ITrackerTransactionTypeBody } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
+import { ICreateTrackerTransactionBody, IGetTransactionResponse } from '@/core/transaction/models'
+import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
+import { useUpdateModel } from '@/hooks/useQueryModel'
+import { GET_ADVANCED_TRANSACTION_KEY, GET_TODAY_TRANSACTION_KEY, GET_UNCLASSIFIED_TRANSACTION_KEY } from '@/core/transaction/constants'
+import { IAdvancedTrackerTransactionResponse, TTrackerTransactionActions } from '@/core/tracker-transaction/models/tracker-transaction.interface'
+import { updateCacheDataTransactionForClassify } from '@/app/dashboard/transaction/handler'
+import { GET_ADVANCED_TRACKER_TRANSACTION_KEY } from '@/core/tracker-transaction/constants'
+import { initTrackerTypeData, updateCacheDataCreateClassify } from '@/app/dashboard/tracker-transaction/handlers'
+import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
+import { Combobox } from '@/components/core/Combobox'
+import toast from 'react-hot-toast'
+import { initQueryOptions } from '@/constants/init-query-options'
+import { GET_ADVANCED_EXPENDITURE_FUND_KEY, GET_STATISTIC_EXPENDITURE_FUND_KEY } from '@/core/expenditure-fund/constants'
+import { useTrackerTransaction } from '@/core/tracker-transaction/hooks'
+import { IQueryOptions } from '@/types/query.interface'
+import { IEditForm, inputVariants, Message, messageVariants, quickActions, Transaction, typeCallBack } from '@/app/chatbox/constants'
+import { handleCancelEdit, handleConfirm, handleSaveEdit, handleSend, handleStartEdit } from '@/app/chatbox/handler'
+import { Card } from '@/components/ui/card'
 
 export function ChatBox() {
-  const { user } = useStoreLocal()
+  let typingInterval: NodeJS.Timeout | null = null
+  // state
+  const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
+  const { user, fundId } = useStoreLocal()
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: 'Xin chào! Tôi có thể giúp gì cho bạn?', sender: 'bot' }
-  ])
-  const [transactions, setTransactions] = useState<any[]>([])
-  const [input, setInput] = useState('')
-  const [error, setError] = useState('')
+  const [messages, setMessages] = useState<Message[]>([{ id: 1, text: 'Xin chào! Tôi có thể giúp gì cho bạn?', sender: 'bot' }])
+  const [input, setInput] = useState<string>('')
+  const [error, setError] = useState<string>('')
+  const [currentResponse, setCurrentResponse] = useState<string>('')
   const scrollRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  let typingInterval: NodeJS.Timeout | null = null
-  const [isTyping, setIsTyping] = useState(false)
-  const [currentResponse, setCurrentResponse] = useState<string>('')
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [selectedTransactions, setSelectedTransactions] = useState<any[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editForms, setEditForms] = useState<{
-    [key: string]: {
-      item: string
-      amount: number
-      categoryId: string
-      walletId: string
-    }
-  }>({})
+  const [isTyping, setIsTyping] = useState<boolean>(false)
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([])
+  console.log("🚀 ~ selectedTransactions:", selectedTransactions)
+  const [editForms, setEditForms] = useState<IEditForm>({})
+  const [apiData, setApiData] = useState<{ message: Message, transactions: Transaction[] }[]>([])
   const [editedTransactions, setEditedTransactions] = useState<any[]>([])
+  const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
+  const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
+  const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState(false)
+  const [isDisabled, setIsDisabled] = useState<boolean>(true)
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false)
+  // hook
+  const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
+  const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
+  const { getAllAccountSource } = useAccountSource()
+  const { getAllData: getAllAccountSourceData } = getAllAccountSource(fundId)
+  const { getAllExpenditureFund } = useExpenditureFund()
+  const { getAllExpenditureFundData } = getAllExpenditureFund()
+  const [typesState, setTypesState] = useState<Record<string, ETypeOfTrackerTransactionType>>({})
+  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => { })
+  const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
+    [GET_ADVANCED_TRANSACTION_KEY],
+    updateCacheDataTransactionForClassify
+  )
+  const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
+    [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
+    updateCacheDataCreateClassify
+  )
+  const { createTrackerTransaction, getAdvancedData } = useTrackerTransaction()
+  const { advancedTrackerTxData, isGetAdvancedPending, refetchGetAdvancedTrackerTransaction } = getAdvancedData({
+    query: queryOptions,
+    fundId
+  })
+  const { resetData: resetCacheTodayTxs } = useUpdateModel([GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)], () => { })
+  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => { })
+  const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
+    [GET_STATISTIC_EXPENDITURE_FUND_KEY],
+    () => { }
+  )
 
+  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => { })
+  const actionMap: Partial<Record<TTrackerTransactionActions, () => void>> = {
+    getTransactions: resetCacheTransaction,
+    getTodayTransactions: resetCacheTodayTxs,
+    getUnclassifiedTransactions: resetCacheUnclassifiedTxs,
+    getAllAccountSource: resetAccountSource,
+    getAllTrackerTransactionType: refetchTrackerTransactionType,
+    getTrackerTransaction: resetCacheTrackerTx,
+    getStatisticExpenditureFund: resetCacheStatisticExpenditureFund,
+    getExpenditureFund: resetCacheExpenditureFund
+  }
+  const callBackRefetchTrackerTransactionPage = (actionMaps: TTrackerTransactionActions[]) => {
+    actionMaps.forEach((action) => {
+      if (actionMap[action]) {
+        actionMap[action]()
+      }
+    })
+  }
+  // memo/callback
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
       const scrollElement = scrollRef.current
@@ -75,7 +126,7 @@ export function ChatBox() {
         behavior: 'smooth'
       })
     }
-    
+
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({
         behavior: 'smooth',
@@ -83,60 +134,7 @@ export function ChatBox() {
       })
     }
   }, [])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToBottom()
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [messages, scrollToBottom])
-
-  useEffect(() => {
-    if (currentResponse) {
-      const timer = setTimeout(() => {
-        scrollToBottom()
-      }, 100)
-      return () => clearTimeout(timer)
-    }
-  }, [currentResponse, scrollToBottom])
-
-  useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        scrollToBottom()
-      }, 100)
-      return () => clearTimeout(timer)
-    }
-  }, [isOpen, scrollToBottom])
-
-  useEffect(() => {
-    const handleEscPress = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isOpen) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener('keydown', handleEscPress)
-    return () => document.removeEventListener('keydown', handleEscPress)
-  }, [isOpen])
-
-  useEffect(() => {
-    const handleCtrlEnter = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === 'Enter') {
-        setIsOpen((prev) => !prev)
-      }
-    }
-
-    document.addEventListener('keydown', handleCtrlEnter)
-    return () => document.removeEventListener('keydown', handleCtrlEnter)
-  }, [])
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isOpen])
-
+  // functional
   const simulateTyping = (text: string, delay: number, messageId: number) => {
     return new Promise<void>((resolve) => {
       let index = 0
@@ -178,203 +176,123 @@ export function ChatBox() {
     })
   }
 
-  const handleSend = async () => {
-    if (input.trim()) {
-      if (typingInterval) {
-        clearInterval(typingInterval)
-        typingInterval = null
-      }
-
-      const newUserMessageId = Date.now()
-      const newBotMessageId = Date.now() + 1
-
-      setMessages((prev) => prev.filter((msg) => msg.text !== ''))
-      setMessages((prev) => [...prev, { id: newUserMessageId, text: input, sender: 'user' }])
-      setMessages((prev) => [...prev, { id: newBotMessageId, text: '', sender: 'bot' }])
-      setInput('')
-      setError('')
-
-      setTimeout(scrollToBottom, 100)
-
-      try {
-        const response = await fetch('https://bot.uniko.id.vn/chat/stream', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            content: input
-          })
-        })
-
-        if (!response.ok) throw new Error('Network response was not ok')
-
-        const reader = response.body?.getReader()
-        if (!reader) throw new Error('Reader not available')
-
-        let fullResponse = ''
-        setIsTyping(true)
-
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) {
-            setIsTyping(false)
-            setTimeout(scrollToBottom, 100)
-            break
-          }
-
-          const chunk = new TextDecoder().decode(value)
-          const lines = chunk.split('data: ').filter((line) => line.trim())
-
-          for (const line of lines) {
-            try {
-              const data = JSON.parse(line)
-              if (data.done) {
-                setTransactions(data.transactions)
-                setTimeout(scrollToBottom, 100)
-              }
-
-              if (data.type === 'message') {
-                const processedRecent = data.recent.replace(/\\n/g, '<br />').replace(/\\"/g, '"').replace(/\\'/g, "'")
-
-                const combinedMessage = `${data.messages}\n\n${'_'.repeat(50)}\n\n${processedRecent}`
-
-                fullResponse = combinedMessage
-                setCurrentResponse(fullResponse)
-
-                setMessages((prev) => {
-                  const newMessages = prev.map((msg) => {
-                    if (msg.id === newBotMessageId) {
-                      return {
-                        ...msg,
-                        text: `${data.messages}\n\n${'_'.repeat(50)}\n\n${processedRecent}`
-                      }
-                    }
-                    return msg
-                  })
-                  setTimeout(scrollToBottom, 100)
-                  return newMessages
-                })
-
-                await new Promise((resolve) => setTimeout(resolve, 10))
-              }
-            } catch (e) {
-              console.error('Error parsing JSON:', e)
-              console.log('Problematic line:', line)
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error sending message:', error)
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            text: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.',
-            sender: 'bot'
-          }
-        ])
-        setIsTyping(false)
-        setTimeout(scrollToBottom, 100)
-      }
-    } else {
-      setError('Bạn phải nhập tin nhắn trước khi gửi.')
-    }
-  }
-
-  const handleViewDetails = (transactions: any[]) => {
+  const handleViewDetails = (transactions: Transaction[]) => {
+    console.log("🚀 ~ handleViewDetails ~ transactions:", transactions)
     setSelectedTransactions(transactions)
     setIsDialogOpen(true)
+    setIsDisabled(true)
   }
 
-  const handleStartEdit = (transaction: any) => {
-    setEditingId(transaction.id)
-    setEditForms((prev) => ({
+  const handleTypeChange = (transactionId: string, newType: any) => {
+    setTypesState((prev) => ({
       ...prev,
-      [transaction.id]: {
-        item: transaction.item,
-        amount: transaction.amount,
-        categoryId: transaction.category.id,
-        walletId: transaction.wallet.id
-      }
+      [transactionId]: newType
     }))
   }
 
-  const handleCancelEdit = () => {
-    setEditingId(null)
+  const onClickSend = (messageAvairable?: string) => {
+    const messageInput = messageAvairable || input
+    return handleSend({
+      input: messageInput,
+      setError,
+      typingInterval,
+      setMessages,
+      setInput,
+      scrollToBottom,
+      fundId,
+      setIsTyping,
+      setCurrentResponse,
+      setApiData
+    })
   }
 
-  const handleSaveEdit = async (transactionId: string) => {
-    try {
-      const currentForm = editForms[transactionId]
-      if (!currentForm) return
+  const onclickConfirm = () => {
+    return handleConfirm({
+      editedTransactions,
+      fundId,
+      postTrackerTransactions,
+      setIsDialogOpen,
+      setEditedTransactions,
+      setIsDisabled
+    })
+  }
 
-      if (!currentForm.item || !currentForm.amount) {
-        console.error('Missing required fields')
-        return
-      }
-
-      const updatedTransaction = {
-        ...currentForm,
-        id: transactionId,
-        category: selectedTransactions.find((t) => t.id === transactionId)?.category,
-        wallet: selectedTransactions.find((t) => t.id === transactionId)?.wallet
-      }
-
-      setSelectedTransactions((prev) =>
-        prev.map((t) => {
-          if (t.id === transactionId) {
-            return {
-              ...t,
-              item: currentForm.item,
-              amount: currentForm.amount,
-              category: { ...t.category, id: currentForm.categoryId },
-              wallet: { ...t.wallet, id: currentForm.walletId }
-            }
-          }
-          return t
-        })
-      )
-
-      setEditedTransactions((prev) => {
-        const exists = prev.find((et) => et.id === transactionId)
-        if (!exists) {
-          return [...prev, updatedTransaction]
-        }
-        return prev.map((et) => (et.id === transactionId ? updatedTransaction : et))
-      })
-
-      handleCancelEdit()
-    } catch (error) {
-      console.error('Failed to update transaction:', error)
+  const postTrackerTransactions = (payload: ICreateTrackerTransactionBody[]) => {
+    for (const item of payload) {
+      createTrackerTransaction(item, {
+        onSuccess: () => {
+          console.log(`Successfully created transaction: ${JSON.stringify(item)}`)
+        },
+        onError: (error) => {
+          toast.error(`Failed to create transaction`)
+        },
+      });
     }
+    refetchGetAdvancedTrackerTransaction()
+    callBackRefetchTrackerTransactionPage(typeCallBack)
   }
 
-  const handleConfirm = () => {
-    console.log('Các giao dịch đã được chỉnh sửa:', editedTransactions)
-    setIsDialogOpen(false)
-    setEditedTransactions([])
-  }
+  // useEffect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [messages, scrollToBottom])
 
-  const messageVariants = {
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, x: -10 }
-  }
+  useEffect(() => {
+    if (currentResponse) {
+      const timer = setTimeout(() => { scrollToBottom() }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [currentResponse, scrollToBottom])
 
-  const textVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 }
-  }
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => { scrollToBottom() }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen, scrollToBottom])
 
-  const inputVariants = {
-    focus: { scale: 1.01 },
-    tap: { scale: 0.99 }
-  }
+  useEffect(() => {
+    const handleEscPress = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleEscPress)
+    return () => document.removeEventListener('keydown', handleEscPress)
+  }, [isOpen])
+
+  useEffect(() => {
+    const handleCtrlEnter = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'Enter') {
+        setIsOpen((prev) => !prev)
+      }
+    }
+
+    document.addEventListener('keydown', handleCtrlEnter)
+    return () => document.removeEventListener('keydown', handleCtrlEnter)
+  }, [])
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (dataTrackerTransactionType)
+      initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
+  }, [dataTrackerTransactionType])
+
+  useEffect(() => {
+    console.log("🚀 ~ >>>>>>>>>>>>>>>>>>>>ChatBox ~ apiData:", apiData)
+  }, [messages]);
 
   return (
-    <div className='fixed bottom-4 right-4'>
+    <div className='fixed bottom-4 right-4 z-50'>
       <AnimatePresence mode='wait'>
         {isOpen ? (
           <motion.div
@@ -400,93 +318,229 @@ export function ChatBox() {
               </motion.button>
             </div>
 
-            <ScrollArea 
+            <ScrollArea
               className="h-[350px] flex-grow px-4 pt-4"
               ref={scrollRef}
             >
               <div className="flex flex-col space-y-4">
                 <AnimatePresence mode="popLayout">
-                  {messages.map((message) => (
+                  {messages.map((message, index) => (
                     <motion.div
                       key={message.id}
                       variants={messageVariants}
-                      initial='initial'
-                      animate='animate'
-                      exit='exit'
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
                       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                       className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-3`}
                     >
                       <div
-                        className={`flex ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'} items-end gap-2`}
+                        className={`relative flex ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
+                          } items-end gap-2`}
                       >
-                        <Avatar className='h-8 w-8'>
+                        {/* Avatar */}
+                        <Avatar className="h-8 w-8">
                           {message.sender === 'user' ? (
                             user?.avatarId ? (
                               <Image
-                                alt='User avatar'
-                                loading='lazy'
-                                className='h-full w-full rounded-full object-cover'
+                                alt="User avatar"
+                                loading="lazy"
+                                className="h-full w-full rounded-full object-cover"
                                 src={`/avatars/${user?.avatarId}.png`}
                                 width={32}
                                 height={32}
                               />
                             ) : (
-                              <AvatarImage src='/user-avatar.png' alt='User' />
+                              <AvatarImage src="/user-avatar.png" alt="User" />
                             )
                           ) : (
-                            <AvatarImage src={AvatarUniko.src} alt='Uniko' />
+                            <AvatarImage src={AvatarUniko.src} alt="Uniko" />
                           )}
                           <AvatarFallback>
-                            {message.sender === 'user' ? user?.fullName?.charAt(0) || 'U' : 'UN'}
+                            {message.sender === 'user'
+                              ? user?.fullName?.charAt(0) || 'U'
+                              : 'UN'}
                           </AvatarFallback>
                         </Avatar>
-                        {(message.sender === 'user' || (message.sender === 'bot' && message.text)) && (
+                        {!message.text.split('_'.repeat(50))[0] && (
                           <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             transition={{ duration: 0.2 }}
-                            className={`max-w-[70%] overflow-hidden rounded-md px-3 py-2 text-sm ${
-                              message.sender === 'user'
-                                ? 'bg-primary text-white'
-                                : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
-                            }`}
+                            className={`overflow-hidden rounded-md px-3 py-2 text-sm ${message.sender === 'user'
+                              ? 'bg-primary text-white'
+                              : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                              }`}
                           >
                             <motion.div
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               transition={{ duration: 0.1 }}
                               style={{ margin: 0 }}
-                              className='prose prose-sm dark:prose-invert max-w-none'
+                              className="prose prose-sm dark:prose-invert max-w-none"
                             >
-                              <div className=''>{message.text.split('_'.repeat(50))[0]}</div>
+                              <div className="flex items-center gap-2">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: "auto" }}
+                                  transition={{ duration: 0.7 }}
+                                  className="overflow-hidden whitespace-nowrap"
+                                >
+                                  <span className={`
+                                    text-sm font-medium
+                                    ${message.sender === 'user'
+                                      ? 'text-white/90'
+                                      : 'text-slate-700 dark:text-slate-200'
+                                    }
+                                  `}>
+                                    Đợi tui chút
+                                  </span>
+                                </motion.div>
 
-                              {message.text.includes('_'.repeat(50)) &&
-                                message.text.split('_'.repeat(50))[1].trim() && (
-                                  <>
-                                    <Separator className='my-4 bg-slate-200/60 dark:bg-slate-600/30' />
-                                    {transactions.length <= 1 ? (
-                                      <div
-                                        className='mt-2'
-                                        dangerouslySetInnerHTML={{ __html: message.text.split('_'.repeat(50))[1] }}
-                                      />
-                                    ) : (
-                                      <div className='mb-2 text-center font-semibold text-green-400'>
-                                        Bạn đang phân loại {transactions.length} giao dịch
-                                      </div>
-                                    )}
-                                    <Button
-                                      className='w-full'
-                                      variant={'ghost'}
-                                      onClick={() => handleViewDetails(transactions)}
-                                    >
-                                      <b className='text-red-400'>Xem chi tiết</b>
-                                    </Button>
-                                  </>
-                                )}
+                                <div className="flex items-center gap-1">
+                                  {Array.from({ length: 3 }).map((_, index) => (
+                                    <motion.div
+                                      key={index}
+                                      className={`
+                                        h-1.5 w-1.5 rounded-full
+                                        ${message.sender === 'user'
+                                          ? 'bg-white/80'
+                                          : 'bg-slate-600 dark:bg-slate-300'
+                                        }
+                                      `}
+                                      animate={{
+                                        scale: [0.6, 1, 0.6],
+                                        opacity: [0.3, 1, 0.3],
+                                      }}
+                                      transition={{
+                                        duration: 0.6,
+                                        repeat: Infinity,
+                                        ease: "easeInOut",
+                                        delay: index * 0.1,
+                                        times: [0, 0.5, 1]
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
                             </motion.div>
                           </motion.div>
+
+
                         )}
+
+                        {/* Nội dung tin nhắn */}
+                        {(message.sender === 'user' ||
+                          (message.sender === 'bot' && message.text)) && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              transition={{ duration: 0.2 }}
+                              className={`max-w-[70%] overflow-hidden rounded-md px-3 py-2 text-sm ${message.sender === 'user'
+                                ? 'bg-primary text-white'
+                                : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                                }`}
+                            >
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.1 }}
+                                style={{ margin: 0 }}
+                                className="prose prose-sm dark:prose-invert max-w-none"
+                              >
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: message.text.split('_'.repeat(50))[0].split('`')[0]
+                                      ? message.text.split('_'.repeat(50))[0].split('`')[0]
+                                      : message.text.split('_'.repeat(50))[0],
+                                  }}
+                                />
+
+                                {/* Kiểm tra nếu message có phân cách */}
+                                {apiData.length > 0 &&
+                                  apiData.map((data: any) => {
+                                    console.log("🚀 ~ apiData.map ~ data:", data)
+                                    return (
+                                      data.message.id === message.id &&
+                                      data.transactions.length > 0 && (
+                                        <div key={data.message.id}>
+                                          <Separator className="my-4 bg-slate-200/60 dark:bg-slate-600/30" />
+                                          <div className="mb-2 text-center font-semibold text-green-400">
+                                            Bạn đang phân loại {data.transactions?.length ?? 0} giao dịch
+                                          </div>
+                                          <Button
+                                            className="w-full"
+                                            variant={'ghost'}
+                                            onClick={() => handleViewDetails(data.transactions)}
+                                          >
+                                            <b className="text-red-400">Xem chi tiết</b>
+                                          </Button>
+                                        </div>
+                                      )
+                                    )
+                                  })}
+                              </motion.div>
+                              {index === 0 && (
+                                <div className="mt-3">
+                                  <div className="flex flex-col gap-2">
+                                    {quickActions.map((action) => (
+                                      <motion.div
+                                        key={action.id}
+                                        whileHover={{ x: 4 }}
+                                        whileTap={{ scale: 0.98 }}
+                                      >
+                                        <Card
+                                          onClick={() => onClickSend(action.description)}
+                                          className="group relative flex items-center overflow-hidden p-2 cursor-pointer border-0 bg-gradient-to-r from-slate-50/80 to-white/40 dark:from-zinc-800/80 dark:to-zinc-900/40 hover:from-slate-100 hover:to-white/60 dark:hover:from-zinc-800 dark:hover:to-zinc-800/60 transition-all duration-300"
+                                        >
+                                          {/* Shine effect */}
+                                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+
+                                          {/* Left accent gradient */}
+                                          <div className={`absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b ${action.iconBgColor} opacity-40 group-hover:opacity-100 group-hover:w-0.5 transition-all duration-300`} />
+
+                                          {/* Icon container with glass effect */}
+                                          <div className={`
+                                            relative flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md
+                                            bg-gradient-to-br from-white/80 to-white/20 dark:from-zinc-700/80 dark:to-zinc-700/20
+                                            shadow-sm backdrop-blur-sm
+                                            group-hover:scale-105 transition-all duration-300
+                                          `}>
+                                            <div className={`absolute inset-0 ${action.iconBgColor} opacity-10 group-hover:opacity-20 rounded-md transition-opacity duration-300`} />
+                                            <action.icon className={`h-3 w-3 ${action.iconColor} transform group-hover:scale-110 transition-transform duration-300`} />
+                                          </div>
+
+                                          {/* Title with gradient text */}
+                                          <div className="ml-2 flex-grow">
+                                            <h2 className={`
+                                              text-xs font-medium bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-200 dark:to-slate-100
+                                              bg-clip-text text-transparent group-hover:from-slate-900 group-hover:to-slate-700
+                                              dark:group-hover:from-white dark:group-hover:to-slate-200
+                                              transition-all duration-300
+                                            `}>
+                                              {action.title}
+                                            </h2>
+                                          </div>
+
+                                          {/* Animated arrow with glass effect */}
+                                          <div className="flex-shrink-0 p-0.5 rounded-full bg-white/50 dark:bg-zinc-700/50 backdrop-blur-sm group-hover:bg-white/80 dark:group-hover:bg-zinc-600/80 transition-colors duration-300">
+                                            <motion.div
+                                              animate={{ x: [0, 4, 0] }}
+                                              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                                            >
+                                              <ChevronRight className="h-2.5 w-2.5 text-slate-400 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200" />
+                                            </motion.div>
+                                          </div>
+                                        </Card>
+                                      </motion.div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </motion.div>
+                          )}
                       </div>
+
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -499,7 +553,7 @@ export function ChatBox() {
               animate={{ y: 0, opacity: 1 }}
               className='border-t bg-primary/10 p-3 pt-2 backdrop-blur-md dark:bg-slate-800/40'
             >
-              {error && <p className='mb-2 text-sm font-semibold text-red-500'>{error}</p>}
+              {error && <p className='mb-2 text-sm font-semibold text-green-600'>{error}</p>}
               <div className='flex items-center gap-2'>
                 <motion.div className='flex-grow' whileFocus={{ scale: 1.01 }} variants={inputVariants}>
                   <Input
@@ -508,12 +562,12 @@ export function ChatBox() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder='Nhập tin nhắn...'
                     className='flex-grow bg-background/80 text-sm placeholder:text-muted-foreground/70 dark:bg-muted/30'
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                    onKeyPress={(e) => e.key === 'Enter' && onClickSend()}
                   />
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    onClick={isTyping ? handleStopTyping : handleSend}
+                    onClick={isTyping ? handleStopTyping : () => onClickSend()}
                     size='icon'
                     variant='default'
                     className='bg-primary/90 hover:bg-primary dark:bg-primary'
@@ -539,8 +593,9 @@ export function ChatBox() {
               <MessageCircle className='h-5 w-5' />
             </Button>
           </motion.div>
-        )}
-      </AnimatePresence>
+        )
+        }
+      </AnimatePresence >
 
       <Dialog
         open={isDialogOpen}
@@ -551,180 +606,347 @@ export function ChatBox() {
           }
         }}
       >
-        <DialogContent className='max-w-[500px]'>
+        <DialogContent className='max-w-[500px]' aria-describedby='des'>
           <DialogHeader>
             <DialogTitle>Chi tiết giao dịch</DialogTitle>
           </DialogHeader>
-
+          <DialogDescription>Uniko-chan</DialogDescription>
           <Accordion type='single' collapsible className='w-full'>
-            {selectedTransactions.map((transaction, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className='hover:no-underline'>
-                  <div className='flex w-full items-center justify-between pr-4'>
-                    <div className='flex items-center gap-2'>
-                      <span className='text-lg'>{transaction.category.name.split(' ')[0]}</span>
-                      <span className='font-medium'>{transaction.item}</span>
-                    </div>
-                    <div
-                      className={`font-medium ${transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'}`}
-                    >
-                      {transaction.type === 'EXPENSE' ? '-' : '+'}
-                      {formatCurrency(transaction.amount)}
-                    </div>
-                  </div>
-                </AccordionTrigger>
+            {selectedTransactions.map((transaction: Transaction) => {
+              // console.log("🚀 ~ {editForms.map ~ transaction:", editForms[transaction.id] ?? transaction.categoryName)
+              const currentType = transaction.id ? typesState[transaction.id] ?? transaction.type : transaction.type
+              const trackerType =
+                transaction.type === ETypeOfTrackerTransactionType.INCOMING ? incomingTrackerType : expenseTrackerType
+              console.log("trackerType[0].name : ", trackerType[0].id);
 
-                <AccordionContent>
-                  {editingId === transaction.id ? (
-                    <div className='space-y-4 p-4'>
-                      <div className='grid gap-3'>
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Tên giao dịch</label>
-                          <Input
-                            value={editForms[transaction.id]?.item || ''}
-                            onChange={(e) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  item: e.target.value
-                                }
-                              }))
-                            }
-                            placeholder='Nhập tên giao dịch'
-                          />
+              return (
+                <AccordionItem key={transaction.id} value={`item-${transaction.id}`}>
+                  <AccordionTrigger className='hover:no-underline'>
+                    <div className='flex w-full items-center justify-between pr-4'>
+                      <div className='flex items-center gap-2'>
+                        <span className='text-lg'>{transaction?.categoryName ?? trackerType[0].name}</span>
+                        {/* <span className='text-lg'>{editForms[transaction.id]?.categoryName}</span> */}
+                      </div>
+                      <div
+                        className={`font-medium ${transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'}`}
+                      >
+                        {transaction.type === 'EXPENSE' ? '-' : '+'}
+                        {formatCurrency(transaction.amount ?? 0, 'VND')}
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+
+                  <AccordionContent>
+                    {editingId === transaction.id ? (
+                      <div className='space-y-4 p-4'>
+                        <div className='grid gap-3'>
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Tên giao dịch</label>
+                            <Input
+                              value={editForms[transaction.id]?.description || ''}
+                              onChange={(e) =>
+                                setEditForms((prev) => ({
+                                  ...prev,
+                                  [transaction.id]: {
+                                    ...prev[transaction.id],
+                                    description: e.target.value
+                                  }
+                                }))
+                              }
+                              placeholder='Nhập tên giao dịch'
+                            />
+                          </div>
+
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Số tiền</label>
+                            <Input
+                              type='number'
+                              value={editForms[transaction.id]?.amount || 0}
+                              onChange={(e) =>
+                                setEditForms((prev) => ({
+                                  ...prev,
+                                  [transaction.id]: {
+                                    ...prev[transaction.id],
+                                    amount: Number(e.target.value)
+                                  }
+                                }))
+                              }
+                              placeholder='Nhập số tiền'
+                            />
+                          </div>
+
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Danh mục</label>
+                            <Combobox
+                              label='Danh mục'
+                              dataArr={
+                                currentType === ETypeOfTrackerTransactionType.INCOMING
+                                  ? incomingTrackerType.map((item) => ({
+                                    ...item,
+                                    value: item.id,
+                                    label: item.name
+                                  }))
+                                  : expenseTrackerType.map((item) => ({
+                                    ...item,
+                                    value: item.id,
+                                    label: item.name
+                                  }))
+                              }
+                              value={editForms[transaction.id]?.categoryId || transaction.categoryId || trackerType[0].id}
+                              onChange={(value: any) => {
+                                setSelectedTransactions((prev) =>
+                                  prev.map((item) => {
+                                    if (item.id === transaction.id) {
+                                      return {
+                                        ...item,
+                                        category: {
+                                          id: value,
+                                          name: trackerType.find((type) => type.id === value)?.name ?? trackerType[0].name
+                                        }
+                                      }
+                                    }
+                                    return item
+                                  })
+                                )
+                                setEditForms((prev) => {
+                                  const currentForm = prev[transaction.id] || {
+                                    amount: transaction.amount,
+                                    categoryId: transaction.categoryId,
+                                    accountSourceId: transaction.accountSourceId,
+                                    description: transaction.description
+                                  }
+
+                                  if (currentForm.categoryId !== value) {
+                                    return {
+                                      ...prev,
+                                      [transaction.id]: {
+                                        ...currentForm,
+                                        categoryId: value
+                                      }
+                                    }
+                                  }
+
+                                  return prev
+                                })
+                              }}
+                              key={transaction.id}
+                              setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
+                              dialogEdit={
+                                openEditTrackerTxTypeDialog && (
+                                  <EditTrackerTypeDialog
+                                    openEditDialog={openEditTrackerTxTypeDialog}
+                                    setOpenEditDialog={setOpenEditTrackerTxTypeDialog}
+                                    dataArr={
+                                      transaction.type === ETypeOfTrackerTransactionType.INCOMING
+                                        ? incomingTrackerType.map((item) => ({
+                                          ...item,
+                                          value: item.id,
+                                          label: item.name
+                                        }))
+                                        : expenseTrackerType.map((item) => ({
+                                          ...item,
+                                          value: item.id,
+                                          label: item.name
+                                        }))
+                                    }
+                                    typeDefault={ETypeOfTrackerTransactionType.INCOMING}
+                                    type={currentType}
+                                    setType={(newType) => handleTypeChange(transaction.id, newType)}
+                                    handleCreateTrackerType={async (
+                                      data: ITrackerTransactionTypeBody,
+                                      setIsCreating: React.Dispatch<React.SetStateAction<boolean>>
+                                    ) => {
+                                      try {
+                                        await createTrackerTxType(data)
+                                        setIsCreating(false)
+                                        refetchTrackerTransactionType()
+                                        callBackRefetchTrackerTransactionPage(typeCallBack)
+                                      } catch (error) {
+                                        setIsCreating(false)
+                                      }
+                                    }}
+                                    handleUpdateTrackerType={async (data: ITrackerTransactionTypeBody) => {
+                                      try {
+                                        await updateTrackerTxType(data)
+                                        refetchTrackerTransactionType()
+                                        callBackRefetchTrackerTransactionPage(typeCallBack)
+                                      } catch (error) {
+                                        console.error('Error updating tracker type:', error)
+                                      }
+                                    }}
+                                    expenditureFund={
+                                      getAllExpenditureFundData?.data?.map((item) => ({
+                                        value: item.id,
+                                        label: item.name
+                                      })) || []
+                                    }
+                                  />
+                                )
+                              }
+                            />
+                          </div>
+
+                          <div className='space-y-2'>
+                            <label className='text-sm font-medium'>Ví</label>
+                            <Select
+                              value={
+                                editForms[transaction.id]?.accountSourceId === 'default'
+                                  ? getAllAccountSourceData?.data[0]?.id || ''
+                                  : editForms[transaction.id]?.accountSourceId
+                              }
+                              onValueChange={(value) => {
+                                setEditForms((prev) => ({
+                                  ...prev,
+                                  [transaction.id]: {
+                                    ...prev[transaction.id],
+                                    accountSourceId: value
+                                  }
+                                }))
+
+                                setSelectedTransactions((prev) =>
+                                  prev.map((item) =>
+                                    item.id === transaction.id
+                                      ? {
+                                        ...item,
+                                        wallet: {
+                                          ...item.wallet,
+                                          id: value,
+                                          name:
+                                            getAllAccountSourceData?.data?.find((account) => account.id === value)
+                                              ?.name || item.walletName,
+                                          currentAmount:
+                                            getAllAccountSourceData?.data?.find((account) => account.id === value)
+                                              ?.currentAmount || (item?.wallet?.currentAmount ?? 0)
+                                        }
+                                      }
+                                      : item
+                                  )
+                                )
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={editForms[transaction.id]?.accountSourceName ?? getAllAccountSourceData?.data[0].name} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {getAllAccountSourceData?.data?.map((account) => (
+                                  <SelectItem key={account.id} value={account.id}>
+                                    {account.name} - {account.currentAmount} {account.currency}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
 
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Số tiền</label>
-                          <Input
-                            type='number'
-                            value={editForms[transaction.id]?.amount || 0}
-                            onChange={(e) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  amount: Number(e.target.value)
-                                }
-                              }))
-                            }
-                            placeholder='Nhập số tiền'
-                          />
+                        <div className='flex items-center justify-end gap-2'>
+                          <Button variant='outline' size='sm' onClick={() => handleCancelEdit(setEditingId)}>
+                            <X className='mr-2 h-4 w-4' />
+                            Hủy
+                          </Button>
+                          <Button size='sm' onClick={() => handleSaveEdit({
+                            transactionId: transaction.id,
+                            editForms,
+                            selectedTransactions,
+                            setSelectedTransactions,
+                            setEditedTransactions,
+                            setEditingId
+                          })}>
+                            <Check className='mr-2 h-4 w-4' />
+                            Lưu
+                          </Button>
                         </div>
-
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Danh mục</label>
-                          <Select
-                            value={editForms[transaction.id]?.categoryId || ''}
-                            onValueChange={(value) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  categoryId: value
-                                }
-                              }))
-                            }
+                      </div>
+                    ) : (
+                      <div className='space-y-4 p-4'>
+                        <div className='grid gap-2 text-sm'>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-muted-foreground'>Danh mục:</span>
+                            <span className='rounded-full bg-slate-100 px-2 py-0.5 dark:bg-slate-800'>
+                              {transaction?.categoryName ?? trackerType[0].name}
+                            </span>
+                          </div> 
+                          <div className='flex items-center justify-between'>
+                            <span className='text-muted-foreground'>Ví:</span>
+                            <span>{transaction?.walletName ?? ''}</span>
+                          </div>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-muted-foreground'>Loại:</span>
+                            <span>{transaction.type === 'EXPENSE' ? 'Chi tiêu' : 'Thu nhập'}</span>
+                          </div>
+                        </div>
+                        <div className='flex justify-end'>
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            className='gap-2'
+                            onClick={() => handleStartEdit({ transaction, setEditForms, setEditingId })}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder='Chọn danh mục' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value={transaction.category.id}>{transaction.category.name}</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div className='space-y-2'>
-                          <label className='text-sm font-medium'>Ví</label>
-                          <Select
-                            value={editForms[transaction.id]?.walletId || ''}
-                            onValueChange={(value) =>
-                              setEditForms((prev) => ({
-                                ...prev,
-                                [transaction.id]: {
-                                  ...prev[transaction.id],
-                                  walletId: value
-                                }
-                              }))
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder='Chọn ví' />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value={transaction.wallet.id}>{transaction.wallet.name}</SelectItem>
-                            </SelectContent>
-                          </Select>
+                            <Pencil className='h-4 w-4' />
+                            Chỉnh sửa
+                          </Button>
                         </div>
                       </div>
-
-                      <div className='flex items-center justify-end gap-2'>
-                        <Button variant='outline' size='sm' onClick={handleCancelEdit}>
-                          <X className='mr-2 h-4 w-4' />
-                          Hủy
-                        </Button>
-                        <Button size='sm' onClick={() => handleSaveEdit(transaction.id)}>
-                          <Check className='mr-2 h-4 w-4' />
-                          Lưu
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className='space-y-4 p-4'>
-                      <div className='grid gap-2 text-sm'>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>Danh mục:</span>
-                          <span className='rounded-full bg-slate-100 px-2 py-0.5 dark:bg-slate-800'>
-                            {transaction.category.name}
-                          </span>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>Ví:</span>
-                          <span>{transaction.wallet.name}</span>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>Loại:</span>
-                          <span>{transaction.type === 'EXPENSE' ? 'Chi tiêu' : 'Thu nhập'}</span>
-                        </div>
-                      </div>
-
-                      <div className='flex justify-end'>
-                        <Button
-                          variant='outline'
-                          size='sm'
-                          className='gap-2'
-                          onClick={() => handleStartEdit(transaction)}
-                        >
-                          <Pencil className='h-4 w-4' />
-                          Chỉnh sửa
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              )
+            })}
           </Accordion>
-
           <DialogFooter className='mt-4 flex items-center justify-between border-t pt-4'>
             <div className='text-sm text-muted-foreground'>
               {editedTransactions.length > 0
                 ? `Đã chỉnh sửa ${editedTransactions.length} giao dịch`
                 : 'Chưa có thay đổi nào'}
             </div>
-            <div className='flex gap-2'>
+            <div className='flex gap-2 items-center'>
               <Button variant='outline' onClick={() => setIsDialogOpen(false)}>
                 Đóng
               </Button>
-              <Button onClick={handleConfirm} disabled={editedTransactions.length === 0}>
-                Xác nhận thay đổi
+              <Dialog open={isOpenConfirm} onOpenChange={setIsOpenConfirm}>
+                <DialogTrigger asChild>
+                  <Button disabled={!isDisabled} variant='destructive' onClick={() => handleStartEdit({ transaction: selectedTransactions[0], setEditForms, setEditingId })}>
+                    {!isDisabled ? (
+                      <div className="flex items-center gap-2">
+                        Xác nhận thay đổi   <Check className="h-4 w-4" />
+                      </div>
+                    ) : 'Xác nhận thay đổi'}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Confirm Change</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to change?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="sm:justify-start">
+                    <div className="w-full flex justify-between items-center">
+                      <Button variant="outline" onClick={() => setIsOpenConfirm(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={() => {
+                        handleSaveEdit({
+                          transactionId: selectedTransactions[0].id,
+                          editForms,
+                          selectedTransactions,
+                          setSelectedTransactions,
+                          setEditedTransactions,
+                          setEditingId
+                        }),
+                          setIsDisabled(false),
+                          setIsOpenConfirm(false)
+                      }}>Thay đổi</Button>
+                    </div>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              <Button variant={'secondary'} onClick={onclickConfirm} isLoading={isGetAdvancedPending} disabled={isDisabled}>
+                Thêm mới
               </Button>
             </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   )
 }

@@ -26,9 +26,10 @@ interface IFlatListProps {
   onClick?: (item: IFlatListData) => void
   isLoading?: boolean
   className?: string
+  checkHeightRange?: boolean
 }
 
-export default function FlatList({ data, onClick, isLoading, className }: IFlatListProps) {
+export default function FlatList({ data, onClick, isLoading, className, checkHeightRange }: IFlatListProps) {
   return (
     <Card className='h-full w-full to-muted/20'>
       {data?.length > 0 ? (
@@ -55,11 +56,10 @@ export default function FlatList({ data, onClick, isLoading, className }: IFlatL
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-2'>
                       <div
-                        className={`${
-                          item.direction === ETypeOfTrackerTransactionType.EXPENSE
-                            ? 'text-destructive'
-                            : 'text-secondary'
-                        }`}
+                        className={`${item.direction === ETypeOfTrackerTransactionType.EXPENSE
+                          ? 'text-destructive'
+                          : 'text-secondary'
+                          }`}
                       >
                         {item.direction === ETypeOfTrackerTransactionType.EXPENSE ? '↓' : '↑'}
                       </div>
@@ -109,7 +109,7 @@ export default function FlatList({ data, onClick, isLoading, className }: IFlatL
           </motion.span>
         </motion.div>
       ) : (
-        <div className='flex h-[200px] flex-col items-center justify-center py-10'>
+        <div className={`flex  flex-col items-center justify-center  ${checkHeightRange ? 'py-4 h-[168px]' : 'py-10 h-[200px]'}`}>
           <div className='relative'>
             <Image
               priority

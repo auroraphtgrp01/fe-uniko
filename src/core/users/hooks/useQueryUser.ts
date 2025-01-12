@@ -35,5 +35,5 @@ export const useGetMeUser = (execute: boolean) => {
     }
   }, [userGetMeData, isGetMeUserPending])
 
-  return { isGetMeUserPending, userGetMeData, executeGetMe }
+  return { isGetMeUserPending, userGetMeData, refetch, executeGetMe }
 }

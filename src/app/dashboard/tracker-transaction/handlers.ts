@@ -53,7 +53,8 @@ export const handleCreateTrackerTransaction = async ({
           'getStatisticExpenditureFund',
           'getStatisticExpenditureFund',
           'getExpenditureFund',
-          'getAllAccountSource'
+          'getAllAccountSource',
+          'getStatisticOverview'
         ])
         setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
@@ -86,11 +87,12 @@ export const handleClassifyTransaction = async ({
       | 'getStatistic'
       | 'getTrackerTransaction'
       | 'getExpenditureFund'
+      | 'getStatisticOverview'
     )[]
   ) => void
-  setUncDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setUncDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
-  setDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
+  setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   hookClassify(payload, {
@@ -102,7 +104,8 @@ export const handleClassifyTransaction = async ({
           'getTodayTransactions',
           'getStatistic',
           'getTrackerTransaction',
-          'getExpenditureFund'
+          'getExpenditureFund',
+          'getStatisticOverview'
         ])
         if (setUncDataTableConfig) setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
         if (setTodayDataTableConfig) setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))

@@ -223,3 +223,4 @@ export type TTrackerTransactionActions =
   | 'getTrackerTransaction'
   | 'getStatisticExpenditureFund'
   | 'getExpenditureFund'
+  | 'getStatisticOverview'

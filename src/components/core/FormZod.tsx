@@ -59,6 +59,7 @@ const FormFieldComponent = React.memo(
             ...fieldItem?.props,
             placeholder: fieldItem.placeHolder
           }}
+          defaultValue={field.value ?? []}
           value={field.value ?? []}
           onValueChange={(value: any[]) => {
             field.onChange(value)

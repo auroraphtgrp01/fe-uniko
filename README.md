@@ -77,6 +77,8 @@ Imagine having a financial best friend who's always there to help you make smart
   > Backend Sorceress & API Enchanter
 - **Nguyen Quang Huy** ([@kwanghy2303](https://github.com/kwanghy2303))
   > Quality Assurance Wizard & Bug Hunter
+- **Doan Vo Van Trong** ([@vantrong2405](https://github.com/vantrong2405))
+  > Frontend Developer & UI/UX Enthusiast
 
 ## 🚀 Join the Financial Revolution
 

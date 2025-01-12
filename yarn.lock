@@ -1473,6 +1473,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-compose-refs@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/react-compose-refs@npm:1.1.1"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 1be82f9f7fab96cc10f167a2e4f976e0135a63d473334f664c06f02af13bc5ea1994cb0505f89ed190d756cb65d57506721c030908af07e49b9e3cfd36044f33
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-context@npm:1.0.0":
   version: 1.0.0
   resolution: "@radix-ui/react-context@npm:1.0.0"
@@ -2511,7 +2524,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-slot@npm:1.1.0, @radix-ui/react-slot@npm:^1.0.2, @radix-ui/react-slot@npm:^1.1.0":
+"@radix-ui/react-slot@npm:1.1.0, @radix-ui/react-slot@npm:^1.0.2":
   version: 1.1.0
   resolution: "@radix-ui/react-slot@npm:1.1.0"
   dependencies:
@@ -2523,6 +2536,21 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 3c9cd90aabf08f541e20dbecb581744be01c552a0cd16e90d7c218381bcc5307aa8a6013d045864e692ba89d3d8c17bfae08df18ed18be6d223d9330ab0302fa
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-slot@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/react-slot@npm:1.1.1"
+  dependencies:
+    "@radix-ui/react-compose-refs": 1.1.1
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: ac391b921dcde1a71db8307247b36cd6908e0886d7a7b0babeb25158292bc29b61ccfb3f83279bfad11fe1f0f90e3e2f3de93b1174f36d107d77b073fe1a652a
   languageName: node
   linkType: hard
 
@@ -3195,6 +3223,13 @@ __metadata:
     "@types/prop-types": "*"
     csstype: ^3.0.2
   checksum: 63d2ff473b348c902b68c20be55d2c5124d078c4336c2d1778f316c27789ed596657e8e714022ce14fb24994b0960fc64c913e629bb0bf85815355b0c31eb46b
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@types/uuid@npm:10.0.0"
+  checksum: e3958f8b0fe551c86c14431f5940c3470127293280830684154b91dc7eb3514aeb79fe3216968833cf79d4d1c67f580f054b5be2cd562bebf4f728913e73e944
   languageName: node
   linkType: hard
 
@@ -5565,6 +5600,34 @@ __metadata:
   bin:
     edge-runtime: dist/cli/index.js
   checksum: 12108c47ceccc9722dfe154731ef22649a2d4612188ab0e79fda8dbd84e9e9979f772161e387a2ff083835188cd6e326eede1a74db0afe3d1de3c827f2668132
+  languageName: node
+  linkType: hard
+
+"embla-carousel-react@npm:^8.5.2":
+  version: 8.5.2
+  resolution: "embla-carousel-react@npm:8.5.2"
+  dependencies:
+    embla-carousel: 8.5.2
+    embla-carousel-reactive-utils: 8.5.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.1 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+  checksum: 695e43b8675738a1257620fe5271b19bfcc61d885d56aa2d590a801c3f9d14a9bd8f1bbaf5a75b985f20edb6eee1171cccc0fa0c0a7d5cd278f72d5021354dea
+  languageName: node
+  linkType: hard
+
+"embla-carousel-reactive-utils@npm:8.5.2":
+  version: 8.5.2
+  resolution: "embla-carousel-reactive-utils@npm:8.5.2"
+  peerDependencies:
+    embla-carousel: 8.5.2
+  checksum: b2111b11ac41aed1910286ef9105c509ca531580d87d8e3531b3d73ab6adbfd58afd91542bce0440ac50ba3e0c2e7f6267b53c9554ed740cd105174d11598afd
+  languageName: node
+  linkType: hard
+
+"embla-carousel@npm:8.5.2":
+  version: 8.5.2
+  resolution: "embla-carousel@npm:8.5.2"
+  checksum: fd994984c846818ba466b0c62f4a3c2d386146705fa2082b7adeee7cf49b3b41f5c87c4f0009cb1439891ede7c5e5c854358bf4476164aa72b8b0ef45f6270bc
   languageName: node
   linkType: hard
 
@@ -12327,7 +12390,7 @@ __metadata:
     "@radix-ui/react-scroll-area": ^1.1.0
     "@radix-ui/react-select": ^2.1.1
     "@radix-ui/react-separator": ^1.1.0
-    "@radix-ui/react-slot": ^1.1.0
+    "@radix-ui/react-slot": ^1.1.1
     "@radix-ui/react-tabs": ^1.1.0
     "@radix-ui/react-tooltip": ^1.1.2
     "@react-oauth/google": ^0.12.1
@@ -12340,6 +12403,7 @@ __metadata:
     "@types/nprogress": ^0.2.3
     "@types/react": ^18
     "@types/react-dom": ^18
+    "@types/uuid": ^10.0.0
     "@typescript-eslint/eslint-plugin": ^8.3.0
     "@typescript-eslint/parser": ^8.3.0
     axios: ^1.7.5
@@ -12349,6 +12413,7 @@ __metadata:
     critters: ^0.0.25
     date-fns: ^3.6.0
     echarts: ^5.5.1
+    embla-carousel-react: ^8.5.2
     emblor: ^1.4.6
     emoji-mart: ^5.6.0
     eslint: ^8

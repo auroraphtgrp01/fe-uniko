@@ -7,30 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-
-const chartData = [
-  { account: 'MB Bank', amount: 2000000, fill: 'hsl(var(--chart-1))' },
-  { account: 'Momo', amount: 1200000, fill: 'hsl(var(--chart-2))' },
-  { account: 'Cash', amount: 700000, fill: 'hsl(var(--chart-3))' }
-]
-
-const chartConfig = {
-  amount: {
-    label: 'Amount'
-  },
-  'MB Bank': {
-    label: 'MB Bank',
-    color: 'hsl(var(--chart-1))'
-  },
-  Momo: {
-    label: 'Momo',
-    color: 'hsl(var(--chart-2))'
-  },
-  Cash: {
-    label: 'Cash',
-    color: 'hsl(var(--chart-3))'
-  }
-} satisfies ChartConfig
+import { ITotalBalanceChart } from '@/core/overview/models/overview.interface'
 
 // Add new state type
 interface Selected {
@@ -38,13 +15,19 @@ interface Selected {
   amount: number
 }
 
-export function BalanceChart() {
+export function BalanceChart({
+  chartData,
+  chartConfig
+}: {
+  chartData: ITotalBalanceChart[]
+  chartConfig: ChartConfig
+}) {
   const [selected, setSelected] = React.useState<Selected | null>(null)
   const chartRef = React.useRef<HTMLDivElement>(null)
 
   const totalAmount = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.amount, 0)
-  }, [])
+  }, [chartData])
 
   // Handle click outside
   React.useEffect(() => {
@@ -118,10 +101,18 @@ export function BalanceChart() {
                             textAnchor='middle'
                             dominantBaseline='middle'
                           >
-                            <tspan x={viewBox.cx} y={viewBox.cy ? viewBox.cy - 12 : 0} className='fill-muted-foreground text-sm'>
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy ? viewBox.cy - 12 : 0}
+                              className='fill-muted-foreground text-sm'
+                            >
                               {selected ? selected.account : 'Total Balance'}
                             </tspan>
-                            <tspan x={viewBox.cx} y={(viewBox.cy ?? 0) + 12} className='fill-foreground text-2xl font-bold'>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy ?? 0) + 12}
+                              className='fill-foreground text-2xl font-bold'
+                            >
                               {formatCurrency(selected ? selected.amount : totalAmount, 'đ', 'vi-VN')}
                             </tspan>
                           </motion.text>

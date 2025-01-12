@@ -8,6 +8,7 @@ import { IUseQueryHookOptions } from '@/types/query.interface'
 import { useGetAllAccountSource } from './useGetAllAccountSource'
 import { useDeleteAnAccountSource } from './useDeleteAnAccountSource'
 import { useDeleteMultipleAccountSource } from './useDeleteMultipleAccountSource'
+import { useGetStatisticAccountBalance } from './useGetStatisticAccountBalance'
 
 export const useAccountSource = (opts?: IUseQueryHookOptions) => {
   const { mutate: createAccountSource, isPending: isCreating } = useCreateAccountSource(opts)
@@ -26,6 +27,7 @@ export const useAccountSource = (opts?: IUseQueryHookOptions) => {
     deleteAnAccountSource,
     isDeletingOne,
     deleteMultipleAccountSource,
-    isDeletingMultiple
+    isDeletingMultiple,
+    getStatisticAccountBalance: useGetStatisticAccountBalance
   }
 }

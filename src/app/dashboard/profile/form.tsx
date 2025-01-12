@@ -59,6 +59,7 @@ export default function ProfileForm() {
             setData(res.data)
             setUser(res.data)
             refetchAdvancedExpendingFund()
+            refetchGetMeData()
             toast.success('Update successfully !')
           }
         }
@@ -66,7 +67,7 @@ export default function ProfileForm() {
     )
   }
   const { t } = useTranslation(['profile'])
-  const { userGetMeData, isGetMeUserPending } = getMe(true)
+  const { userGetMeData, isGetMeUserPending, refetch: refetchGetMeData } = getMe(true)
   const { setData } = useUpdateModel<IUserGetMeResponse>([USER_QUERY_ME], (oldData, newData) => {
     return { ...oldData, data: newData }
   })

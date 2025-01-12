@@ -103,37 +103,6 @@ export const updateCacheDataTransactionForDelete = (oldData: IGetTransactionResp
   }
 }
 
-export const handleClassifyTransaction = async ({
-  formData,
-  setFormData,
-  hookCreate,
-  hookUpdateCacheUnclassified,
-  hookUpdateCache,
-  setIsDialogOpen,
-  hookSetDataTrackerTxs
-}: {
-  formData: IClassifyTransactionBody
-  setFormData: React.Dispatch<React.SetStateAction<IClassifyTransactionBody>>
-  hookCreate: any
-  hookUpdateCacheUnclassified: any
-  hookUpdateCache: any
-  setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogTransaction>>
-  hookSetDataTrackerTxs: any
-}) => {
-  hookCreate(formData, {
-    onSuccess: (res: ITrackerTransactionResponse) => {
-      if (res.statusCode === 200 || res.statusCode === 201) {
-        hookUpdateCache(res.data)
-        hookUpdateCacheUnclassified(res.data)
-        hookSetDataTrackerTxs(res.data)
-        toast.success('Classify transaction successfully!')
-        setFormData(initCreateTrackerTransactionForm)
-        setIsDialogOpen((prev: any) => ({ ...prev, isDialogClassifyTransactionOpen: false, isDialogDetailOpen: false }))
-      }
-    }
-  })
-}
-
 export const paginateTodayTransactionDataTable = ({
   todayDataTableConfig,
   transactionSummary,
@@ -181,7 +150,8 @@ export const handleUpdateTransaction = ({
           'getTransactions',
           'getTodayTransactions',
           'getStatistic',
-          'getUnclassifiedTransactions'
+          'getUnclassifiedTransactions',
+          'getStatisticOverview'
         ])
         toast.success('Update transaction successfully!')
         setDataTableConfig((prev: any) => ({ ...prev, currentPage: 1 }))
@@ -266,7 +236,8 @@ export const handleDeleteMultipleTransaction = ({
             'getUnclassifiedTransactions',
             'getTodayTransactions',
             'getStatistic',
-            'getAllAccountSource'
+            'getAllAccountSource',
+            'getStatisticOverview'
           ])
           setDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
           setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
