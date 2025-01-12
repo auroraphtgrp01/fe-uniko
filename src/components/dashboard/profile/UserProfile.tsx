@@ -1,12 +1,13 @@
 import { Separator } from '@/components/ui/separator'
 import AvatarSelector from './AvatarSelector'
 import InfoItem from './InfoItems'
-import { formatDateToInput } from '@/libraries/utils'
+import { formatDateTimeVN, formatDateToInput } from '@/libraries/utils'
 import { IUser } from '@/types/user.i'
 import { Briefcase, Calendar, Mail, MapPin, Phone, User2 } from 'lucide-react'
 import Image from 'next/image'
 import { Avatar } from '@/components/ui/avatar'
 import { useTranslation } from 'react-i18next'
+import { useMemo } from 'react'
 
 interface IUserProfileProps {
   handleUpdateUser?: (formData: {
@@ -49,18 +50,38 @@ export default function UserProfile({ handleUpdateUser, user }: IUserProfileProp
       <div className='grid gap-4 sm:grid-cols-2'>
         <div className='space-y-4'>
           <InfoItem icon={Mail} label='Email' value={user.email} />
-          <InfoItem icon={Phone} label={t('profile:infoProfileTitle.infoPhone_number')} value={user.phone_number} />
+          <InfoItem
+            icon={Phone}
+            label={t('profile:infoProfileTitle.infoPhone_number')}
+            value={user.phone_number || t('profile:infoProfileValue.unknown')}
+          />
 
-          <InfoItem icon={MapPin} label={t('profile:infoProfileTitle.infoAddress')} value={user.address} />
+          <InfoItem
+            icon={MapPin}
+            label={t('profile:infoProfileTitle.infoAddress')}
+            value={user.address || t('profile:infoProfileValue.unknown')}
+          />
         </div>
         <div className='space-y-4'>
           <InfoItem
             icon={Calendar}
             label={t('profile:infoProfileTitle.infoDateOfBirth')}
-            value={formatDateToInput(user.dateOfBirth)}
+            value={user.dateOfBirth ? formatDateTimeVN(user.dateOfBirth, false) : t('profile:infoProfileValue.unknown')}
           />
-          <InfoItem icon={User2} label={t('profile:infoProfileTitle.infoGender.label')} value={user.gender} />
-          <InfoItem icon={Briefcase} label={t('profile:infoProfileTitle.infoWorkplace')} value={user.workplace} />
+          <InfoItem
+            icon={User2}
+            label={t('profile:infoProfileTitle.infoGender.label')}
+            value={
+              user.gender
+                ? t(`profile:infoProfileValue.infoGender.${user.gender.toLowerCase()}`, user.gender.toLowerCase())
+                : t('profile:infoProfileValue.unknown')
+            }
+          />
+          <InfoItem
+            icon={Briefcase}
+            label={t('profile:infoProfileTitle.infoWorkplace')}
+            value={user.workplace || t('profile:infoProfileValue.unknown')}
+          />
         </div>
       </div>
     </>

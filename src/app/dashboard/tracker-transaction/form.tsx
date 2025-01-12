@@ -99,16 +99,20 @@ import {
   GET_ADVANCED_EXPENDITURE_FUND_KEY,
   GET_STATISTIC_EXPENDITURE_FUND_KEY
 } from '@/core/expenditure-fund/constants'
+import { useOverviewPage } from '@/core/overview/hooks'
 
 export default function TrackerTransactionForm() {
   // states
+  const [checkHeightRange, setCheckHeightRange] = useState<boolean>(false) // check height range for responsive 600 - 900
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
   const [unclassifiedTxTableData, setUnclassifiedTxTableData] = useState<IDataTransactionTable[]>([])
   const [formDataCreateTrackerTxType, setFormDataCreateTrackerTxType] =
     useState<ITrackerTransactionTypeBody>(initTrackerTypeForm)
-  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
+  const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
+    ...initTableConfig
+  })
   const [dataTableUnclassifiedConfig, setDataTableUnclassifiedConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
     classNameOfScroll: 'h-[calc(100vh-35rem)]'
@@ -126,7 +130,6 @@ export default function TrackerTransactionForm() {
   )
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   // hooks
-  // declare hooks
   const socket = useSocket()
   const { user, fundId } = useStoreLocal()
   const { getMe } = useUser()
@@ -143,6 +146,13 @@ export default function TrackerTransactionForm() {
     deleteAnTrackerTransaction,
     deleteMultipleTrackerTransaction
   } = useTrackerTransaction()
+  const { getStatisticOverviewPage } = useOverviewPage()
+  const { refetchGetStatisticOverviewPageData } = getStatisticOverviewPage(
+    {
+      daysToSubtract: 90
+    },
+    fundId
+  )
   const { getAllTrackerTransactionType, createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const { getUnclassifiedTransactions, updateTransaction, statusUpdate: statusUpdateTransaction } = useTransaction()
   const { dataTrackerTransactionType, refetchTrackerTransactionType } = getAllTrackerTransactionType(fundId)
@@ -162,20 +172,20 @@ export default function TrackerTransactionForm() {
     getAllAccountSource(fundId)
   const { getAllExpenditureFundData } = getAllExpenditureFund()
   // custom hooks
-  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => {})
+  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => { })
   const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
     [GET_STATISTIC_EXPENDITURE_FUND_KEY],
-    () => {}
+    () => { }
   )
   const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataCreateClassify
   )
-  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
-  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => {})
+  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => { })
+  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => { })
   const { resetData: resetCacheTodayTxs } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    () => {}
+    () => { }
   )
   const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
@@ -184,7 +194,7 @@ export default function TrackerTransactionForm() {
     }
   )
 
-  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
+  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => { })
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY],
     updateCacheDataTransactionForClassify
@@ -200,7 +210,8 @@ export default function TrackerTransactionForm() {
     getAllTrackerTransactionType: refetchTrackerTransactionType,
     getTrackerTransaction: resetCacheTrackerTx,
     getStatisticExpenditureFund: resetCacheStatisticExpenditureFund,
-    getExpenditureFund: resetCacheExpenditureFund
+    getExpenditureFund: resetCacheExpenditureFund,
+    getStatisticOverview: refetchGetStatisticOverviewPageData
   }
   const callBackRefetchTrackerTransactionPage = (actionMaps: TTrackerTransactionActions[]) => {
     actionMaps.forEach((action) => {
@@ -285,7 +296,25 @@ export default function TrackerTransactionForm() {
     }
   }, [statisticData])
 
-  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t), [chartData, t])
+  useEffect(() => {
+    const updateScreenHeight = () => {
+      const viewportHeight = window.innerHeight
+      if (viewportHeight >= 600 && viewportHeight <= 900) {
+        setCheckHeightRange(true)
+      } else {
+        setCheckHeightRange(false)
+      }
+    }
+
+    updateScreenHeight()
+    window.addEventListener('resize', updateScreenHeight)
+
+    return () => {
+      window.removeEventListener('resize', updateScreenHeight)
+    };
+  }, []);
+
+  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t, checkHeightRange), [chartData, t, checkHeightRange])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
   const refetchTransactionBySocket = () => {
@@ -369,7 +398,7 @@ export default function TrackerTransactionForm() {
   }, [socket])
 
   return (
-    <div className='grid h-full select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
+    <div className='grid select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
@@ -390,11 +419,21 @@ export default function TrackerTransactionForm() {
                 </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
-                    {formatCurrency(statisticData?.data?.totalBalance ?? 0, 'đ', 'vi-vn')}
+                    {formatCurrency(statisticData?.data?.total?.totalBalance ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-blue-100'>
-                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('notiTotalBalance', { percentage: 2.5 })}</span>
+                    {statisticData?.data?.total?.rate?.[0] !== '-' || !statisticData.data.income.rate ? (
+                      <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    ) : (
+                      <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    )}
+                    {/* <span>{t('notiTotalBalance', { percentage: 2.5 })}</span> */}
+                    <span>
+                      {`${statisticData?.data?.total?.rate && statisticData.data.total.rate !== 'none'
+                        ? (statisticData.data.total.rate.startsWith('-') ? '' : '+') + statisticData.data.total.rate
+                        : '0'
+                        }% left this month`}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -418,11 +457,18 @@ export default function TrackerTransactionForm() {
                 </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
-                    {formatCurrency(statisticData?.data?.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
+                    {formatCurrency(statisticData?.data?.income.totalIncomeToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex h-[50%] items-center text-sm text-emerald-100'>
-                    <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('notiIncoming', { percentage: 2.5 })}</span>
+                    {statisticData?.data?.income?.rate?.[0] !== '-' || !statisticData.data.income.rate ? (
+                      <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    ) : (
+                      <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    )}
+                    {/* <span>{t('notiIncoming', { percentage: 2.5 })}</span> */}
+                    {(statisticData?.data?.income?.rate?.[0] === '-' ? '' : '+') +
+                      (statisticData?.data?.income.rate || '0') +
+                      '% from last week'}
                   </p>
                 </div>
               </div>
@@ -446,11 +492,18 @@ export default function TrackerTransactionForm() {
                 </div>
                 <div className='text-right'>
                   <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
-                    {formatCurrency(statisticData?.data?.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
+                    {formatCurrency(statisticData?.data?.expense.totalExpenseToday ?? 0, 'đ', 'vi-vn')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-red-100'>
-                    <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>{t('notiExpense', { percentage: 15 })}</span>
+                    {statisticData?.data?.income?.rate?.[0] !== '-' || !statisticData.data.income.rate ? (
+                      <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    ) : (
+                      <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
+                    )}
+                    {/* <span>{t('notiExpense', { percentage: 15 })}</span> */}
+                    {(statisticData?.data?.expense?.rate?.[0] === '-' ? '' : '+') +
+                      (statisticData?.data?.expense.rate || '0') +
+                      '% from last week'}
                   </p>
                 </div>
               </div>
@@ -550,6 +603,7 @@ export default function TrackerTransactionForm() {
             </CardHeader>
             <CardContent className='flex-1 overflow-hidden'>
               <FlatList
+                checkHeightRange={checkHeightRange}
                 data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
                 onClick={(data: IFlatListData) => {
                   const item =

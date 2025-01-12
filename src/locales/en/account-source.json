@@ -87,7 +87,7 @@
       "description": "Details of Source Account",
       "currentAmount": "Current Amount",
       "accountBank": "Account Bank",
-      "checkType": "Check Type",
+      "type": "Type",
       "currency": "Currency",
       "initialAmount": "Initial Amount",
       "name": "Name"
@@ -99,5 +99,9 @@
     "initAmount": "Initial Amount",
     "accountBank": "Account Bank",
     "currentAmount": "Current Amount"
+  },
+  "type": {
+    "WALLET": "Wallet",
+    "BANKING": "Banking"
   }
 }

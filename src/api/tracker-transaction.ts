@@ -5,6 +5,5 @@ export const trackerTransactionRoutes = {
   statistics: 'tracker-transactions/statistics/:fundId',
   getAdvanced: 'tracker-transactions/query-advanced/:fundId',
   deleteAnTrackerTransaction: 'tracker-transactions/remove-one/:id',
-  deleteMultipleTrackerTransaction: 'tracker-transactions/remove-multiple/:ids',
-  getFundOfUser: 'tracker-transactions/fund-of-user'
+  deleteMultipleTrackerTransaction: 'tracker-transactions/remove-multiple/:ids'
 }

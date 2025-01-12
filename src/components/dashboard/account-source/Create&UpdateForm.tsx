@@ -1,6 +1,10 @@
 import { Button } from '@/components/ui/button'
-import { EAccountSourceType } from '@/core/account-source/models'
-import { PlusCircle } from 'lucide-react'
+import {
+  EAccountSourceType,
+  IAccountSource,
+  IAccountSourceBody,
+  IAccountSourceFormData
+} from '@/core/account-source/models'
 import FormZod from '../../core/FormZod'
 import {
   createAccountSourceFormBody,
@@ -20,20 +24,35 @@ import {
   updateAccountBankFormBody,
   updateAccountBankSchema
 } from '@/core/account-source/constants/update-account-bank.constant'
+import { EBankTypes, initEmptyAccountSource } from '@/app/dashboard/account-source/constants'
 
-export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValue, fundId }: any) {
+export default function CreateAndUpdateAccountSourceForm({
+  callBack,
+  defaultValue
+}: {
+  callBack: (payload: IAccountSourceBody) => void
+  defaultValue?: IAccountSource
+}) {
   const [typeState, setTypeState] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
-  const [defaultValueData, setDefaultValueData] = useState<any>({})
+  const [defaultValueData, setDefaultValueData] = useState<IAccountSourceFormData>({
+    accountBank: undefined,
+    accountSource: { accountSourceName: '', accountSourceType: EAccountSourceType.WALLET, initAmount: '' }
+  })
+  useEffect(() => {
+    console.log('>>>', defaultValue)
+  }, [defaultValue])
   const formCreateAccountSourceRef = useRef<HTMLFormElement>(null)
   const formCreateAccountBankRef = useRef<HTMLFormElement>(null)
-  let payload = { fundId }
 
   const { t } = useTranslation(['accountSource'])
-  const handleSubmit = (v: any) => {
-    payload = { ...v, initAmount: Number(v.initAmount), name: v.accountSourceName }
-    if (typeState !== EAccountSourceType.BANKING) {
-      callBack(payload)
-    }
+  let payload: IAccountSourceBody = { name: '', initAmount: 0, accountSourceType: EAccountSourceType.WALLET }
+  const handleSubmit = (v: {
+    accountSourceName: string
+    initAmount?: string
+    accountSourceType: EAccountSourceType
+  }) => {
+    payload = { ...v, id: defaultValue?.id, initAmount: Number(v.initAmount), name: v.accountSourceName }
+    if (typeState !== EAccountSourceType.BANKING) callBack(payload)
   }
 
   const handleSubmitBank = (v: any) => {
@@ -52,25 +71,27 @@ export default function CreateAndUpdateAccountSourceForm({ callBack, defaultValu
     if (defaultValue) {
       setDefaultValueData({
         accountBank: {
-          id: defaultValue?.data?.accountBank?.id ?? '',
-          type: defaultValue?.data?.accountBank?.type ?? '',
-          login_id: defaultValue?.data?.accountBank?.login_id ?? '',
-          accounts: defaultValue?.data?.accountBankId ?? ''
+          type: defaultValue.accountBank?.type ?? EBankTypes.MB_BANK,
+          login_id: defaultValue.accountBank?.login_id ?? '',
+          password: defaultValue.accountBank?.pass ?? '',
+          accounts: defaultValue.accountBank
+            ? defaultValue.accountBank.accounts.map((account) => account.accountNo)
+            : []
         },
         accountSource: {
-          id: defaultValue?.id,
-          accountSourceName: defaultValue?.name,
-          accountSourceType: defaultValue?.checkType
+          accountSourceName: defaultValue.name,
+          accountSourceType: defaultValue.type,
+          initAmount: String(defaultValue.initAmount)
         }
       })
-      setTypeState(defaultValue?.checkType)
+      setTypeState(defaultValue?.type)
     }
   }, [defaultValue])
 
   return (
     <div>
       <Fragment>
-        {!defaultValue ? (
+        {defaultValue === initEmptyAccountSource ? (
           <Fragment>
             <FormZod
               defaultValues={defaultValueData.accountSource}

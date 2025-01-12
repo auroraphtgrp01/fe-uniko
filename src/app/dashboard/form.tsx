@@ -1,31 +1,88 @@
 'use client'
-import React from 'react'
-import { Card } from '@/components/ui/card'
+import React, { useEffect, useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { motion } from 'framer-motion'
-import DonutChart from '@/components/core/charts/DonutChart'
 import { LineChart } from '@/components/core/charts/LineChart'
-import CardInHeader from '../../components/dashboard/CardInHeader'
-import { BarChartBasic } from '@/components/core/charts/BarChart'
 import { BalanceChart } from '@/components/core/charts/BalanceChart'
+import { useOverviewPage } from '@/core/overview/hooks'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
+import { ICashFlowAnalysisStatistic, ITotalAmount, ITotalBalanceChart } from '@/core/overview/models/overview.interface'
+import { initDataStatisticAccountBalance, initDataStatisticCashFlowAnalysis } from './handler'
+import { initEmptyBalanceChartConfig, initEmptyTotalAmount } from './constants'
+import { formatCurrency } from '@/libraries/utils'
+import { ChartConfig } from '@/components/ui/chart'
+import { useAccountSource } from '@/core/account-source/hooks'
+import Image from 'next/image'
+import NoDataPlaceHolder from '@/images/2.png'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function DashboardMainForm() {
-  const chartData = [
-    {
-      name: 'MB BANK',
-      value: '40'
-    },
-    {
-      name: 'Ví tiền mặt',
-      value: '60'
+  const { fundId } = useStoreLocal()
+  // states
+  const [daysToSubtract, setDaysToSubtract] = useState(90)
+  const [cashFlowAnalysisChartData, setCashFlowAnalysisChartData] = useState<ICashFlowAnalysisStatistic[]>([])
+  const [balanceChartData, setBalanceChartData] = useState<ITotalBalanceChart[]>([])
+  const [balanceChartConfig, setBalanceChartConfig] = useState<ChartConfig>(initEmptyBalanceChartConfig)
+  const [totalIncome, setTotalIncome] = useState<ITotalAmount>(initEmptyTotalAmount)
+  const [totalExpenses, setTotalExpenses] = useState<ITotalAmount>(initEmptyTotalAmount)
+  const [timeRange, setTimeRange] = useState<string>('90d')
+  React.useEffect(() => {
+    if (timeRange === '30d') {
+      setDaysToSubtract(30)
+    } else if (timeRange === '7d') {
+      setDaysToSubtract(7)
+    } else {
+      setDaysToSubtract(90)
     }
-  ]
+  }, [timeRange])
+
+  // hooks
+  // declare hooks
+  const { getStatisticOverviewPage } = useOverviewPage()
+  const { getStatisticAccountBalance } = useAccountSource()
+
+  // use hooks
+  const { getStatisticAccountBalanceData } = getStatisticAccountBalance(fundId)
+  const { getStatisticOverviewPageData } = getStatisticOverviewPage(
+    {
+      daysToSubtract
+    },
+    fundId
+  )
+
+  // effects
+  useEffect(() => {
+    if (getStatisticOverviewPageData)
+      initDataStatisticCashFlowAnalysis({
+        data: getStatisticOverviewPageData.data,
+        setCashFlowAnalysisChartData,
+        setTotalIncome,
+        setTotalExpenses
+      })
+  }, [getStatisticOverviewPageData])
+  useEffect(() => {
+    if (getStatisticAccountBalanceData && getStatisticAccountBalanceData.data.length > 0)
+      initDataStatisticAccountBalance({
+        data: getStatisticAccountBalanceData.data,
+        setBalanceChartConfig,
+        setBalanceChartData
+      })
+  }, [getStatisticAccountBalanceData])
+
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
       <div className='flex w-full flex-col md:col-span-1'>
         <div className='grid flex-1 grid-cols-1 gap-4'>
           <Card className='p-4'>
-            <BalanceChart></BalanceChart>
+            {balanceChartData.length > 0 ? (
+              <BalanceChart chartConfig={balanceChartConfig} chartData={balanceChartData} />
+            ) : (
+              <div className='mb-28 mt-28 flex flex-col items-center justify-center'>
+                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+              </div>
+            )}
           </Card>
         </div>
       </div>
@@ -36,12 +93,22 @@ export default function DashboardMainForm() {
               <div className='flex items-center justify-between'>
                 <div className='space-y-2'>
                   <p className='text-sm font-medium text-muted-foreground'>Total Income</p>
-                  <h3 className='text-2xl font-bold tracking-tight'>$12,500</h3>
-                  <div className='flex items-center gap-1 text-sm font-medium text-green-600'>
+                  <h3 className='text-2xl font-bold tracking-tight'>
+                    {formatCurrency(totalIncome.amount ?? 0, 'đ', 'vi-vn')}
+                  </h3>
+                  <div
+                    // Nếu như tăng/thu nhiều hơn hoặc không đổi (true) => green ngược lại red
+                    className={`flex items-center gap-1 text-sm font-medium ${totalIncome.rate?.[0] !== '-' || totalIncome.rate === undefined ? 'text-green-600' : 'text-red-600'}`}
+                    style={{ userSelect: 'none' }}
+                  >
                     <motion.div initial={{ rotate: -45 }} animate={{ rotate: 0 }} transition={{ duration: 0.3 }}>
-                      <TrendingUp className='h-4 w-4' />
+                      {totalIncome.rate?.[0] !== '-' || totalIncome.rate === undefined ? (
+                        <TrendingUp className='h-4 w-4' />
+                      ) : (
+                        <TrendingDown className='h-4 w-4' />
+                      )}
                     </motion.div>
-                    +12% from last month
+                    {(totalIncome.rate?.[0] === '-' ? '' : '+') + (totalIncome.rate || '0') + '% from last week'}
                   </div>
                 </div>
                 <motion.div
@@ -62,12 +129,22 @@ export default function DashboardMainForm() {
               <div className='flex items-center justify-between'>
                 <div className='space-y-2'>
                   <p className='text-sm font-medium text-muted-foreground'>Total Expenses</p>
-                  <h3 className='text-2xl font-bold tracking-tight'>$8,250</h3>
-                  <div className='flex items-center gap-1 text-sm font-medium text-red-600'>
+                  <h3 className='text-2xl font-bold tracking-tight'>
+                    {formatCurrency(totalExpenses.amount ?? 0, 'đ', 'vi-vn')}
+                  </h3>
+                  <div
+                    // Nếu như tăng/tiêu nhiều hơn (true) => red ngược lại green
+                    className={`flex items-center gap-1 text-sm font-medium ${totalExpenses.rate?.[0] !== '-' || totalExpenses.rate === undefined ? 'text-red-600' : 'text-green-600'}`}
+                    style={{ userSelect: 'none' }}
+                  >
                     <motion.div initial={{ rotate: 45 }} animate={{ rotate: 0 }} transition={{ duration: 0.3 }}>
-                      <TrendingDown className='h-4 w-4' />
+                      {totalExpenses.rate?.[0] !== '-' || totalExpenses.rate === undefined ? (
+                        <TrendingUp className='h-4 w-4' />
+                      ) : (
+                        <TrendingDown className='h-4 w-4' />
+                      )}
                     </motion.div>
-                    +5% from last month
+                    {(totalExpenses.rate?.[0] === '-' ? '' : '+') + (totalExpenses.rate || '0') + '% from last week'}
                   </div>
                 </div>
                 <motion.div
@@ -84,13 +161,44 @@ export default function DashboardMainForm() {
           </motion.div>
         </div>
         <div className='mt-4 flex-1'>
-        <LineChart></LineChart>
+          <Card>
+            <CardHeader className='flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row'>
+              <div className='grid flex-1 gap-1 text-center sm:text-left'>
+                <CardTitle>Cash Flow Analysis</CardTitle>
+                <CardDescription>Monitoring incoming and outgoing transactions</CardDescription>
+              </div>
+              <Select value={timeRange} onValueChange={setTimeRange}>
+                <SelectTrigger className='w-[160px] rounded-lg sm:ml-auto' aria-label='Select a value'>
+                  <SelectValue placeholder='Last 3 months' />
+                </SelectTrigger>
+                <SelectContent className='rounded-xl'>
+                  <SelectItem value='90d' className='rounded-lg'>
+                    Last 3 months
+                  </SelectItem>
+                  <SelectItem value='30d' className='rounded-lg'>
+                    Last 30 days
+                  </SelectItem>
+                  <SelectItem value='7d' className='rounded-lg'>
+                    Last 7 days
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </CardHeader>
+            <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6'>
+              {cashFlowAnalysisChartData.length > 0 ? (
+                <LineChart chartData={cashFlowAnalysisChartData} />
+              ) : (
+                <div className='mb-7 mt-7 flex flex-col items-center justify-center'>
+                  <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                  <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
       <div className='flex w-full gap-4 md:col-span-3'>
-        <div className='w-[60%]'>
-         
-        </div>
+        <div className='w-[60%]'></div>
         <div className='w-[40%]'></div>
       </div>
     </div>

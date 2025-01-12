@@ -1,10 +1,11 @@
 import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
 import { z } from 'zod'
+import { EAccountSourceType } from '../models'
 
 export const updateAccountSourceSchema = z.object({
   accountSourceName: z.string().min(2, { message: 'Source Name is required' }),
-  accountSourceType: z.enum(['WALLET', 'BANKING']),
+  accountSourceType: z.nativeEnum(EAccountSourceType),
   id: z.string().optional()
 })
 

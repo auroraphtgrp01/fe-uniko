@@ -79,6 +79,7 @@ import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants
 import DeleteDialog from '@/components/dashboard/DeleteDialog'
 import { useExpenditureFund } from '@/core/expenditure-fund/hooks'
 import { useQueryClient } from '@tanstack/react-query'
+import { useOverviewPage } from '@/core/overview/hooks'
 
 export default function TransactionForm() {
   // states
@@ -134,6 +135,13 @@ export default function TransactionForm() {
   const { getMe } = useUser()
   const socket = useSocket()
   const { getAllExpenditureFund, getAdvancedExpenditureFund } = useExpenditureFund()
+  const { getStatisticOverviewPage } = useOverviewPage()
+  const { refetchGetStatisticOverviewPageData } = getStatisticOverviewPage(
+    {
+      daysToSubtract: 90
+    },
+    fundId
+  )
 
   // fetch data
   const { getAllData: accountSourceData } = getAllAccountSource(fundId)
@@ -176,7 +184,8 @@ export default function TransactionForm() {
     getAllTrackerTransactionType: resetCacheTrackerTxType,
     getTrackerTransaction: resetCacheDataTrackerTx,
     getAllExpenditureFund: refetchAllExpendingFund,
-    getExpenditureFund: refetchAdvancedExpendingFund
+    getExpenditureFund: refetchAdvancedExpendingFund,
+    getStatisticOverview: refetchGetStatisticOverviewPageData
   }
 
   const callBackRefetchTransactionPage = (actions: TTransactionActions[]) => {
@@ -276,7 +285,8 @@ export default function TransactionForm() {
             'getStatistic',
             'getTodayTransactions',
             'getAllAccountSource',
-            'getExpenditureFund'
+            'getExpenditureFund',
+            'getStatisticOverview'
           ])
           setUncDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
           setTodayDataTableConfig((prev) => ({ ...prev, currentPage: 1 }))
@@ -333,7 +343,8 @@ export default function TransactionForm() {
       'getTodayTransactions',
       'getUnclassifiedTransactions',
       'getAllAccountSource',
-      'getStatistic'
+      'getStatistic',
+      'getStatisticOverview'
     ])
     while (!isGetTransaction) {
       if (dataTransaction?.statusCode === 200) toast.success('Reload data successfully!')

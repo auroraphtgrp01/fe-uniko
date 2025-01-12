@@ -56,12 +56,6 @@ export default function DeleteDialog({
             </Button>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className='absolute right-2 top-2 rounded-full p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-gray-500 dark:hover:text-gray-400'
-        >
-          <X className='h-5 w-5' />
-        </button>
       </DialogContent>
     </Dialog>
   )

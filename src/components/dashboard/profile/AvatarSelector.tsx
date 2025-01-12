@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { avatarPath } from '@/constants/avatar'
 import Image from 'next/image'
 import { IDynamicType } from '@/types/common.i'
+import { useTranslation } from 'react-i18next'
 
 export default function AvatarSelector({
   onSelect,
@@ -16,6 +17,7 @@ export default function AvatarSelector({
   onSelect: ({ avatarId }: { avatarId: string } & IDynamicType) => void
   value?: string
 }) {
+  const { t } = useTranslation(['profile'])
   const [selectedAvatar, setSelectedAvatar] = useState(value)
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(!value)
@@ -59,7 +61,7 @@ export default function AvatarSelector({
         <PopoverContent className='ms-2 mt-5 w-[400px]' side='right'>
           <Card>
             <CardHeader>
-              <CardTitle>Choose Your Avatar</CardTitle>
+              <CardTitle>{t('avatar.action')}</CardTitle>
             </CardHeader>
             <CardContent className='p-1 py-2'>
               <ScrollArea className='h-[400px] px-3 pr-5'>

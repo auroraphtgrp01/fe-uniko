@@ -87,7 +87,7 @@
       "description": "Thông tin chi tiết tài khoản nguồn",
       "currentAmount": "Số dư hiện tại",
       "accountBank": "Ngân hàng tài khoản",
-      "checkType": "Loại kiểm tra",
+      "type": "Loại tài khoản",
       "currency": "Loại tiền tệ",
       "initialAmount": "Số dư ban đầu",
       "name": "Tên tài khoản"
@@ -99,5 +99,9 @@
     "initAmount": "Số dư ban đầu",
     "accountBank": "Ngân hàng",
     "currentAmount": "Số dư hiện tại"
+  },
+  "type": {
+    "WALLET": "Ví",
+    "BANKING": "Ngân hàng"
   }
 }

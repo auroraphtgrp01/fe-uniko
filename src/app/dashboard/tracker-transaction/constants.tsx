@@ -121,7 +121,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
   )
 }
 
-export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>): ITabConfig => {
+export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>, checkHeightRange?: boolean): ITabConfig => {
   return {
     default: 'expenseChart',
     tabContents: [
@@ -129,10 +129,15 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div className='flex w-full items-center justify-center'>
             {data && data.expenseTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.expenseTransactionTypeStats} className='h-[17rem] w-full' types='donut' />
+              <DonutChart data={data.expenseTransactionTypeStats} className={`w-full ${checkHeightRange ? 'h-[12rem]' : 'h-[17rem]'}`} types='donut' />
             ) : (
               <div className='mt-10 flex flex-col items-center justify-center'>
-                <Image priority src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <Image
+                  src={NoDataPlaceHolder}
+                  alt="No data available"
+                  width={checkHeightRange ? 110 : 150}
+                  height={checkHeightRange ? 110 : 150}
+                />
                 <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
               </div>
             )}
@@ -145,10 +150,15 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div className='flex w-full items-center justify-center'>
             {data && data.incomingTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.incomingTransactionTypeStats} className='h-[17rem] w-full' types='donut' />
+              <DonutChart data={data.incomingTransactionTypeStats} className={`w-full ${checkHeightRange ? 'h-[12rem]' : 'h-[17rem]'}`} types='donut' />
             ) : (
               <div className='mt-10 flex flex-col items-center justify-center'>
-                <Image src={NoDataPlaceHolder} alt='No data available' width={150} height={150} />
+                <Image
+                  src={NoDataPlaceHolder}
+                  alt="No data available"
+                  width={checkHeightRange ? 110 : 150}
+                  height={checkHeightRange ? 110 : 150}
+                />
                 <span className='mt-2 text-sm font-semibold text-foreground'>No data available</span>
               </div>
             )}
