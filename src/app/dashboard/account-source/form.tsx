@@ -359,7 +359,7 @@ export default function AccountSourceForm() {
           <Card className="flex h-full flex-col shadow-lg rounded-lg ">
             <CardHeader className="flex-none py-4 px-6 border-b ">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <CardTitle className="text-lg font-semibold ">
+                <CardTitle >
                   {t('accountSource:AccountSourceCardDetail.title')}
                 </CardTitle>
                 <div className="flex flex-wrap items-center gap-2">
@@ -469,7 +469,10 @@ export default function AccountSourceForm() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    {isIncreased ? "Increased" : "Decreased"} from{" "}
+                    {isIncreased ? t('accountSource:AccountSourceCardDetail.Increased')
+                      : t('accountSource:AccountSourceCardDetail.Decreased')}
+                    {" "}
+                    {t('accountSource:AccountSourceCardDetail.from')} {" "}
                     {formatCurrency(previousBalance, "VND")}
                   </motion.div>
                 </motion.div>
@@ -478,12 +481,13 @@ export default function AccountSourceForm() {
           </Card>
 
         </div>
-        <Card className='flex-1'>
+        <Card className='flex-1 h-[55%]'>
           <CardHeader className='mb-5 py-4'>
+            <CardTitle>{t('accountSource:WalletBalanceSummary')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div>
-              <DonutChart data={chartData} className='mt-[-2rem] h-[20rem] w-full' types='donut' />
+              <DonutChart data={chartData} className='mt-[-2rem] h-[17rem] w-full' types='donut' />
             </div>
           </CardContent>
         </Card>

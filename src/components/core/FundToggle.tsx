@@ -47,7 +47,7 @@ export default function FundToggle() {
             <span>Expenditure Funds</span>
           </div>
           <DropdownMenuSeparator />
-          <div className='max-h-[140px] overflow-x-hidden overflow-y-scroll'>
+          <div className='max-h-[150px] overflow-x-hidden overflow-y-auto'>
             {fundArr?.map((fund, index) => (
               <React.Fragment key={fund.id}>
                 {index !== 0 && <DropdownMenuSeparator />}

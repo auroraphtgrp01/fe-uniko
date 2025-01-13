@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <BreadcrumbHeader />
             </h1>
           </div>
-          <div className='overflow-x-hidden pb-2'>{children}</div>
+          <div className=''>{children}</div>
           <ChatBox></ChatBox>
         </div>
       </main>

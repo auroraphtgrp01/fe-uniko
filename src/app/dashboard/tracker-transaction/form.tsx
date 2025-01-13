@@ -103,7 +103,6 @@ import { useOverviewPage } from '@/core/overview/hooks'
 
 export default function TrackerTransactionForm() {
   // states
-  const [checkHeightRange, setCheckHeightRange] = useState<boolean>(false) // check height range for responsive 600 - 900
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
@@ -131,7 +130,7 @@ export default function TrackerTransactionForm() {
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   // hooks
   const socket = useSocket()
-  const { user, fundId } = useStoreLocal()
+  const { user, fundId, checkHeightRange, setCheckHeightRange } = useStoreLocal()
   const { getMe } = useUser()
   const { t } = useTranslation(['trackerTransaction', 'common'])
   const { isGetMeUserPending } = getMe(true)
@@ -400,7 +399,7 @@ export default function TrackerTransactionForm() {
   return (
     <div className='grid select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
-      <div className='flex w-full flex-col md:col-span-2'>
+      <div className='flex w-full h-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
           {/* Total Balance Card */}
           <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
@@ -465,7 +464,6 @@ export default function TrackerTransactionForm() {
                     ) : (
                       <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
                     )}
-                    {/* <span>{t('notiIncoming', { percentage: 2.5 })}</span> */}
                     {(statisticData?.data?.income?.rate?.[0] === '-' ? '' : '+') +
                       (statisticData?.data?.income.rate || '0') +
                       '% from last week'}
@@ -521,7 +519,6 @@ export default function TrackerTransactionForm() {
                 config={dataTableConfig}
                 setConfig={setDataTableConfig}
                 buttons={dataTableButtons}
-                // extendsJSX={extendsJSX}
                 onRowClick={(rowData) => {
                   const find =
                     advancedTrackerTxData?.data.find((item) => item.id === rowData.id) ||
@@ -566,7 +563,7 @@ export default function TrackerTransactionForm() {
           </Card>
         </div>
       </div>
-      {/* Right Section */}{' '}
+      {/* Right Section */}
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
         <div className='h-[55%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
@@ -601,7 +598,8 @@ export default function TrackerTransactionForm() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className='flex-1 overflow-hidden'>
+            {/* className='flex-1 overflow-hidden' */}
+            <CardContent >
               <FlatList
                 checkHeightRange={checkHeightRange}
                 data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}

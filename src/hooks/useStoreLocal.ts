@@ -19,6 +19,9 @@ interface StoreState {
   setFundId: (fundId: string) => void
   fundArr: IFundOfUser[]
   setFundArr: (fundArr: IFundOfUser[]) => void
+  // checkHeightRange
+  checkHeightRange: boolean
+  setCheckHeightRange: (checkHeightRange: boolean) => void
 }
 
 // Add constant for localStorage key
@@ -41,5 +44,7 @@ export const useStoreLocal = create<StoreState>((set) => ({
     set({ fundId })
   },
   fundArr: [],
-  setFundArr: (fundArr) => set({ fundArr })
+  setFundArr: (fundArr) => set({ fundArr }),
+  checkHeightRange: false,
+  setCheckHeightRange: (data) => set({ checkHeightRange: data })
 }))

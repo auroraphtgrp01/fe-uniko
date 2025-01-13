@@ -320,13 +320,13 @@ html {
   scroll-behavior: smooth;
 }
 
-@media (max-height: 900px) {
+@media (max-height: 773px) {
   html {
-    font-size: 90%;
+    font-size: 85%;
   }
 }
 
-@media (min-height: 901px) {
+@media (min-height: 774px) {
   html {
     font-size: 100%;
   }

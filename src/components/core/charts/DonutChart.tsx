@@ -9,6 +9,7 @@ export interface IChartProps {
   options?: any
   className?: string | string[]
   types?: 'nightingale' | 'referer' | 'donut' | 'haftDonut' | 'line'
+  checkHeightRange?: boolean
 }
 
 export interface IPayloadDataChart {
@@ -38,7 +39,7 @@ export interface IChartDataAccountSource {
   detailBalanceTypeStats: IPayloadDataChart[]
 }
 
-const DonutChart = ({ options, data, className, types = 'donut' }: IChartProps) => {
+const DonutChart = ({ options, data, className, types = 'donut', checkHeightRange }: IChartProps) => {
   const chartRef = useRef(null)
   const fontFamily = 'var(--font-sans)'
   const chartConfig = JSON.parse(JSON.stringify(ChartConfig))

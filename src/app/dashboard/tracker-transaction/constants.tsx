@@ -129,7 +129,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div className='flex w-full items-center justify-center'>
             {data && data.expenseTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.expenseTransactionTypeStats} className={`w-full ${checkHeightRange ? 'h-[12rem]' : 'h-[17rem]'}`} types='donut' />
+              <DonutChart data={data.expenseTransactionTypeStats} className={`w-full ${checkHeightRange ? 'h-[14rem]' : 'h-[17rem]'}`} types='donut' />
             ) : (
               <div className='mt-10 flex flex-col items-center justify-center'>
                 <Image
@@ -150,7 +150,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div className='flex w-full items-center justify-center'>
             {data && data.incomingTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.incomingTransactionTypeStats} className={`w-full ${checkHeightRange ? 'h-[12rem]' : 'h-[17rem]'}`} types='donut' />
+              <DonutChart data={data.incomingTransactionTypeStats} className={`w-full ${checkHeightRange ? 'h-[14rem]' : 'h-[17rem]'}`} types='donut' />
             ) : (
               <div className='mt-10 flex flex-col items-center justify-center'>
                 <Image

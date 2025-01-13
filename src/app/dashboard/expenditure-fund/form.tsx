@@ -77,7 +77,7 @@ export default function ExpenditureFundForm() {
   }, [dataTable])
 
   // hooks
-  const { fundId } = useStoreLocal()
+  const { fundId, setCheckHeightRange, checkHeightRange } = useStoreLocal()
   const { createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const {
     createExpenditureFund,
@@ -190,7 +190,7 @@ export default function ExpenditureFundForm() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className='overflow-auto'>
+              <div>
                 <FlatList data={summaryRecentTransactions} isLoading={isGetStatisticPending} />
               </div>
             </CardContent>
@@ -202,7 +202,7 @@ export default function ExpenditureFundForm() {
             </CardHeader>
             <CardContent>
               <div className='flex h-auto w-full justify-center'>
-                <DonutChart data={chartData} className='h-[20rem] w-full max-w-[50rem]' types='donut' />
+                <DonutChart data={chartData} checkHeightRange={checkHeightRange} className={` w-full max-w-[50rem] ${checkHeightRange ? 'h-[15rem]' : 'h-[19rem]'}`} types='donut' />
               </div>
             </CardContent>
           </Card>

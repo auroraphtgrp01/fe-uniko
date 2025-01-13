@@ -130,6 +130,10 @@
     },
     "lastUpdate": "Cập nhật lần cuối",
     "totalAccount": "Tổng tài khoản",
-    "totalBlance": "Tổng số dư"
-  }
+    "totalBlance": "Tổng số dư",
+    "Increased": "Tăng",
+    "Decreased": "Giảm",
+    "from": "từ"
+  },
+  "WalletBalanceSummary": "Tóm tắt số dư ví"
 }

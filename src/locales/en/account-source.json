@@ -130,6 +130,10 @@
     },
     "lastUpdate": "Last updated",
     "totalAccount": "Total Account",
-    "totalBlance": "Total Balance"
-  }
+    "totalBlance": "Total Balance",
+    "Increased": "Increased",
+    "Decreased": "Decreased",
+    "from": "from"
+  },
+  "WalletBalanceSummary": "Wallet Balance Summary"
 }
