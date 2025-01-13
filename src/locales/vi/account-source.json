@@ -11,6 +11,10 @@
     "detailsDialog": {
       "title": "Thông tin chi tiết về tài khoản nguồn",
       "description": "Chi tiết giao dịch tài khoản nguồn"
+    },
+    "deleteDialog": {
+      "title": "Xóa nguồn tài khoản",
+      "description": "Bạn có chắc chắn muốn xóa nguồn tài khoản này không?"
     }
   },
   "form": {
@@ -101,7 +105,31 @@
     "currentAmount": "Số dư hiện tại"
   },
   "type": {
-    "WALLET": "Ví",
-    "BANKING": "Ngân hàng"
+    "WALLET": "Ví điện tử",
+    "BANKING": "Ví ngân hàng"
+  },
+  "AccountSourceCard": {
+    "totalBlance": {
+      "label": "Tổng số dư",
+      "gradually": "Tăng từ tháng trước"
+    },
+    "totalBanking": {
+      "label": "Tổng ngân hàng",
+      "gradually": "Tăng từ tháng trước"
+    },
+    "totalWallet": {
+      "label": "Tổng ví",
+      "gradually": "Không thay đổi từ hôm qua"
+    }
+  },
+  "AccountSourceCardDetail": {
+    "title": "Nguồn tài khoản",
+    "item": {
+      "wallet": "Ví điện tử",
+      "banking": "Ngân hàng"
+    },
+    "lastUpdate": "Cập nhật lần cuối",
+    "totalAccount": "Tổng tài khoản",
+    "totalBlance": "Tổng số dư"
   }
 }

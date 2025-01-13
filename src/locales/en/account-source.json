@@ -11,6 +11,10 @@
     "detailsDialog": {
       "title": "Account Source Details",
       "description": "Account Source Transaction"
+    },
+    "deleteDialog": {
+      "title": "Delete Account Source",
+      "description": "Are you sure you want to delete this account source?"
     }
   },
   "form": {
@@ -103,5 +107,29 @@
   "type": {
     "WALLET": "Wallet",
     "BANKING": "Banking"
+  },
+  "AccountSourceCard": {
+    "totalBlance": {
+      "label": "Total Balance",
+      "gradually": "increaseFromLastMonth"
+    },
+    "totalBanking": {
+      "label": "Total Banking",
+      "gradually": "increaseFromLastMonth"
+    },
+    "totalWallet": {
+      "label": "Total Wallet",
+      "gradually": "noChangeFromYesterday"
+    }
+  },
+  "AccountSourceCardDetail": {
+    "title": "Account Source",
+    "item": {
+      "wallet": "Wallet",
+      "banking": "Banking"
+    },
+    "lastUpdate": "Last updated",
+    "totalAccount": "Total Account",
+    "totalBlance": "Total Balance"
   }
 }

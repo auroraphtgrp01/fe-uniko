@@ -61,7 +61,7 @@ import { Badge } from '@/components/ui/badge'
 import DonutChart from '@/components/core/charts/DonutChart'
 
 export default function AccountSourceForm() {
-  const { t } = useTranslation(['common'])
+  const { t } = useTranslation(['common', 'accountSource'])
   // States
   const [dataDetail, setDataDetail] = useState<IAccountSource>(initEmptyAccountSource)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>(initTableConfig)
@@ -73,7 +73,7 @@ export default function AccountSourceForm() {
   const [currentTypeAccount, setCurrentTypeAccount] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
   const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [chartData, setChartData] = useState<any>([])
-  
+
   // Hooks
   // declare hooks
   const {
@@ -220,7 +220,7 @@ export default function AccountSourceForm() {
             <CardHeader className='relative pb-1'>
               <CardTitle className='flex items-center text-base font-medium text-white'>
                 <CloudDownload className='mr-2 h-5 w-5 animate-pulse' />
-                Total Balance
+                {t('accountSource:AccountSourceCard.totalBlance.label')}
               </CardTitle>
             </CardHeader>
             <CardContent className='relative pt-1'>
@@ -234,7 +234,7 @@ export default function AccountSourceForm() {
                   </p>
                   <p className='mt-1 flex items-center text-sm text-red-100'>
                     <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>increaseFromLastMonth</span>
+                    <span>{t('accountSource:AccountSourceCard.totalBlance.gradually')}</span>
                   </p>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function AccountSourceForm() {
             <CardHeader className='relative pb-1'>
               <CardTitle className='flex items-center text-base font-medium text-white'>
                 <PcCase className='mr-2 h-5 w-5 animate-pulse' />
-                Total Banking
+                {t('accountSource:AccountSourceCard.totalBanking.label')}
               </CardTitle>
             </CardHeader>
             <CardContent className='relative pt-1'>
@@ -261,7 +261,7 @@ export default function AccountSourceForm() {
                   </p>
                   <p className='mt-1 flex items-center text-sm text-blue-100'>
                     <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>increaseFromLastMonth</span>
+                    <span>{t('accountSource:AccountSourceCard.totalBanking.gradually')}</span>
                   </p>
                 </div>
               </div>
@@ -275,7 +275,7 @@ export default function AccountSourceForm() {
             <CardHeader className='relative pb-1'>
               <CardTitle className='flex items-center text-base font-medium text-white'>
                 <ArrowDownToLineIcon className='mr-2 h-5 w-5 animate-pulse' />
-                Total Wallet
+                {t('accountSource:AccountSourceCard.totalWallet.label')}
               </CardTitle>
             </CardHeader>
             <CardContent className='relative pt-1'>
@@ -289,7 +289,7 @@ export default function AccountSourceForm() {
                   </p>
                   <p className='mt-1 flex items-center text-sm text-emerald-100'>
                     <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
-                    <span>noChangeFromYesterday</span>
+                    <span>{t('accountSource:AccountSourceCard.totalWallet.gradually')}</span>
                   </p>
                 </div>
               </div>
@@ -360,7 +360,7 @@ export default function AccountSourceForm() {
             <CardHeader className="flex-none py-4 px-6 border-b ">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <CardTitle className="text-lg font-semibold ">
-                  Account Source
+                  {t('accountSource:AccountSourceCardDetail.title')}
                 </CardTitle>
                 <div className="flex flex-wrap items-center gap-2">
                   <Select
@@ -371,8 +371,8 @@ export default function AccountSourceForm() {
                       <SelectValue placeholder="Select type account" />
                     </SelectTrigger>
                     <SelectContent className="w-full">
-                      <SelectItem value="WALLET">Wallet</SelectItem>
-                      <SelectItem value="BANKING">Banking</SelectItem>
+                      <SelectItem value="WALLET">{t('accountSource:AccountSourceCardDetail.item.wallet')}</SelectItem>
+                      <SelectItem value="BANKING">{t('accountSource:AccountSourceCardDetail.item.banking')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -404,7 +404,7 @@ export default function AccountSourceForm() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                     >
-                      Last updated: {new Date().toLocaleString()}
+                      {t('accountSource:AccountSourceCardDetail.lastUpdate')}: {new Date().toLocaleString()}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -419,7 +419,7 @@ export default function AccountSourceForm() {
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-base font-medium text-gray-600 dark:text-gray-400">
-                      Total Accounts
+                      {t('accountSource:AccountSourceCardDetail.totalAccount')}
                     </span>
                     <motion.span
                       className="text-lg font-bold text-gray-800 dark:text-white"
@@ -434,7 +434,7 @@ export default function AccountSourceForm() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-base font-medium text-gray-600 dark:text-gray-400">
-                      Total Balance
+                      {t('accountSource:AccountSourceCardDetail.totalBlance')}
                     </span>
                     <div className="flex items-center">
                       <motion.span
