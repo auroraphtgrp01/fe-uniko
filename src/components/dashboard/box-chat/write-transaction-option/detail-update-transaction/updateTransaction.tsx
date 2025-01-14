@@ -2,7 +2,7 @@ import FormZod from '@/components/core/FormZod'
 import { Button } from '@/components/ui/button'
 import { Check, X } from 'lucide-react'
 import { defineUpdateTransactionFormBody, updateTransactionSchema } from './constants'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ITrackerTransactionType,
   ITrackerTransactionTypeBody
@@ -10,8 +10,11 @@ import {
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { handleCancelEdit } from '@/app/chatbox/handler'
 import { IAccountSource } from '@/core/account-source/models'
+import { Transaction } from '@/app/chatbox/constants'
+import { initEmptyAccountSource } from '@/app/dashboard/account-source/constants'
 
 interface IUpdateTransactionProps {
+  transaction: Transaction
   incomeTrackerType: ITrackerTransactionType[]
   expenseTrackerType: ITrackerTransactionType[]
   trackerType: ITrackerTransactionType[]
@@ -20,8 +23,19 @@ interface IUpdateTransactionProps {
 }
 
 export const UpdateTransaction = (props: IUpdateTransactionProps) => {
-  const { incomeTrackerType, expenseTrackerType, trackerType, setEditingId, accountSources } = props
+  const { incomeTrackerType, expenseTrackerType, trackerType, setEditingId, accountSources, transaction } = props
+  const accountSourceData = useMemo(() => {
+    return [
+      ...accountSources,
+      {
+        ...initEmptyAccountSource,
+        id: transaction.wallet?.id || 'unknown',
+        name: transaction.walletName
+      }
+    ]
+  }, [accountSources, transaction.wallet])
   const formRef = useRef<HTMLFormElement>(null)
+  console.log('🚀 ~ UpdateTransaction ~ transaction:', transaction)
 
   // state
   const [typeOfEditTrackerType, setTypeOfEditTrackerType] = useState<ETypeOfTrackerTransactionType>(
@@ -37,11 +51,17 @@ export const UpdateTransaction = (props: IUpdateTransactionProps) => {
   return (
     <div>
       <FormZod
+        defaultValues={{
+          reasonName: transaction.description,
+          amount: transaction.amount.toString(),
+          trackerTypeId: transaction.categoryId,
+          accountSourceId: transaction.wallet?.id || 'unknown'
+        }}
         formFieldBody={defineUpdateTransactionFormBody({
           incomeTrackerType,
           expenseTrackerType,
           currentDirection: typeOfEditTrackerType,
-          accountSourceData: accountSources,
+          accountSourceData: accountSourceData,
           typeOfEditTrackerType,
           setTypeOfEditTrackerType,
           openEditDialog: isOpenEditDialog,

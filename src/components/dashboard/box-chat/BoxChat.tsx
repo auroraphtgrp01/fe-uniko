@@ -16,10 +16,7 @@ import { Check } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { DialogDescription } from '@radix-ui/react-dialog'
 import { useAccountSource } from '@/core/account-source/hooks'
-import {
-  ITrackerTransactionType,
-  ITrackerTransactionTypeBody
-} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
+import { ITrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { GET_ADVANCED_ACCOUNT_SOURCE_KEY } from '@/core/account-source/constants'
@@ -655,6 +652,7 @@ export function ChatBox() {
                         expenseTrackerType={expenseTrackerType}
                         trackerType={trackerType}
                         accountSources={getAllAccountSourceData?.data || []}
+                        transaction={transaction}
                       />
                     ) : (
                       <DetailTransaction
