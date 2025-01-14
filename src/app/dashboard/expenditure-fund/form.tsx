@@ -51,6 +51,7 @@ import DeleteDialog from '@/components/dashboard/DeleteDialog'
 
 export default function ExpenditureFundForm() {
   // states
+  const [heightDonut, setHeightDonut] = useState<string>('')
   const [isDialogOpen, setIsDialogOpen] = useState<IExpenditureFundDialogOpen>(initEmptyExpenditureFundDialogOpen)
   const [dataTableConfig, setDataTableConfig] = useState<IDataTableConfig>({
     ...initTableConfig,
@@ -77,7 +78,7 @@ export default function ExpenditureFundForm() {
   }, [dataTable])
 
   // hooks
-  const { fundId, setCheckHeightRange, checkHeightRange } = useStoreLocal()
+  const { fundId, checkHeightRange, viewportHeight, setFundArr } = useStoreLocal()
   const { createTrackerTxType, updateTrackerTxType } = useTrackerTransactionType()
   const {
     createExpenditureFund,
@@ -104,7 +105,6 @@ export default function ExpenditureFundForm() {
     dateRange
   )
   const { getAllExpenditureFundData, refetchAllExpendingFund } = getAllExpenditureFund()
-  const { setFundArr } = useStoreLocal()
 
   useEffect(() => {
     if (getAllExpenditureFundData && getAllExpenditureFundData.data) {
@@ -178,6 +178,18 @@ export default function ExpenditureFundForm() {
     setQueryOptions((prev) => ({ ...prev, page: dataTableConfig.currentPage, limit: dataTableConfig.limit }))
   }, [dataTableConfig])
 
+  useEffect(() => {
+    if (viewportHeight > 600 && viewportHeight <= 700) {
+      setHeightDonut("h-[15rem]")
+    } else if (viewportHeight > 700 && viewportHeight <= 800) {
+      setHeightDonut("h-[20rem]")
+    } else if (viewportHeight > 800 && viewportHeight <= 900) {
+      setHeightDonut("h-[19rem]")
+    } else {
+      setHeightDonut("h-[20rem]")
+    }
+  }, [viewportHeight])
+
   const buttons = initButtonInHeaders({ setIsDialogOpen })
   return (
     <div className='grid h-full w-full grid-cols-1 gap-4'>
@@ -202,7 +214,7 @@ export default function ExpenditureFundForm() {
             </CardHeader>
             <CardContent>
               <div className='flex h-auto w-full justify-center'>
-                <DonutChart data={chartData} checkHeightRange={checkHeightRange} className={` w-full max-w-[50rem] ${checkHeightRange ? 'h-[15rem]' : 'h-[19rem]'}`} types='donut' />
+                <DonutChart data={chartData} className={` w-full max-w-[50rem] ${heightDonut}`} types='donut' />
               </div>
             </CardContent>
           </Card>
