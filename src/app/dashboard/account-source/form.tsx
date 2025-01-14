@@ -172,13 +172,13 @@ export default function AccountSourceForm() {
 
   useEffect(() => {
     if (viewportHeight > 600 && viewportHeight <= 700) {
-      setHeightDonut("h-[18rem]");
+      setHeightDonut("h-[18rem]")
     } else if (viewportHeight > 700 && viewportHeight <= 800) {
-      setHeightDonut("h-[20rem]");
+      setHeightDonut("h-[20rem]")
     } else if (viewportHeight > 800 && viewportHeight <= 900) {
-      setHeightDonut("h-[19rem]");
+      setHeightDonut("h-[19rem]")
     } else {
-      setHeightDonut("h-[20rem]");
+      setHeightDonut("h-[20rem]")
     }
   }, [viewportHeight])
 
@@ -241,10 +241,10 @@ export default function AccountSourceForm() {
                   <Layers2Icon className='h-7 w-7 text-white' />
                 </div>
                 <div className='text-right'>
-                  <p className='overflow-hidden truncate whitespace-nowrap text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105 md:w-[190px]'>
+                  <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
                     {formatCurrency(accountBanks.totalBalance, 'VND ')}
                   </p>
-                  <p className='mt-1 flex items-center text-sm text-red-100'>
+                  <p className='mt-1 flex items-center text-sm text-blue-100'>
                     <ArrowUpIcon className='mr-1 h-4 w-4 animate-bounce' />
                     <span>{t('accountSource:AccountSourceCard.totalBlance.gradually')}</span>
                   </p>
@@ -265,10 +265,10 @@ export default function AccountSourceForm() {
             <CardContent className='relative pt-1'>
               <div className='flex items-center justify-between'>
                 <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
-                  <Landmark className='h-7 w-7 text-white' />
+                  <Layers2Icon className='h-7 w-7 text-white' />
                 </div>
                 <div className='text-right'>
-                  <p className='overflow-hidden truncate whitespace-nowrap text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105 md:w-[190px]'>
+                  <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
                     {formatCurrency(accountBanks.totalBalanceBanking, 'VND')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-blue-100'>
@@ -293,10 +293,10 @@ export default function AccountSourceForm() {
             <CardContent className='relative pt-1'>
               <div className='flex items-center justify-between'>
                 <div className='rounded-lg bg-white/10 p-3 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/20'>
-                  <Wallet className='h-7 w-7 text-white' />
+                  <Layers2Icon className='h-7 w-7 text-white' />
                 </div>
                 <div className='text-right'>
-                  <p className='overflow-hidden truncate whitespace-nowrap text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105 md:w-[190px]'>
+                  <p className='text-2xl font-bold text-white transition-all duration-300 group-hover:scale-105'>
                     {formatCurrency(accountBanks.totalBalanceWallet, 'VND')}
                   </p>
                   <p className='mt-1 flex items-center text-sm text-emerald-100'>

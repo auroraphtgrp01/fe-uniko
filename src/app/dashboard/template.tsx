@@ -27,7 +27,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
       } else {
         setCheckHeightRange(false)
       }
-      console.log("🚀 ~ updateScreenHeight ~ viewportHeight:", viewportHeight)
     }
 
     updateScreenHeight()

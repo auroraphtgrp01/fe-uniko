@@ -426,7 +426,6 @@ export default function TrackerTransactionForm() {
                     ) : (
                       <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
                     )}
-                    {/* <span>{t('notiTotalBalance', { percentage: 2.5 })}</span> */}
                     <span>
                       {`${statisticData?.data?.total?.rate && statisticData.data.total.rate !== 'none'
                         ? (statisticData.data.total.rate.startsWith('-') ? '' : '+') + statisticData.data.total.rate
