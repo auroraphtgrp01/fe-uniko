@@ -22,6 +22,8 @@ interface StoreState {
   // checkHeightRange
   checkHeightRange: boolean
   setCheckHeightRange: (checkHeightRange: boolean) => void
+  viewportHeight: number
+  setViewportHeight: (viewportHeight: number) => void
 }
 
 // Add constant for localStorage key
@@ -46,5 +48,9 @@ export const useStoreLocal = create<StoreState>((set) => ({
   fundArr: [],
   setFundArr: (fundArr) => set({ fundArr }),
   checkHeightRange: false,
-  setCheckHeightRange: (data) => set({ checkHeightRange: data })
+  setCheckHeightRange: (data) => set({ checkHeightRange: data }),
+  viewportHeight: window.innerHeight,
+  setViewportHeight: (viewportHeight) => set({
+    viewportHeight
+  })
 }))

@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
 import CardInHeader from '@/components/dashboard/CardInHeader'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { use, useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -73,6 +73,7 @@ export default function AccountSourceForm() {
   const [currentTypeAccount, setCurrentTypeAccount] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
   const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [chartData, setChartData] = useState<any>([])
+  const [heightDonut, setHeightDonut] = useState<string>("")
 
   // Hooks
   // declare hooks
@@ -85,7 +86,7 @@ export default function AccountSourceForm() {
     getStatisticAccountBalance,
     getAllAccountSource
   } = useAccountSource()
-  const { setAccountSourceData, accountSourceData, fundId } = useStoreLocal()
+  const { setAccountSourceData, accountSourceData, fundId, viewportHeight, setViewportHeight } = useStoreLocal()
 
   const { refetchGetStatisticAccountBalanceData } = getStatisticAccountBalance(fundId)
   const { refetchAllData } = getAllAccountSource(fundId)
@@ -169,6 +170,18 @@ export default function AccountSourceForm() {
     }
   }, [getAdvancedData])
 
+  useEffect(() => {
+    if (viewportHeight > 600 && viewportHeight <= 700) {
+      setHeightDonut("h-[18rem]");
+    } else if (viewportHeight > 700 && viewportHeight <= 800) {
+      setHeightDonut("h-[20rem]");
+    } else if (viewportHeight > 800 && viewportHeight <= 900) {
+      setHeightDonut("h-[19rem]");
+    } else {
+      setHeightDonut("h-[20rem]");
+    }
+  }, [viewportHeight])
+
   // Other components
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
   const totalBalance = useMemo(
@@ -208,7 +221,6 @@ export default function AccountSourceForm() {
   const isIncreased = useMemo(() => totalBalance > previousBalance, [totalBalance, previousBalance]);
 
   return (
-
     <div className='grid h-full select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
       <div className='flex w-full flex-1 flex-col md:col-span-2'>
@@ -487,7 +499,7 @@ export default function AccountSourceForm() {
           </CardHeader>
           <CardContent>
             <div>
-              <DonutChart data={chartData} className='mt-[-2rem] h-[17rem] w-full' types='donut' />
+              <DonutChart data={chartData} className={`mt-[-2rem] w-full ${heightDonut}`} types='donut' />
             </div>
           </CardContent>
         </Card>

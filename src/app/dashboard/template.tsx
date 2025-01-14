@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 
 export default function Template({ children }: { children: React.ReactNode }) {
-  const { setCheckHeightRange, checkHeightRange } = useStoreLocal()
+  const { setCheckHeightRange, checkHeightRange, viewportHeight, setViewportHeight } = useStoreLocal()
 
   useEffect(() => {
     window.scrollTo({
@@ -15,8 +15,13 @@ export default function Template({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
+    if (viewportHeight) {
+      setViewportHeight(window.innerHeight)
+    }
+  }, [viewportHeight]);
+
+  useEffect(() => {
     const updateScreenHeight = () => {
-      const viewportHeight = window.innerHeight
       if (viewportHeight >= 600 && viewportHeight <= 771) {
         setCheckHeightRange(true)
       } else {
