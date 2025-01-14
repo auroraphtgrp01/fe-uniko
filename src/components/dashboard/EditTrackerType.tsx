@@ -1,25 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { Delete, Edit, PlusIcon, Save, SaveIcon, Undo2, X } from 'lucide-react'
-import {
-  IEditTrackerTypeDialogProps,
-  ITrackerTransactionType,
-  ITrackerTransactionTypeBody
-} from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
-import FormZod from '../core/FormZod'
+import { PlusIcon, SaveIcon, X } from 'lucide-react'
+import { IEditTrackerTypeDialogProps } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import CreateTrackerTypeForm from './CreateTrackerTypeForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
 import { useTrackerTransactionType } from '@/core/tracker-transaction-type/hooks'
-import {
-  defineEditTrackerTypeBody,
-  editTrackerTypeSchema
-} from '@/core/tracker-transaction-type/constants/update-tracker-transaction-type.constant'
 import AccordionEditTrackerType from './AccordionEditTrackerType'
 import { useTranslation } from 'react-i18next'
 
@@ -34,12 +22,11 @@ export default function EditTrackerTypeDialog({
   handleUpdateTrackerType,
   expenditureFund
 }: IEditTrackerTypeDialogProps) {
-  const { isDeleteOne, deleteTrackerType } = useTrackerTransactionType()
+  const { deleteTrackerType } = useTrackerTransactionType()
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [valueSearch, setValueSearch] = useState<string>('')
   const filteredDataArr = dataArr?.filter((data) => data.label.toLowerCase().includes(valueSearch.trim().toLowerCase()))
-  const [accordionValue, setAccordionValue] = useState<string | null>(null)
   const handleDeleteTrackerType = (id: string) => {
     deleteTrackerType({ id })
     setOpenEditDialog(false)

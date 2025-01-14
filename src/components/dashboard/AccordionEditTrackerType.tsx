@@ -10,7 +10,6 @@ import {
 } from '@/core/tracker-transaction-type/constants/update-tracker-transaction-type.constant'
 import {
   IEditTrackerTypeDialogData,
-  ITrackerTransactionType,
   ITrackerTransactionTypeBody
 } from '@/core/tracker-transaction-type/models/tracker-transaction-type.interface'
 import { useRef, useState } from 'react'

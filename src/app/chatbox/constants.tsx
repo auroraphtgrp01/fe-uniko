@@ -1,6 +1,6 @@
-import { ETypeOfTrackerTransactionType } from "@/core/tracker-transaction-type/models/tracker-transaction-type.enum"
-import { ICreateTrackerTransactionBody } from "@/core/transaction/models"
-import { Dispatch, SetStateAction } from "react"
+import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { ICreateTrackerTransactionBody } from '@/core/transaction/models'
+import { Dispatch, SetStateAction } from 'react'
 import { ChevronRight, LineChart, MessageCircle, NotebookPen, TrendingUp } from 'lucide-react'
 export const typeCallBack: any = [
   'getAllTrackerTransactionType',
@@ -39,26 +39,26 @@ export interface Category {
 }
 
 export interface Transaction {
-  id: string;
-  amount: number;
-  type: ETypeOfTrackerTransactionType;
-  description: string;
-  walletName: string;
-  categoryId: string;
-  categoryName: string;
-  accountSourceId: string;
-  accountSourceName: string;
-  fundId: string;
-  userId: string;
+  id: string
+  amount: number
+  type: ETypeOfTrackerTransactionType
+  description: string
+  walletName: string
+  categoryId: string
+  categoryName: string
+  accountSourceId: string
+  accountSourceName: string
+  fundId: string
+  userId: string
   wallet?: {
-    id: string;
-    name: string;
-    currentAmount: number;
-  };
+    id: string
+    name: string
+    currentAmount: number
+  }
   category?: {
-    id: string;
-    name: string;
-  };
+    id: string
+    name: string
+  }
 }
 export interface IEditForm {
   [key: string]: {
@@ -72,12 +72,12 @@ export interface IEditForm {
 }
 
 export interface ITrackerTransactionBody {
-  trackerTypeId: string;
-  reasonName: string;
-  direction: string;
-  amount: string | number;
-  accountSourceId: string;
-  fundId: string;
+  trackerTypeId: string
+  reasonName: string
+  direction: string
+  amount: string | number
+  accountSourceId: string
+  fundId: string
 }
 
 export interface IPropsStartEdit {
@@ -96,27 +96,31 @@ export interface IPropsHandleSend {
   fundId: string
   setIsTyping: Dispatch<SetStateAction<boolean>>
   setCurrentResponse: Dispatch<SetStateAction<string>>
-  setApiData: Dispatch<SetStateAction<{
-    message: Message;
-    transactions: Transaction[];
-  }[]>>
+  setApiData: Dispatch<
+    SetStateAction<
+      {
+        message: Message
+        transactions: Transaction[]
+      }[]
+    >
+  >
 }
 
-export interface IPropsHandleCancelEdit {
-  transactionId: string,
-  editForms: IEditForm,
-  selectedTransactions: Transaction[],
-  setSelectedTransactions: Dispatch<SetStateAction<Transaction[]>>,
-  setEditedTransactions: Dispatch<SetStateAction<any[]>>,
+export interface IPropsHandleSaveEdit {
+  transactionId: string
+  editForms: IEditForm
+  selectedTransactions: Transaction[]
+  setSelectedTransactions: Dispatch<SetStateAction<Transaction[]>>
+  setEditedTransactions: Dispatch<SetStateAction<any[]>>
   setEditingId: Dispatch<SetStateAction<string | null>>
 }
 
-export interface IpropsHandleConfirm {
-  editedTransactions: any[],
-  fundId: string,
-  postTrackerTransactions: any,
-  setIsDialogOpen: Dispatch<SetStateAction<boolean>>,
-  setIsDisabled: Dispatch<SetStateAction<boolean>>,
+export interface IPropsHandleConfirm {
+  editedTransactions: any[]
+  fundId: string
+  postTrackerTransactions: any
+  setIsDialogOpen: Dispatch<SetStateAction<boolean>>
+  setIsDisabled: Dispatch<SetStateAction<boolean>>
   setEditedTransactions: Dispatch<SetStateAction<any[]>>
 }
 
