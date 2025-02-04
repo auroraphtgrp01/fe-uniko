@@ -28,19 +28,22 @@ import { EBankTypes, initEmptyAccountSource } from '@/app/dashboard/account-sour
 
 export default function CreateAndUpdateAccountSourceForm({
   callBack,
-  defaultValue
+  defaultValue,
+  isCreating,
+  isUpdating
 }: {
   callBack: (payload: IAccountSourceBody) => void
   defaultValue?: IAccountSource
+  isCreating: boolean
+  isUpdating: boolean
 }) {
   const [typeState, setTypeState] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
   const [defaultValueData, setDefaultValueData] = useState<IAccountSourceFormData>({
+
     accountBank: undefined,
     accountSource: { accountSourceName: '', accountSourceType: EAccountSourceType.WALLET, initAmount: '' }
   })
-  useEffect(() => {
-    console.log('>>>', defaultValue)
-  }, [defaultValue])
+
   const formCreateAccountSourceRef = useRef<HTMLFormElement>(null)
   const formCreateAccountBankRef = useRef<HTMLFormElement>(null)
 
@@ -101,6 +104,7 @@ export default function CreateAndUpdateAccountSourceForm({
               onSubmit={handleSubmit}
               submitRef={formCreateAccountSourceRef}
             />
+
             {typeState === EAccountSourceType.BANKING && (
               <FormZod
                 defaultValues={defaultValueData.accountBank}
@@ -136,7 +140,7 @@ export default function CreateAndUpdateAccountSourceForm({
           </Fragment>
         )}
       </Fragment>
-      <Button onClick={onSubmitAll} className='mt-4 w-full'>
+      <Button onClick={onSubmitAll} className='mt-4 w-full' disabled={isCreating || isUpdating}>
         {t('form.button.save_changes_account_source')}
       </Button>
     </div>

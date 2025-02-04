@@ -99,11 +99,13 @@ export interface IUnclassifiedTxDialog {
   setTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
 }
 export interface IClassifyTransactionDialog {
+  isPendingClassifyTransaction: boolean
   classifyTransaction: any
   handleClassify: (data: IClassifyTransactionBody) => void
 }
 export interface ICreateTrackerTransactionDialog {
   handleCreate: (data: ICreateTrackerTransactionBody) => void
+  isPendingCreateTrackerTransaction: boolean
 }
 
 export interface ICreateTrackerTransactionTypeDialog {

@@ -144,7 +144,9 @@ export default function TrackerTransactionForm() {
     statusUpdating: statusUpdateTrackerTransaction,
     updateTrackerTransaction,
     deleteAnTrackerTransaction,
-    deleteMultipleTrackerTransaction
+    deleteMultipleTrackerTransaction,
+    isCreating : isPendingCreateTrackerTransaction,
+    isClassing : isPendingClassifyTransaction
   } = useTrackerTransaction()
   const { getStatisticOverviewPage } = useOverviewPage()
   const { refetchGetStatisticOverviewPageData } = getStatisticOverviewPage(
@@ -636,6 +638,7 @@ export default function TrackerTransactionForm() {
           statusUpdateTrackerTransaction
         }}
         classifyTransactionDialog={{
+          isPendingClassifyTransaction,
           classifyTransaction,
           handleClassify: (data: IClassifyTransactionBody) => {
             handleClassifyTransaction({
@@ -652,6 +655,7 @@ export default function TrackerTransactionForm() {
           }
         }}
         createTrackerTransactionDialog={{
+          isPendingCreateTrackerTransaction,
           handleCreate: (data: ICreateTrackerTransactionBody) =>
             handleCreateTrackerTransaction({
               payload: {

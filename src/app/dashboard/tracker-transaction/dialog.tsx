@@ -43,7 +43,7 @@ export default function TrackerTransactionDialog({
       handleClassify: classifyTransactionDialog.handleClassify
     }),
     footer: (
-      <Button onClick={() => formClassifyRef.current?.requestSubmit()} type='button'>
+      <Button onClick={() => formClassifyRef.current?.requestSubmit()} disabled={classifyTransactionDialog.isPendingClassifyTransaction} isLoading={classifyTransactionDialog.isPendingClassifyTransaction} type='button'>
         {t('common:button.save')}
       </Button>
     ),
@@ -74,7 +74,8 @@ export default function TrackerTransactionDialog({
       expenditureFund: sharedDialogElements.expenditureFund
     }),
     footer: (
-      <Button type='button' onClick={() => formCreateRef.current?.requestSubmit()}>
+      <Button type='button' disabled={createTrackerTransactionDialog.isPendingCreateTrackerTransaction}
+        isLoading={createTrackerTransactionDialog.isPendingCreateTrackerTransaction} onClick={() => formCreateRef.current?.requestSubmit()}>
         {t('common:button.save')}
       </Button>
     ),
