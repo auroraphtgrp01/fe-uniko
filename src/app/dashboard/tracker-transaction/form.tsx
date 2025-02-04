@@ -389,7 +389,7 @@ export default function TrackerTransactionForm() {
     } else if (viewportHeight > 800 && viewportHeight <= 900) {
       setHeightDonut("h-[17rem]")
     } else {
-      setHeightDonut("h-[20rem]")
+      setHeightDonut("h-[17rem]")
     }
   }, [viewportHeight])
 
