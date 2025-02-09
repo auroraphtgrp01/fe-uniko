@@ -103,6 +103,7 @@ import { useOverviewPage } from '@/core/overview/hooks'
 
 export default function TrackerTransactionForm() {
   // states
+  const [heightDonut, setHeightDonut] = useState<string>('')
   const [queryOptions, setQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [uncTableQueryOptions, setUncTableQueryOptions] = useState<IQueryOptions>(initQueryOptions)
   const [tableData, setTableData] = useState<ICustomTrackerTransaction[]>([])
@@ -130,7 +131,7 @@ export default function TrackerTransactionForm() {
   const [idDeletes, setIdDeletes] = useState<string[]>([])
   // hooks
   const socket = useSocket()
-  const { user, fundId, checkHeightRange, setCheckHeightRange } = useStoreLocal()
+  const { user, fundId, checkHeightRange, viewportHeight } = useStoreLocal()
   const { getMe } = useUser()
   const { t } = useTranslation(['trackerTransaction', 'common'])
   const { isGetMeUserPending } = getMe(true)
@@ -295,25 +296,7 @@ export default function TrackerTransactionForm() {
     }
   }, [statisticData])
 
-  useEffect(() => {
-    const updateScreenHeight = () => {
-      const viewportHeight = window.innerHeight
-      if (viewportHeight >= 600 && viewportHeight <= 900) {
-        setCheckHeightRange(true)
-      } else {
-        setCheckHeightRange(false)
-      }
-    }
-
-    updateScreenHeight()
-    window.addEventListener('resize', updateScreenHeight)
-
-    return () => {
-      window.removeEventListener('resize', updateScreenHeight)
-    };
-  }, []);
-
-  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t, checkHeightRange), [chartData, t, checkHeightRange])
+  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t, heightDonut, checkHeightRange), [chartData, t, heightDonut, checkHeightRange])
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
   const refetchTransactionBySocket = () => {
@@ -395,6 +378,18 @@ export default function TrackerTransactionForm() {
       socket.off(EPaymentEvents.REFETCH_FAILED, handleRefetchFailed)
     }
   }, [socket])
+
+  useEffect(() => {
+    if (viewportHeight > 600 && viewportHeight <= 700) {
+      setHeightDonut("h-[14.5rem]")
+    } else if (viewportHeight > 700 && viewportHeight <= 800) {
+      setHeightDonut("h-[18rem]")
+    } else if (viewportHeight > 800 && viewportHeight <= 900) {
+      setHeightDonut("h-[17rem]")
+    } else {
+      setHeightDonut("h-[20rem]")
+    }
+  }, [viewportHeight])
 
   return (
     <div className='grid select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>

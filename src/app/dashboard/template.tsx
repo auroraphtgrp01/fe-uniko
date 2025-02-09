@@ -18,7 +18,8 @@ export default function Template({ children }: { children: React.ReactNode }) {
     if (viewportHeight) {
       setViewportHeight(window.innerHeight)
     }
-  }, [viewportHeight]);
+    console.log("🚀 ~ updateScreenHeight ~ viewportHeight:", window.innerHeight)
+  }, [window.innerHeight]);
 
   useEffect(() => {
     const updateScreenHeight = () => {
@@ -28,7 +29,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
         setCheckHeightRange(false)
       }
     }
-
     updateScreenHeight()
     window.addEventListener('resize', updateScreenHeight)
 

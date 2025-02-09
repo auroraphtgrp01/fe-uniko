@@ -121,7 +121,7 @@ export const defineContentCreateTrackerTxTypeDialog = ({
   )
 }
 
-export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>, checkHeightRange?: boolean): ITabConfig => {
+export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunction<any>, heightDonut?: string, checkHeightRange?: boolean): ITabConfig => {
   return {
     default: 'expenseChart',
     tabContents: [
@@ -129,7 +129,7 @@ export const initTrackerTransactionTab = (data: IChartData | undefined, t: TFunc
         content: (
           <div className='flex w-full items-center justify-center'>
             {data && data.expenseTransactionTypeStats?.length > 0 ? (
-              <DonutChart data={data.expenseTransactionTypeStats} className={`w-full ${checkHeightRange ? 'h-[14rem]' : 'h-[17rem]'}`} types='donut' />
+              <DonutChart data={data.expenseTransactionTypeStats} className={`w-full ${heightDonut}`} types='donut' />
             ) : (
               <div className='mt-10 flex flex-col items-center justify-center'>
                 <Image
