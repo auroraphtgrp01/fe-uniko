@@ -3,12 +3,30 @@ import { z } from 'zod'
 
 export const updateUserSchema = z
   .object({
-    fullName: z.string().min(5),
-    dateOfBirth: z.date(),
-    gender: z.string().min(3),
-    workplace: z.string().min(3),
-    phone_number: z.string().min(3),
-    address: z.string().min(3)
+    fullName: z
+      .string()
+      .trim()
+      .min(5)
+      .max(50)
+      .regex(/^[A-Za-zÀ-ỹ\s]+$/),
+    dateOfBirth: z
+      .date()
+      .refine((date) => date <= new Date())
+      .refine((date) => {
+        const age = new Date().getFullYear() - date.getFullYear()
+        return age >= 10
+      }, 'Date of birth must be at least 10 years old.'),
+    gender: z.enum(['Male', 'Female'], {
+      message: 'Gender must be either "Male" or "Female".'
+    }),
+    workplace: z.string().min(10).max(100),
+    phone_number: z
+      .string()
+      .trim()
+      .min(10, { message: 'Phone number must be at least 10 characters long.' })
+      .max(15, { message: 'Phone number must be at most 15 characters long.' })
+      .regex(/^(\+?\d{1,3})?\s?\d{9,15}$/, 'Invalid phone number'),
+    address: z.string().min(20).max(100)
   })
   .strict()
 

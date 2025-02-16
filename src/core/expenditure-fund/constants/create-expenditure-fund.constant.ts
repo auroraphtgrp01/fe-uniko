@@ -48,7 +48,11 @@ export const defineCreateExpenditureFundFormBody =
 
 export const createExpenditureFundSchema = z
   .object({
-    name: z.string().trim().min(2).max(256),
+    name: z
+      .string({ message: 'Name is required' })
+      .trim()
+      .min(5, { message: 'Name must be at least 5 characters long.' })
+      .max(50, { message: 'Name must be at most 50 characters long.' }),
     // currency: z.enum(['USD', 'VND', 'EUR']),
     description: z.any()
   })

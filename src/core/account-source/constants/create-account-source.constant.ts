@@ -4,8 +4,13 @@ import { z } from 'zod'
 import { EAccountSourceType } from '../models'
 
 export const createAccountSourceSchema = z.object({
-  accountSourceName: z.string().min(2, { message: 'Source Name is required' }),
-  accountSourceType: z.nativeEnum(EAccountSourceType),
+  accountSourceName: z
+    .string({ message: 'Source Name is required' })
+    .min(5, { message: 'Source Name must be at least 5 characters long' })
+    .max(30, { message: 'Source Name must be at most 30 characters long' }),
+  accountSourceType: z.nativeEnum(EAccountSourceType, {
+    message: 'Account source type must be either "Wallet" or "Banking"'
+  }),
   initAmount: z.string().min(0, { message: 'Initial Amount is required' })
 })
 

@@ -1,17 +1,16 @@
 import { z } from 'zod'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
-import { translate } from '@/libraries/utils'
 
 export const updatePassWordSchemaWithCurrentPassword = z
   .object({
-    currentPassword: z.string().min(3, { message: 'Current password must be at least 3 characters long.' }),
-    newPassword: z.string().min(3, { message: 'New password must be at least 3 characters long.' })
+    currentPassword: z.string().min(6, { message: 'Current password must be at least 6 characters long.' }),
+    newPassword: z.string().min(6, { message: 'New password must be at least 6 characters long.' })
   })
   .strict()
 
 export const updatePassWordSchemaWithoutCurrentPassword = z
   .object({
-    newPassword: z.string().min(3, { message: 'New password must be at least 3 characters long.' })
+    newPassword: z.string().min(6, { message: 'New password must be at least 6 characters long.' })
   })
   .strict()
 

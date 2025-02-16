@@ -4,9 +4,14 @@ import { z } from 'zod'
 import { EAccountSourceType } from '../models'
 
 export const updateAccountSourceSchema = z.object({
-  accountSourceName: z.string().min(2, { message: 'Source Name is required' }),
-  accountSourceType: z.nativeEnum(EAccountSourceType),
-  id: z.string().optional()
+  accountSourceName: z
+    .string({ message: 'Source Name is required' })
+    .min(5, { message: 'Source Name must be at least 5 characters long' })
+    .max(30, { message: 'Source Name must be at most 30 characters long' }),
+  accountSourceType: z.nativeEnum(EAccountSourceType, {
+    message: 'Account source type must be either "Wallet" or "Banking"'
+  }),
+  id: z.string()
 })
 
 export const updateAccountSourceFormBody = (setTypeState: any) => {

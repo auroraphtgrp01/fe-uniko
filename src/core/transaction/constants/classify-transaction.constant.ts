@@ -66,7 +66,7 @@ export const defineClassifyTransactionFormBody = ({
 
 export const classifyTransactionSchema = z
   .object({
-    reasonName: z.string().trim().min(2).max(256),
+    reasonName: z.string().trim().min(5).max(100),
     trackerTypeId: z.string().uuid(),
     description: z.any()
   })

@@ -114,7 +114,7 @@ export const defineCreateTrackerTransactionFormBody = ({
 
 export const createTrackerTransactionSchema = z
   .object({
-    reasonName: z.string().trim().min(2).max(256),
+    reasonName: z.string().trim().min(5).max(100),
     amount: z.string(),
     accountSourceId: z.string().uuid(),
     direction: z.enum(['INCOMING', 'EXPENSE']),
