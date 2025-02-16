@@ -40,8 +40,8 @@ export const defineCreateExpenditureFundFormBody =
       {
         name: 'description',
         type: EFieldType.Textarea,
-        label: t('form.direction.label'),
-        placeHolder: t('form.direction.placeholder')
+        label: t('form.description.label'),
+        placeHolder: t('form.description.placeholder')
       }
     ]
   }

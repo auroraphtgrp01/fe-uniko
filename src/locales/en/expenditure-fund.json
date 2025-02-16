@@ -17,8 +17,19 @@
       "placeholder": "Enter name *"
     },
     "direction": {
+      "label": "Direction",
+      "placeholder": "Enter direction *"
+    },
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status *",
+      "active": "Active",
+      "closed": "Closed",
+      "pending": "Pending"
+    },
+    "description": {
       "label": "Description",
-      "placeholder": "Enter description *"
+      "placeholder": "Enter description"
     }
   },
   "tableExpenditureFundFormBody": {

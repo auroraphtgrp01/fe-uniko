@@ -117,7 +117,7 @@ export const createTrackerTransactionSchema = z
     reasonName: z.string().trim().min(5).max(100),
     amount: z.string(),
     accountSourceId: z.string().uuid(),
-    direction: z.enum(['INCOMING', 'EXPENSE']),
+    direction: z.enum(['INCOMING', 'EXPENSE'], { message: 'Direction must be either "Incoming" or "Expense"' }),
     trackerTypeId: z.string().uuid(),
     description: z.any()
   })

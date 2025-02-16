@@ -62,6 +62,6 @@ export const updateTransactionSchema = z
   .object({
     amount: z.string(),
     accountSourceId: z.string().uuid(),
-    direction: z.enum(['INCOMING', 'EXPENSE'])
+    direction: z.enum(['INCOMING', 'EXPENSE'], { message: 'Direction must be either "Incoming" or "Expense"' })
   })
   .strict()
