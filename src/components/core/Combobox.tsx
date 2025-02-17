@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState, forwardRef } from 'react'
+import React, { useState, forwardRef, useEffect } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/libraries/utils'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useStoreLocal } from '@/hooks/useStoreLocal'
 
 export interface IComboboxProps {
   className?: string
@@ -38,6 +39,8 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
   ) => {
     const [open, setOpen] = useState(false)
     const [searchValue, setSearchValue] = useState('')
+    const { viewportHeight } = useStoreLocal()
+    const [scrollMaxHeight, setScrollMaxHeight] = useState('')
 
     const filteredDataArr = dataArr?.filter((data) =>
       data.label.toLowerCase().includes(searchValue.trim().toLowerCase())
@@ -55,6 +58,12 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
       setOpen(false)
       setSearchValue('')
     }
+
+    useEffect(() => {
+      if (viewportHeight <= 700) {
+        setScrollMaxHeight('max-h-[200px] h-[200px]')
+      }
+    }, [viewportHeight]);
 
     return (
       <div className={cn(className)}>
@@ -89,7 +98,7 @@ export const Combobox = forwardRef<HTMLButtonElement, IComboboxProps>(
                 onValueChange={setSearchValue}
                 placeholder={`Search ${label ?? 'item'}`}
               />
-              <CommandList>
+              <CommandList className={scrollMaxHeight}>
                 {filteredDataArr?.length > 0 ? (
                   <CommandGroup>
                     {filteredDataArr?.map((data) => (
