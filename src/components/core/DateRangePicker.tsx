@@ -58,18 +58,18 @@ const DATE_RANGE_OPTIONS: DateRangeOption[] = [
     label: 'This Week',
     value: 'this-week',
     getRangeFn: () => ({
-      from: startOfWeek(new Date()),
-      to: endOfWeek(new Date())
+      from: addDays(startOfWeek(new Date()), 1),
+      to: addDays(endOfWeek(new Date()), 1)
     })
   },
   {
     label: 'Last Week',
     value: 'last-week',
     getRangeFn: () => {
-      const lastWeekStart = subDays(startOfWeek(new Date()), 7)
+      const lastWeekStart = subDays(addDays(startOfWeek(new Date()), 1), 7)
       return {
         from: lastWeekStart,
-        to: endOfWeek(lastWeekStart)
+        to: addDays(endOfWeek(lastWeekStart), 1)
       }
     }
   },
