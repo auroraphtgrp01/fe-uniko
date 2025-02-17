@@ -73,8 +73,8 @@ export const updateTrackerTransactionSchema = z
     reasonName: z
       .string({ message: 'Reason Name is required' })
       .trim()
-      .min(5, { message: 'Reason Name must be at least 5 characters long.' })
-      .max(100, { message: 'Reason Name must be at most 100 characters long.' }),
+      .min(5, { message: 'Reason Name must be at least 5 characters long' })
+      .max(100, { message: 'Reason Name must be at most 100 characters long' }),
     trackerTypeId: z.string({ message: 'Tracker Type is required' }).uuid(),
     description: z.any()
   })

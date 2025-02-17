@@ -114,11 +114,21 @@ export const defineCreateTrackerTransactionFormBody = ({
 
 export const createTrackerTransactionSchema = z
   .object({
-    reasonName: z.string().trim().min(5).max(100),
-    amount: z.string(),
-    accountSourceId: z.string().uuid(),
+    reasonName: z
+      .string({
+        message: 'Reason name must be a valid string'
+      })
+      .trim()
+      .min(5, { message: 'Reason name must be at least 5 characters long' })
+      .max(100, { message: 'Reason name must not exceed 100 characters' }),
+    amount: z.string({ message: 'Amount must be a valid number' }).min(0, { message: 'Amount must be greater than 0' }),
+    accountSourceId: z
+      .string({ message: 'Please select a account source' })
+      .uuid({ message: 'Account source ID is not a valid UUID format' }),
     direction: z.enum(['INCOMING', 'EXPENSE'], { message: 'Direction must be either "Incoming" or "Expense"' }),
-    trackerTypeId: z.string().uuid(),
+    trackerTypeId: z
+      .string({ message: 'Please select a tracker type' })
+      .uuid({ message: 'Tracker type ID is not a valid UUID format' }),
     description: z.any()
   })
   .strict()
