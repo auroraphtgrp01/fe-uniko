@@ -107,6 +107,22 @@ export const getCurrentMonthDateRange = (): IDateRange => {
   }
 }
 
+export const getCurrentWeekRange = () => {
+  const today = new Date()
+  const startDay = new Date(today)
+  startDay.setDate(today.getDate() - today.getDay() + 1)
+  startDay.setHours(0, 0, 0, 0)
+
+  const endDay = new Date(today)
+  endDay.setDate(today.getDate() - today.getDay() + 7)
+  endDay.setHours(23, 59, 59, 999)
+
+  return {
+    startDay,
+    endDay
+  }
+}
+
 export function translate(Ns: Namespace): TFunction<Namespace, KPrefix>
 export function translate(Ns: Namespace, options?: TOptions<any>): string
 export function translate(Ns: KNamespace, options?: TOptions<any>): string | TFunction<Namespace, KPrefix> {
