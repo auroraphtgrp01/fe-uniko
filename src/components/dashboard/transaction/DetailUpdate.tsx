@@ -321,7 +321,7 @@ export default function DetailUpdateTransaction({
                 updateTransactionProps.handleUpdateTransaction(payload, updateTransactionProps.setIsEditing)
               }}
               defaultValues={{
-                amount: String(updateTransactionProps.transaction.amount),
+                amount: updateTransactionProps.transaction.amount,
                 accountSourceId: updateTransactionProps.transaction.accountSource.id,
                 direction: transactionState.direction
               }}

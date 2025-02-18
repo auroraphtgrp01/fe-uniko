@@ -10,7 +10,12 @@ import { z } from 'zod'
 export const updateTransactionSchema = z
   .object({
     reasonName: z.string({ message: 'Reason name is required' }),
-    amount: z.string({ message: 'Amount is required' }),
+    amount: z
+      .string()
+      .transform((value) => parseFloat(value))
+      .refine((value) => !isNaN(value) && value > 0, {
+        message: 'Amount must be a valid number & greater than 0'
+      }),
     accountSourceId: z.string({ message: 'Account source is required' }).uuid({ message: 'Account source is invalid' }),
     trackerTypeId: z.string({ message: 'Category is required' }).uuid({ message: 'Category is invalid' })
   })

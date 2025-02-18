@@ -60,7 +60,12 @@ export const defineUpdateTransactionFormBody = ({
 
 export const updateTransactionSchema = z
   .object({
-    amount: z.string({ message: 'Amount must be a valid number' }).min(0, { message: 'Amount must be greater than 0' }),
+    amount: z
+      .string()
+      .transform((value) => parseFloat(value))
+      .refine((value) => !isNaN(value) && value > 0, {
+        message: 'Amount must be a valid number & greater than 0'
+      }),
     accountSourceId: z
       .string({ message: 'Please select a account source' })
       .uuid({ message: 'Account source ID is not a valid UUID format' }),

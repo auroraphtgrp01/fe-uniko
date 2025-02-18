@@ -53,7 +53,7 @@ export const UpdateTransaction = (props: IUpdateTransactionProps) => {
       <FormZod
         defaultValues={{
           reasonName: transaction.description,
-          amount: transaction.amount.toString(),
+          amount: transaction.amount,
           trackerTypeId: transaction.categoryId,
           accountSourceId: transaction.wallet?.id || 'unknown'
         }}

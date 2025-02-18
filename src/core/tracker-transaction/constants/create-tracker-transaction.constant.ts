@@ -121,7 +121,12 @@ export const createTrackerTransactionSchema = z
       .trim()
       .min(5, { message: 'Reason name must be at least 5 characters long' })
       .max(100, { message: 'Reason name must not exceed 100 characters' }),
-    amount: z.string({ message: 'Amount must be a valid number' }).min(0, { message: 'Amount must be greater than 0' }),
+    amount: z
+      .string()
+      .transform((value) => parseFloat(value))
+      .refine((value) => !isNaN(value) && value > 0, {
+        message: 'Amount must be a valid number & greater than 0'
+      }),
     accountSourceId: z
       .string({ message: 'Please select a account source' })
       .uuid({ message: 'Account source ID is not a valid UUID format' }),
