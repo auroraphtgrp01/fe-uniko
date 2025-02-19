@@ -61,7 +61,7 @@ export const defineUpdateTransactionFormBody = ({
 export const updateTransactionSchema = z
   .object({
     amount: z
-      .string()
+      .any()
       .transform((value) => parseFloat(value))
       .refine((value) => !isNaN(value) && value > 0, {
         message: 'Amount must be a valid number & greater than 0'

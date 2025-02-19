@@ -122,7 +122,7 @@ export const createTrackerTransactionSchema = z
       .min(5, { message: 'Reason name must be at least 5 characters long' })
       .max(100, { message: 'Reason name must not exceed 100 characters' }),
     amount: z
-      .string()
+      .any()
       .transform((value) => parseFloat(value))
       .refine((value) => !isNaN(value) && value > 0, {
         message: 'Amount must be a valid number & greater than 0'

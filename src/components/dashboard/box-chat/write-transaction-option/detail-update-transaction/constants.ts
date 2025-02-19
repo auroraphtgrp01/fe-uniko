@@ -11,7 +11,7 @@ export const updateTransactionSchema = z
   .object({
     reasonName: z.string({ message: 'Reason name is required' }),
     amount: z
-      .string()
+      .any()
       .transform((value) => parseFloat(value))
       .refine((value) => !isNaN(value) && value > 0, {
         message: 'Amount must be a valid number & greater than 0'
