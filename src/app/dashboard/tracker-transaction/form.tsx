@@ -652,7 +652,8 @@ export default function TrackerTransactionForm() {
               hookClassify: classifyTransaction,
               setIsDialogOpen,
               setUncDataTableConfig: setDataTableUnclassifiedConfig,
-              setDataTableConfig: setDataTableConfig
+              setDataTableConfig: setDataTableConfig,
+              setDataDetail: setDataDetailTransaction
             })
           }
         }}

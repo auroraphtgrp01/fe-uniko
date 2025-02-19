@@ -538,7 +538,8 @@ export default function TransactionForm() {
                 setDataTableConfig: setDataTableConfig,
                 setIsDialogOpen: setIsDialogOpen,
                 setIsEditing,
-                callBackOnSuccess: callBackRefetchTransactionPage
+                callBackOnSuccess: callBackRefetchTransactionPage,
+                setDataDetail
               })
             },
             typeOfTrackerType,
