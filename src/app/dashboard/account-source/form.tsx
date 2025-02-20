@@ -1,8 +1,7 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/dashboard/DataTable'
-import CardInHeader from '@/components/dashboard/CardInHeader'
-import React, { use, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -13,11 +12,9 @@ import {
 } from '@/app/dashboard/account-source/constants'
 import {
   filterDataAccountSource,
-  handleDeleteAnAccountSource,
   handleDeleteMultipleAccountSource,
   handleSubmitAccountSource,
   initDataTable,
-  onRowClick,
   updateCacheDataCreate,
   updateCacheDataUpdate
 } from '@/app/dashboard/account-source/handler'
@@ -45,7 +42,6 @@ import {
   ArrowUpIcon,
   BanknoteIcon,
   CloudDownload,
-  Landmark,
   Layers2Icon,
   PcCase,
   TrendingDown,
@@ -71,7 +67,6 @@ export default function AccountSourceForm() {
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogAccountSource>(initDialogFlag)
   const [isHovered, setIsHovered] = useState(false)
   const [currentTypeAccount, setCurrentTypeAccount] = useState<EAccountSourceType>(EAccountSourceType.WALLET)
-  const [idRowClicked, setIdRowClicked] = useState<string>('')
   const [chartData, setChartData] = useState<any>([])
   const [heightDonut, setHeightDonut] = useState<string>('')
 
@@ -84,9 +79,14 @@ export default function AccountSourceForm() {
     deleteAnAccountSource,
     deleteMultipleAccountSource,
     getStatisticAccountBalance,
-    getAllAccountSource
+    getAllAccountSource,
+    isCreating,
+    isUpdating,
+    isDeletingOne,
+    isDeletingMultiple
   } = useAccountSource()
-  const { setAccountSourceData, accountSourceData, fundId, viewportHeight, setViewportHeight } = useStoreLocal()
+  const { setAccountSourceData, accountSourceData, fundId, viewportHeight } = useStoreLocal()
+
 
   const { refetchGetStatisticAccountBalanceData } = getStatisticAccountBalance(fundId)
   const { refetchAllData } = getAllAccountSource(fundId)
@@ -107,7 +107,7 @@ export default function AccountSourceForm() {
   }
 
   // Hooks
-  const { setData: setDataCreate, resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
+  const { resetData: resetAccountSource } = useUpdateModel<IAdvancedAccountSourceResponse>(
     [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataCreate
   )
@@ -509,21 +509,27 @@ export default function AccountSourceForm() {
         fundId={fundId}
         sharedDialogElements={{
           isDialogOpen,
-          setIsDialogOpen
+          setIsDialogOpen,
+          isCreating,
+          isUpdating,
+          isDeletingOne,
+          isDeletingMultiple
         }}
-        callBack={(payload: IAccountSourceBody) => {
-          handleSubmitAccountSource({
-            payload: { ...payload },
-            setIsDialogOpen,
-            hookCreate: createAccountSource,
-            hookUpdate: updateAccountSource,
-            fundId,
-            isDialogOpen,
-            callBackOnSuccess: callBackRefetchAccountSourcePage
-          })
-        }}
+        callBack={
+          (payload: IAccountSourceBody) => {
+            handleSubmitAccountSource({
+              payload: { ...payload },
+              setIsDialogOpen,
+              hookCreate: createAccountSource,
+              hookUpdate: updateAccountSource,
+              fundId,
+              isDialogOpen,
+              callBackOnSuccess: callBackRefetchAccountSourcePage
+            })
+          }
+        }
         detailAccountSourceDialog={{
-          dataDetail
+          dataDetail,
         }}
       />
       <DeleteDialog

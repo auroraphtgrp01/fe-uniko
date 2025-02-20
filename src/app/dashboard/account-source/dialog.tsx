@@ -12,7 +12,12 @@ interface IAccountSourceDialogProps {
   sharedDialogElements: {
     isDialogOpen: IDialogAccountSource
     setIsDialogOpen: React.Dispatch<React.SetStateAction<IDialogAccountSource>>
+    isCreating: boolean
+    isUpdating: boolean
+    isDeletingOne: boolean
+    isDeletingMultiple: boolean
   }
+
   callBack: (payload: IAccountSourceBody) => void
   detailAccountSourceDialog: {
     dataDetail: IAccountSource
@@ -29,11 +34,14 @@ export default function AccountSourceDialog({
   const updateConfigDialog: IDialogConfig = {
     content: CreateAndUpdateAccountSourceForm({
       callBack,
-      defaultValue: detailAccountSourceDialog.dataDetail
+      defaultValue: detailAccountSourceDialog.dataDetail,
+      isCreating: sharedDialogElements.isCreating,
+      isUpdating: sharedDialogElements.isUpdating,
     }),
     description: t('AccountSourceDialog.updateDialog.description'),
     title: t('AccountSourceDialog.updateDialog.title'),
     isOpen: sharedDialogElements.isDialogOpen.isDialogUpdateOpen,
+
     onClose: () => {
       sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogUpdateOpen: false }))
     }
@@ -42,7 +50,9 @@ export default function AccountSourceDialog({
   const createConfigDialog: IDialogConfig = {
     content: CreateAndUpdateAccountSourceForm({
       callBack,
-      defaultValue: initEmptyAccountSource
+      defaultValue: initEmptyAccountSource,
+      isCreating: sharedDialogElements.isCreating,
+      isUpdating: sharedDialogElements.isUpdating,
     }),
     description: t('AccountSourceDialog.createDialog.description'),
     title: t('AccountSourceDialog.createDialog.title'),

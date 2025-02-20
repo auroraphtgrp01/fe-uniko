@@ -174,7 +174,7 @@ export default function FormZod<T extends z.ZodRawShape>({
   formFieldBody,
   buttonConfig,
   classNameForm,
-  disabled,
+  disabled = false,
   submitRef,
   formRef
 }: IFormZodProps<T> & { disabled?: boolean }) {

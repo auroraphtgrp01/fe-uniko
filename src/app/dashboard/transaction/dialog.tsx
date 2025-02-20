@@ -1,6 +1,5 @@
 import { DataTable, IDeleteProps } from '@/components/dashboard/DataTable'
 import CustomDialog from '@/components/dashboard/Dialog'
-import { Button } from '@/components/ui/button'
 import {
   IClassifyTransactionBody,
   IDataTransactionTable,
