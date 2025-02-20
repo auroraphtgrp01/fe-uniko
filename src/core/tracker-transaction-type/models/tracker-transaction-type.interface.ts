@@ -1,8 +1,23 @@
 import { IBaseResponseData, IBaseResponsePagination } from '@/types/common.i'
 import { ETrackerTypeOfTrackerTransactionType, ETypeOfTrackerTransactionType } from './tracker-transaction-type.enum'
+import { ITransaction } from '@/core/transaction/models'
 
 export type TrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType>
-export type IAdvancedTrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType[]>
+export type IAdvancedTrackerTransactionTypeResponse = IBaseResponseData<
+  {
+    trackerType: ITrackerTransactionType
+    statistic: {
+      spendingOfWeek: {
+        recentTransactions: ITransaction[]
+        sum: number
+      }
+      spendingOfMonth: {
+        recentTransactions: ITransaction[]
+        sum: number
+      }
+    }
+  }[]
+>
 
 export interface ITrackerTransactionType {
   id: string

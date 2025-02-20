@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
-import { formatCurrency, mergeQueryParams, replaceParams } from '@/libraries/utils'
+import { formatCurrency, mergeQueryParams } from '@/libraries/utils'
 import { useState } from 'react'
 import { IDataTableConfig } from '@/types/common.i'
 import { initTableConfig } from '@/constants/data-table'
@@ -15,8 +15,6 @@ import {
   handleDeleteTransaction,
   handleUpdateTransaction,
   modifyTransactionHandler,
-  updateCacheDataTransactionForClassify,
-  updateCacheDataTransactionForDelete,
   updateCacheDataTransactionForUpdate
 } from '@/app/dashboard/transaction/handler'
 import { IQueryOptions } from '@/types/query.interface'
@@ -540,7 +538,8 @@ export default function TransactionForm() {
                 setDataTableConfig: setDataTableConfig,
                 setIsDialogOpen: setIsDialogOpen,
                 setIsEditing,
-                callBackOnSuccess: callBackRefetchTransactionPage
+                callBackOnSuccess: callBackRefetchTransactionPage,
+                setDataDetail
               })
             },
             typeOfTrackerType,

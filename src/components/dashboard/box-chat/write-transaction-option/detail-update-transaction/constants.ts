@@ -1,20 +1,36 @@
 import { modifiedTrackerTypeForComboBox } from '@/app/dashboard/tracker-transaction/handlers'
 import EditTrackerTypeDialog from '@/components/dashboard/EditTrackerType'
+import { IAccountSource } from '@/core/account-source/models'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
+import { IUpdateTrackerTransactionFormProps } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { translate } from '@/libraries/utils'
 import { EFieldType, IBodyFormField } from '@/types/formZod.interface'
 import { z } from 'zod'
-import { IClassifyTransactionFormProps } from '../models'
 
-export const defineClassifyTransactionFormBody = ({
+export const updateTransactionSchema = z
+  .object({
+    reasonName: z.string({ message: 'Reason name is required' }),
+    amount: z
+      .any()
+      .transform((value) => parseFloat(value))
+      .refine((value) => !isNaN(value) && value > 0, {
+        message: 'Amount must be a valid number & greater than 0'
+      }),
+    accountSourceId: z.string({ message: 'Account source is required' }).uuid({ message: 'Account source is invalid' }),
+    trackerTypeId: z.string({ message: 'Category is required' }).uuid({ message: 'Category is invalid' })
+  })
+  .strict()
+
+export const defineUpdateTransactionFormBody = ({
   editTrackerTypeDialogProps,
   expenseTrackerType,
   incomeTrackerType,
   typeOfEditTrackerType,
   setTypeOfEditTrackerType,
   setOpenEditDialog,
-  openEditDialog
-}: IClassifyTransactionFormProps): IBodyFormField[] => {
+  openEditDialog,
+  accountSourceData
+}: IUpdateTrackerTransactionFormProps): IBodyFormField[] => {
   const t = translate(['transaction', 'common'])
   return [
     {
@@ -24,6 +40,16 @@ export const defineClassifyTransactionFormBody = ({
       placeHolder: t('TransactionType.defineClassifyTransactionFormBody.reasonName.placeholder'),
       props: {
         autoComplete: 'reasonName'
+      }
+    },
+    {
+      name: 'amount',
+      type: EFieldType.Input,
+      label: 'Amount',
+      placeHolder: 'Amount *',
+      props: {
+        type: 'number',
+        autoComplete: 'amount'
       }
     },
     {
@@ -53,21 +79,11 @@ export const defineClassifyTransactionFormBody = ({
       }
     },
     {
-      name: 'description',
-      type: EFieldType.Textarea,
-      label: t('TransactionType.defineClassifyTransactionFormBody.description.label'),
-      placeHolder: t('TransactionType.defineClassifyTransactionFormBody.description.placeholder'),
-      props: {
-        autoComplete: 'description'
-      }
+      name: 'accountSourceId',
+      type: EFieldType.Select,
+      label: 'Account Source',
+      placeHolder: 'Select Account Source',
+      dataSelector: modifiedTrackerTypeForComboBox(accountSourceData)
     }
   ]
 }
-
-export const classifyTransactionSchema = z
-  .object({
-    reasonName: z.string().trim().min(5).max(100),
-    trackerTypeId: z.string().uuid(),
-    description: z.any()
-  })
-  .strict()

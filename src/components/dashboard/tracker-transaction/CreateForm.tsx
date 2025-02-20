@@ -38,8 +38,9 @@ export default function CreateTrackerTransactionForm({
   handleCreate,
   handleCreateTrackerType,
   handleUpdateTrackerType,
-  expenditureFund
+  expenditureFund,
 }: ICreateTrackerTransactionFormProps) {
+  
   const [currentDirection, setCurrentDirection] = useState<ETypeOfTrackerTransactionType>(
     ETypeOfTrackerTransactionType.INCOMING
   )

@@ -50,6 +50,7 @@ export default function DetailUpdateTransaction({
   const submitUpdateTransactionRef = useRef<HTMLFormElement>(null)
   const submitUpdateTrackerTransactionRef = useRef<HTMLFormElement>(null)
   const formUpdateTrackerTransactionRef = useRef<any>()
+  const formUpdateTransactionRef = useRef<any>()
   const [trackerTypeData, setTrackerTypeData] = useState<ITrackerTransactionType[]>([])
   const [transactionState, setTransactionState] = useState<ITrackerTranSactionEditType>({
     isUpdateTrackerTransaction:
@@ -58,7 +59,7 @@ export default function DetailUpdateTransaction({
     direction: updateTransactionProps.transaction.direction as ETypeOfTrackerTransactionType,
     trackerTypeId: updateTrackerTransactionProps?.trackerTransaction.trackerTypeId || ''
   })
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (updateTransactionProps.isEditing) {
       if (
         classifyDialogProps?.formClassifyRef &&
@@ -67,10 +68,17 @@ export default function DetailUpdateTransaction({
       ) {
         classifyDialogProps.formClassifyRef.current?.requestSubmit()
       } else {
-        submitUpdateTransactionRef.current?.requestSubmit()
+        const isTransactionValid = await formUpdateTransactionRef.current?.trigger()
+        const isTrackerValid = updateTrackerTransactionProps?.isEditing
+          ? await formUpdateTrackerTransactionRef.current?.trigger()
+          : true
+
+        if (isTransactionValid && isTrackerValid) {
+          submitUpdateTransactionRef.current?.requestSubmit()
+          if (updateTrackerTransactionProps?.isEditing) submitUpdateTrackerTransactionRef.current?.requestSubmit()
+        }
       }
     }
-    if (updateTrackerTransactionProps?.isEditing) submitUpdateTrackerTransactionRef.current?.requestSubmit()
   }
 
   useEffect(() => {
@@ -295,6 +303,7 @@ export default function DetailUpdateTransaction({
           {/* Form update transaction */}
           {!updateTransactionProps.transaction.ofAccount && (
             <FormZod
+              formRef={formUpdateTransactionRef}
               submitRef={submitUpdateTransactionRef}
               formFieldBody={defineUpdateTransactionFormBody({
                 accountSourceData: commonProps.accountSourceData,
@@ -321,7 +330,7 @@ export default function DetailUpdateTransaction({
                 updateTransactionProps.handleUpdateTransaction(payload, updateTransactionProps.setIsEditing)
               }}
               defaultValues={{
-                amount: String(updateTransactionProps.transaction.amount),
+                amount: updateTransactionProps.transaction.amount,
                 accountSourceId: updateTransactionProps.transaction.accountSource.id,
                 direction: transactionState.direction
               }}

@@ -14,7 +14,7 @@ import {
   PcCase,
   Layers2Icon
 } from 'lucide-react'
-import { formatCurrency, formatDateTimeVN, getCurrentMonthDateRange, mergeQueryParams } from '@/libraries/utils'
+import { formatCurrency, formatDateTimeVN, getCurrentWeekRange, mergeQueryParams } from '@/libraries/utils'
 import { IDataTableConfig } from '@/types/common.i'
 import { IQueryOptions } from '@/types/query.interface'
 import {
@@ -120,7 +120,7 @@ export default function TrackerTransactionForm() {
   const [isPendingRefetch, setIsPendingRefetch] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState<IDialogTrackerTransaction>(initDialogFlag)
   const [chartData, setChartData] = useState<IChartData>()
-  const [dates, setDates] = useState<IDateRange>(getCurrentMonthDateRange())
+  const [dates, setDates] = useState<IDateRange>(getCurrentWeekRange())
   const [incomingTrackerType, setIncomingTrackerType] = useState<ITrackerTransactionType[]>([])
   const [expenseTrackerType, setExpenseTrackerType] = useState<ITrackerTransactionType[]>([])
   const [dataDetail, setDataDetail] = useState<ITrackerTransaction>(initEmptyDetailTrackerTransaction)
@@ -144,7 +144,9 @@ export default function TrackerTransactionForm() {
     statusUpdating: statusUpdateTrackerTransaction,
     updateTrackerTransaction,
     deleteAnTrackerTransaction,
-    deleteMultipleTrackerTransaction
+    deleteMultipleTrackerTransaction,
+    isCreating : isPendingCreateTrackerTransaction,
+    isClassing : isPendingClassifyTransaction
   } = useTrackerTransaction()
   const { getStatisticOverviewPage } = useOverviewPage()
   const { refetchGetStatisticOverviewPageData } = getStatisticOverviewPage(
@@ -172,20 +174,20 @@ export default function TrackerTransactionForm() {
     getAllAccountSource(fundId)
   const { getAllExpenditureFundData } = getAllExpenditureFund()
   // custom hooks
-  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => { })
+  const { resetData: resetCacheExpenditureFund } = useUpdateModel([GET_ADVANCED_EXPENDITURE_FUND_KEY], () => {})
   const { resetData: resetCacheStatisticExpenditureFund } = useUpdateModel(
     [GET_STATISTIC_EXPENDITURE_FUND_KEY],
-    () => { }
+    () => {}
   )
   const { resetData: resetCacheTrackerTx } = useUpdateModel<IAdvancedTrackerTransactionResponse>(
     [GET_ADVANCED_TRACKER_TRANSACTION_KEY, mergeQueryParams(queryOptions)],
     updateCacheDataCreateClassify
   )
-  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => { })
-  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => { })
+  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
+  const { resetData: resetCacheUnclassifiedTxs } = useUpdateModel([GET_UNCLASSIFIED_TRANSACTION_KEY], () => {})
   const { resetData: resetCacheTodayTxs } = useUpdateModel(
     [GET_TODAY_TRANSACTION_KEY, mergeQueryParams(initQueryOptions)],
-    () => { }
+    () => {}
   )
   const { setData: setCacheTrackerTxTypeCreate } = useUpdateModel<any>(
     [GET_ALL_TRACKER_TRANSACTION_TYPE_KEY],
@@ -194,7 +196,7 @@ export default function TrackerTransactionForm() {
     }
   )
 
-  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => { })
+  const { resetData: resetAccountSource } = useUpdateModel([GET_ADVANCED_ACCOUNT_SOURCE_KEY], () => {})
   const { resetData: resetCacheTransaction } = useUpdateModel<IGetTransactionResponse>(
     [GET_ADVANCED_TRANSACTION_KEY],
     updateCacheDataTransactionForClassify
@@ -296,7 +298,10 @@ export default function TrackerTransactionForm() {
     }
   }, [statisticData])
 
-  const tabConfig: ITabConfig = useMemo(() => initTrackerTransactionTab(chartData, t, heightDonut, checkHeightRange), [chartData, t, heightDonut, checkHeightRange])
+  const tabConfig: ITabConfig = useMemo(
+    () => initTrackerTransactionTab(chartData, t, heightDonut, checkHeightRange),
+    [chartData, t, heightDonut, checkHeightRange]
+  )
   const dataTableButtons = initButtonInDataTableHeader({ setIsDialogOpen })
 
   const refetchTransactionBySocket = () => {
@@ -381,20 +386,21 @@ export default function TrackerTransactionForm() {
 
   useEffect(() => {
     if (viewportHeight > 600 && viewportHeight <= 700) {
-      setHeightDonut("h-[14.5rem]")
+      setHeightDonut('h-[14.5rem]')
     } else if (viewportHeight > 700 && viewportHeight <= 800) {
-      setHeightDonut("h-[18rem]")
+      setHeightDonut('h-[18rem]')
     } else if (viewportHeight > 800 && viewportHeight <= 900) {
-      setHeightDonut("h-[17rem]")
+      setHeightDonut('h-[17rem]')
     } else {
-      setHeightDonut("h-[20rem]")
+      setHeightDonut("h-[17rem]")
+      setHeightDonut('h-[20rem]')
     }
   }, [viewportHeight])
 
   return (
     <div className='grid select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
       {/* Left Section */}
-      <div className='flex w-full h-full flex-col md:col-span-2'>
+      <div className='flex h-full w-full flex-col md:col-span-2'>
         <div className='grid grid-cols-1 gap-4 max-[1280px]:grid-cols-1 md:grid-cols-1 lg:grid-cols-3'>
           {/* Total Balance Card */}
           <Card className='group relative overflow-hidden transition-all duration-300 hover:shadow-lg'>
@@ -422,10 +428,11 @@ export default function TrackerTransactionForm() {
                       <ArrowDownIcon className='mr-1 h-4 w-4 animate-bounce' />
                     )}
                     <span>
-                      {`${statisticData?.data?.total?.rate && statisticData.data.total.rate !== 'none'
-                        ? (statisticData.data.total.rate.startsWith('-') ? '' : '+') + statisticData.data.total.rate
-                        : '0'
-                        }% left this month`}
+                      {`${
+                        statisticData?.data?.total?.rate && statisticData.data.total.rate !== 'none'
+                          ? (statisticData.data.total.rate.startsWith('-') ? '' : '+') + statisticData.data.total.rate
+                          : '0'
+                      }% left this month`}
                     </span>
                   </p>
                 </div>
@@ -561,6 +568,7 @@ export default function TrackerTransactionForm() {
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
         <div className='h-[55%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
+          {/* ------------------------- */}
         </div>
         <div className='h-[calc(45%)]'>
           <Card className='flex h-full flex-col'>
@@ -593,7 +601,7 @@ export default function TrackerTransactionForm() {
               </div>
             </CardHeader>
             {/* className='flex-1 overflow-hidden' */}
-            <CardContent >
+            <CardContent>
               <FlatList
                 checkHeightRange={checkHeightRange}
                 data={modifyFlatListData(dataUnclassifiedTxs?.data || [])}
@@ -636,6 +644,7 @@ export default function TrackerTransactionForm() {
           statusUpdateTrackerTransaction
         }}
         classifyTransactionDialog={{
+          isPendingClassifyTransaction,
           classifyTransaction,
           handleClassify: (data: IClassifyTransactionBody) => {
             handleClassifyTransaction({
@@ -647,11 +656,13 @@ export default function TrackerTransactionForm() {
               hookClassify: classifyTransaction,
               setIsDialogOpen,
               setUncDataTableConfig: setDataTableUnclassifiedConfig,
-              setDataTableConfig: setDataTableConfig
+              setDataTableConfig: setDataTableConfig,
+              setDataDetail: setDataDetailTransaction
             })
           }
         }}
         createTrackerTransactionDialog={{
+          isPendingCreateTrackerTransaction,
           handleCreate: (data: ICreateTrackerTransactionBody) =>
             handleCreateTrackerTransaction({
               payload: {

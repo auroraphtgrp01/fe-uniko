@@ -1,7 +1,7 @@
 import Header from '@/components/core/header'
 import Sidebar from '@/components/core/sidebar'
 import BreadcrumbHeader from '../../components/core/breadcrumb'
-import { ChatBox } from '../../components/dashboard/BoxChat'
+import { ChatBox } from '../../components/dashboard/box-chat/BoxChat'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

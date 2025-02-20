@@ -17,8 +17,19 @@
       "placeholder": "Nhập tên *"
     },
     "direction": {
+      "label": "Loại giao dịch",
+      "placeholder": "Chọn loại giao dịch *"
+    },
+    "status": {
+      "label": "Trạng thái",
+      "placeholder": "Chọn trạng thái *",
+      "active": "Đang hoạt động",
+      "closed": "Đã đóng",
+      "pending": "Đang chờ"
+    },
+    "description": {
       "label": "Mô tả",
-      "placeholder": "Nhập mô tả *"
+      "placeholder": "Nhập mô tả"
     }
   },
   "tableExpenditureFundFormBody": {

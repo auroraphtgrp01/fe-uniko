@@ -3,7 +3,7 @@ import { EFieldType } from '@/types/formZod.interface'
 import { z } from 'zod'
 
 export const createAccountBankSchema = z.object({
-  type: z.enum(['MB_BANK']),
+  type: z.enum(['MB_BANK'], { message: 'Bank type must be either "MB_BANK"' }),
   login_id: z.string().min(5),
   password: z.string().min(5),
   accounts: z.array(z.string().min(5)).min(1)

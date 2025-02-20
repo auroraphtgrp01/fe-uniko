@@ -74,7 +74,8 @@ export const handleClassifyTransaction = async ({
   setTodayDataTableConfig,
   setDataTableConfig,
   setIsEditing,
-  callBackOnSuccess
+  callBackOnSuccess,
+  setDataDetail
 }: {
   payload: IClassifyTransactionBody
   setIsDialogOpen: React.Dispatch<React.SetStateAction<any>>
@@ -94,6 +95,7 @@ export const handleClassifyTransaction = async ({
   setTodayDataTableConfig?: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setDataTableConfig: React.Dispatch<React.SetStateAction<IDataTableConfig>>
   setIsEditing?: React.Dispatch<React.SetStateAction<boolean>>
+  setDataDetail: React.Dispatch<React.SetStateAction<ITransaction>>
 }) => {
   hookClassify(payload, {
     onSuccess: (res: ITrackerTransactionResponse) => {
@@ -116,6 +118,7 @@ export const handleClassifyTransaction = async ({
           isDialogClassifyTransactionOpen: false,
           isDialogDetailTransactionOpen: false
         }))
+        setDataDetail((prev) => ({ ...prev, TrackerTransaction: res.data }))
         toast.success('Classify transaction successfully!')
       }
     }
@@ -267,12 +270,37 @@ export const modifiedTrackerTypeForComboBox = (type: any) => {
 }
 
 export const initTrackerTypeData = (
-  data: ITrackerTransactionType[],
+  data: {
+    trackerType: ITrackerTransactionType
+    statistic: {
+      spendingOfWeek: {
+        recentTransactions: ITransaction[]
+        sum: number
+      }
+      spendingOfMonth: {
+        recentTransactions: ITransaction[]
+        sum: number
+      }
+    }
+  }[],
   setIncomingTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>,
   setExpenseTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>
 ) => {
-  setIncomingTrackerType(data?.filter((item) => item.type === ETypeOfTrackerTransactionType.INCOMING))
-  setExpenseTrackerType(data?.filter((item) => item.type === ETypeOfTrackerTransactionType.EXPENSE))
+  const income = data
+    .map((item) => {
+      if (item.trackerType.type === ETypeOfTrackerTransactionType.INCOMING) return item.trackerType
+      return undefined
+    })
+    .filter((item): item is ITrackerTransactionType => item !== undefined)
+  const expense = data
+    .map((item) => {
+      if (item.trackerType.type === ETypeOfTrackerTransactionType.EXPENSE) return item.trackerType
+      return undefined
+    })
+    .filter((item): item is ITrackerTransactionType => item !== undefined)
+
+  setIncomingTrackerType(income)
+  setExpenseTrackerType(expense)
 }
 
 export const handleCreateTrackerType = ({

@@ -40,19 +40,19 @@ export const defineUpdateExpenditureFundFormBody =
       {
         name: 'status',
         type: EFieldType.Select,
-        label: '',
+        label: t('form.status.label'),
         dataSelector: [
           {
             value: 'ACTIVE',
-            label: t('update.form.selectActive.active')
+            label: t('form.status.active')
           },
           {
             value: 'CLOSED',
-            label: t('update.form.selectActive.closed')
+            label: t('form.status.closed')
           },
           {
             value: 'PENDING',
-            label: t('update.form.selectActive.pending')
+            label: t('form.status.pending')
           }
         ],
         placeHolder: 'Select status *'
@@ -60,17 +60,23 @@ export const defineUpdateExpenditureFundFormBody =
       {
         name: 'description',
         type: EFieldType.Textarea,
-        label: t('update.form.selectActive.label'),
-        placeHolder: t('update.form.selectActive.description')
+        label: t('form.description.label'),
+        placeHolder: t('form.description.placeholder')
       }
     ]
   }
 
 export const updateExpenditureFundSchema = z
   .object({
-    name: z.string().trim().min(2).max(256),
+    name: z
+      .string({ message: 'Name is required' })
+      .trim()
+      .min(5, { message: 'Name must be at least 5 characters long.' })
+      .max(50, { message: 'Name must be at most 50 characters long.' }),
     // currency: z.enum(['USD', 'VND', 'EUR']),
-    status: z.enum(['ACTIVE', 'CLOSED', 'PENDING']),
+    status: z.enum(['ACTIVE', 'CLOSED', 'PENDING'], {
+      message: 'Status must be either "Active" or "Closed" or "Pending"'
+    }),
     description: z.any()
   })
   .strict()

@@ -1,13 +1,12 @@
 import { translate } from '@/libraries/utils'
 import { EFieldType } from '@/types/formZod.interface'
-import { type } from 'os'
 import { z } from 'zod'
 
 export const updateAccountBankSchema = z.object({
-  type: z.enum(['MB_BANK']),
-  login_id: z.string().min(5),
-  password: z.string().min(5),
-  accounts: z.array(z.string().min(5)).min(1)
+  type: z.enum(['MB_BANK'], { message: 'Bank type must be either "MB_BANK"' }),
+  login_id: z.string({ message: 'Login ID is required' }).min(5),
+  password: z.string({ message: 'Password is required' }).min(5),
+  accounts: z.array(z.string({ message: 'Account number is required' }).min(5)).min(1)
 })
 const t = translate(['accountSource'])
 export const updateAccountBankFormBody = [

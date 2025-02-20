@@ -3,7 +3,6 @@ import { initEmptyDetailExpenditureFund } from './constants'
 import { IDialogConfig } from '@/types/common.i'
 import { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { t } from 'i18next'
 import { IExpenditureFundDialogProps } from '@/core/expenditure-fund/models/expenditure-fund.interface'
 import CreateExpenditureFundForm from '@/components/dashboard/expenditure-fund/create-expenditure-fund'
 import { DetailExpenditureFund } from '@/components/dashboard/expenditure-fund/detail-expenditure-fund'
@@ -30,14 +29,16 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
   const createExpenditureFundDialog: IDialogConfig = {
     content: CreateExpenditureFundForm({
       handleCreate: createDialog.handleCreate,
-      formCreateRef: formCreateExpenditureFundRef
+      formCreateRef: formCreateExpenditureFundRef,
     }),
     isOpen: commonDialogState.isDialogOpen.isDialogCreateOpen,
     onClose: () => commonDialogState.setIsDialogOpen((prev) => ({ ...prev, isDialogCreateOpen: false })),
     title: t('expenditureFund:form.createExpenditureFund.title'),
     description: t('expenditureFund:form.createExpenditureFund.description'),
     footer: (
-      <Button onClick={() => formCreateExpenditureFundRef.current?.requestSubmit()} type='button'>
+      <Button onClick={() => formCreateExpenditureFundRef.current?.requestSubmit()}
+        disabled={createDialog.status === 'pending'}
+        isLoading={createDialog.status === 'pending'} type='button'>
         {t('common:button.save')}
       </Button>
     )
@@ -92,7 +93,9 @@ export default function ExpenditureFundDialog(params: IExpenditureFundDialogProp
     title: t('expenditureFundDetails:update.title'),
     description: t('expenditureFundDetails:update.description'),
     footer: (
-      <Button onClick={() => formUpdateExpenditureFundRef.current?.requestSubmit()} type='button'>
+      <Button onClick={() => formUpdateExpenditureFundRef.current?.requestSubmit()}
+        disabled={detailUpdateDialog.status === 'pending'}
+        isLoading={detailUpdateDialog.status === 'pending'} type='button'>
         {t('common:button.save')}
       </Button>
     )
