@@ -145,8 +145,8 @@ export default function TrackerTransactionForm() {
     updateTrackerTransaction,
     deleteAnTrackerTransaction,
     deleteMultipleTrackerTransaction,
-    isCreating : isPendingCreateTrackerTransaction,
-    isClassing : isPendingClassifyTransaction
+    isCreating: isPendingCreateTrackerTransaction,
+    isClassing: isPendingClassifyTransaction
   } = useTrackerTransaction()
   const { getStatisticOverviewPage } = useOverviewPage()
   const { refetchGetStatisticOverviewPageData } = getStatisticOverviewPage(
@@ -392,8 +392,7 @@ export default function TrackerTransactionForm() {
     } else if (viewportHeight > 800 && viewportHeight <= 900) {
       setHeightDonut('h-[17rem]')
     } else {
-      setHeightDonut("h-[17rem]")
-      setHeightDonut('h-[20rem]')
+      setHeightDonut('h-[19.5rem]')
     }
   }, [viewportHeight])
 
@@ -566,7 +565,7 @@ export default function TrackerTransactionForm() {
       </div>
       {/* Right Section */}
       <div className='flex h-full w-full flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
-        <div className='h-[55%]'>
+        <div className='h-[57%]'>
           <TrackerTransactionChart tabConfig={tabConfig} statisticDateRange={{ dates, setDates }} />
           {/* ------------------------- */}
         </div>
