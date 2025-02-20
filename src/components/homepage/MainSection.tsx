@@ -11,6 +11,7 @@ import AvatarKhanh from '@/images/contributors/Khanh.jpg'
 import AvatarHuy from '@/images/contributors/Huy.jpg'
 import AvatarThanh from '@/images/contributors/Thanh.jpg'
 import AvatarTrong from '@/images/contributors/Trong.jpg'
+import AvatarTriet from '@/images/contributors/Triet.jpg'
 import { BentoGridThird } from '@/components/homepage/Grid'
 import { MarqueeReview } from '@/components/homepage/Marquee'
 
@@ -42,6 +43,12 @@ export default function MainSection() {
       role: 'Frontend Developer',
       image: AvatarTrong,
       srcGit: 'https://github.com/vantrong2405'
+    },
+    {
+      name: 'Pham Minh Triet',
+      role: 'Mobile Developer',
+      image: AvatarTriet,
+      srcGit: 'https://github.com/pmtriet'
     },
     { name: 'Nguyen Quang Huy', role: 'Frontend Developer', image: AvatarHuy, srcGit: 'https://github.com/kwanghy2303' }
   ]
