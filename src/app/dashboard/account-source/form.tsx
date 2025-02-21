@@ -20,7 +20,7 @@ import {
 } from '@/app/dashboard/account-source/handler'
 import { initTableConfig } from '@/constants/data-table'
 import { useAccountSource } from '@/core/account-source/hooks'
-import { formatCurrency, getConvertedKeysToTitleCase, getTypes, mergeQueryParams } from '@/libraries/utils'
+import { formatCurrency, getTypes, mergeQueryParams } from '@/libraries/utils'
 import { getColumns } from '@/components/dashboard/ColumnsTable'
 import {
   EAccountSourceType,
@@ -87,7 +87,6 @@ export default function AccountSourceForm() {
   } = useAccountSource()
   const { setAccountSourceData, accountSourceData, fundId, viewportHeight } = useStoreLocal()
 
-
   const { refetchGetStatisticAccountBalanceData } = getStatisticAccountBalance(fundId)
   const { refetchAllData } = getAllAccountSource(fundId)
   const { getAdvancedData, refetchGetAdvanced } = getAdvancedAccountSource({ query: queryOptions, fundId })
@@ -115,7 +114,7 @@ export default function AccountSourceForm() {
     [GET_ADVANCED_ACCOUNT_SOURCE_KEY, mergeQueryParams(queryOptions), fundId],
     updateCacheDataUpdate
   )
-  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => { })
+  const { resetData: resetCacheStatistic } = useUpdateModel([STATISTIC_TRACKER_TRANSACTION_KEY], () => {})
 
   // Memos
   const isWallet = currentTypeAccount === 'WALLET'
@@ -136,11 +135,10 @@ export default function AccountSourceForm() {
   // Effects
   useEffect(() => {
     if (getAdvancedData) {
-      const data = getAdvancedData.data.map((item) => item)
-      setAccountSourceData(data)
+      setAccountSourceData(getAdvancedData.data)
       setDataTableConfig((prev) => ({
         ...prev,
-        types: getTypes(accountSourceData, 'type'),
+        types: getTypes(getAdvancedData.data, 'type'),
         totalPage: Number(getAdvancedData.pagination?.totalPage)
       }))
     }
@@ -172,13 +170,13 @@ export default function AccountSourceForm() {
 
   useEffect(() => {
     if (viewportHeight > 600 && viewportHeight <= 700) {
-      setHeightDonut("h-[18rem]")
+      setHeightDonut('h-[18rem]')
     } else if (viewportHeight > 700 && viewportHeight <= 800) {
-      setHeightDonut("h-[20rem]")
+      setHeightDonut('h-[20rem]')
     } else if (viewportHeight > 800 && viewportHeight <= 900) {
-      setHeightDonut("h-[19rem]")
+      setHeightDonut('h-[19rem]')
     } else {
-      setHeightDonut("h-[20rem]")
+      setHeightDonut('h-[20rem]')
     }
   }, [viewportHeight])
 
@@ -210,15 +208,18 @@ export default function AccountSourceForm() {
     () => tableData.filter((account) => account.checkType === EAccountSourceType.BANKING).length,
     [tableData]
   )
-  const accountBanks = useMemo(() => ({
-    totalBalance,
-    totalAccountWallet,
-    totalAccountBanking,
-    totalBalanceWallet,
-    totalBalanceBanking
-  }), [totalBalance, totalAccountWallet, totalAccountBanking, totalBalanceWallet, totalBalanceBanking])
-  const previousBalance = useMemo(() => totalBalance * 0.95, [totalBalance]);
-  const isIncreased = useMemo(() => totalBalance > previousBalance, [totalBalance, previousBalance]);
+  const accountBanks = useMemo(
+    () => ({
+      totalBalance,
+      totalAccountWallet,
+      totalAccountBanking,
+      totalBalanceWallet,
+      totalBalanceBanking
+    }),
+    [totalBalance, totalAccountWallet, totalAccountBanking, totalBalanceWallet, totalBalanceBanking]
+  )
+  const previousBalance = useMemo(() => totalBalance * 0.95, [totalBalance])
+  const isIncreased = useMemo(() => totalBalance > previousBalance, [totalBalance, previousBalance])
 
   return (
     <div className='grid h-full select-none grid-cols-1 gap-4 max-[1300px]:grid-cols-1 xl:grid-cols-3'>
@@ -368,42 +369,34 @@ export default function AccountSourceForm() {
       {/* Right Section */}
       <div className='flex h-full w-full flex-1 flex-col space-y-4 md:col-span-2 min-[1280px]:col-span-1'>
         <div className='h-[calc(45%)]'>
-          <Card className="flex h-full flex-col shadow-lg rounded-lg ">
-            <CardHeader className="flex-none py-4 px-6 border-b ">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <CardTitle >
-                  {t('accountSource:AccountSourceCardDetail.title')}
-                </CardTitle>
-                <div className="flex flex-wrap items-center gap-2">
+          <Card className='flex h-full flex-col rounded-lg shadow-lg'>
+            <CardHeader className='flex-none border-b px-6 py-4'>
+              <div className='flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
+                <CardTitle>{t('accountSource:AccountSourceCardDetail.title')}</CardTitle>
+                <div className='flex flex-wrap items-center gap-2'>
                   <Select
                     value={currentTypeAccount}
                     onValueChange={(value: EAccountSourceType) => setCurrentTypeAccount(value)}
                   >
-                    <SelectTrigger className="h-10 w-full md:w-56  rounded-lg px-4 ">
-                      <SelectValue placeholder="Select type account" />
+                    <SelectTrigger className='h-10 w-full rounded-lg px-4 md:w-56'>
+                      <SelectValue placeholder='Select type account' />
                     </SelectTrigger>
-                    <SelectContent className="w-full">
-                      <SelectItem value="WALLET">{t('accountSource:AccountSourceCardDetail.item.wallet')}</SelectItem>
-                      <SelectItem value="BANKING">{t('accountSource:AccountSourceCardDetail.item.banking')}</SelectItem>
+                    <SelectContent className='w-full'>
+                      <SelectItem value='WALLET'>{t('accountSource:AccountSourceCardDetail.item.wallet')}</SelectItem>
+                      <SelectItem value='BANKING'>{t('accountSource:AccountSourceCardDetail.item.banking')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
             </CardHeader>
 
-            <CardContent className="px-6 py-6">
-              <div className="relative overflow-hidden ">
-                <div className="mb-6 flex items-center justify-between">
-                  <Badge
-                    variant="secondary"
-                    className="rounded-full  px-3 py-1 text-sm font-semibold"
-                  >
-                    {isWallet ? "WALLET" : "BANKING"}
+            <CardContent className='px-6 py-6'>
+              <div className='relative overflow-hidden'>
+                <div className='mb-6 flex items-center justify-between'>
+                  <Badge variant='secondary' className='rounded-full px-3 py-1 text-sm font-semibold'>
+                    {isWallet ? 'WALLET' : 'BANKING'}
                   </Badge>
-                  <motion.div
-                    whileHover={{ rotate: 20 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
+                  <motion.div whileHover={{ rotate: 20 }} transition={{ type: 'spring', stiffness: 300 }}>
                     {isWallet ? <Wallet size={28} /> : <BanknoteIcon size={28} />}
                   </motion.div>
                 </div>
@@ -411,7 +404,7 @@ export default function AccountSourceForm() {
                 <AnimatePresence>
                   {isHovered && (
                     <motion.div
-                      className="absolute bottom-2 right-2 text-sm text-gray-500 dark:text-gray-400"
+                      className='absolute bottom-2 right-2 text-sm text-gray-500 dark:text-gray-400'
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
@@ -424,76 +417,71 @@ export default function AccountSourceForm() {
 
               <div>
                 <motion.div
-                  className="space-y-6"
+                  className='space-y-6'
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-base font-medium text-gray-600 dark:text-gray-400">
+                  <div className='flex items-center justify-between'>
+                    <span className='text-base font-medium text-gray-600 dark:text-gray-400'>
                       {t('accountSource:AccountSourceCardDetail.totalAccount')}
                     </span>
                     <motion.span
-                      className="text-lg font-bold text-gray-800 dark:text-white"
+                      className='text-lg font-bold text-gray-800 dark:text-white'
                       initial={{ scale: 1 }}
                       animate={{ scale: [1, 1.1, 1] }}
                       transition={{ duration: 0.3, times: [0, 0.5, 1] }}
                     >
-                      {isWallet
-                        ? accountBanks.totalAccountWallet
-                        : accountBanks.totalAccountBanking}
+                      {isWallet ? accountBanks.totalAccountWallet : accountBanks.totalAccountBanking}
                     </motion.span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-base font-medium text-gray-600 dark:text-gray-400">
+                  <div className='flex items-center justify-between'>
+                    <span className='text-base font-medium text-gray-600 dark:text-gray-400'>
                       {t('accountSource:AccountSourceCardDetail.totalBlance')}
                     </span>
-                    <div className="flex items-center">
+                    <div className='flex items-center'>
                       <motion.span
-                        className={`text-lg font-bold ${isIncreased
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-red-600 dark:text-red-400"
-                          }`}
+                        className={`text-lg font-bold ${
+                          isIncreased ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                        }`}
                         animate={{ scale: isHovered ? 1.1 : 1 }}
-                        transition={{ type: "spring", stiffness: 300 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
                       >
                         {isWallet
-                          ? formatCurrency(accountBanks.totalBalanceWallet, "VND")
-                          : formatCurrency(accountBanks.totalBalanceBanking, "VND")}
+                          ? formatCurrency(accountBanks.totalBalanceWallet, 'VND')
+                          : formatCurrency(accountBanks.totalBalanceBanking, 'VND')}
                       </motion.span>
                       <motion.div
-                        className="ml-2"
+                        className='ml-2'
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
                       >
                         {isIncreased ? (
-                          <TrendingUp className="text-green-600 dark:text-green-400" size={20} />
+                          <TrendingUp className='text-green-600 dark:text-green-400' size={20} />
                         ) : (
-                          <TrendingDown className="text-red-600 dark:text-red-400" size={20} />
+                          <TrendingDown className='text-red-600 dark:text-red-400' size={20} />
                         )}
                       </motion.div>
                     </div>
                   </div>
                   <motion.div
-                    className="text-base text-gray-500 dark:text-gray-400"
+                    className='text-base text-gray-500 dark:text-gray-400'
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    {isIncreased ? t('accountSource:AccountSourceCardDetail.Increased')
-                      : t('accountSource:AccountSourceCardDetail.Decreased')}
-                    {" "}
-                    {t('accountSource:AccountSourceCardDetail.from')} {" "}
-                    {formatCurrency(previousBalance, "VND")}
+                    {isIncreased
+                      ? t('accountSource:AccountSourceCardDetail.Increased')
+                      : t('accountSource:AccountSourceCardDetail.Decreased')}{' '}
+                    {t('accountSource:AccountSourceCardDetail.from')} {formatCurrency(previousBalance, 'VND')}
                   </motion.div>
                 </motion.div>
               </div>
             </CardContent>
           </Card>
-
         </div>
-        <Card className='flex-1 h-[55%]'>
+        <Card className='h-[55%] flex-1'>
           <CardHeader className='mb-5 py-4'>
             <CardTitle>{t('accountSource:WalletBalanceSummary')}</CardTitle>
           </CardHeader>
@@ -503,7 +491,6 @@ export default function AccountSourceForm() {
             </div>
           </CardContent>
         </Card>
-
       </div>
       <AccountSourceDialog
         fundId={fundId}
@@ -515,21 +502,19 @@ export default function AccountSourceForm() {
           isDeletingOne,
           isDeletingMultiple
         }}
-        callBack={
-          (payload: IAccountSourceBody) => {
-            handleSubmitAccountSource({
-              payload: { ...payload },
-              setIsDialogOpen,
-              hookCreate: createAccountSource,
-              hookUpdate: updateAccountSource,
-              fundId,
-              isDialogOpen,
-              callBackOnSuccess: callBackRefetchAccountSourcePage
-            })
-          }
-        }
+        callBack={(payload: IAccountSourceBody) => {
+          handleSubmitAccountSource({
+            payload: { ...payload },
+            setIsDialogOpen,
+            hookCreate: createAccountSource,
+            hookUpdate: updateAccountSource,
+            fundId,
+            isDialogOpen,
+            callBackOnSuccess: callBackRefetchAccountSourcePage
+          })
+        }}
         detailAccountSourceDialog={{
-          dataDetail,
+          dataDetail
         }}
       />
       <DeleteDialog
