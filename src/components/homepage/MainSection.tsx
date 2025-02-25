@@ -14,6 +14,7 @@ import AvatarTrong from '@/images/contributors/Trong.jpg'
 import AvatarTriet from '@/images/contributors/Triet.jpg'
 import { BentoGridThird } from '@/components/homepage/Grid'
 import { MarqueeReview } from '@/components/homepage/Marquee'
+import { PlatformSection } from '@/components/homepage/PlatformSection'
 
 export default function MainSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -54,7 +55,7 @@ export default function MainSection() {
   ]
 
   return (
-    <div
+    <div id='home'
       ref={containerRef}
       className='relative w-full select-none bg-white bg-gradient-to-r from-rose-50/80 via-white to-rose-50/80 dark:bg-black dark:from-rose-950/50 dark:via-slate-900 dark:to-rose-950/50 dark:bg-grid-white/[0.05]'
     >
@@ -97,11 +98,13 @@ export default function MainSection() {
           <div className='absolute -mt-32 opacity-0' id='overview'></div>
           <BentoGridThird />
         </div>
+        <div id='platform'>
+          <PlatformSection />
+        </div>
         <div className=''>
-          {/* <div className='absolute -mt-32 scroll-mt-32 opacity-0' id='features'></div> */}
-          {/* <FeatureTabs /> */}
           <MarqueeReview />
         </div>
+
         <div id='contributors'>
           <ContributorsSection contributors={contributors} />
         </div>

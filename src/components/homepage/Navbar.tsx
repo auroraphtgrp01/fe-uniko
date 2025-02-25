@@ -44,7 +44,7 @@ export default function Navbar() {
             ? isScrolled
               ? windowWidth <= 1280
                 ? '80%'
-                : '45%'
+                : '55%'
               : '91.666667%'
             : '100%',
         marginTop: !isMobile ? (isScrolled ? '1rem' : '0') : '0',
@@ -104,7 +104,7 @@ export default function Navbar() {
           </div>
         </a>
         <ul className='hidden space-x-10 md:flex'>
-          {['overview', 'features', 'contributors'].map((item, index) => (
+          {['home', 'overview', 'platform', 'contributors'].map((item, index) => (
             <motion.li
               key={item}
               initial={{ opacity: 0, y: -20 }}
@@ -119,7 +119,9 @@ export default function Navbar() {
                 href={`#${item}`}
                 className='font-semibold text-gray-700 transition-colors hover:text-primary dark:text-gray-200 dark:hover:text-primary'
               >
-                {item === 'overview' ? 'Tổng quan' : item === 'features' ? 'Tính năng' : 'Đóng góp'}
+                {item === 'home' ? 'Trang chủ' :
+                  item === 'overview' ? 'Tổng quan' :
+                    item === 'platform' ? 'Nền tảng' : 'Đóng góp'}
               </a>
             </motion.li>
           ))}
@@ -141,20 +143,20 @@ export default function Navbar() {
           <ul className='flex flex-col items-center space-y-8 pt-8'>
             <li>
               <a
-                href='#overview'
+                href='#home'
                 className='text-xl font-semibold text-gray-700 dark:text-foreground'
                 onClick={() => setIsMenuOpen(false)}
               >
-                Tổng quan
+                Trang chủ
               </a>
             </li>
             <li>
               <a
-                href='#features'
+                href='#platform'
                 className='text-xl font-semibold text-gray-700 dark:text-foreground'
                 onClick={() => setIsMenuOpen(false)}
               >
-                Tính năng
+                Nền tảng
               </a>
             </li>
             <li>
