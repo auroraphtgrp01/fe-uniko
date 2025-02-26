@@ -15,6 +15,7 @@ import AvatarTriet from '@/images/contributors/Triet.jpg'
 import { BentoGridThird } from '@/components/homepage/Grid'
 import { MarqueeReview } from '@/components/homepage/Marquee'
 import { PlatformSection } from '@/components/homepage/PlatformSection'
+// import { IPhoneDemo } from '@/components/homepage/IPhoneDemo'
 
 export default function MainSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -22,7 +23,7 @@ export default function MainSection() {
   const contributors = [
     {
       name: 'Le Minh Tuan',
-      role: 'Lead Developer',
+      role: 'Founder & Leader Developer',
       image: AvatarTuan,
       srcGit: 'https://github.com/auroraphtgrp01',
       priority: true
@@ -101,6 +102,11 @@ export default function MainSection() {
         <div id='platform'>
           <PlatformSection />
         </div>
+        {/* 
+        <div id='iphone-demo'>
+          <IPhoneDemo />
+        </div> */}
+
         <div className=''>
           <MarqueeReview />
         </div>

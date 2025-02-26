@@ -45,7 +45,6 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
               Meet Our{' '}
               <span className='inline-block  font-bold relative'>
                 Amazing Team
-                <span className='absolute bottom-0 left-0 w-full h-[2px] bg-white/20'></span>
               </span>
             </span>
             <motion.div
