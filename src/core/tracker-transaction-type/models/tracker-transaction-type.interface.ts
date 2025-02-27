@@ -3,21 +3,7 @@ import { ETrackerTypeOfTrackerTransactionType, ETypeOfTrackerTransactionType } f
 import { ITransaction } from '@/core/transaction/models'
 
 export type TrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType>
-export type IAdvancedTrackerTransactionTypeResponse = IBaseResponseData<
-  {
-    trackerType: ITrackerTransactionType
-    statistic: {
-      spendingOfWeek: {
-        recentTransactions: ITransaction[]
-        sum: number
-      }
-      spendingOfMonth: {
-        recentTransactions: ITransaction[]
-        sum: number
-      }
-    }
-  }[]
->
+export type IAdvancedTrackerTransactionTypeResponse = IBaseResponseData<ITrackerTransactionType[]>
 
 export interface ITrackerTransactionType {
   id: string

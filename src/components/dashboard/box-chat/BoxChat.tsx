@@ -308,9 +308,14 @@ export function ChatBox() {
   }, [isOpen])
 
   useEffect(() => {
+    console.log('>>>>', dataTrackerTransactionType)
     if (dataTrackerTransactionType)
       initTrackerTypeData(dataTrackerTransactionType.data, setIncomingTrackerType, setExpenseTrackerType)
   }, [dataTrackerTransactionType])
+
+  useEffect(() => {
+    console.log('🚀 ~ trackerType:', incomingTrackerType, expenseTrackerType)
+  }, [incomingTrackerType, expenseTrackerType])
 
   useEffect(() => {
     console.log('🚀 ~ >>>>>>>>>>>>>>>>>>>>ChatBox ~ apiData:', apiData)
@@ -625,7 +630,7 @@ export function ChatBox() {
               const currentType = transaction.id ? (typesState[transaction.id] ?? transaction.type) : transaction.type
               const trackerType =
                 transaction.type === ETypeOfTrackerTransactionType.INCOMING ? incomingTrackerType : expenseTrackerType
-              console.log('trackerType[0].name : ', trackerType[0].id)
+              // console.log('trackerType[0].name : ', trackerType[0].id)
 
               return (
                 <AccordionItem key={transaction.id} value={`item-${transaction.id}`}>
@@ -650,7 +655,7 @@ export function ChatBox() {
                         setEditingId={setEditingId}
                         incomeTrackerType={incomingTrackerType}
                         expenseTrackerType={expenseTrackerType}
-                        trackerType={trackerType}
+                        defaultTrackerType={trackerType[0].type as ETypeOfTrackerTransactionType}
                         accountSources={getAllAccountSourceData?.data || []}
                         transaction={transaction}
                       />

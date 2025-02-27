@@ -17,13 +17,13 @@ interface IUpdateTransactionProps {
   transaction: Transaction
   incomeTrackerType: ITrackerTransactionType[]
   expenseTrackerType: ITrackerTransactionType[]
-  trackerType: ITrackerTransactionType[]
+  defaultTrackerType: ETypeOfTrackerTransactionType
   setEditingId: React.Dispatch<React.SetStateAction<string | null>>
   accountSources: IAccountSource[]
 }
 
 export const UpdateTransaction = (props: IUpdateTransactionProps) => {
-  const { incomeTrackerType, expenseTrackerType, trackerType, setEditingId, accountSources, transaction } = props
+  const { incomeTrackerType, expenseTrackerType, defaultTrackerType, setEditingId, accountSources, transaction } = props
   const accountSourceData = useMemo(() => {
     return [
       ...accountSources,
@@ -38,15 +38,13 @@ export const UpdateTransaction = (props: IUpdateTransactionProps) => {
   console.log('🚀 ~ UpdateTransaction ~ transaction:', transaction)
 
   // state
-  const [typeOfEditTrackerType, setTypeOfEditTrackerType] = useState<ETypeOfTrackerTransactionType>(
-    trackerType[0].type as ETypeOfTrackerTransactionType
-  )
+  const [typeOfEditTrackerType, setTypeOfEditTrackerType] = useState<ETypeOfTrackerTransactionType>(defaultTrackerType)
   const [isOpenEditDialog, setIsOpenEditDialog] = useState<boolean>(false)
 
   // effect
   useEffect(() => {
-    setTypeOfEditTrackerType(trackerType[0].type as ETypeOfTrackerTransactionType)
-  }, [trackerType])
+    setTypeOfEditTrackerType(defaultTrackerType)
+  }, [defaultTrackerType])
 
   return (
     <div>
@@ -67,7 +65,7 @@ export const UpdateTransaction = (props: IUpdateTransactionProps) => {
           openEditDialog: isOpenEditDialog,
           setOpenEditDialog: setIsOpenEditDialog,
           editTrackerTypeDialogProps: {
-            typeDefault: trackerType[0].type as ETypeOfTrackerTransactionType,
+            typeDefault: defaultTrackerType,
             expenditureFund: [],
             handleUpdateTrackerType: (data: ITrackerTransactionTypeBody) => {},
             handleCreateTrackerType: (

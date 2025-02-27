@@ -16,7 +16,7 @@ export const updateTransactionSchema = z
       .refine((value) => !isNaN(value) && value > 0, {
         message: 'Amount must be a valid number & greater than 0'
       }),
-    accountSourceId: z.string({ message: 'Account source is required' }).uuid({ message: 'Account source is invalid' }),
+    accountSourceId: z.string({ message: 'Account source is required' }),
     trackerTypeId: z.string({ message: 'Category is required' }).uuid({ message: 'Category is invalid' })
   })
   .strict()
