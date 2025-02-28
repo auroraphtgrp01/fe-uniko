@@ -270,37 +270,30 @@ export const modifiedTrackerTypeForComboBox = (type: any) => {
 }
 
 export const initTrackerTypeData = (
-  data: {
-    trackerType: ITrackerTransactionType
-    statistic: {
-      spendingOfWeek: {
-        recentTransactions: ITransaction[]
-        sum: number
-      }
-      spendingOfMonth: {
-        recentTransactions: ITransaction[]
-        sum: number
-      }
-    }
-  }[],
+  data: ITrackerTransactionType[],
   setIncomingTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>,
   setExpenseTrackerType: React.Dispatch<React.SetStateAction<ITrackerTransactionType[]>>
 ) => {
-  const income = data
-    .map((item) => {
-      if (item.trackerType.type === ETypeOfTrackerTransactionType.INCOMING) return item.trackerType
-      return undefined
-    })
-    .filter((item): item is ITrackerTransactionType => item !== undefined)
-  const expense = data
-    .map((item) => {
-      if (item.trackerType.type === ETypeOfTrackerTransactionType.EXPENSE) return item.trackerType
-      return undefined
-    })
-    .filter((item): item is ITrackerTransactionType => item !== undefined)
+  const [income, expense, transfer] = data.reduce(
+    (
+      acc: [ITrackerTransactionType[], ITrackerTransactionType[], ITrackerTransactionType[]],
+      tx: ITrackerTransactionType
+    ) => {
+      if (tx.type === ETypeOfTrackerTransactionType.INCOMING) {
+        acc[0].push(tx)
+      } else if (tx.type === ETypeOfTrackerTransactionType.EXPENSE) {
+        acc[1].push(tx)
+      } else {
+        acc[2].push(tx)
+      }
+      return acc
+    },
+    [[], [], []]
+  )
 
   setIncomingTrackerType(income)
   setExpenseTrackerType(expense)
+  // setTransferTrackerType(transfer)
 }
 
 export const handleCreateTrackerType = ({

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { IDialogConfig } from '@/types/common.i'
 import { ITrackerTransactionDialogProps } from '@/core/tracker-transaction/models/tracker-transaction.interface'
 import { DataTable } from '@/components/dashboard/DataTable'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ClassifyForm from '@/components/dashboard/transaction/ClassifyForm'
 import CreateTrackerTransactionForm from '@/components/dashboard/tracker-transaction/CreateForm'
 import { ETypeOfTrackerTransactionType } from '@/core/tracker-transaction-type/models/tracker-transaction-type.enum'
@@ -24,13 +24,14 @@ export default function TrackerTransactionDialog({
   // states
   const [transactionIdClassifying, setTransactionIdClassifying] = useState<string>()
   const [openEditTrackerTxTypeDialog, setOpenEditTrackerTxTypeDialog] = useState<boolean>(false)
-  const { transactionId } = sharedDialogElements
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
-
+  useEffect(() => {
+    console.log('====>>>>', sharedDialogElements.incomeTrackerType, sharedDialogElements.expenseTrackerType)
+  }, [sharedDialogElements.expenseTrackerType, sharedDialogElements.incomeTrackerType])
   const classifyingTransactionConfigDialog: IDialogConfig = {
     content: ClassifyForm({
-      transactionId: transactionId as string,
+      transactionId: transactionIdClassifying as string,
       incomeTrackerType: sharedDialogElements.incomeTrackerType,
       expenseTrackerType: sharedDialogElements.expenseTrackerType,
       editTrackerTypeDialogProps: {
@@ -43,7 +44,12 @@ export default function TrackerTransactionDialog({
       handleClassify: classifyTransactionDialog.handleClassify
     }),
     footer: (
-      <Button onClick={() => formClassifyRef.current?.requestSubmit()} disabled={classifyTransactionDialog.isPendingClassifyTransaction} isLoading={classifyTransactionDialog.isPendingClassifyTransaction} type='button'>
+      <Button
+        onClick={() => formClassifyRef.current?.requestSubmit()}
+        disabled={classifyTransactionDialog.isPendingClassifyTransaction}
+        isLoading={classifyTransactionDialog.isPendingClassifyTransaction}
+        type='button'
+      >
         {t('common:button.save')}
       </Button>
     ),
@@ -74,8 +80,12 @@ export default function TrackerTransactionDialog({
       expenditureFund: sharedDialogElements.expenditureFund
     }),
     footer: (
-      <Button type='button' disabled={createTrackerTransactionDialog.isPendingCreateTrackerTransaction}
-        isLoading={createTrackerTransactionDialog.isPendingCreateTrackerTransaction} onClick={() => formCreateRef.current?.requestSubmit()}>
+      <Button
+        type='button'
+        disabled={createTrackerTransactionDialog.isPendingCreateTrackerTransaction}
+        isLoading={createTrackerTransactionDialog.isPendingCreateTrackerTransaction}
+        onClick={() => formCreateRef.current?.requestSubmit()}
+      >
         {t('common:button.save')}
       </Button>
     ),
@@ -95,8 +105,8 @@ export default function TrackerTransactionDialog({
           config={unclassifiedTxDialog.tableConfig}
           setConfig={unclassifiedTxDialog.setTableConfig}
           onRowClick={(rowData) => {
-            sharedDialogElements.setTypeOfTrackerType(rowData.direction as ETypeOfTrackerTransactionType)
             setTransactionIdClassifying(rowData.id)
+            sharedDialogElements.setTypeOfTrackerType(rowData.direction as ETypeOfTrackerTransactionType)
             sharedDialogElements.setIsDialogOpen((prev) => ({ ...prev, isDialogClassifyTransactionOpen: true }))
           }}
         />

@@ -23,7 +23,9 @@ export default function ClassifyForm({
   useEffect(() => {
     setTypeOfEditTrackerType(editTrackerTypeDialogProps.typeDefault)
   }, [editTrackerTypeDialogProps.typeDefault])
-
+  useEffect(() => {
+    console.log('....>>>>', incomeTrackerType, expenseTrackerType)
+  }, [expenseTrackerType, incomeTrackerType])
   return (
     <FormZod
       formSchema={classifyTransactionSchema}
