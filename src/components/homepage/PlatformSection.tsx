@@ -23,9 +23,9 @@ export const PlatformSection = () => {
     ]
 
     return (
-        <section className="py-24 px-4 md:px-8 lg:px-16 overflow-hidden relative">
+        <section className="py-24 overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-50 dark:to-gray-900/20 opacity-50 pointer-events-none"></div>
-            <div className="max-w-7xl mx-auto relative z-10">
+            <div className="relative z-10">
                 <div className="text-center mb-20">
                     <motion.span
                         initial={{ opacity: 0 }}
