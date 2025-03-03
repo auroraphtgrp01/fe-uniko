@@ -8,6 +8,7 @@ import { useForgotPassword } from '@/core/auth/hooks/useForgotPassword'
 import { useResetPassword } from '@/core/auth/hooks/useResetPassword'
 import { useVerifyEmail } from '@/core/auth/hooks/useVerifyEmail'
 import { useLogout } from '@/core/auth/hooks/useLogout'
+import { useResendVerifyEmail } from './useResendVerifyEmail'
 
 export const useAuth = (opts?: IUseQueryHookOptions) => {
   const [isRememberMe, setIsRememberMe] = useState(true)
@@ -28,6 +29,7 @@ export const useAuth = (opts?: IUseQueryHookOptions) => {
     useVerifyEmail,
     useLogout,
     signInGoogle,
-    isSigningInGoogle
+    isSigningInGoogle,
+    resendVerifyEmail: useResendVerifyEmail
   }
 }

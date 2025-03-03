@@ -2,6 +2,7 @@ import { setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/l
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { authServices } from '../configs'
+import React from 'react'
 import { AUTH_RETRY } from '@/core/auth/constants'
 import { IUseQueryHookOptions } from '@/types/query.interface'
 import { useState } from 'react'
@@ -9,6 +10,7 @@ import { useMutationCustom } from '@/hooks/useMutationCustom'
 import { useUser } from '@/core/users/hooks'
 import { ISignInBody, ISignInResponse } from '@/core/auth/models'
 import Cookies from 'js-cookie'
+import { ResendToast } from '@/app/resend-email-toast'
 
 export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) => {
   const router = useRouter()
@@ -40,11 +42,21 @@ export const useSignIn = (isRememberMe: boolean, opts?: IUseQueryHookOptions) =>
           toast.error('Account is inactive, please contact the administrator !')
         }
       },
-      onError: (error) => {
-        const errorMessage =
-          (error as any)?.payload?.message + '!\n\n' + (error as any)?.payload?.details[0] ||
-          'Login failed, please try again!'
-        toast.error(errorMessage, { duration: 1500 })
+      onError: (error, variables) => {
+        if (error.status === 400)
+          toast.custom(
+            React.createElement(ResendToast, {
+              title: 'User unverified!',
+              description:
+                'Your account is inactive. Please check your email and verify email before perform login again.',
+              buttonContent: 'Resend verify email',
+              email: variables.email
+            }),
+            { duration: 3000 }
+          )
+        else if (error.status === 404) toast.error('Account is not exist!', { duration: 3000 })
+        else toast.error('Email or password is incorrect, please try again!', { duration: 3000 })
+
         opts?.callBackOnError?.()
       }
     }

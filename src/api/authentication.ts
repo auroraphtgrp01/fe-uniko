@@ -6,5 +6,6 @@ export const authenticationRoutes = {
   verifyEmail: 'auth/verify-email/:token',
   loginGoogle: 'auth/login/google',
   verifyToken: 'auth/verify-token/:refreshToken',
-  logOut: 'auth/logout'
+  logOut: 'auth/logout',
+  resendVerifyToken: 'auth/resend-verify-email/:email'
 }
